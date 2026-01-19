@@ -1,0 +1,307 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  GUEST
+}
+
+enum DeviceType {
+  LED
+  SERVO
+  TOUCH
+}
+
+enum DeviceStatus {
+  ON
+  OFF
+  AUTO
+  ERROR
+}
+
+enum PowerSource {
+  SOLAR
+  BATTERY
+  GRID
+}
+
+enum SolarStatus {
+  CHARGING
+  STANDBY
+  ERROR
+}
+
+// User management
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  username  String    @unique
+  password  String
+  role      UserRole  @default(USER)
+  isActive  Boolean   @default(true)
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  devices      Device[]
+  automations  AutomationRule[]
+  activityLogs ActivityLog[]
+
+  @@map("users")
+}
+
+// Device management
+model Device {
+  id               String       @id @default(cuid())
+  name             String
+  type             DeviceType
+  status           DeviceStatus @default(OFF)
+  pin              Int // GPIO pin on ESP32
+  value            Int? // Brightness for LED, position for servo
+  manualMode       Boolean      @default(false)
+  powerConsumption Float?       @default(0)
+  lastActive       DateTime?
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Specific device types
+  led   Led?
+  servo Servo?
+  touch Touch?
+
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  activityLogs ActivityLog[]
+
+  @@unique([userId, name])
+  @@map("devices")
+}
+
+// LED devices (x3)
+model Led {
+  id       String @id @default(cuid())
+  deviceId String @unique
+  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  color         String? @default("#FFFFFF")
+  brightness    Int     @default(100) // 0-100%
+  minBrightness Int     @default(0)
+  maxBrightness Int     @default(100)
+
+  @@map("leds")
+}
+
+// Servo device (for coffee shelter)
+model Servo {
+  id       String @id @default(cuid())
+  deviceId String @unique
+  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  position Int @default(0) // 0-180 degrees
+  minAngle Int @default(0)
+  maxAngle Int @default(180)
+  speed    Int @default(10) // degrees per second
+
+  // Rain protection
+  autoRetract   Boolean @default(true)
+  rainThreshold Float   @default(80) // Humidity threshold for rain
+
+  @@map("servos")
+}
+
+// Touch sensors (x4)
+model Touch {
+  id       String @id @default(cuid())
+  deviceId String @unique
+  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  sensitivity Int     @default(50) // 0-100
+  isTouched   Boolean @default(false)
+
+  @@map("touches")
+}
+
+// Sensor data
+model SensorData {
+  id String @id @default(cuid())
+
+  // AHT20 + BMP280
+  temperature Float // Celsius
+  humidity    Float // Percentage
+  pressure    Float // hPa
+
+  // LM393 LDR
+  lightLevel Int // 0-1023
+  isDark     Boolean // Based on threshold
+
+  // Rain sensor
+  isRaining Boolean
+
+  timestamp DateTime @default(now())
+
+  @@index([timestamp])
+  @@map("sensor_data")
+}
+
+// Power monitoring (INA219 DC)
+model PowerData {
+  id String @id @default(cuid())
+
+  voltage Float // Volts
+  current Float // Amps
+  power   Float // Watts
+  energy  Float // Watt-hours
+
+  source       PowerSource @default(SOLAR)
+  batteryLevel Float? // 0-100%
+
+  timestamp DateTime @default(now())
+
+  @@index([timestamp])
+  @@map("power_data")
+}
+
+// Solar charging (CN3791)
+model SolarData {
+  id String @id @default(cuid())
+
+  solarVoltage   Float // Solar panel voltage
+  solarCurrent   Float // Solar panel current
+  chargeVoltage  Float // Battery charging voltage
+  chargeCurrent  Float // Battery charging current
+  batteryVoltage Float // Battery voltage
+
+  status      SolarStatus @default(STANDBY)
+  temperature Float? // Charger temperature
+
+  timestamp DateTime @default(now())
+
+  @@index([timestamp])
+  @@map("solar_data")
+}
+
+// OLED Display data
+model DisplayData {
+  id String @id @default(cuid())
+
+  line1 String?
+  line2 String?
+  line3 String?
+  line4 String?
+
+  isDisplayOn Boolean @default(true)
+  brightness  Int     @default(100)
+
+  updatedAt DateTime @updatedAt
+
+  @@map("display_data")
+}
+
+// AI Learning Data
+model AiLearningData {
+  id String @id @default(cuid())
+
+  feature    String // Feature name (e.g., "light_control")
+  inputData  Json // Input parameters
+  outputData Json // Output/result
+  accuracy   Float? // Model accuracy
+
+  timestamp DateTime @default(now())
+
+  @@index([feature, timestamp])
+  @@map("ai_learning_data")
+}
+
+// Behavior Pattern
+model BehaviorPattern {
+  id String @id @default(cuid())
+
+  patternName String
+  condition   Json // Conditions for pattern
+  action      Json // Actions to perform
+  priority    Int     @default(1)
+  isActive    Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("behavior_patterns")
+}
+
+// Automation Rules
+model AutomationRule {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+
+  conditionType String // "sensor", "time", "ai_prediction"
+  conditions    Json // Array of conditions
+  actions       Json // Array of actions
+
+  isActive      Boolean   @default(true)
+  lastTriggered DateTime?
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("automation_rules")
+}
+
+// Activity Log
+model ActivityLog {
+  id String @id @default(cuid())
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  action   String
+  deviceId String?
+  device   Device? @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+
+  details   Json?
+  ipAddress String?
+  userAgent String?
+
+  timestamp DateTime @default(now())
+
+  @@index([timestamp])
+  @@index([userId, timestamp])
+  @@map("activity_logs")
+}
+
+// System Settings
+model SystemSettings {
+  id String @id @default(cuid())
+
+  // Lighting settings
+  autoLightEnabled Boolean @default(true)
+  lightOnTime      String? @default("18:00")
+  lightOffTime     String? @default("06:00")
+  lightThreshold   Int     @default(30) // LDR threshold
+
+  // Rain protection
+  autoRainProtection    Boolean @default(true)
+  rainHumidityThreshold Float   @default(80)
+
+  // Energy saving
+  powerSaveMode       Boolean @default(false)
+  maxPowerConsumption Float   @default(100) // Watts
+
+  // AI settings
+  aiLearningEnabled Boolean @default(true)
+  predictionHorizon Int     @default(24) // hours
+
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
+}
