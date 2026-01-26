@@ -21,7 +21,7 @@ enum DeviceType {
 
 enum DeviceStatus {
   ON
-  OFF
+  OFF 
   AUTO
   ERROR
 }

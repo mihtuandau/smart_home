@@ -6,13 +6,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS
   app.enableCors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true,
   });
 
-  // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -21,7 +19,6 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle('Smart Home Management System API')
     .setDescription(
