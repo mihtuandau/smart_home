@@ -1,5 +1,16 @@
 'use client';
 
+import { useSensors } from '@/hooks/useSensors';
+
+interface SensorData {
+  temperature: number;
+  humidity: number;
+  pressure: number;
+  lightLevel: number;
+  isDark: boolean;
+  isRaining: boolean;
+}
+
 interface SensorCardProps {
   title: string;
   value: string;
@@ -67,6 +78,17 @@ function PressureCard({ title, subtitle, value, status, borderColor, bgColor, ic
 }
 
 export default function EnvironmentStatus() {
+  const { data: response, isLoading } = useSensors(1, 3000); // Refetch every 3 seconds
+  const data = (response as any)?.data?.[0] || null;
+
+  if (isLoading || !data) {
+    return (
+      <div className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
+        <div className="h-40 bg-gray-200 rounded"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-lg p-6 border border-gray-200">
       <div className="mb-4">
@@ -78,18 +100,18 @@ export default function EnvironmentStatus() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <SensorCard 
             title="Ánh sáng (LDR)"
-            value="777 lx"
-            badge="Ban ngày"
-            badgeColor="bg-black text-white"
+            value={`${data.lightLevel} lx`}
+            badge={data.isDark ? 'Ban đêm' : 'Ban ngày'}
+            badgeColor={data.isDark ? 'bg-gray-800 text-white' : 'bg-yellow-100 text-yellow-800'}
             borderColor="#eab308"
             bgColor="#fef9c3"
             icon="☀️"
           />
           <SensorCard 
             title="Mưa"
-            value="Có mưa"
-            badge="Servo: Đóng"
-            badgeColor="bg-black text-white"
+            value={data.isRaining ? 'Có mưa' : 'Không mưa'}
+            badge={data.isRaining ? 'Servo: Đóng' : 'Servo: Mở'}
+            badgeColor={data.isRaining ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}
             borderColor="#3b82f6"
             bgColor="#dbeafe"
             icon="🌧️"
@@ -99,7 +121,7 @@ export default function EnvironmentStatus() {
         <PressureCard 
           title="Áp suất khí quyển (BMP280)"
           subtitle="Áp suất hiện tại"
-          value="1013.25 hPa"
+          value={`${data.pressure.toFixed(2)} hPa`}
           status="Ổn định"
           borderColor="#a855f7"
           bgColor="#f3e8ff"

@@ -1,5 +1,14 @@
 'use client';
 
+import { useLatestDeviceData } from '@/hooks/useDevices';
+
+interface DeviceData {
+  led1: boolean;
+  led2: boolean;
+  temperature: number;
+  voltage: number;
+}
+
 interface Device {
   name: string;
   status: string;
@@ -8,11 +17,44 @@ interface Device {
 }
 
 export default function DeviceControl() {
+  const { data: response, isLoading } = useLatestDeviceData(3000); // Refetch every 3 seconds
+  const data = (response as any)?.data || response;
+
+  if (isLoading || !data) {
+    return (
+      <div className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
+        <div className="h-40 bg-gray-200 rounded"></div>
+      </div>
+    );
+  }
+
+  const ledCount = (data.led1 ? 1 : 0) + (data.led2 ? 1 : 0);
+
   const devices: Device[] = [
-    { name: 'LED đang bật', status: '2/3', statusColor: 'bg-black text-white', icon: '💡' },
-    { name: 'Servo Motor', status: 'Auto', statusColor: 'bg-black text-white', icon: '🔄' },
-    { name: 'ESP32 DevKit', status: 'Online', statusColor: 'bg-green-100 text-green-700', icon: '⚡' },
-    { name: 'CN3791 Charger', status: 'Charging', statusColor: 'bg-green-100 text-green-700', icon: '🔋' },
+    { 
+      name: 'LED đang bật', 
+      status: `${ledCount}/2`, 
+      statusColor: ledCount > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700', 
+      icon: '💡' 
+    },
+    { 
+      name: 'Servo Motor', 
+      status: 'Auto', 
+      statusColor: 'bg-blue-100 text-blue-700', 
+      icon: '🔄' 
+    },
+    { 
+      name: 'ESP32 DevKit', 
+      status: 'Online', 
+      statusColor: 'bg-green-100 text-green-700', 
+      icon: '⚡' 
+    },
+    { 
+      name: 'CN3791 Charger', 
+      status: `${data.voltage.toFixed(2)}V`, 
+      statusColor: data.voltage > 3.5 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700', 
+      icon: '🔋' 
+    },
   ];
 
   return (

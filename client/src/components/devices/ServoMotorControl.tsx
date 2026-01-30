@@ -1,21 +1,74 @@
 'use client';
 
 import { useState } from 'react';
+import { useLatestDeviceData, useControlServo } from '@/hooks/useDevices';
+import { useSensors } from '@/hooks/useSensors';
+import Toast from '@/components/ui/Toast';
+
+interface ToastState {
+  message: string;
+  type: 'success' | 'error' | 'info';
+}
 
 export default function ServoMotorControl() {
-  const [position, setPosition] = useState<'close' | 'middle' | 'open'>('open');
-  const [autoMode, setAutoMode] = useState(true);
+  const { data: iotResponse, isLoading: iotLoading } = useLatestDeviceData(3000);
+  const { data: sensorsResponse, isLoading: sensorsLoading } = useSensors(1, 3000);
+  const controlServoMutation = useControlServo();
+  const [toast, setToast] = useState<ToastState | null>(null);
   
-  const getAngle = () => {
-    switch (position) {
-      case 'close': return '0';
-      case 'middle': return '90';
-      case 'open': return '180';
+  const data = (iotResponse as any)?.data || iotResponse;
+  const sensorData = (sensorsResponse as any)?.data?.[0];
+  const loading = iotLoading || sensorsLoading;
+
+  const servoAngle = data?.servo_angle ?? 180;
+  const position: 'close' | 'middle' | 'open' = 
+    servoAngle === 0 ? 'close' : 
+    servoAngle === 90 ? 'middle' : 'open';
+  
+  const getAngle = () => String(servoAngle);
+
+  const controlServo = async (angle: 0 | 90 | 180) => {    
+    try {
+      await controlServoMutation.mutateAsync(angle);
+      
+      const positionName = angle === 0 ? 'đóng' : angle === 90 ? 'giữa' : 'mở';
+      setToast({
+        message: `Mái che đã chuyển về vị trí ${positionName}`,
+        type: 'success'
+      });
+    } catch (error) {
+      console.error('Failed to control servo:', error);
+      setToast({
+        message: 'Không thể điều khiển mái che',
+        type: 'error'
+      });
     }
   };
 
+  if (loading) {
+    return (
+      <div className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
+        <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
+        <div className="h-40 bg-gray-200 rounded mb-6"></div>
+        <div className="h-32 bg-gray-200 rounded"></div>
+      </div>
+    );
+  }
+
+  const isDark = sensorData?.isDark ?? false;
+  const isRaining = sensorData?.isRaining ?? false;
+
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
+    <>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,7 +78,7 @@ export default function ServoMotorControl() {
         </div>
         
         <span className="px-3 py-1 bg-black text-white rounded-lg text-sm font-medium">
-          {autoMode ? 'Tự động' : 'Thủ công'}
+          Tự động
         </span>
       </div>
       
@@ -33,14 +86,20 @@ export default function ServoMotorControl() {
       
       <div className="bg-blue-50 rounded-lg p-6 mb-6">
         <p className="text-sm text-gray-600 text-center mb-2">Vị trí mái che</p>
-        <p className="text-4xl font-bold text-gray-900 text-center mb-6">{getAngle()}°</p>
+        <p className="text-4xl font-bold text-gray-900 text-center mb-2">{getAngle()}°</p>
+        <p className={`text-sm text-center font-medium ${
+          controlServoMutation.isPending ? 'text-blue-600' : 'text-gray-500'
+        }`}>
+          {controlServoMutation.isPending ? '⏳ Đang chuyển...' : `● ${position === 'close' ? 'Đóng' : position === 'middle' ? 'Giữa' : 'Mở'}`}
+        </p>
         
         <div className="flex items-center justify-center gap-4">
           <button
-            onClick={() => setPosition('close')}
+            onClick={() => controlServo(0)}
+            disabled={controlServoMutation.isPending}
             className={`flex flex-col items-center justify-center w-24 h-24 rounded-lg transition-colors ${
               position === 'close' ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            } ${controlServoMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -49,10 +108,11 @@ export default function ServoMotorControl() {
           </button>
           
           <button
-            onClick={() => setPosition('middle')}
+            onClick={() => controlServo(90)}
+            disabled={controlServoMutation.isPending}
             className={`flex flex-col items-center justify-center w-24 h-24 rounded-lg transition-colors ${
               position === 'middle' ? 'bg-gray-200 text-gray-900' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            } ${controlServoMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -61,10 +121,11 @@ export default function ServoMotorControl() {
           </button>
           
           <button
-            onClick={() => setPosition('open')}
+            onClick={() => controlServo(180)}
+            disabled={controlServoMutation.isPending}
             className={`flex flex-col items-center justify-center w-24 h-24 rounded-lg transition-colors ${
               position === 'open' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+            } ${controlServoMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <svg className="w-8 h-8 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -86,16 +147,16 @@ export default function ServoMotorControl() {
           <div className="flex items-center justify-between">
             <span className="text-gray-600">Cảm biến mưa:</span>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
-              <span className="text-gray-900">Không mưa</span>
+              <span className={`w-2 h-2 rounded-full ${isRaining ? 'bg-red-500' : 'bg-green-500'}`}></span>
+              <span className="text-gray-900">{isRaining ? 'Có mưa → Đóng' : 'Không mưa'}</span>
             </div>
           </div>
           
           <div className="flex items-center justify-between">
             <span className="text-gray-600">Ánh sáng:</span>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
-              <span className="text-gray-900">Ban ngày → Mở</span>
+              <span className={`w-2 h-2 rounded-full ${isDark ? 'bg-blue-500' : 'bg-yellow-500'}`}></span>
+              <span className="text-gray-900">{isDark ? 'Ban đêm → Đóng' : 'Ban ngày → Mở'}</span>
             </div>
           </div>
         </div>
@@ -109,6 +170,8 @@ export default function ServoMotorControl() {
           </p>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
+      

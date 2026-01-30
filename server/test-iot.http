@@ -1,0 +1,73 @@
+### IoT API Testing
+@baseUrl = http://localhost:3001
+@contentType = application/json
+
+### Check MQTT Status
+GET {{baseUrl}}/iot/status
+
+### Get Latest Data from ESP32
+GET {{baseUrl}}/iot/data/latest
+
+### Get All Sensor Data (Last 50)
+GET {{baseUrl}}/iot/sensors
+
+### Get All Power Data (Last 50)
+GET {{baseUrl}}/iot/power
+
+### Get All Devices
+GET {{baseUrl}}/iot/devices
+
+### Get Activity Logs
+GET {{baseUrl}}/iot/logs
+
+### ===== LED CONTROLS =====
+
+### Turn LED1 ON
+POST {{baseUrl}}/iot/control/led
+Content-Type: {{contentType}}
+
+{
+  "led1": true
+}
+
+### Turn LED1 OFF
+POST {{baseUrl}}/iot/control/led
+Content-Type: {{contentType}}
+
+{
+  "led1": false
+}
+
+### Turn LED2 ON
+POST {{baseUrl}}/iot/control/led
+Content-Type: {{contentType}}
+
+{
+  "led2": true
+}
+
+### Turn LED2 OFF
+POST {{baseUrl}}/iot/control/led
+Content-Type: {{contentType}}
+
+{
+  "led2": false
+}
+
+### Turn Both LEDs ON
+POST {{baseUrl}}/iot/control/led
+Content-Type: {{contentType}}
+
+{
+  "led1": true,
+  "led2": true
+}
+
+### Turn Both LEDs OFF
+POST {{baseUrl}}/iot/control/led
+Content-Type: {{contentType}}
+
+{
+  "led1": false,
+  "led2": false
+}

@@ -16,7 +16,20 @@ export default function LoginPage() {
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
- 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    try {
+      await login(credentials);
+      router.push('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 px-4 py-12">
@@ -45,7 +58,7 @@ export default function LoginPage() {
           )}
 
           {/* Login Form */}
-          <form className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-4">
               {/* Email Input */}
               <div>

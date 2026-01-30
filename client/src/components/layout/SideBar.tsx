@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 
 interface MenuItem {
   path: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
   label: string;
 }
 
@@ -17,9 +17,10 @@ interface DashboardSidebarProps {
     email?: string;
   } | null;
   onLogout: () => void;
+  onClose?: () => void;
 }
 
-export default function DashboardSidebar({ isOpen, user, onLogout }: DashboardSidebarProps) {
+export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: DashboardSidebarProps) {
   const pathname = usePathname();
 
   const menuItems: MenuItem[] = [
@@ -33,7 +34,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout }: DashboardSi
       label: 'Tổng quan' 
     },
     { 
-      path: '/dashboard/devices', 
+      path: '/devices', 
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
@@ -73,23 +74,47 @@ export default function DashboardSidebar({ isOpen, user, onLogout }: DashboardSi
   ];
 
   return (
-    <aside
-      className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
-        isOpen ? 'translate-x-0' : '-translate-x-full'
-      } bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 w-64 shadow-lg`}
-    >
+    <>
+      {/* Mobile Overlay - lighter and less intrusive */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-gray-100 bg-opacity-20 md:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 w-64 shadow-lg md:relative md:translate-x-0 md:z-0`}
+      >
       <div className="h-full px-4 py-6 overflow-y-auto flex flex-col">
         {/* Logo */}
-        <div className="flex items-center mb-8 px-2">
-          <div className="h-11 w-11 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
-            <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
+        <div className="flex items-center justify-between mb-8 px-2">
+          <div className="flex items-center flex-1">
+            <div className="h-11 w-11 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
+              <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h1 className="text-lg font-bold text-gray-900">Smart Home</h1>
+              <p className="text-xs text-gray-500">AI Dashboard</p>
+            </div>
           </div>
-          <div className="ml-3">
-            <h1 className="text-lg font-bold text-gray-900">Smart Home</h1>
-            <p className="text-xs text-gray-500">AI Dashboard</p>
-          </div>
+          {/* Close button - mobile only */}
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 hover:text-gray-600 md:hidden"
+              title="Đóng menu"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Navigation */}
@@ -100,6 +125,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout }: DashboardSi
               <Link
                 key={item.path}
                 href={item.path}
+                onClick={onClose} // Close sidebar on mobile when clicking menu
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-50 text-blue-700 font-semibold shadow-sm'
@@ -140,5 +166,6 @@ export default function DashboardSidebar({ isOpen, user, onLogout }: DashboardSi
         </div>
       </div>
     </aside>
+    </>
   );
 }

@@ -4,6 +4,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './common/prisma.module';
 import { AuthModule } from './module/auth/auth.module';
+import { MqttModule } from './module/mqtt/mqtt.module';
+import { SensorsModule } from './module/sensors/sensors.module';
+import { DevicesModule } from './module/devices/devices.module';
+import { AutomationModule } from './module/automation/automation.module';
+import { SettingsModule } from './module/settings/settings.module';
+import { DashboardModule } from './module/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -13,6 +19,12 @@ import { AuthModule } from './module/auth/auth.module';
     }),
     PrismaModule,
     AuthModule,
+    MqttModule,
+    SensorsModule,
+    DevicesModule,
+    AutomationModule,
+    SettingsModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

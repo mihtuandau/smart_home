@@ -15,19 +15,26 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <WelcomeBanner username={user?.username} />
+      
+      {/* Stats - Load immediately */}
       <StatsGrid />
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Environment Status - Load second */}
         <div className="lg:col-span-2">
           <EnvironmentStatus />
         </div>
+        
+        {/* Device Control - Load second */}
         <div>
           <DeviceControl />
         </div>
       </div>
       
+      {/* Hardware List - Load third */}
       <HardwareList />
       
+      {/* System Alerts - Load last */}
       <div className="bg-white rounded-lg p-6 border border-gray-200">
         <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
