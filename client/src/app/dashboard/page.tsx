@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import WelcomeBanner from '@/components/dashboard/WelcomeBanner';
 import StatsGrid from '@/components/dashboard/StatsGrid';
 import EnvironmentStatus from '@/components/dashboard/EnvironmentStatus';
 import DeviceControl from '@/components/dashboard/DeviceControl';
@@ -14,7 +13,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <WelcomeBanner username={user?.username} />
       
       {/* Stats - Load immediately */}
       <StatsGrid />

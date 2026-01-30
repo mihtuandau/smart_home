@@ -7,6 +7,9 @@ export * from './useSensors';
 // Dashboard hooks
 export * from './useDashboard';
 
+// Automation hooks
+export * from './useAutomation';
+
 // Socket hooks - explicit exports to avoid naming conflicts
 export {
   useSocket,

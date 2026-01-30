@@ -51,7 +51,15 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
       ),
       label: 'Cảm biến' 
     },
-    
+    { 
+      path: '/automation', 
+      icon: (
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      ),
+      label: 'Tự động hóa' 
+    },
     { 
       path: '/energy', 
       icon: (
@@ -75,7 +83,6 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
 
   return (
     <>
-      {/* Mobile Overlay - lighter and less intrusive */}
       {isOpen && (
         <div
           className="fixed inset-0 z-30 bg-gray-100 bg-opacity-20 md:hidden"
@@ -83,14 +90,12 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 w-64 shadow-lg md:relative md:translate-x-0 md:z-0`}
       >
       <div className="h-full px-4 py-6 overflow-y-auto flex flex-col">
-        {/* Logo */}
         <div className="flex items-center justify-between mb-8 px-2">
           <div className="flex items-center flex-1">
             <div className="h-11 w-11 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
@@ -103,7 +108,6 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
               <p className="text-xs text-gray-500">AI Dashboard</p>
             </div>
           </div>
-          {/* Close button - mobile only */}
           {onClose && (
             <button
               onClick={onClose}
@@ -117,7 +121,6 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
           )}
         </div>
 
-        {/* Navigation */}
         <nav className="space-y-1 flex-1">
           {menuItems.map((item) => {
             const isActive = pathname === item.path;

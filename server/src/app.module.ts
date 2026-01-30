@@ -10,6 +10,7 @@ import { DevicesModule } from './module/devices/devices.module';
 import { AutomationModule } from './module/automation/automation.module';
 import { SettingsModule } from './module/settings/settings.module';
 import { DashboardModule } from './module/dashboard/dashboard.module';
+import { EnergyModule } from './module/energy/energy.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { DashboardModule } from './module/dashboard/dashboard.module';
     AutomationModule,
     SettingsModule,
     DashboardModule,
+    EnergyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
