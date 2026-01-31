@@ -17,7 +17,7 @@ interface Device {
 }
 
 export default function DeviceControl() {
-  const { data: response, isLoading } = useLatestDeviceData(3000); // Refetch every 3 seconds
+  const { data: response, isLoading } = useLatestDeviceData(3000); 
   const data = (response as any)?.data || response;
 
   if (isLoading || !data) {

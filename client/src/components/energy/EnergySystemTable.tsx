@@ -1,5 +1,7 @@
 'use client';
 
+import { useEnergyStats, usePowerSources } from '@/hooks/useEnergy';
+
 interface SystemComponent {
   name: string;
   spec: string;
@@ -11,44 +13,60 @@ interface SystemComponent {
 }
 
 export default function EnergySystemTable() {
+  const { data: energyData, isLoading: energyLoading } = useEnergyStats(24);
+  const { data: sourcesData, isLoading: sourcesLoading } = usePowerSources(24);
+  
+  const latestEnergy = ((energyData as any)?.data || [])[((energyData as any)?.data || []).length - 1] || {};
+  const sources = (sourcesData as any)?.data || {};
+  
+  const totalEnergy = ((energyData as any)?.data || []).reduce((sum: number, item: any) => sum + (item.energy || 0), 0);
+
   const components: SystemComponent[] = [
     {
       name: 'Solar Panel',
-      spec: '6V 2A',
-      status: 'Năng lượng thu được',
+      spec: `${(latestEnergy.voltage || 0).toFixed(1)}V ${(latestEnergy.current || 0).toFixed(1)}A`,
+      status: 'Công suất hiện tại',
       statusColor: 'text-gray-900',
-      metric: '45.2 Wh',
-      value: '45.2 Wh',
-      valueColor: 'text-gray-900'
+      metric: `${(latestEnergy.power || 0).toFixed(2)} W`,
+      value: `${(latestEnergy.power || 0).toFixed(2)} W`,
+      valueColor: 'text-orange-600'
     },
     {
-      name: 'CN3791 Solar Charger',
-      spec: 'Hoạt động',
-      status: 'Năng lượng tiêu thụ',
+      name: 'Năng lượng thu được',
+      spec: 'Hôm nay',
+      status: 'Tổng năng lượng',
       statusColor: 'text-green-700',
-      metric: '32.8 Wh',
-      value: '32.8 Wh',
+      metric: `${totalEnergy.toFixed(2)} Wh`,
+      value: `${totalEnergy.toFixed(2)} Wh`,
       valueColor: 'text-gray-900'
     },
     {
-      name: 'INA219 DC Sensor',
-      spec: 'Đang đo',
-      status: 'Thời gian hoạt động',
-      statusColor: 'text-green-700',
-      metric: '8h 24m',
-      value: '8h 24m',
-      valueColor: 'text-gray-900'
+      name: 'Nguồn điện',
+      spec: latestEnergy.source || 'UNKNOWN',
+      status: 'Trạng thái',
+      statusColor: 'text-blue-700',
+      metric: 'Hoạt động',
+      value: 'Hoạt động',
+      valueColor: 'text-green-700'
     },
     {
-      name: 'DC-DC XL4005E1',
-      spec: '5V Output',
-      status: 'Hiệu suất',
+      name: 'Hiệu suất',
+      spec: 'Hệ thống',
+      status: 'Tỷ lệ chuyển đổi',
       statusColor: 'text-gray-900',
       metric: '85%',
       value: '85%',
       valueColor: 'text-green-700'
     }
   ];
+
+  if (energyLoading || sourcesLoading) {
+    return (
+      <div className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
+        <div className="h-64"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-lg p-6 border border-gray-200">

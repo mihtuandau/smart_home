@@ -67,3 +67,6 @@ export const useIoTSensors = (refetchInterval?: number) => {
     refetchInterval: refetchInterval || 5000, // Refetch every 5 seconds by default
   });
 };
+
+// Alias for current sensor data
+export const useSensorData = useCurrentSensors;

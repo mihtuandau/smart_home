@@ -84,7 +84,7 @@ class ApiClient {
   }
 
   async getEnergyStats(hours: number = 24) {
-    return this.request(`/dashboard/energy?hours=${hours}`);
+    return this.request(`/energy/stats?hours=${hours}`);
   }
 
   async getSystemHealth() {
@@ -232,6 +232,23 @@ class ApiClient {
     return this.request(`/automation/${id}/toggle`, {
       method: 'POST',
     });
+  }
+
+  // Energy APIs
+  async getBatteryStatus() {
+    return this.request('/energy/battery');
+  }
+
+  async getSolarStats(hours: number = 24) {
+    return this.request(`/energy/solar?hours=${hours}`);
+  }
+
+  async getPowerSources(hours: number = 24) {
+    return this.request(`/energy/sources?hours=${hours}`);
+  }
+
+  async getEfficiency(hours: number = 24) {
+    return this.request(`/energy/efficiency?hours=${hours}`);
   }
 }
 
