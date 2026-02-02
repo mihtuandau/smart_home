@@ -39,8 +39,6 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
       </div>
     );
   }
-
-  // Mock data for light intensity - you should replace this with real data from your API
   const chartData = [
     { time: '00:00', light: 0 },
     { time: '04:00', light: 0 },

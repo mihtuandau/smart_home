@@ -1,9 +1,13 @@
 import { AuthResponse, LoginCredentials, User } from '../types';
-import apiClient from '../lib/api';
+import { authApi } from '../lib/api';
 
 class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await apiClient.login(credentials.email, credentials.password);
+    const response = await authApi.login(credentials.email, credentials.password);
+    this.saveAuthData({
+      accessToken: response.access_token,
+      user: response.user
+    });
     return {
       accessToken: response.access_token,
       user: response.user
@@ -11,20 +15,17 @@ class AuthService {
   }
 
   async getProfile(): Promise<User> {
-    return apiClient.getProfile() as Promise<User>;
+    return authApi.getProfile() as Promise<User>;
   }
 
   logout() {
-    apiClient.clearToken();
+    authApi.clearToken();
     if (typeof window !== 'undefined') {
       localStorage.removeItem('user');
     }
   }
 
   saveAuthData(authResponse: AuthResponse) {
-    if (authResponse.accessToken) {
-      apiClient.setToken(authResponse.accessToken);
-    }
     if (typeof window !== 'undefined' && authResponse.user) {
       localStorage.setItem('user', JSON.stringify(authResponse.user));
     }

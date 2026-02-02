@@ -6,11 +6,9 @@ import { useSolarStats } from '@/hooks/useEnergy';
 export default function SolarPowerChart() {
   const { data, isLoading } = useSolarStats(24);
   
-  // Handle API response structure: data.data.data
   const rawData = (data as any)?.data;
   const solarDataFromAPI = rawData?.data || [];
   
-  // Mock data if no real data available
   const mockData = solarDataFromAPI.length === 0 ? [
     { timestamp: new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString(), power: 12.5 },
     { timestamp: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(), power: 15.3 },
@@ -25,7 +23,6 @@ export default function SolarPowerChart() {
   
   const solarData = solarDataFromAPI.length > 0 ? solarDataFromAPI : mockData;
   
-  // Transform data for chart
   const chartData = solarData.map((item: any) => ({
     time: new Date(item.timestamp).toLocaleTimeString('vi-VN', { 
       hour: '2-digit', 

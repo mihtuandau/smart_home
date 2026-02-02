@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// Schema cho Login
 export const loginSchema = z.object({
   email: z
     .string()
@@ -13,7 +12,6 @@ export const loginSchema = z.object({
   rememberMe: z.boolean().optional(),
 });
 
-// Schema cho Register
 export const registerSchema = z
   .object({
     name: z
@@ -39,6 +37,5 @@ export const registerSchema = z
     path: ['confirmPassword'],
   });
 
-// Infer types từ schemas
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;

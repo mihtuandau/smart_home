@@ -1,23 +1,23 @@
-import apiClient from '../lib/api';
+import { dashboardApi } from '../lib/api';
 
 export const dashboardService = {
   // Get dashboard overview
   getOverview: async () => {
-    return apiClient.getDashboardOverview();
+    return dashboardApi.getDashboardOverview();
   },
 
   // Get energy stats
   getEnergyStats: async (hours: number = 24) => {
-    return apiClient.getEnergyStats(hours);
+    return dashboardApi.getEnergyStats(hours);
   },
 
   // Get system health
   getSystemHealth: async () => {
-    return apiClient.getSystemHealth();
+    return dashboardApi.getSystemHealth();
   },
 
   // Get recent activities
   getRecentActivities: async (limit: number = 10) => {
-    return apiClient.getRecentActivities(limit);
+    return dashboardApi.getRecentActivities(limit);
   },
 };

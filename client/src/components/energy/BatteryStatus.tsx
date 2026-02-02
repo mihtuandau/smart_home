@@ -68,7 +68,6 @@ export default function BatteryStatus() {
       </div>
 
       <div className="space-y-4">
-        {/* Progress Bar */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-600">Mức pin</span>

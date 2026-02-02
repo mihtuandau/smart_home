@@ -119,7 +119,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
               <Link
                 key={item.path}
                 href={item.path}
-                onClick={onClose} // Close sidebar on mobile when clicking menu
+                onClick={onClose} 
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-50 text-blue-700 font-semibold shadow-sm'
@@ -135,7 +135,6 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
           })}
         </nav>
 
-        {/* User Section */}
         <div className="pt-4 mt-4 border-t border-gray-200">
           <div className="flex items-center justify-between bg-white rounded-lg p-3 shadow-sm">
             <div className="flex items-center gap-3">

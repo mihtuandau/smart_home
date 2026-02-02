@@ -1,28 +1,28 @@
-import apiClient from '../lib/api';
+import { energyApi } from '../lib/api';
 
 export const energyService = {
   // Get energy stats
   getEnergyStats: async (hours: number = 24) => {
-    return apiClient.getEnergyStats(hours);
+    return energyApi.getEnergyStats(hours);
   },
 
   // Get battery status
   getBatteryStatus: async () => {
-    return apiClient.getBatteryStatus();
+    return energyApi.getBatteryStatus();
   },
 
   // Get solar power stats
   getSolarStats: async (hours: number = 24) => {
-    return apiClient.getSolarStats(hours);
+    return energyApi.getSolarStats(hours);
   },
 
   // Get power sources breakdown
   getPowerSources: async (hours: number = 24) => {
-    return apiClient.getPowerSources(hours);
+    return energyApi.getPowerSources(hours);
   },
 
   // Get efficiency metrics
   getEfficiency: async (hours: number = 24) => {
-    return apiClient.getEfficiency(hours);
+    return energyApi.getEfficiency(hours);
   },
 };

@@ -40,18 +40,15 @@ const DeviceStatusChart: React.FC = () => {
 
   const devices = (devicesData as any)?.data || [];
 
-  // Calculate device statistics
   const totalDevices = devices.length;
   const onlineDevices = devices.filter((d: any) => d.status === 'online' || d.status === 'on').length;
   const offlineDevices = devices.filter((d: any) => d.status === 'offline' || d.status === 'off').length;
 
-  // Status distribution data for pie chart
   const statusData = [
     { name: 'Online', value: onlineDevices, color: '#10b981' },
     { name: 'Offline', value: offlineDevices, color: '#ef4444' },
   ];
 
-  // Device types data for bar chart
   const deviceTypes = devices.reduce((acc: any, device: any) => {
     const type = device.type || 'Unknown';
     if (!acc[type]) {

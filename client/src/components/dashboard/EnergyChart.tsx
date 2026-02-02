@@ -19,14 +19,12 @@ interface EnergyChartProps {
   hours?: number;
 }
 
-// Helper function to transform and group energy data by hour with fixed time slots
 const transformEnergyData = (data: any[], hours: number) => {
   if (!data || data.length === 0) return [];
   
-  // Create fixed hourly slots
   const slots: Array<{ timestamp: Date; hour: number; data: any[] }> = [];
   const now = new Date();
-  const hoursToShow = Math.min(hours, 24); // Max 24 hours
+  const hoursToShow = Math.min(hours, 24);
   
   for (let i = hoursToShow - 1; i >= 0; i--) {
     const slotTime = new Date(now.getTime() - i * 60 * 60 * 1000);
@@ -38,7 +36,6 @@ const transformEnergyData = (data: any[], hours: number) => {
     });
   }
   
-  // Map data to slots
   data.forEach((item) => {
     const itemDate = new Date(item.timestamp);
     const itemHour = itemDate.getHours();
@@ -49,7 +46,6 @@ const transformEnergyData = (data: any[], hours: number) => {
     }
   });
   
-  // Calculate average for each slot
   return slots.map(slot => {
     if (slot.data.length === 0) {
       return {
@@ -98,19 +94,15 @@ const EnergyChart: React.FC<EnergyChartProps> = ({ hours = 24 }) => {
     );
   }
 
-  // Transform data for chart
   const rawData = (data as any)?.data || [];
   const hasData = rawData.length > 0;
   
-  // Transform API data to chart format and group by hour
   const chartData = hasData ? transformEnergyData(rawData, hours) : [];
   
-  // Calculate stats
   const totalConsumption = rawData.reduce((sum: number, item: any) => sum + (item.energy || 0), 0);
   const avgConsumption = hasData ? totalConsumption / rawData.length : 0;
   const peakConsumption = hasData ? Math.max(...rawData.map((item: any) => item.energy || 0)) : 0;
   
-  // Debug log
   console.log('Energy Chart Data:', { rawData, chartData, totalConsumption });
 
   return (
@@ -129,7 +121,6 @@ const EnergyChart: React.FC<EnergyChartProps> = ({ hours = 24 }) => {
         </div>
       </div>
 
-      {/* Summary Stats */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="text-center p-3 bg-blue-50 rounded-lg">
           <p className="text-xs text-gray-600 mb-1">Tổng tiêu thụ</p>
@@ -151,7 +142,6 @@ const EnergyChart: React.FC<EnergyChartProps> = ({ hours = 24 }) => {
         </div>
       </div>
 
-      {/* Chart */}
       {hasData ? (
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={chartData}>

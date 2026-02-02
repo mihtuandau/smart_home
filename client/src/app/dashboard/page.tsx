@@ -18,8 +18,6 @@ export default function DashboardPage() {
     <div className="space-y-6">
       
       <StatsGrid />
-      
-      {/* Environment & Device Control */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <EnvironmentStatus />
@@ -29,7 +27,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Charts Section - Analytics */}
       <div className="mt-6">
         <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
           <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,19 +35,16 @@ export default function DashboardPage() {
           Phân tích & Thống kê
         </h2>
         
-        {/* Row 1: Energy & Temperature */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <EnergyChart hours={24} />
           <TemperatureHumidityChart hours={24} />
         </div>
 
-        {/* Row 2: Light & Device Status */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <LightIntensityChart hours={24} />
           <DeviceStatusChart />
         </div>
 
-        {/* Row 3: Recent Activities - Full Width */}
         <RecentActivitiesChart limit={10} />
       </div>
     </div>

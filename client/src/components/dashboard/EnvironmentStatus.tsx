@@ -2,14 +2,6 @@
 
 import { useSensors } from '@/hooks/useSensors';
 
-interface SensorData {
-  temperature: number;
-  humidity: number;
-  pressure: number;
-  lightLevel: number;
-  isDark: boolean;
-  isRaining: boolean;
-}
 
 interface SensorCardProps {
   title: string;
@@ -78,7 +70,7 @@ function PressureCard({ title, subtitle, value, status, borderColor, bgColor, ic
 }
 
 export default function EnvironmentStatus() {
-  const { data: response, isLoading } = useSensors(1, 3000); // Refetch every 3 seconds
+  const { data: response, isLoading } = useSensors(1, 3000); 
   const data = (response as any)?.data?.[0] || null;
 
   if (isLoading || !data) {

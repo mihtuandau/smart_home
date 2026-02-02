@@ -1,4 +1,4 @@
-// Dashboard Types
+
 
 export interface DashboardOverview {
   totalDevices: number;
@@ -7,16 +7,16 @@ export interface DashboardOverview {
   alerts: number;
 }
 
-export interface EnergyData {
+export interface DashboardEnergyData {
   time: string;
   consumption: number;
 }
 
-export interface EnergyStats {
+export interface DashboardEnergyStats {
   totalConsumption: number;
   averageConsumption: number;
   peakConsumption: number;
-  history: EnergyData[];
+  history: DashboardEnergyData[];
 }
 
 export interface SystemHealth {
@@ -35,14 +35,14 @@ export interface Activity {
   user?: string;
 }
 
-export interface SensorReading {
+export interface DashboardSensorReading {
   temperature: number;
   humidity: number;
   light: number;
   timestamp: string;
 }
 
-export interface DeviceStatus {
+export interface DashboardDeviceStatus {
   id: string;
   name: string;
   type: string;

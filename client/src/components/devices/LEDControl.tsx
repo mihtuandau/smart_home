@@ -15,17 +15,14 @@ export default function LEDControl() {
   const controlLEDMutation = useControlSingleLED();
   const [toast, setToast] = useState<ToastState | null>(null);
   
-  // Local state for optimistic update
   const [localLEDs, setLocalLEDs] = useState({ led1: false, led2: false });
   
-  // Disable refetch while mutation pending for instant updates
   const { data: response, isLoading } = useLatestDeviceData(
     controlLEDMutation.isPending ? undefined : 5000
   );
   
   const data = (response as any)?.data || response;
 
-  // Listen to cache changes directly (for instant updates from other components)
   useEffect(() => {
     const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
       if (event.query.queryKey[0] === 'devices' && event.query.queryKey[1] === 'latestData') {
@@ -43,7 +40,6 @@ export default function LEDControl() {
     return () => unsubscribe();
   }, [queryClient]);
 
-  // Also sync with API response
   useEffect(() => {
     if (data && !controlLEDMutation.isPending) {
       setLocalLEDs(prev => {
@@ -51,7 +47,6 @@ export default function LEDControl() {
           led1: data.led1 === true,
           led2: data.led2 === true,
         };
-        // Only update if actually different to avoid unnecessary re-renders
         if (prev.led1 !== newState.led1 || prev.led2 !== newState.led2) {
           return newState;
         }
@@ -63,19 +58,16 @@ export default function LEDControl() {
   const toggleLed = async (ledNumber: 1 | 2) => {
     if (controlLEDMutation.isPending) return;
     
-    // Get current state
     const currentState = ledNumber === 1 ? localLEDs.led1 : localLEDs.led2;
     const newState = !currentState;
     
     console.log(`[LED${ledNumber}] Toggle: ${currentState} → ${newState}`);
     
-    // Optimistic update - update UI immediately
     setLocalLEDs(prev => ({
       ...prev,
       [ledNumber === 1 ? 'led1' : 'led2']: newState,
     }));
     
-    // Also update React Query cache immediately
     queryClient.setQueryData(['devices', 'latestData'], (oldData: any) => {
       if (!oldData) return oldData;
       const updated = { ...oldData };
@@ -103,13 +95,11 @@ export default function LEDControl() {
     } catch (error: any) {
       console.error(`[LED${ledNumber}] Error:`, error);
       
-      // Rollback on error
       setLocalLEDs(prev => ({
         ...prev,
         [ledNumber === 1 ? 'led1' : 'led2']: !newState,
       }));
       
-      // Rollback React Query cache
       queryClient.setQueryData(['devices', 'latestData'], (oldData: any) => {
         if (!oldData) return oldData;
         const updated = { ...oldData };

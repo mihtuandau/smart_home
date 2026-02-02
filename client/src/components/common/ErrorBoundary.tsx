@@ -31,18 +31,14 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // Log error to console for debugging
     console.error('Error caught by boundary:', error);
     console.error('Error info:', errorInfo);
 
-    // Update state to display fallback UI
     this.setState({
       error,
       errorInfo,
     });
 
-    // You can also log the error to an external service here
-    // logErrorToService(error, errorInfo);
   }
 
   handleReset = () => {
@@ -58,20 +54,15 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-8 border border-red-200">
-            {/* Error Icon */}
             <div className="text-6xl text-center mb-4">💥</div>
-
-            {/* Error Title */}
             <h1 className="text-2xl font-bold text-red-600 text-center mb-2">
               Oops! Có lỗi xảy ra
             </h1>
 
-            {/* Error Message */}
             <p className="text-gray-700 text-center mb-4">
               Ứng dụng gặp lỗi không mong muốn. Vui lòng tải lại trang hoặc liên hệ hỗ trợ.
             </p>
 
-            {/* Error Details (Development Only) */}
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 max-h-40 overflow-y-auto">
                 <p className="text-xs font-mono text-red-800 whitespace-pre-wrap">
@@ -85,7 +76,6 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
             )}
 
-            {/* Action Buttons */}
             <div className="flex gap-3">
               <button
                 onClick={this.handleReset}
@@ -101,7 +91,6 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
             </div>
 
-            {/* Help Text */}
             <p className="text-xs text-gray-500 text-center mt-4">
               📧 Nếu lỗi tiếp tục xảy ra, vui lòng{' '}
               <a href="mailto:support@smart-home.local" className="text-blue-600 hover:underline">

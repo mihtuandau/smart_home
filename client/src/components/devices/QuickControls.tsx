@@ -18,7 +18,6 @@ export default function QuickControls() {
 
   const handleAllLedsOn = async () => {
     try {
-      // Optimistic update - update cache immediately
       queryClient.setQueryData(['devices', 'latestData'], (oldData: any) => {
         if (!oldData) return oldData;
         const updated = { ...oldData };
@@ -28,10 +27,8 @@ export default function QuickControls() {
         return updated;
       });
 
-      // Show toast immediately (don't wait for API)
       setToast({ message: 'Đã bật tất cả đèn LED', type: 'success' });
 
-      // Send requests in background (fire and forget)
       Promise.all([
         controlLED.mutateAsync({ ledNumber: 1, state: true }),
         controlLED.mutateAsync({ ledNumber: 2, state: true })
@@ -45,7 +42,6 @@ export default function QuickControls() {
 
   const handleAllLedsOff = async () => {
     try {
-      // Optimistic update - update cache immediately
       queryClient.setQueryData(['devices', 'latestData'], (oldData: any) => {
         if (!oldData) return oldData;
         const updated = { ...oldData };
@@ -55,10 +51,8 @@ export default function QuickControls() {
         return updated;
       });
 
-      // Show toast immediately (don't wait for API)
       setToast({ message: 'Đã tắt tất cả đèn LED', type: 'success' });
 
-      // Send requests in background (fire and forget)
       Promise.all([
         controlLED.mutateAsync({ ledNumber: 1, state: false }),
         controlLED.mutateAsync({ ledNumber: 2, state: false })

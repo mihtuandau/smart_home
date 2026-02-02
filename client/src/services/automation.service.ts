@@ -1,4 +1,4 @@
-import apiClient from '@/lib/api';
+import { automationApi } from '../lib/api';
 
 export interface AutomationRule {
   id: string;
@@ -48,7 +48,7 @@ export const automationService = {
    * Lấy danh sách tất cả automation rules
    */
   async getAllRules(): Promise<AutomationRule[]> {
-    const response = await apiClient.getAutomationRules();
+    const response = await automationApi.getAutomationRules();
     return Array.isArray(response) ? response : [];
   },
 
@@ -56,7 +56,7 @@ export const automationService = {
    * Lấy danh sách automation rules đang hoạt động
    */
   async getActiveRules(): Promise<AutomationRule[]> {
-    const response = await apiClient.getActiveAutomationRules();
+    const response = await automationApi.getActiveAutomationRules();
     return Array.isArray(response) ? response : [];
   },
 
@@ -64,7 +64,7 @@ export const automationService = {
    * Lấy chi tiết một automation rule
    */
   async getRuleById(id: string): Promise<AutomationRule> {
-    const response = await apiClient.getAutomationRule(id);
+    const response = await automationApi.getAutomationRule(id);
     return response as AutomationRule;
   },
 
@@ -72,7 +72,7 @@ export const automationService = {
    * Tạo automation rule mới
    */
   async createRule(data: CreateAutomationData): Promise<AutomationRule> {
-    const response = await apiClient.createAutomationRule(data);
+    const response = await automationApi.createAutomationRule(data);
     return response as AutomationRule;
   },
 
@@ -80,7 +80,7 @@ export const automationService = {
    * Cập nhật automation rule
    */
   async updateRule(id: string, data: UpdateAutomationData): Promise<AutomationRule> {
-    const response = await apiClient.updateAutomationRule(id, data);
+    const response = await automationApi.updateAutomationRule(id, data);
     return response as AutomationRule;
   },
 
@@ -88,14 +88,14 @@ export const automationService = {
    * Xóa automation rule
    */
   async deleteRule(id: string): Promise<void> {
-    await apiClient.deleteAutomationRule(id);
+    await automationApi.deleteAutomationRule(id);
   },
 
   /**
    * Bật/tắt automation rule
    */
   async toggleRule(id: string): Promise<AutomationRule> {
-    const response = await apiClient.toggleAutomationRule(id);
+    const response = await automationApi.toggleAutomationRule(id);
     return response as AutomationRule;
   },
 };
