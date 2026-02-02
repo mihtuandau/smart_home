@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { dashboardService } from '../services/dashboard.service';
 
-// Query keys
 export const dashboardKeys = {
   all: ['dashboard'] as const,
   overview: () => [...dashboardKeys.all, 'overview'] as const,
@@ -10,18 +9,16 @@ export const dashboardKeys = {
   activities: (limit: number) => [...dashboardKeys.all, 'activities', limit] as const,
 };
 
-// Get dashboard overview
 export const useDashboardOverview = () => {
   return useQuery({
     queryKey: dashboardKeys.overview(),
     queryFn: dashboardService.getOverview,
-    staleTime: 1000 * 60 * 2, // 2 minutes
-    gcTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 1000 * 60 * 2,
+    gcTime: 1000 * 60 * 5, 
     retry: 1,
   });
 };
 
-// Get energy stats
 export const useEnergyStats = (hours: number = 24) => {
   return useQuery({
     queryKey: dashboardKeys.energy(hours),
@@ -32,23 +29,21 @@ export const useEnergyStats = (hours: number = 24) => {
   });
 };
 
-// Get system health
 export const useSystemHealth = (refetchInterval?: number) => {
   return useQuery({
     queryKey: dashboardKeys.health(),
     queryFn: dashboardService.getSystemHealth,
-    refetchInterval: refetchInterval || 30000, // Refetch every 30 seconds by default
+    refetchInterval: refetchInterval || 30000, 
     gcTime: 1000 * 60 * 5,
     retry: 1,
   });
 };
 
-// Get recent activities
 export const useRecentActivities = (limit: number = 10) => {
   return useQuery({
     queryKey: dashboardKeys.activities(limit),
     queryFn: () => dashboardService.getRecentActivities(limit),
-    staleTime: 1000 * 60, // 1 minute
+    staleTime: 1000 * 60,
     gcTime: 1000 * 60 * 3,
     retry: 1,
   });

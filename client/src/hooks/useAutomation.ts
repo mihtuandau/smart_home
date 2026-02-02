@@ -2,10 +2,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { automationService, type AutomationRule, type CreateAutomationData, type UpdateAutomationData } from '@/services/automation.service';
 import toast from 'react-hot-toast';
 
-/**
- * Hook để quản lý automation rules
- * Cung cấp các methods để lấy, tạo, sửa, xóa automation rules
- */
 export function useAutomation() {
   const queryClient = useQueryClient();
 

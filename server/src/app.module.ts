@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -11,6 +12,7 @@ import { AutomationModule } from './module/automation/automation.module';
 import { SettingsModule } from './module/settings/settings.module';
 import { DashboardModule } from './module/dashboard/dashboard.module';
 import { EnergyModule } from './module/energy/energy.module';
+import { MaintenanceModule } from './module/maintenance/maintenance.module';
 
 @Module({
   imports: [
@@ -18,6 +20,7 @@ import { EnergyModule } from './module/energy/energy.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    ScheduleModule.forRoot(),
     PrismaModule,
     AuthModule,
     MqttModule,
@@ -27,6 +30,7 @@ import { EnergyModule } from './module/energy/energy.module';
     SettingsModule,
     DashboardModule,
     EnergyModule,
+    MaintenanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],

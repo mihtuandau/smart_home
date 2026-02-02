@@ -1,8 +1,4 @@
-/**
- * Application Constants
- */
 
-// Status Types
 export const STATUS = {
   ACTIVE: 'active',
   INACTIVE: 'inactive',
@@ -13,7 +9,6 @@ export const STATUS = {
   SUCCESS: 'success',
 } as const;
 
-// Device Types
 export const DEVICE_TYPES = {
   LED: 'led',
   SERVO: 'servo',
@@ -21,7 +16,6 @@ export const DEVICE_TYPES = {
   TOUCH: 'touch',
 } as const;
 
-// Sensor Types
 export const SENSOR_TYPES = {
   TEMPERATURE: 'temperature',
   HUMIDITY: 'humidity',
@@ -33,7 +27,6 @@ export const SENSOR_TYPES = {
   RAIN: 'rain',
 } as const;
 
-// Alert Levels
 export const ALERT_LEVELS = {
   INFO: 'info',
   SUCCESS: 'success',
@@ -42,7 +35,6 @@ export const ALERT_LEVELS = {
   CRITICAL: 'critical',
 } as const;
 
-// Chart Types
 export const CHART_TYPES = {
   LINE: 'line',
   AREA: 'area',
@@ -50,17 +42,15 @@ export const CHART_TYPES = {
   PIE: 'pie',
 } as const;
 
-// Time Ranges
 export const TIME_RANGES = {
   HOUR_1: 1,
   HOURS_6: 6,
   HOURS_12: 12,
   HOURS_24: 24,
-  DAYS_7: 168, // 7 days in hours
-  DAYS_30: 720, // 30 days in hours
+  DAYS_7: 168, 
+  DAYS_30: 720, 
 } as const;
 
-// Hardware Devices
 export const HARDWARE = {
   ESP32: 'ESP32 DevKit 1',
   LDR: 'LM393 LDR',
@@ -73,7 +63,6 @@ export const HARDWARE = {
   LED_SERVO: 'x3 LED + Servo',
 } as const;
 
-// Hardware Descriptions
 export const HARDWARE_DESCRIPTIONS = {
   [HARDWARE.ESP32]: 'Bộ điều khiển chính',
   [HARDWARE.LDR]: 'Cảm biến ánh sáng',
@@ -86,7 +75,6 @@ export const HARDWARE_DESCRIPTIONS = {
   [HARDWARE.LED_SERVO]: 'Đèn & động cơ servo',
 } as const;
 
-// Error Messages
 export const ERROR_MESSAGES = {
   NETWORK_ERROR: 'Lỗi kết nối mạng',
   UNAUTHORIZED: 'Bạn cần đăng nhập để tiếp tục',
@@ -98,7 +86,6 @@ export const ERROR_MESSAGES = {
   UNKNOWN_ERROR: 'Đã xảy ra lỗi không xác định',
 } as const;
 
-// Success Messages
 export const SUCCESS_MESSAGES = {
   LOGIN_SUCCESS: 'Đăng nhập thành công',
   LOGOUT_SUCCESS: 'Đăng xuất thành công',

@@ -146,9 +146,43 @@ model SensorData {
   isRaining Boolean
 
   timestamp DateTime @default(now())
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'")) // Auto-delete after 30 days
 
   @@index([timestamp])
+  @@index([expiresAt])
   @@map("sensor_data")
+}
+
+// Sensor aggregates (5-minute buckets)
+model SensorAgg {
+  id String @id @default(cuid())
+
+  bucketStart   DateTime
+  bucketMinutes Int      @default(5)
+
+  temperatureAvg Float
+  temperatureMin Float
+  temperatureMax Float
+
+  humidityAvg Float
+  humidityMin Float
+  humidityMax Float
+
+  pressureAvg Float
+  pressureMin Float
+  pressureMax Float
+
+  lightLevelAvg Float
+  lightLevelMin Int
+  lightLevelMax Int
+
+  rainCount Int @default(0)
+  darkCount Int @default(0)
+  samples   Int
+
+  @@unique([bucketStart, bucketMinutes])
+  @@index([bucketStart])
+  @@map("sensor_aggs")
 }
 
 // Power monitoring (INA219 DC)
@@ -164,9 +198,38 @@ model PowerData {
   batteryLevel Float? // 0-100%
 
   timestamp DateTime @default(now())
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'")) // Auto-delete after 30 days
 
   @@index([timestamp])
+  @@index([expiresAt])
   @@map("power_data")
+}
+
+// Power aggregates (5-minute buckets)
+model PowerAgg {
+  id String @id @default(cuid())
+
+  bucketStart   DateTime
+  bucketMinutes Int      @default(5)
+
+  voltageAvg Float
+  voltageMin Float
+  voltageMax Float
+
+  currentAvg Float
+  currentMin Float
+  currentMax Float
+
+  powerAvg Float
+  powerMin Float
+  powerMax Float
+
+  energySum Float
+  samples   Int
+
+  @@unique([bucketStart, bucketMinutes])
+  @@index([bucketStart])
+  @@map("power_aggs")
 }
 
 // Solar charging (CN3791)
@@ -183,8 +246,10 @@ model SolarData {
   temperature Float? // Charger temperature
 
   timestamp DateTime @default(now())
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'")) // Auto-delete after 30 days
 
   @@index([timestamp])
+  @@index([expiresAt])
   @@map("solar_data")
 }
 

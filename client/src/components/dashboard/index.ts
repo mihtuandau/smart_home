@@ -9,6 +9,3 @@ export { default as RecentActivitiesChart } from './RecentActivitiesChart';
 export { default as StatsGrid } from './StatsGrid';
 export { default as EnvironmentStatus } from './EnvironmentStatus';
 export { default as DeviceControl } from './DeviceControl';
-export { default as HardwareList } from './HardwareList';
-export { default as SystemAlert } from './SystemAlert';
-export { default as EnergySummary } from './EnergySummary';
