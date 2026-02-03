@@ -67,13 +67,13 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
           <p className="text-xs font-semibold text-gray-700 mb-2">{payload[0].payload.time}</p>
-          <p className="text-xs text-red-600 flex items-center gap-1">
-            <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
-            Nhiệt độ: {payload[0].value}°C
-          </p>
-          <p className="text-xs text-blue-600 flex items-center gap-1 mt-1">
+          <p className="text-xs text-blue-600 flex items-center gap-1">
             <span className="inline-block w-3 h-3 bg-blue-500 rounded-full"></span>
-            Độ ẩm: {payload[1].value}%
+            Độ ẩm: {payload[0].value}%
+          </p>
+          <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
+            <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
+            Nhiệt độ: {payload[1].value}°C
           </p>
         </div>
       );

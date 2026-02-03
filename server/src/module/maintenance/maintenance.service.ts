@@ -3,7 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../../common/prisma.service';
 
 const BUCKET_MINUTES = 5;
-const RAW_RETENTION_DAYS = 30; // Changed to 30 days
+const RAW_RETENTION_DAYS = 7; // Production: 7 days retention
 
 @Injectable()
 export class MaintenanceService {
@@ -27,22 +27,22 @@ export class MaintenanceService {
 
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async cleanupRawData() {
-    const now = new Date();
+    const cutoffDate = new Date(Date.now() - RAW_RETENTION_DAYS * 24 * 60 * 60 * 1000);
 
     const [sensorResult, powerResult, solarResult] = await Promise.all([
       this.prisma.sensorData.deleteMany({
-        where: { expiresAt: { lt: now } },
+        where: { timestamp: { lt: cutoffDate } },
       }),
       this.prisma.powerData.deleteMany({
-        where: { expiresAt: { lt: now } },
+        where: { timestamp: { lt: cutoffDate } },
       }),
       this.prisma.solarData.deleteMany({
-        where: { expiresAt: { lt: now } },
+        where: { timestamp: { lt: cutoffDate } },
       }),
     ]);
 
     this.logger.log(
-      `Cleanup expired data: sensor=${sensorResult.count}, power=${powerResult.count}, solar=${solarResult.count}`,
+      `Cleanup data older than ${RAW_RETENTION_DAYS} days: sensor=${sensorResult.count}, power=${powerResult.count}, solar=${solarResult.count}`,
     );
   }
 

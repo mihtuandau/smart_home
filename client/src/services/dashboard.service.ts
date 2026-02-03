@@ -1,4 +1,4 @@
-import { dashboardApi } from '../lib/api';
+import { dashboardApi, energyApi } from '../lib/api';
 
 export const dashboardService = {
   // Get dashboard overview
@@ -8,7 +8,7 @@ export const dashboardService = {
 
   // Get energy stats
   getEnergyStats: async (hours: number = 24) => {
-    return dashboardApi.getEnergyStats(hours);
+    return energyApi.getEnergyStats(hours);
   },
 
   // Get system health

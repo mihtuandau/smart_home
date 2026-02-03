@@ -1,19 +1,19 @@
 'use client';
 
 import StatCard from './StatCard';
-import { useLatestDeviceData } from '@/hooks/useDevices';
-
-interface SensorData {
-  temperature: number;
-  humidity: number;
-  voltage: number;
-  current_mA: number;
-  power_mW: number;
-}
+import { useLatestDeviceData, useDeviceStats } from '@/hooks/useDevices';
+import { useEnergyStats } from '@/hooks/useEnergy';
 
 export default function StatsGrid() {
-  const { data: response, isLoading } = useLatestDeviceData(3000);
-  const data = (response as any)?.data;
+  const { data: latestResponse, isLoading: latestLoading } = useLatestDeviceData(3000);
+  const { data: statsResponse, isLoading: statsLoading } = useDeviceStats();
+  const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24);
+
+  const latestData = (latestResponse as any)?.data;
+  const statsData = (statsResponse as any)?.data;
+  const energyData = (energyResponse as any)?.data;
+
+  const isLoading = latestLoading || statsLoading || energyLoading;
 
   if (isLoading) {
     return (
@@ -27,30 +27,35 @@ export default function StatsGrid() {
     );
   }
 
+  // Calculate total energy from solar (last 24h)
+  const totalSolarEnergy = energyData?.totalEnergy || 0;
+  const devicesOn = statsData?.activeDevices || 0;
+  const totalDevices = statsData?.totalDevices || 0;
+
   const stats = [
     { 
-      label: 'Năng lượng mặt trời', 
-      value: data ? `${(data.power_mW / 1000).toFixed(1)} W` : '0 W', 
-      color: '#f59e0b',
-      subtitle: 'Đang phát điện'
+      label: 'Thiết bị hoạt động', 
+      value: `${devicesOn}/${totalDevices}`, 
+      color: '#10b981',
+      subtitle: 'Đang bật'
     },
     { 
-      label: 'Điện áp', 
-      value: data ? `${data.voltage.toFixed(2)}V` : '0V', 
-      color: '#10b981',
-      subtitle: `${data ? (data.current_mA / 1000).toFixed(2) : '0'}A`
+      label: 'Năng lượng hôm nay', 
+      value: `${(totalSolarEnergy / 1000).toFixed(2)} Wh`,
+      color: '#f59e0b',
+      subtitle: 'Solar power'
     },
     { 
       label: 'Nhiệt độ', 
-      value: data ? `${data.temperature.toFixed(1)}°C` : '0°C', 
+      value: latestData ? `${latestData.temperature.toFixed(1)}°C` : '--', 
       color: '#ef4444',
-      subtitle: 'AHT20 Sensor'
+      subtitle: `Độ ẩm: ${latestData ? latestData.humidity.toFixed(1) : '--'}%`
     },
     { 
-      label: 'Độ ẩm', 
-      value: data ? `${data.humidity.toFixed(1)}%` : '0%', 
+      label: 'Điện áp hệ thống', 
+      value: latestData ? `${latestData.voltage.toFixed(2)}V` : '--', 
       color: '#3b82f6',
-      subtitle: 'AHT20 Sensor'
+      subtitle: `${latestData ? (latestData.current_mA / 1000).toFixed(2) : '--'}A`
     },
   ];
 

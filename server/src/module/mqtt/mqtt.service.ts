@@ -23,7 +23,7 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   private lastPersisted: { timestamp: number; data: SensorPayload } | null = null;
   private lastLedState: { led1?: boolean; led2?: boolean } = {};
 
-  private static readonly HEARTBEAT_MS = 5 * 60 * 1000; // 5 minutes
+  private static readonly HEARTBEAT_MS = 10 * 60 * 1000; // 10 minutes (optimized)
   private static readonly THRESHOLDS = {
     temperature: 0.5,    // 0.5°C
     humidity: 5.0,       // 5%
