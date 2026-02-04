@@ -6,35 +6,47 @@ import { useSolarStats } from '@/hooks/useEnergy';
 export default function SolarPowerChart() {
   const { data, isLoading } = useSolarStats(24);
   
-  const rawData = (data as any)?.data;
-  const solarDataFromAPI = rawData?.data || [];
+  // Server returns { success, period, data: { totalGenerated, peakPower, averagePower, data: [...] } }
+  const solarDataFromAPI = Array.isArray((data as any)?.data?.data) ? (data as any).data.data : [];
   
-  const mockData = solarDataFromAPI.length === 0 ? [
-    { timestamp: new Date(Date.now() - 23 * 60 * 60 * 1000).toISOString(), power: 12.5 },
-    { timestamp: new Date(Date.now() - 20 * 60 * 60 * 1000).toISOString(), power: 15.3 },
-    { timestamp: new Date(Date.now() - 17 * 60 * 60 * 1000).toISOString(), power: 18.7 },
-    { timestamp: new Date(Date.now() - 14 * 60 * 60 * 1000).toISOString(), power: 22.1 },
-    { timestamp: new Date(Date.now() - 11 * 60 * 60 * 1000).toISOString(), power: 25.8 },
-    { timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(), power: 28.4 },
-    { timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), power: 24.6 },
-    { timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), power: 18.2 },
-    { timestamp: new Date().toISOString(), power: 10.5 },
-  ] : [];
-  
-  const solarData = solarDataFromAPI.length > 0 ? solarDataFromAPI : mockData;
-  
-  const chartData = solarData.map((item: any) => ({
-    time: new Date(item.timestamp).toLocaleTimeString('vi-VN', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    }),
-    power: item.power || 0,
-  }));
+  const chartData = solarDataFromAPI.map((item: any) => {
+    const timestamp = typeof item.timestamp === 'string' 
+      ? new Date(item.timestamp) 
+      : item.timestamp;
+    
+    return {
+      time: timestamp.toLocaleTimeString('vi-VN', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }),
+      power: item.power || 0,
+    };
+  });
 
   if (isLoading) {
     return (
       <div className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
         <div className="h-64"></div>
+      </div>
+    );
+  }
+
+  if (chartData.length === 0) {
+    return (
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Công suất Solar Panel</h2>
+          <p className="text-sm text-gray-500">Công suất phát điện theo thời gian</p>
+        </div>
+        <div className="h-64 flex items-center justify-center">
+          <div className="text-center">
+            <svg className="w-16 h-16 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <p className="text-gray-500 font-medium">Chưa có dữ liệu Solar Panel</p>
+            <p className="text-xs text-gray-400 mt-1">Dữ liệu sẽ xuất hiện khi hệ thống bắt đầu thu thập</p>
+          </div>
+        </div>
       </div>
     );
   }

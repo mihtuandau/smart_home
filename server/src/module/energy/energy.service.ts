@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
+import { PowerSource } from '@prisma/client';
 
 @Injectable()
 export class EnergyService {
@@ -18,6 +19,7 @@ export class EnergyService {
           gte: startTime,
           lte: now,
         },
+        source: 'SOLAR', // Only get SOLAR data for dashboard stats
       },
       orderBy: { timestamp: 'asc' },
     });
@@ -230,5 +232,89 @@ export class EnergyService {
       period: `${hours}h`,
       timestamp: new Date(),
     };
+  }
+
+  /**
+   * Seed test power data for 24 hours
+   */
+  async seedTestPowerData() {
+    const now = new Date();
+    const testData: any[] = [];
+
+    for (let i = 0; i < 24; i++) {
+      const timestamp = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
+      const hour = timestamp.getHours();
+
+      // Simulate solar power curve (peak at noon)
+      let power = 0;
+      if (hour >= 6 && hour <= 18) {
+        const peakHour = 12;
+        const hoursFromPeak = Math.abs(hour - peakHour);
+        power = Math.max(0, 100 - hoursFromPeak * 10 + Math.random() * 20);
+      }
+
+      testData.push({
+        voltage: 18 + Math.random() * 2,
+        current: power / 20,
+        power: power,
+        energy: (power * 1) / 60, // 1-hour interval
+        source: PowerSource.SOLAR,
+        batteryLevel: null,
+        timestamp,
+      });
+    }
+
+    // Delete existing test data
+    await this.prisma.powerData.deleteMany({
+      where: {
+        timestamp: {
+          gte: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+        },
+      },
+    });
+
+    // Insert test data
+    for (const data of testData) {
+      await (this.prisma.powerData.create as any)({ data });
+    }
+
+    return {
+      success: true,
+      message: `Seeded ${testData.length} power data records for testing`,
+      count: testData.length,
+    };
+  }
+
+  /**
+   * Clean up old power data with energy = 0
+   */
+  async cleanupZeroEnergyData() {
+    const deleted = await this.prisma.powerData.deleteMany({
+      where: {
+        energy: 0,
+        source: PowerSource.SOLAR,
+      },
+    });
+
+    return `Deleted ${deleted.count} old SOLAR records with energy = 0`;
+  }
+
+  /**
+   * Delete all old SOLAR data before a timestamp (keep only recent data with proper energy values)
+   */
+  async deleteOldSolarData() {
+    // Delete all SOLAR data before 2026-02-04 16:55:00 (before the fix)
+    const cutoffTime = new Date('2026-02-04T16:55:00Z');
+    
+    const deleted = await this.prisma.powerData.deleteMany({
+      where: {
+        source: PowerSource.SOLAR,
+        timestamp: {
+          lt: cutoffTime,
+        },
+      },
+    });
+
+    return `Deleted ${deleted.count} SOLAR records before ${cutoffTime.toISOString()}`;
   }
 }

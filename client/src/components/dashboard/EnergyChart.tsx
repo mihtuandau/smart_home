@@ -13,7 +13,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { useEnergyStats } from '@/hooks/useDashboard';
+import { useEnergyStats } from '@/hooks/useEnergy';
 
 interface EnergyChartProps {
   hours?: number;

@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/commo
 import * as mqtt from 'mqtt';
 import { MQTT_CONFIG, MQTT_TOPICS } from '../../config/mqtt.config';
 import { PrismaService } from '../../common/prisma.service';
+import { PowerSource } from '@prisma/client';
 
 export interface SensorPayload {
   temperature: number;
@@ -178,13 +179,17 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
   private async savePowerData(data: SensorPayload) {
     try {
+      // Calculate energy based on power (assuming ~10 minute intervals for MQTT messages)
+      // Energy (Wh) = Power (W) * Time (hours) = (Power * 10/60) Wh
+      const energyWh = (data.power_mW / 1000) * (10 / 60);
+      
       await this.prisma.powerData.create({
         data: {
           voltage: data.voltage,
           current: data.current_mA / 1000, 
           power: data.power_mW / 1000, 
-          energy: 0, 
-          source: 'BATTERY',
+          energy: parseFloat(energyWh.toFixed(2)),
+          source: PowerSource.SOLAR,
           batteryLevel: null,
         },
       });

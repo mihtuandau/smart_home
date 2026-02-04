@@ -117,12 +117,16 @@ export class DevicesService {
       _count: true,
     });
 
+    const statusMap = byStatus.reduce((acc, item) => {
+      acc[item.status] = item._count;
+      return acc;
+    }, {} as Record<string, number>);
+
     return {
       total,
-      byStatus: byStatus.reduce((acc, item) => {
-        acc[item.status] = item._count;
-        return acc;
-      }, {}),
+      online: statusMap['ON'] || 0,
+      offline: statusMap['OFF'] || 0,
+      byStatus: statusMap,
       byType: byType.reduce((acc, item) => {
         acc[item.type] = item._count;
         return acc;

@@ -7,15 +7,15 @@ export default function SensorHistoryTable() {
   const [hours, setHours] = useState(24);
   const { data: response, isLoading, error } = useSensorHistory(hours);
 
-  const mockData = [
-    { id: 1, timestamp: '2026-02-03 14:30:00', temperature: 25.5, humidity: 62, light: 450, pressure: 1013 },
-    { id: 2, timestamp: '2026-02-03 14:25:00', temperature: 25.3, humidity: 63, light: 420, pressure: 1013 },
-    { id: 3, timestamp: '2026-02-03 14:20:00', temperature: 25.2, humidity: 64, light: 400, pressure: 1012 },
-    { id: 4, timestamp: '2026-02-03 14:15:00', temperature: 25.0, humidity: 65, light: 380, pressure: 1012 },
-    { id: 5, timestamp: '2026-02-03 14:10:00', temperature: 24.8, humidity: 66, light: 350, pressure: 1012 },
-  ];
-
-  const data = mockData;
+  const historyData = ((response as any)?.data || []) as any[];
+  const data = historyData.map((item, index) => ({
+    id: index,
+    timestamp: new Date(item.timestamp).toLocaleString('vi-VN'),
+    temperature: item.temperature,
+    humidity: item.humidity,
+    light: item.lightLevel,
+    pressure: item.pressure,
+  }));
 
   return (
     <div className="bg-white rounded-lg p-6 border border-gray-200">
