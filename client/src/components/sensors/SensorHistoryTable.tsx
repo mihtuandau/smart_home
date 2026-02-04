@@ -7,7 +7,6 @@ export default function SensorHistoryTable() {
   const [hours, setHours] = useState(24);
   const { data: response, isLoading, error } = useSensorHistory(hours);
 
-  // Mock data for now - replace with actual API
   const mockData = [
     { id: 1, timestamp: '2026-02-03 14:30:00', temperature: 25.5, humidity: 62, light: 450, pressure: 1013 },
     { id: 2, timestamp: '2026-02-03 14:25:00', temperature: 25.3, humidity: 63, light: 420, pressure: 1013 },
@@ -72,10 +71,10 @@ export default function SensorHistoryTable() {
               {data.map((row, index) => (
                 <tr key={row.id} className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
                   <td className="px-4 py-3 text-gray-900 font-medium">{row.timestamp}</td>
-                  <td className="px-4 py-3 text-right text-red-600 font-medium">{row.temperature.toFixed(1)}</td>
-                  <td className="px-4 py-3 text-right text-blue-600 font-medium">{row.humidity.toFixed(1)}</td>
-                  <td className="px-4 py-3 text-right text-yellow-600 font-medium">{row.light}</td>
-                  <td className="px-4 py-3 text-right text-purple-600 font-medium">{row.pressure}</td>
+                  <td className="px-4 py-3 text-right text-red-600 font-medium">{row.temperature !== undefined ? row.temperature.toFixed(1) : '--'}</td>
+                  <td className="px-4 py-3 text-right text-blue-600 font-medium">{row.humidity !== undefined ? row.humidity.toFixed(1) : '--'}</td>
+                  <td className="px-4 py-3 text-right text-yellow-600 font-medium">{row.light ?? '--'}</td>
+                  <td className="px-4 py-3 text-right text-purple-600 font-medium">{row.pressure ?? '--'}</td>
                 </tr>
               ))}
             </tbody>

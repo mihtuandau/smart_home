@@ -2,6 +2,13 @@
 
 import { useSensorData } from '@/hooks/useSensors';
 
+interface SensorData {
+  temperature: number;
+  humidity: number;
+  light?: number;
+  pressure?: number;
+}
+
 interface StatCardProps {
   label: string;
   value: string;
@@ -46,8 +53,7 @@ function SensorStatCard({ label, value, subtitle, color, icon, trend }: StatCard
 }
 
 export default function SensorStatsGrid() {
-  const { data: response, isLoading } = useSensorData(3000); // Refresh every 3s
-  const data = (response as any)?.data;
+  const { data, isLoading } = useSensorData(3000) as { data?: SensorData; isLoading: boolean }; 
 
   if (isLoading) {
     return (
@@ -64,7 +70,7 @@ export default function SensorStatsGrid() {
   const stats: StatCardProps[] = [
     {
       label: 'Nhiệt độ',
-      value: data ? `${data.temperature.toFixed(1)}°C` : '--',
+      value: data?.temperature !== undefined ? `${data.temperature.toFixed(1)}°C` : '--',
       subtitle: 'AHT20 Sensor',
       color: '#ef4444',
       icon: (
@@ -75,7 +81,7 @@ export default function SensorStatsGrid() {
     },
     {
       label: 'Độ ẩm',
-      value: data ? `${data.humidity.toFixed(1)}%` : '--',
+      value: data?.humidity !== undefined ? `${data.humidity.toFixed(1)}%` : '--',
       subtitle: 'AHT20 Sensor',
       color: '#3b82f6',
       icon: (
