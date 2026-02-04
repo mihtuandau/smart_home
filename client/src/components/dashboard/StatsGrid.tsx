@@ -7,11 +7,14 @@ import { useEnergyStats } from '@/hooks/useEnergy';
 export default function StatsGrid() {
   const { data: latestResponse, isLoading: latestLoading } = useLatestDeviceData(3000);
   const { data: statsResponse, isLoading: statsLoading } = useDeviceStats();
-  const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24);
+  const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24, 5000); // Refetch every 5 seconds
 
   const latestData = (latestResponse as any)?.data;
   const statsData = (statsResponse as any)?.data;
-  const energyData = (energyResponse as any)?.data;
+  
+  // Energy response is an array of power data, calculate total
+  const energyArray = (energyResponse as any)?.data || [];
+  const totalSolarEnergy = energyArray.reduce((sum: number, item: any) => sum + (item.energy || 0), 0);
 
   const isLoading = latestLoading || statsLoading || energyLoading;
 
@@ -27,10 +30,9 @@ export default function StatsGrid() {
     );
   }
 
-  // Calculate total energy from solar (last 24h)
-  const totalSolarEnergy = energyData?.totalEnergy || 0;
-  const devicesOn = statsData?.activeDevices || 0;
-  const totalDevices = statsData?.totalDevices || 0;
+  // Get device stats from the response
+  const devicesOn = statsData?.online || 0;
+  const totalDevices = statsData?.total || 0;
 
   const stats = [
     { 
@@ -41,21 +43,21 @@ export default function StatsGrid() {
     },
     { 
       label: 'Năng lượng hôm nay', 
-      value: `${(totalSolarEnergy / 1000).toFixed(2)} Wh`,
+      value: `${(totalSolarEnergy / 1000).toFixed(2)} kWh`,
       color: '#f59e0b',
       subtitle: 'Solar power'
     },
     { 
       label: 'Nhiệt độ', 
-      value: latestData ? `${latestData.temperature.toFixed(1)}°C` : '--', 
+      value: latestData?.temperature !== undefined ? `${latestData.temperature.toFixed(1)}°C` : '--', 
       color: '#ef4444',
-      subtitle: `Độ ẩm: ${latestData ? latestData.humidity.toFixed(1) : '--'}%`
+      subtitle: `Độ ẩm: ${latestData?.humidity !== undefined ? latestData.humidity.toFixed(1) : '--'}%`
     },
     { 
       label: 'Điện áp hệ thống', 
-      value: latestData ? `${latestData.voltage.toFixed(2)}V` : '--', 
+      value: latestData?.voltage !== undefined ? `${latestData.voltage.toFixed(2)}V` : '--', 
       color: '#3b82f6',
-      subtitle: `${latestData ? (latestData.current_mA / 1000).toFixed(2) : '--'}A`
+      subtitle: `${latestData?.current_mA !== undefined ? (latestData.current_mA / 1000).toFixed(2) : '--'}A`
     },
   ];
 

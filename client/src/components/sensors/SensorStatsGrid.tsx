@@ -2,11 +2,15 @@
 
 import { useSensorData } from '@/hooks/useSensors';
 
-interface SensorData {
+interface SensorCurrentData {
   temperature: number;
   humidity: number;
-  light?: number;
-  pressure?: number;
+  pressure: number;
+  lightLevel: number;
+  isDark: boolean;
+  isRaining: boolean;
+  timestamp: string;
+  comfort: string;
 }
 
 interface StatCardProps {
@@ -53,7 +57,8 @@ function SensorStatCard({ label, value, subtitle, color, icon, trend }: StatCard
 }
 
 export default function SensorStatsGrid() {
-  const { data, isLoading } = useSensorData(3000) as { data?: SensorData; isLoading: boolean }; 
+  const { data: response, isLoading } = useSensorData(3000);
+  const data = (response as any)?.data as SensorCurrentData | undefined; 
 
   if (isLoading) {
     return (
@@ -92,7 +97,7 @@ export default function SensorStatsGrid() {
     },
     {
       label: 'Ánh sáng',
-      value: data?.light !== undefined ? `${data.light.toFixed(0)} lux` : '--',
+      value: data?.lightLevel !== undefined ? `${data.lightLevel} lux` : '--',
       subtitle: 'BH1750 Sensor',
       color: '#f59e0b',
       icon: (

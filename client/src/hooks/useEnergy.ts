@@ -12,12 +12,13 @@ export const energyKeys = {
 };
 
 // Get energy stats
-export const useEnergyStats = (hours: number = 24) => {
+export const useEnergyStats = (hours: number = 24, refetchInterval?: number) => {
   return useQuery({
     queryKey: energyKeys.stats(hours),
     queryFn: () => energyService.getEnergyStats(hours),
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: 1000 * 30, // 30 seconds
     gcTime: 1000 * 60 * 5,
+    refetchInterval: refetchInterval || 10000, // Refetch every 10 seconds by default
     retry: 1,
   });
 };

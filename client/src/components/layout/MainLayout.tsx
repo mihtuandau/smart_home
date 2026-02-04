@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import DashboardSidebar from '@/components/layout/Sidebar';
+import DashboardSidebar from '@/components/layout/SideBar';
 import DashboardHeader from '@/components/layout/Header';
 
 interface MainLayoutProps {
@@ -14,9 +14,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Default false on mobile
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
-  // Không hiển thị sidebar/header cho trang login
   const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
 
   const handleLogout = () => {

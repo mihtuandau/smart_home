@@ -12,14 +12,15 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { useSensorData } from '@/hooks/useSensors';
+import { useSensorHistory, useSensorData } from '@/hooks/useSensors';
 
 interface TemperatureHumidityChartProps {
   hours?: number;
 }
 
 const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hours = 24 }) => {
-  const { data: sensorData, isLoading, error } = useSensorData();
+  const { data: historyResponse, isLoading, error } = useSensorHistory(hours);
+  const { data: currentResponse } = useSensorData();
 
   if (isLoading) {
     return (
@@ -40,24 +41,37 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
     );
   }
 
-  // Mock data - replace with real API data
-  const chartData = [
-    { time: '00:00', temperature: 24, humidity: 65 },
-    { time: '02:00', temperature: 23, humidity: 68 },
-    { time: '04:00', temperature: 22, humidity: 70 },
-    { time: '06:00', temperature: 23, humidity: 68 },
-    { time: '08:00', temperature: 25, humidity: 62 },
-    { time: '10:00', temperature: 27, humidity: 58 },
-    { time: '12:00', temperature: 29, humidity: 55 },
-    { time: '14:00', temperature: 30, humidity: 53 },
-    { time: '16:00', temperature: 29, humidity: 54 },
-    { time: '18:00', temperature: 27, humidity: 58 },
-    { time: '20:00', temperature: 26, humidity: 60 },
-    { time: '22:00', temperature: 25, humidity: 63 },
-  ];
+  // Transform API data to chart format
+  const historyData = ((historyResponse as any)?.data || []) as any[];
+  const chartData = historyData
+    .slice()
+    .reverse()
+    .map((item) => ({
+      time: new Date(item.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      temperature: item.temperature,
+      humidity: item.humidity,
+      timestamp: item.timestamp,
+    }));
 
-  const currentTemp = (sensorData as any)?.data?.temperature || 0;
-  const currentHumidity = (sensorData as any)?.data?.humidity || 0;
+  // If no history data, show placeholder message
+  if (chartData.length === 0) {
+    return (
+      <div className="bg-white rounded-lg p-6 border border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+            <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.617a1 1 0 01.894-1.788l1.599.799L9 4.323V3a1 1 0 011-1z" clipRule="evenodd"/>
+            </svg>
+          </div>
+          Nhiệt độ & Độ ẩm
+        </h2>
+        <p className="text-gray-500 text-center py-8">Không có dữ liệu lịch sử</p>
+      </div>
+    );
+  }
+
+  const currentTemp = ((currentResponse as any)?.data?.temperature || 0);
+  const currentHumidity = ((currentResponse as any)?.data?.humidity || 0);
   
   const avgTemp = chartData.reduce((sum, item) => sum + item.temperature, 0) / chartData.length;
   const avgHumidity = chartData.reduce((sum, item) => sum + item.humidity, 0) / chartData.length;
@@ -83,7 +97,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
 
   return (
     <div className="bg-white rounded-lg p-6 border border-gray-200">
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
           <div className="w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
             <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
@@ -92,41 +106,11 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
           </div>
           Nhiệt độ & Độ ẩm
         </h2>
-        <div className="text-sm text-gray-500">
-          {hours} giờ qua
-        </div>
-      </div>
-
-      {/* Summary Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="text-center p-3 bg-red-50 rounded-lg">
-          <p className="text-xs text-gray-600 mb-1">Nhiệt độ</p>
-          <p className="text-lg font-bold text-red-600">
-            {currentTemp}°C
-          </p>
-        </div>
-        <div className="text-center p-3 bg-blue-50 rounded-lg">
-          <p className="text-xs text-gray-600 mb-1">Độ ẩm</p>
-          <p className="text-lg font-bold text-blue-600">
-            {currentHumidity}%
-          </p>
-        </div>
-        <div className="text-center p-3 bg-orange-50 rounded-lg">
-          <p className="text-xs text-gray-600 mb-1">TB Nhiệt độ</p>
-          <p className="text-lg font-bold text-orange-600">
-            {avgTemp.toFixed(1)}°C
-          </p>
-        </div>
-        <div className="text-center p-3 bg-cyan-50 rounded-lg">
-          <p className="text-xs text-gray-600 mb-1">TB Độ ẩm</p>
-          <p className="text-lg font-bold text-cyan-600">
-            {avgHumidity.toFixed(1)}%
-          </p>
-        </div>
+        <p className="text-sm text-gray-500 mt-1">{hours} giờ qua</p>
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={400}>
         <ComposedChart data={chartData}>
           <defs>
             <linearGradient id="colorHumidity" x1="0" y1="0" x2="0" y2="1">
@@ -157,47 +141,27 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
           <Legend />
           <Area
             yAxisId="right"
-            type="monotone"
+            type="natural"
             dataKey="humidity"
             fill="url(#colorHumidity)"
             stroke="#3b82f6"
             strokeWidth={2}
+            dot={false}
+            activeDot={{ r: 6 }}
             name="Độ ẩm (%)"
           />
           <Line
             yAxisId="left"
-            type="monotone"
+            type="natural"
             dataKey="temperature"
             stroke="#ef4444"
             strokeWidth={2}
-            dot={{ fill: '#ef4444', r: 4 }}
-            activeDot={{ r: 6 }}
+            dot={false}
+            activeDot={{ r: 6, fill: '#ef4444' }}
             name="Nhiệt độ (°C)"
           />
         </ComposedChart>
       </ResponsiveContainer>
-
-      {/* Comfort level indicator */}
-      <div className="mt-4 grid grid-cols-2 gap-4">
-        <div className="p-3 bg-gray-50 rounded-lg">
-          <p className="text-xs font-semibold text-gray-600 mb-2">Nhiệt độ tối ưu</p>
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>18°C</span>
-            <span className="font-medium text-green-600">20-26°C</span>
-            <span>32°C</span>
-          </div>
-          <div className="mt-1 h-2 bg-gradient-to-r from-blue-400 via-green-400 to-red-400 rounded-full"></div>
-        </div>
-        <div className="p-3 bg-gray-50 rounded-lg">
-          <p className="text-xs font-semibold text-gray-600 mb-2">Độ ẩm tối ưu</p>
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>30%</span>
-            <span className="font-medium text-green-600">40-60%</span>
-            <span>80%</span>
-          </div>
-          <div className="mt-1 h-2 bg-gradient-to-r from-orange-400 via-blue-400 to-cyan-400 rounded-full"></div>
-        </div>
-      </div>
     </div>
   );
 };
