@@ -34,7 +34,7 @@ export const useLatestDeviceData = (refetchInterval?: number) => {
   return useQuery({
     queryKey: deviceKeys.latestData(),
     queryFn: deviceService.getLatestData,
-    refetchInterval: refetchInterval || 5000, // Refetch every 5 seconds by default
+    refetchInterval: refetchInterval ?? 5000, // Refetch every 5 seconds by default; undefined disables polling
   });
 };
 

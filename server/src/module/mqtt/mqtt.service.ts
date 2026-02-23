@@ -305,7 +305,7 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
             timestamp: new Date().toISOString(),
           },
         },
-      });
+      });     
     } catch (error) {
       this.logger.error(`Failed to log activity: ${error.message}`);
     }
