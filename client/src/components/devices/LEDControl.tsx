@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLatestDeviceData, useControlSingleLED } from '@/hooks/useDevices';
-import { useQueryClient } from '@tanstack/react-query';
 import Toast from '@/components/ui/Toast';
 
 interface ToastState {
@@ -10,112 +9,72 @@ interface ToastState {
   type: 'success' | 'error' | 'info';
 }
 
+// How long (ms) to ignore polling updates after a toggle to avoid UI flash
+const TOGGLE_COOLDOWN = 10000;
+
 export default function LEDControl() {
-  const queryClient = useQueryClient();
   const controlLEDMutation = useControlSingleLED();
   const [toast, setToast] = useState<ToastState | null>(null);
-  
   const [localLEDs, setLocalLEDs] = useState({ led1: false, led2: false });
-  
-  const { data: response, isLoading } = useLatestDeviceData(
-    controlLEDMutation.isPending ? undefined : 5000
-  );
-  
+
+  // Tracks the timestamp of the last user toggle action
+  const lastToggleRef = useRef<number>(0);
+  // Whether localLEDs has been initialized from server data at least once
+  const initializedRef = useRef<boolean>(false);
+
+  const { data: response, isLoading } = useLatestDeviceData(5000);
   const data = (response as any)?.data || response;
 
+  // Sync server data → localLEDs only on first load OR after cooldown expires
   useEffect(() => {
-    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
-      if (event.query.queryKey[0] === 'devices' && event.query.queryKey[1] === 'latestData') {
-        const cachedData = queryClient.getQueryData(['devices', 'latestData']) as any;
-        if (cachedData) {
-          const dataObj = cachedData.data || cachedData;
-          setLocalLEDs({
-            led1: dataObj.led1 === true,
-            led2: dataObj.led2 === true,
-          });
-        }
-      }
-    });
+    if (!data) return;
 
-    return () => unsubscribe();
-  }, [queryClient]);
+    const msSinceToggle = Date.now() - lastToggleRef.current;
 
-  useEffect(() => {
-    if (data && !controlLEDMutation.isPending) {
+    // Always sync on initial load; afterwards only sync if cooldown has passed
+    if (!initializedRef.current || msSinceToggle >= TOGGLE_COOLDOWN) {
+      initializedRef.current = true;
       setLocalLEDs(prev => {
-        const newState = {
+        const next = {
           led1: data.led1 === true,
           led2: data.led2 === true,
         };
-        if (prev.led1 !== newState.led1 || prev.led2 !== newState.led2) {
-          return newState;
-        }
+        if (prev.led1 !== next.led1 || prev.led2 !== next.led2) return next;
         return prev;
       });
     }
-  }, [data, controlLEDMutation.isPending]);
+  }, [data]);
 
   const toggleLed = async (ledNumber: 1 | 2) => {
     if (controlLEDMutation.isPending) return;
-    
+
     const currentState = ledNumber === 1 ? localLEDs.led1 : localLEDs.led2;
     const newState = !currentState;
-    
-    console.log(`[LED${ledNumber}] Toggle: ${currentState} → ${newState}`);
-    
+
+    // Record toggle time BEFORE any state changes so the effect guard works immediately
+    lastToggleRef.current = Date.now();
+
+    // Optimistic local update
     setLocalLEDs(prev => ({
       ...prev,
       [ledNumber === 1 ? 'led1' : 'led2']: newState,
     }));
-    
-    queryClient.setQueryData(['devices', 'latestData'], (oldData: any) => {
-      if (!oldData) return oldData;
-      const updated = { ...oldData };
-      const dataObj = updated.data || updated;
-      if (ledNumber === 1) {
-        dataObj.led1 = newState;
-      } else if (ledNumber === 2) {
-        dataObj.led2 = newState;
-      }
-      return updated;
-    });
-    
+
     try {
-      const response = await controlLEDMutation.mutateAsync({ 
-        ledNumber, 
-        state: newState 
-      });
-      
-      console.log(`[LED${ledNumber}] Response:`, response);
-      
+      await controlLEDMutation.mutateAsync({ ledNumber, state: newState });
       setToast({
         message: `LED ${ledNumber} đã ${newState ? 'bật' : 'tắt'}`,
-        type: 'success'
+        type: 'success',
       });
     } catch (error: any) {
       console.error(`[LED${ledNumber}] Error:`, error);
-      
+      // Rollback and let polling take over immediately
+      lastToggleRef.current = 0;
       setLocalLEDs(prev => ({
         ...prev,
-        [ledNumber === 1 ? 'led1' : 'led2']: !newState,
+        [ledNumber === 1 ? 'led1' : 'led2']: currentState,
       }));
-      
-      queryClient.setQueryData(['devices', 'latestData'], (oldData: any) => {
-        if (!oldData) return oldData;
-        const updated = { ...oldData };
-        const dataObj = updated.data || updated;
-        if (ledNumber === 1) {
-          dataObj.led1 = !newState;
-        } else if (ledNumber === 2) {
-          dataObj.led2 = !newState;
-        }
-        return updated;
-      });
-      
-      setToast({
-        message: 'Không thể điều khiển LED',
-        type: 'error'
-      });
+      setToast({ message: 'Không thể điều khiển LED', type: 'error' });
     }
   };
 
