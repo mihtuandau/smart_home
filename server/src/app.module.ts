@@ -13,6 +13,7 @@ import { SettingsModule } from './module/settings/settings.module';
 import { DashboardModule } from './module/dashboard/dashboard.module';
 import { EnergyModule } from './module/energy/energy.module';
 import { MaintenanceModule } from './module/maintenance/maintenance.module';
+import { AiModule } from './module/ai/ai.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MaintenanceModule } from './module/maintenance/maintenance.module';
     DashboardModule,
     EnergyModule,
     MaintenanceModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/commo
 import * as mqtt from 'mqtt';
 import { MQTT_CONFIG, MQTT_TOPICS } from '../../config/mqtt.config';
 import { PrismaService } from '../../common/prisma.service';
+import { AiService } from '../ai/ai.service';
 import { PowerSource } from '@prisma/client';
 
 export interface SensorPayload {
@@ -34,7 +35,10 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     power: 0.2,
   };
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private aiService: AiService,
+  ) {}
 
   async onModuleInit() {
     this.connectMqtt();
@@ -119,6 +123,13 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
         }
 
         await this.updateDeviceStatesIfChanged(data);
+
+        // AI analysis — equivalent to on_message() in ai_mqtt.py
+        try {
+          await this.aiService.analyze(data);
+        } catch (aiErr) {
+          this.logger.debug(`AI analysis error: ${aiErr.message}`);
+        }
       }
     } catch (error) {
       this.logger.error(`Error handling message: ${error.message}`);
