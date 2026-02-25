@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../../common/prisma.service';
 
@@ -6,10 +6,15 @@ const BUCKET_MINUTES = 5;
 const RAW_RETENTION_DAYS = 7; // Production: 7 days retention
 
 @Injectable()
-export class MaintenanceService {
+export class MaintenanceService implements OnModuleInit {
   private readonly logger = new Logger(MaintenanceService.name);
 
   constructor(private prisma: PrismaService) {}
+
+  async onModuleInit() {
+    this.logger.log('Running startup cleanup...');
+    await this.cleanupRawData();
+  }
 
   @Cron(CronExpression.EVERY_MINUTE)
   async aggregateRecentBuckets() {
