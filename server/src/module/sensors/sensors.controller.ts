@@ -25,13 +25,16 @@ export class SensorsController {
   }
 
   @Get('history/:hours')
-  async getHistory(@Param('hours', ParseIntPipe) hours: number) {
-    const data = await this.sensorsService.getHistory(hours);
+  async getHistory(
+    @Param('hours', ParseIntPipe) hours: number,
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('pageSize', ParseIntPipe) pageSize: number = 20,
+  ) {
+    const result = await this.sensorsService.getHistory(hours, page, pageSize);
     return {
       success: true,
-      count: data.length,
       period: `${hours}h`,
-      data,
+      ...result,
     };
   }
 

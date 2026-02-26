@@ -12,17 +12,27 @@ export class SensorsService {
     });
   }
 
-  async getHistory(hours: number = 24) {
+  async getHistory(hours: number = 24, page: number = 1, pageSize: number = 20) {
     const since = new Date(Date.now() - hours * 60 * 60 * 1000);
+    const where = { timestamp: { gte: since } };
 
-    return this.prisma.sensorData.findMany({
-      where: {
-        timestamp: {
-          gte: since,
-        },
-      },
-      orderBy: { timestamp: 'desc' },
-    });
+    const [data, total] = await Promise.all([
+      this.prisma.sensorData.findMany({
+        where,
+        orderBy: { timestamp: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+      }),
+      this.prisma.sensorData.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
   }
 
   async getStats(hours: number = 24) {
