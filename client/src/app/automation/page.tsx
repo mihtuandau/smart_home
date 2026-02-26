@@ -37,8 +37,7 @@ export default function AutomationPage() {
   };
 
   const handleTriggerRule = async (id: string) => {
-    // TODO: Implement trigger rule when API is ready
-    console.log('Trigger rule:', id);
+    await toggleRule(id);
   };
 
   return (
