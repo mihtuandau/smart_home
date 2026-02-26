@@ -9,8 +9,8 @@ export const sensorsApi = {
     return apiClient.request('/sensors/current');
   },
 
-  async getSensorHistory(hours: number = 24) {
-    return apiClient.request(`/sensors/history/${hours}`);
+  async getSensorHistory(hours: number = 24, page: number = 1, pageSize: number = 20) {
+    return apiClient.request(`/sensors/history/${hours}?page=${page}&pageSize=${pageSize}`);
   },
 
   async getSensorStats() {

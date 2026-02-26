@@ -12,8 +12,8 @@ export const sensorService = {
   },
 
   // Get sensor history
-  getSensorHistory: async (hours: number = 24) => {
-    return sensorsApi.getSensorHistory(hours);
+  getSensorHistory: async (hours: number = 24, page: number = 1, pageSize: number = 20) => {
+    return sensorsApi.getSensorHistory(hours, page, pageSize);
   },
 
   // Get sensor stats
