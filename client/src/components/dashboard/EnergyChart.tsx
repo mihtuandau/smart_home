@@ -103,8 +103,6 @@ const EnergyChart: React.FC<EnergyChartProps> = ({ hours = 24 }) => {
   const avgConsumption = hasData ? totalConsumption / rawData.length : 0;
   const peakConsumption = hasData ? Math.max(...rawData.map((item: any) => item.energy || 0)) : 0;
   
-  console.log('Energy Chart Data:', { rawData, chartData, totalConsumption });
-
   return (
     <div className="bg-white rounded-lg p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
