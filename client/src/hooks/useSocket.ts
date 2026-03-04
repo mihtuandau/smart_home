@@ -160,6 +160,47 @@ export function useDeviceControl() {
   };
 }
 
+export interface AiAdvicePayload {
+  time: string;
+  advice: string[];
+  anomaly: string | null;
+  analysis: string;
+  type: 'status' | 'alert';
+  /** Công suất thực tế (W) */
+  powerW: number;
+  led1: boolean;
+  led2: boolean;
+}
+
+/**
+ * Custom hook for real-time AI advice and warnings from the server.
+ * - `status`: live current analysis (updated every message)
+ * - `alerts`: history of alert/advice events (type === 'alert')
+ */
+export function useAiAdvice(maxItems = 20) {
+  const [status, setStatus] = useState<AiAdvicePayload | null>(null);
+  const [alerts, setAlerts] = useState<AiAdvicePayload[]>([]);
+
+  useEffect(() => {
+    const handleAdvice = (payload: AiAdvicePayload) => {
+      setStatus(payload);
+      if (payload.type === 'alert') {
+        setAlerts((prev) => [payload, ...prev].slice(0, maxItems));
+      }
+    };
+
+    socketService.onAiAdvice(handleAdvice);
+
+    return () => {
+      socketService.offAiAdvice(handleAdvice);
+    };
+  }, [maxItems]);
+
+  const clear = useCallback(() => setAlerts([]), []);
+
+  return { status, alerts, clear };
+}
+
 /**
  * Custom hook for automation events
  */

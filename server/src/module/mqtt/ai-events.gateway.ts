@@ -1,0 +1,62 @@
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  OnGatewayInit,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+} from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
+import { Server, Socket } from 'socket.io';
+
+export interface AiAdvicePayload {
+  time: string;
+  advice: string[];
+  anomaly: string | null;
+  analysis: string;
+  /** 'status' = cập nhật thường xuyên, 'alert' = có cảnh báo/lời khuyên cụ thể */
+  type: 'status' | 'alert';
+  /** Công suất thực tế (W) để UI hiển thị gauge */
+  powerW: number;
+  led1: boolean;
+  led2: boolean;
+}
+
+@WebSocketGateway({
+  cors: {
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3002',
+      'http://localhost:5173',
+      process.env.CORS_ORIGIN,
+    ].filter(Boolean),
+    credentials: true,
+  },
+})
+export class AiEventsGateway
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
+  @WebSocketServer()
+  server: Server;
+
+  private readonly logger = new Logger(AiEventsGateway.name);
+
+  afterInit() {
+    this.logger.log('🤖 AI Events WebSocket Gateway initialized');
+  }
+
+  handleConnection(client: Socket) {
+    this.logger.debug(`Client connected: ${client.id}`);
+  }
+
+  handleDisconnect(client: Socket) {
+    this.logger.debug(`Client disconnected: ${client.id}`);
+  }
+
+  /**
+   * Broadcast AI advice/warnings to all connected clients.
+   * Event name: 'ai:advice'
+   */
+  emitAiAdvice(payload: AiAdvicePayload): void {
+    this.server.emit('ai:advice', payload);
+  }
+}

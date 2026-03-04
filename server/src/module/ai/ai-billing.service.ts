@@ -11,7 +11,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 import { BillingForecastDto } from './dto/ai-result.dto';
 
-const DEFAULT_PRICE_VND_PER_KWH = parseFloat(process.env.ELECTRICITY_PRICE ?? '3000');
+const DEFAULT_PRICE_VND_PER_KWH = parseFloat(
+  process.env.ELECTRICITY_PRICE ?? '3000',
+);
 
 @Injectable()
 export class AiBillingService {
@@ -27,9 +29,10 @@ export class AiBillingService {
    */
   async computeMonthlyEnergyKwh(year: number, month: number): Promise<number> {
     const start = new Date(Date.UTC(year, month - 1, 1));
-    const end = month === 12
-      ? new Date(Date.UTC(year + 1, 0, 1))
-      : new Date(Date.UTC(year, month, 1));
+    const end =
+      month === 12
+        ? new Date(Date.UTC(year + 1, 0, 1))
+        : new Date(Date.UTC(year, month, 1));
 
     const rows = await this.prisma.powerData.findMany({
       where: { timestamp: { gte: start, lt: end } },
@@ -41,7 +44,9 @@ export class AiBillingService {
 
     let totalWh = 0;
     for (let i = 0; i < rows.length - 1; i++) {
-      const dt = (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) / 3_600_000; // hours
+      const dt =
+        (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) /
+        3_600_000; // hours
       totalWh += rows[i].power * dt; // power in W * hours = Wh
     }
 
@@ -61,12 +66,16 @@ export class AiBillingService {
     const month = asOf.getUTCMonth() + 1;
 
     const start = new Date(Date.UTC(year, month - 1, 1));
-    const end   = month === 12
-      ? new Date(Date.UTC(year + 1, 0, 1))
-      : new Date(Date.UTC(year, month, 1));
+    const end =
+      month === 12
+        ? new Date(Date.UTC(year + 1, 0, 1))
+        : new Date(Date.UTC(year, month, 1));
 
     const daysInMonth = (end.getTime() - start.getTime()) / 86_400_000;
-    const elapsedDays = Math.max((asOf.getTime() - start.getTime()) / 86_400_000, 1 / 24);
+    const elapsedDays = Math.max(
+      (asOf.getTime() - start.getTime()) / 86_400_000,
+      1 / 24,
+    );
 
     const kwhSoFar = await this.computeMonthlyEnergyKwh(year, month);
 
@@ -79,7 +88,9 @@ export class AiBillingService {
 
     if (dailySeries.length > 0) {
       meanDaily = dailySeries.reduce((s, v) => s + v, 0) / dailySeries.length;
-      const variance = dailySeries.reduce((s, v) => s + Math.pow(v - meanDaily, 2), 0) / dailySeries.length;
+      const variance =
+        dailySeries.reduce((s, v) => s + Math.pow(v - meanDaily, 2), 0) /
+        dailySeries.length;
       stdDaily = Math.sqrt(variance);
       nDays = dailySeries.length;
     } else {
@@ -116,9 +127,11 @@ export class AiBillingService {
     };
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────────
-
-  private async computeDailySeriesKwh(year: number, month: number, asOf: Date): Promise<number[]> {
+  private async computeDailySeriesKwh(
+    year: number,
+    month: number,
+    asOf: Date,
+  ): Promise<number[]> {
     const start = new Date(Date.UTC(year, month - 1, 1));
     const rows = await this.prisma.powerData.findMany({
       where: { timestamp: { gte: start, lt: asOf } },
@@ -128,10 +141,12 @@ export class AiBillingService {
 
     if (rows.length < 2) return [];
 
-    const dayMap = new Map<string, number>(); // "YYYY-MM-DD" → kWh
+    const dayMap = new Map<string, number>();
 
     for (let i = 0; i < rows.length - 1; i++) {
-      const dt = (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) / 3_600_000;
+      const dt =
+        (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) /
+        3_600_000;
       const wh = rows[i].power * dt;
       const day = rows[i].timestamp.toISOString().slice(0, 10);
       dayMap.set(day, (dayMap.get(day) ?? 0) + wh / 1000);
@@ -140,7 +155,6 @@ export class AiBillingService {
     return Array.from(dayMap.values());
   }
 
-  /** Format human-readable monthly report (mirrors format_monthly_report). */
   formatReport(dto: BillingForecastDto): string {
     return [
       `[Báo cáo điện] Tháng: ${dto.month}`,

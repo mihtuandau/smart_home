@@ -12,6 +12,7 @@ import { AiBaselineService } from './ai-baseline.service';
 import { AiBillingService } from './ai-billing.service';
 import { AiResultDto } from './dto/ai-result.dto';
 import { SensorPayload } from '../mqtt/mqtt.service';
+import { AiEventsGateway } from '../mqtt/ai-events.gateway';
 
 /** Billing chỉ tính mỗi N tin nhắn để không query DB quá nhiều */
 const BILLING_EVERY_N = 100;
@@ -28,6 +29,7 @@ export class AiService {
     private advisor: AiAdvisorService,
     private baseline: AiBaselineService,
     private billing: AiBillingService,
+    private aiEventsGateway: AiEventsGateway,
   ) {}
 
   /**
@@ -39,22 +41,25 @@ export class AiService {
     const now = new Date();
     const powerMw = data.power_mW;
 
-    // 1. Cập nhật baseline (tương đương enqueue_update_with_row)
-    this.baseline.updateWithReading(data.power_mW / 1000, now);
+    // 1. Cập nhật baseline với LED state — học riêng từng ngữ cảnh
+    this.baseline.updateWithReading(data.power_mW / 1000, now, data.led1, data.led2);
 
-    // 2. Phân tích realtime (tương đương analyze_realtime)
-    const analysis = this.analyzer.analyzeRealtime(powerMw, now);
+    // 2. Cập nhật rolling window TRƯỚC KHI phân tích (tránh lag 1 message)
+    this.analyzer.feedReading(powerMw, data.led1, data.led2);
 
-    // 3. Phát hiện bất thường (tương đương detect_anomaly)
+    // 3. Phân tích realtime (tương đương analyze_realtime)
+    const analysis = this.analyzer.analyzeRealtime(powerMw, data.led1, data.led2, now);
+
+    // 4. Phát hiện bất thường (tương đương detect_anomaly)
     const anomaly = this.analyzer.detectAnomaly(powerMw, data.led1, data.led2);
 
-    // 4. Tổng hợp ngày (tương đương daily_summary)
+    // 5. Tổng hợp ngày (tương đương daily_summary)
     const summary = await this.analyzer.getDailySummary();
 
-    // 5. Lời khuyên tiết kiệm điện (tương đương energy_advice)
+    // 6. Lời khuyên tiết kiệm điện (tương đương energy_advice)
     const advice = this.advisor.getAdvice({ powerMw, led1: data.led1, led2: data.led2, ts: now });
 
-    // 6. Dự báo hóa đơn (tương đương project_monthly_energy_and_cost — chạy định kỳ)
+    // 7. Dự báo hóa đơn (tương đương project_monthly_energy_and_cost — chạy định kỳ)
     let billingDto = this.latestResult?.billing ?? null;
     if (this.messageCount % BILLING_EVERY_N === 1) {
       try {
@@ -64,7 +69,7 @@ export class AiService {
       }
     }
 
-    // 7. Lưu kết quả AI vào DB (tương đương save_ai_result)
+    // 8. Lưu kết quả AI vào DB (tương đương save_ai_result)
     if (anomaly || advice.length > 0) {
       this.saveToDb(data, analysis, anomaly, summary, advice).catch(() => {});
     }
@@ -84,6 +89,19 @@ export class AiService {
     this.logger.log(analysis);
     if (anomaly) this.logger.warn(anomaly);
     if (advice.length) advice.forEach((a) => this.logger.log(a));
+
+    // Phát sự kiện WebSocket tới frontend — LUÔN emit để hiển thị trạng thái thực
+    const isAlert = advice.length > 0 || !!anomaly;
+    this.aiEventsGateway.emitAiAdvice({
+      time: now.toISOString(),
+      advice,
+      anomaly: anomaly ?? null,
+      analysis,
+      type: isAlert ? 'alert' : 'status',
+      powerW: powerMw / 1000,
+      led1: data.led1,
+      led2: data.led2,
+    });
 
     return result;
   }
