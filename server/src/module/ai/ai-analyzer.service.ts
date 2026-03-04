@@ -17,6 +17,8 @@ const ANOMALY_WINDOW = 500;
 const ANOMALY_ZSCORE_THRESHOLD = 3.5;
 /** Số lần liên tiếp vượt ngưỡng mới cảnh báo (giảm false positive) */
 const ANOMALY_PERSIST_COUNT = 2;
+/** Số reading tối thiểu bắt đầu phân tích */
+const MIN_WINDOW = 3;
 
 @Injectable()
 export class AiAnalyzerService {
@@ -26,37 +28,108 @@ export class AiAnalyzerService {
   private window: Array<{ powerMw: number; led1: boolean; led2: boolean }> = [];
   /** Đếm số lần liên tiếp bị coi là anomaly */
   private consecutiveAnomalyCount = 0;
+  /** Trạng thái LED của reading mới nhất */
+  private latestLed1 = false;
+  private latestLed2 = false;
+  /** Trạng thái LED reading trước (để phát hiện transition) */
+  private prevLed1: boolean | null = null;
+  private prevLed2: boolean | null = null;
 
   constructor(
     private prisma: PrismaService,
     private baseline: AiBaselineService,
   ) {}
 
+  // ── Window feed (gọi trước analyze + detect) ─────────────────────────────────
+
+  /**
+   * Cập nhật rolling window — phải gọi TRƯỚC analyzeRealtime và detectAnomaly.
+   */
+  feedReading(powerMw: number, led1: boolean, led2: boolean): void {
+    this.prevLed1 = this.latestLed1;
+    this.prevLed2 = this.latestLed2;
+    this.window.push({ powerMw, led1, led2 });
+    if (this.window.length > ANOMALY_WINDOW) {
+      this.window.shift();
+    }
+    this.latestLed1 = led1;
+    this.latestLed2 = led2;
+  }
+
   // ── Realtime analysis ────────────────────────────────────────────────────────
 
   /**
    * Tương đương analyze_realtime().
    * So sánh công suất hiện tại với baseline hoặc trung bình rolling window.
+   * Truyền led1/led2 để tránh cảnh báo sai khi đèn đang bật.
    */
-  analyzeRealtime(powerMw: number, ts: Date = new Date()): string {
-    if (this.window.length < 10) {
-      return '📊 AI: Chưa đủ dữ liệu để phân tích';
+  analyzeRealtime(
+    powerMw: number,
+    led1: boolean,
+    led2: boolean,
+    ts: Date = new Date(),
+  ): string {
+    /** Chuyển mW → W, 1 chữ số thập phân */
+    const W = (mw: number) => (mw / 1000).toFixed(1);
+
+    if (this.window.length < MIN_WINDOW) {
+      return `📊 AI đang làm quen với thiết bị của bạn... (${this.window.length}/${MIN_WINDOW})`;
     }
 
-    // Ưu tiên baseline-aware check
-    if (this.baseline.isSignificantDeviation(powerMw, ts, 1.4)) {
-      const exp = this.baseline.expectedPowerMw(ts)!;
-      const pct = Math.round((powerMw / exp - 1) * 100);
-      return `⚠️ AI Cảnh báo: Công suất hiện tại cao hơn baseline khoảng ${pct}%`;
+    const ledsOn = led1 || led2;
+    const ledLabel = led1 && led2 ? 'Đèn 1 + Đèn 2' : led1 ? 'Đèn 1' : led2 ? 'Đèn 2' : 'Tất cả đèn';
+
+    // Phát hiện transition: LED vừa thay đổi trong reading này
+    const ledJustChanged =
+      this.prevLed1 !== null &&
+      (this.prevLed1 !== led1 || this.prevLed2 !== led2);
+
+    if (ledJustChanged) {
+      const prevLedsOn = this.prevLed1 || (this.prevLed2 ?? false);
+      // Tính công suất trung bình trước khi đèn thay đổi (trạng thái cũ)
+      const prevStateWindow = this.window.slice(0, -1).filter(
+        (r) => r.led1 === this.prevLed1 && r.led2 === this.prevLed2,
+      );
+      const prevAvg = prevStateWindow.length >= 2
+        ? prevStateWindow.reduce((s, r) => s + r.powerMw, 0) / prevStateWindow.length
+        : this.window[this.window.length - 2]?.powerMw ?? powerMw;
+      const delta = Math.abs(Math.round(powerMw - prevAvg));
+      if (!prevLedsOn && ledsOn) {
+        return `💡 ${ledLabel} vừa bật — điện tăng thêm ${W(delta)} W (đang dùng: ${W(powerMw)} W)`;
+      } else if (prevLedsOn && !ledsOn) {
+        return `🌙 Đèn vừa tắt — điện giảm ${W(delta)} W (điện chờ hiện tại: ${W(powerMw)} W)`;
+      } else {
+        return `🔄 ${ledLabel} thay đổi — điện tiêu thụ hiện tại: ${W(powerMw)} W`;
+      }
     }
 
-    // Fallback: rolling average
+    // Trạng thái ổn định: so sánh với rolling window cùng trạng thái đèn
+    const sameStateWindow = this.window.filter(
+      (r) => r.led1 === led1 && r.led2 === led2,
+    );
+
+    if (sameStateWindow.length >= 5) {
+      const avgMw =
+        sameStateWindow.reduce((s, r) => s + r.powerMw, 0) /
+        sameStateWindow.length;
+      if (powerMw > avgMw * 1.5) {
+        const pct = Math.round((powerMw / avgMw - 1) * 100);
+        return `⚠️ Điện cao hơn mức thường ${pct}% — nên kiểm tra xem có thiết bị nào bật quên không`;
+      }
+      return ledsOn
+        ? `✅ ${ledLabel} đang bật — mức điện bình thường (${W(powerMw)} W)`
+        : `✅ Đèn đã tắt hết — điện tiêu thụ thấp, bình thường (${W(powerMw)} W)`;
+    }
+
+    // Fallback: rolling average toàn bộ
     const avgMw = this.window.reduce((s, r) => s + r.powerMw, 0) / this.window.length;
-    if (powerMw > avgMw * 1.4) {
-      return '⚠️ AI Cảnh báo: Công suất hiện tại cao bất thường';
+    if (!ledsOn && powerMw > avgMw * 1.4) {
+      return `⚠️ Điện vẫn cao dù đèn đã tắt (${W(powerMw)} W) — có thiết bị nào đang bật không?`;
     }
 
-    return '✅ AI: Mức tiêu thụ điện ổn định';
+    return ledsOn
+      ? `✅ ${ledLabel} đang bật — điện tiêu thụ ${W(powerMw)} W`
+      : `✅ Đèn đã tắt — điện tiêu thụ thấp (${W(powerMw)} W)`;
   }
 
   // ── Anomaly detection ────────────────────────────────────────────────────────
@@ -72,12 +145,7 @@ export class AiAnalyzerService {
     led1: boolean,
     led2: boolean,
   ): string | null {
-    // Cập nhật rolling window
-    this.window.push({ powerMw, led1, led2 });
-    if (this.window.length > ANOMALY_WINDOW) {
-      this.window.shift();
-    }
-
+    // Window đã được cập nhật bởi feedReading() trước đó
     if (this.window.length < 30) return null;
 
     // Suppress nếu LED vừa thay đổi trạng thái (expected power change)
@@ -111,7 +179,7 @@ export class AiAnalyzerService {
     }
 
     if (this.consecutiveAnomalyCount >= ANOMALY_PERSIST_COUNT) {
-      return '🚨 AI ML: Phát hiện hành vi tiêu thụ điện bất thường';
+      return '🚨 Điện tiêu thụ đột ngột bất thường — vui lòng kiểm tra thiết bị trong nhà';
     }
 
     return null;
@@ -138,8 +206,7 @@ export class AiAnalyzerService {
       }
 
       const avgW = rows.reduce((s, r) => s + r.power, 0) / rows.length;
-      const avgMw = avgW * 1000;
-      return `📅 Trung bình công suất hôm nay: ${Math.round(avgMw)} mW`;
+      return `📅 Điện tiêu thụ trung bình hôm nay: ${avgW.toFixed(1)} W`;
     } catch (err) {
       this.logger.error(`Daily summary error: ${err.message}`);
       return '📅 Không thể tổng hợp dữ liệu';

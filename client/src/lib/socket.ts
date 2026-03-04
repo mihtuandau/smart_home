@@ -6,8 +6,8 @@ class SocketService {
   private reconnectAttempts = 0;
 
   connect(token?: string): Socket {
-    if (this.socket?.connected) {
-      console.log('Socket sẵn sàng và đã kết nối.');
+    // Re-use existing socket (even while reconnecting) to preserve all listeners
+    if (this.socket) {
       return this.socket;
     }
 
@@ -95,6 +95,20 @@ class SocketService {
     this.socket?.on('system:alert', callback);
   }
 
+  onAiAdvice(callback: (data: any) => void): void {
+    // Ensure socket exists before attaching listener
+    const socket = this.socket ?? this.connect();
+    socket.on('ai:advice', callback);
+  }
+
+  offAiAdvice(callback?: (data: any) => void): void {
+    if (callback) {
+      this.socket?.off('ai:advice', callback);
+    } else {
+      this.socket?.off('ai:advice');
+    }
+  }
+
   onAutomationTriggered(callback: (data: any) => void): void {
     this.socket?.on('automation:triggered', callback);
   }
@@ -145,6 +159,7 @@ class SocketService {
     this.socket?.off('device:status');
     this.socket?.off('system:alert');
     this.socket?.off('automation:triggered');
+    this.socket?.off('ai:advice');
   }
 
   disconnect(): void {

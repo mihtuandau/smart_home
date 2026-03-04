@@ -6,6 +6,7 @@ import StatsGrid from '@/components/dashboard/StatsGrid';
 import EnvironmentStatus from '@/components/dashboard/EnvironmentStatus';
 import DeviceControl from '@/components/dashboard/DeviceControl';
 import RecentActivitiesChart from '@/components/dashboard/RecentActivitiesChart';
+import AIInsights from '@/components/ai/AIInsights';
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -31,8 +32,16 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Recent Activities */}
-      <RecentActivitiesChart limit={10} />
+      {/* AI Insights + Recent Activities */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1">
+          <AIInsights />
+        </div>
+        <div className="lg:col-span-2">
+          <RecentActivitiesChart limit={10} />
+        </div>
+      </div>
     </div>
   );
 }
+

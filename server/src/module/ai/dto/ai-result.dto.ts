@@ -31,9 +31,23 @@ export interface BaselineSlot {
   mean: number | null;
 }
 
-/** Full baseline profile structure (7 weekdays × 24 hours). */
+/**
+ * LED state key for baseline profile.
+ * none   = cả hai đèn tắt
+ * led1   = chỉ đèn 1 bật
+ * led2   = chỉ đèn 2 bật
+ * both   = cả hai đèn bật
+ */
+export type LedState = 'none' | 'led1' | 'led2' | 'both';
+
+/**
+ * Full baseline profile: weekday × hour × ledState → stats.
+ * Mỗi tổ hợp trạng thái đèn được học riêng để so sánh đúng.
+ */
 export type BaselineProfile = {
   [weekday: string]: {
-    [hour: string]: BaselineSlot;
+    [hour: string]: {
+      [key in LedState]?: BaselineSlot;
+    };
   };
 };
