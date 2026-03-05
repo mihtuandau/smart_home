@@ -24,6 +24,8 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   private latestData: SensorPayload | null = null;
   private lastPersisted: { timestamp: number; data: SensorPayload } | null = null;
   private lastLedState: { led1?: boolean; led2?: boolean } = {};
+  /** Timestamp (ms) của lần lưu power_data trước — dùng tính energy đúng */
+  private lastPowerSavedAt: number | null = null;
 
   private static readonly HEARTBEAT_MS = 10 * 60 * 1000; // 10 minutes (optimized)
   private static readonly THRESHOLDS = {
@@ -190,9 +192,13 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
   private async savePowerData(data: SensorPayload) {
     try {
-      // Calculate energy based on power (assuming ~10 minute intervals for MQTT messages)
-      // Energy (Wh) = Power (W) * Time (hours) = (Power * 10/60) Wh
-      const energyWh = (data.power_mW / 1000) * (10 / 60);
+      // Energy (Wh) = Power (W) × độ dài giửa hai lần lưu thực tế
+      const now = Date.now();
+      const elapsedHours = this.lastPowerSavedAt
+        ? Math.min((now - this.lastPowerSavedAt) / 3_600_000, 1) // thiết đệ cap 1h phòng gián đoạn mạng
+        : 10 / 60; // fallback 10 phút khi lần đầu tiên
+      const energyWh = (data.power_mW / 1000) * elapsedHours;
+      this.lastPowerSavedAt = now;
       
       await this.prisma.powerData.create({
         data: {

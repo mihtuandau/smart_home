@@ -17,6 +17,7 @@ export {
   useSystemAlerts,
   useDeviceControl,
   useAutomationEvents,
+  useAiAdvice,
 } from './useSocket';
 
 // Auth hooks

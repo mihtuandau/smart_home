@@ -17,6 +17,10 @@ export interface AdvisorInput {
 
 @Injectable()
 export class AiAdvisorService {
+  private prevLed1: boolean | null = null;
+  private prevLed2: boolean | null = null;
+  private prevPowerMw: number | null = null;
+
   constructor(private baseline: AiBaselineService) {}
 
   /**
@@ -26,28 +30,64 @@ export class AiAdvisorService {
   getAdvice(input: AdvisorInput): string[] {
     const { powerMw, led1, led2, ts = new Date() } = input;
     const advice: string[] = [];
+    /** Chuyển mW → W, hiển thị 1 chữ số thập phân */
+    const W = (mw: number) => (mw / 1000).toFixed(1);
 
-    // Lấy ngưỡng từ baseline nếu có, fallback về giá trị cứng
-    const expectedMw = this.baseline.expectedPowerMw(ts);
-    const highThreshold = expectedMw != null ? expectedMw * 1.5 : 2500;
-    const backgroundThreshold = expectedMw != null ? expectedMw * 0.8 : 1500;
+    const led1Changed = this.prevLed1 !== null && this.prevLed1 !== led1;
+    const led2Changed = this.prevLed2 !== null && this.prevLed2 !== led2;
+    const prevPower = this.prevPowerMw ?? powerMw;
 
-    if (led1 && led2 && powerMw > 2000) {
-      advice.push('💡 Gợi ý: Nên tắt bớt đèn khi không sử dụng');
-    }
-
-    if (powerMw > highThreshold) {
-      if (expectedMw != null) {
-        const pct = Math.round((powerMw / expectedMw - 1) * 100);
-        advice.push(`🔋 Gợi ý: Công suất cao hơn mức bình thường ${pct}%, nên kiểm tra thiết bị tiêu thụ`);
+    // ── Sự kiện bật/tắt đèn ────────────────────────────────────────────────────
+    if (led1Changed) {
+      const delta = Math.abs(Math.round(powerMw - prevPower));
+      if (led1) {
+        advice.push(`💡 Đèn 1 vừa bật — điện tăng thêm ${W(delta)} W (đang dùng: ${W(powerMw)} W)`);
       } else {
-        advice.push('🔋 Gợi ý: Công suất cao, nên kiểm tra thiết bị tiêu thụ');
+        advice.push(`💡 Đèn 1 vừa tắt — điện giảm ${W(delta)} W (hiện tiêu thụ: ${W(powerMw)} W)`);
       }
     }
 
-    if (!led1 && !led2 && powerMw > backgroundThreshold) {
-      advice.push('⚠️ AI Nhận xét: Có tải điện nền bất thường khi không bật đèn');
+    if (led2Changed) {
+      const delta = Math.abs(Math.round(powerMw - prevPower));
+      if (led2) {
+        advice.push(`💡 Đèn 2 vừa bật — điện tăng thêm ${W(delta)} W (đang dùng: ${W(powerMw)} W)`);
+      } else {
+        advice.push(`💡 Đèn 2 vừa tắt — điện giảm ${W(delta)} W (hiện tiêu thụ: ${W(powerMw)} W)`);
+      }
     }
+
+    // ── Kiểm tra trạng thái ổn định (không có thay đổi LED) ─────────────────────
+    if (!led1Changed && !led2Changed) {
+      // Lấy baseline đúng với trạng thái đèn hiện tại
+      const expectedMw = this.baseline.expectedPowerMw(ts, led1, led2);
+
+      if (!led1 && !led2) {
+        // Tất cả đèn tắt — cảnh báo khi điện nền cao hơn 30% mức đã học
+        const normalMw = expectedMw ?? 800;
+        const abnormalThreshold = normalMw * 1.3;
+        if (powerMw > abnormalThreshold) {
+          advice.push(
+            `⚠️ Điện vẫn cao dù đèn đã tắt hết (${W(powerMw)} W, mức thường: ~${W(normalMw)} W) — có thiết bị nào quên tắt không?`,
+          );
+        }
+      } else {
+        // Có đèn đang bật
+        if (led1 && led2) {
+          advice.push('💡 Gợi ý: Tắt bớt đèn không cần thiết để tiết kiệm điện');
+        }
+        if (expectedMw != null && powerMw > expectedMw * 1.4) {
+          const pct = Math.round((powerMw / expectedMw - 1) * 100);
+          advice.push(
+            `🔋 Điện đang cao hơn mức thường ${pct}% — đang dùng ${W(powerMw)} W thay vì ~${W(expectedMw)} W như thường lệ`,
+          );
+        }
+      }
+    }
+
+    // Lưu trạng thái cho lần sau
+    this.prevLed1 = led1;
+    this.prevLed2 = led2;
+    this.prevPowerMw = powerMw;
 
     return advice;
   }
