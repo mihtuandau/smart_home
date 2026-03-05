@@ -10,6 +10,7 @@ import { AiAnalyzerService } from './ai-analyzer.service';
 import { AiAdvisorService } from './ai-advisor.service';
 import { AiBaselineService } from './ai-baseline.service';
 import { AiBillingService } from './ai-billing.service';
+import { AiLedStatsService } from './ai-led-stats.service';
 import { AiResultDto } from './dto/ai-result.dto';
 import { SensorPayload } from '../mqtt/mqtt.service';
 import { AiEventsGateway } from '../mqtt/ai-events.gateway';
@@ -29,6 +30,7 @@ export class AiService {
     private advisor: AiAdvisorService,
     private baseline: AiBaselineService,
     private billing: AiBillingService,
+    private ledStats: AiLedStatsService,
     private aiEventsGateway: AiEventsGateway,
   ) {}
 
@@ -40,6 +42,9 @@ export class AiService {
     this.messageCount++;
     const now = new Date();
     const powerMw = data.power_mW;
+
+    // 0. Tích lũy LED stats — tính delta time chính xác
+    const dailyLed = this.ledStats.tick(data.led1, data.led2, now);
 
     // 1. Cập nhật baseline với LED state — học riêng từng ngữ cảnh
     this.baseline.updateWithReading(data.power_mW / 1000, now, data.led1, data.led2);
@@ -81,6 +86,7 @@ export class AiService {
       summary,
       advice,
       billing: billingDto,
+      dailyLed,
     };
 
     this.latestResult = result;
@@ -101,6 +107,7 @@ export class AiService {
       powerW: powerMw / 1000,
       led1: data.led1,
       led2: data.led2,
+      dailyLed,
     });
 
     return result;

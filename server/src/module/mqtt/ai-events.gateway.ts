@@ -8,6 +8,8 @@ import {
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
+import type { LedDayEntry } from '../ai/ai-led-stats.service';
+
 export interface AiAdvicePayload {
   time: string;
   advice: string[];
@@ -19,6 +21,8 @@ export interface AiAdvicePayload {
   powerW: number;
   led1: boolean;
   led2: boolean;
+  /** LED daily consumption stats (today, server-computed) */
+  dailyLed: LedDayEntry;
 }
 
 @WebSocketGateway({

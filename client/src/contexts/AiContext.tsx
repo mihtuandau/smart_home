@@ -9,11 +9,12 @@ import React, {
   useState,
 } from 'react';
 import { socketService } from '@/lib/socket';
-import type { AiAdvicePayload } from '@/hooks/useSocket';
+import { apiClient } from '@/lib/api';
+import type { AiAdvicePayload, LedDayEntry } from '@/hooks/useSocket';
 
 const MAX_ALERTS = 50;
-/** Key localStorage gồm ngày hôm nay → sang ngày mới tự thành key khác → data cũ bị bỏ qua */
-const storageKey = () => `ai_alerts_${new Date().toISOString().slice(0, 10)}`; // "ai_alerts_2026-03-05"
+/** Alert key theo ngày — tự xóa khi sang ngày mới */
+const storageKey = () => `ai_alerts_${new Date().toISOString().slice(0, 10)}`;
 
 function loadAlertsFromStorage(): AiAdvicePayload[] {
   try {
@@ -27,43 +28,103 @@ function loadAlertsFromStorage(): AiAdvicePayload[] {
 
 function saveAlertsToStorage(alerts: AiAdvicePayload[]) {
   try {
-    // Xóa key của các ngày cũ để không chiếm dung lượng
     Object.keys(localStorage)
       .filter((k) => k.startsWith('ai_alerts_') && k !== storageKey())
       .forEach((k) => localStorage.removeItem(k));
     localStorage.setItem(storageKey(), JSON.stringify(alerts));
-  } catch {
-    // localStorage bị block (private mode, storage full) — bỏ qua
-  }
+  } catch { /* ignore */ }
 }
+
+// ── Constants ──────────────────────────────────────────────────────────────────
+
+const EMPTY_LED_DAY: LedDayEntry = {
+  date: '',
+  led1_wh: 0,
+  led2_wh: 0,
+  led1_on_minutes: 0,
+  led2_on_minutes: 0,
+};
+
+/** Refresh lịch sử LED từ REST mỗi 5 phút */
+const HISTORY_REFRESH_MS = 5 * 60 * 1000;
+
+// ── Context types ──────────────────────────────────────────────────────────────
 
 interface AiContextValue {
   status: AiAdvicePayload | null;
   alerts: AiAdvicePayload[];
   clearAlerts: () => void;
+  /**
+   * Tiêu thụ LED hôm nay — server tính chính xác qua delta time,
+   * cập nhật realtime mỗi MQTT message qua socket.
+   */
+  todayLed: LedDayEntry;
+  /**
+   * Lịch sử N ngày gần nhất — lấy từ REST /ai/led-daily, refresh mỗi 5 phút.
+   * Bao gồm cả hôm nay (server merge in-memory).
+   */
+  ledHistory: LedDayEntry[];
+  ledHistoryLoading: boolean;
 }
 
 const AiContext = createContext<AiContextValue>({
   status: null,
   alerts: [],
   clearAlerts: () => {},
+  todayLed: { ...EMPTY_LED_DAY },
+  ledHistory: [],
+  ledHistoryLoading: true,
 });
+
+// ── Provider ───────────────────────────────────────────────────────────────────
 
 /**
  * Bọc toàn bộ app — subscribe socket AI một lần duy nhất.
- * - Dữ liệu tồn tại khi điều hướng giữa các trang (AiContext)
- * - Alerts được lưu localStorage theo ngày → mở lại app vẫn thấy
- * - Tự xóa khi sang ngày mới (key khác)
+ *
+ * - `todayLed`   : server tích lũy theo delta time thực tế → emit qua socket
+ * - `ledHistory` : lấy từ REST (persist DB), tự refresh 5 phút/lần
+ * - Alerts        : lưu localStorage theo ngày, tự xóa sang ngày mới
  */
 export function AiProvider({ children }: { children: React.ReactNode }) {
-  const [status, setStatus] = useState<AiAdvicePayload | null>(null);
-  // Khởi tạo từ localStorage ngay lập tức
-  const [alerts, setAlerts] = useState<AiAdvicePayload[]>(() => loadAlertsFromStorage());
+  const [status, setStatus]         = useState<AiAdvicePayload | null>(null);
+  const [alerts, setAlerts]         = useState<AiAdvicePayload[]>(() => loadAlertsFromStorage());
+  const [todayLed, setTodayLed]     = useState<LedDayEntry>({ ...EMPTY_LED_DAY });
+  const [ledHistory, setLedHistory] = useState<LedDayEntry[]>([]);
+  const [ledHistoryLoading, setLedHistoryLoading] = useState(true);
+
+  // ── Fetch LED history từ REST ────────────────────────────────────────────────
+
+  const fetchLedHistory = useCallback(async () => {
+    try {
+      const res = await apiClient.request<{ days: number; data: LedDayEntry[] }>(
+        '/ai/led-daily?days=30',
+      );
+      if (res.data) setLedHistory(res.data);
+    } catch {
+      // Giữ data cũ nếu lỗi mạng
+    } finally {
+      setLedHistoryLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchLedHistory();
+    const id = setInterval(fetchLedHistory, HISTORY_REFRESH_MS);
+    return () => clearInterval(id);
+  }, [fetchLedHistory]);
+
+  // ── Socket handler ─────────────────────────────────────────────────────────
 
   const handleRef = useRef<((p: AiAdvicePayload) => void) | null>(null);
 
   handleRef.current = (payload: AiAdvicePayload) => {
     setStatus(payload);
+
+    // dailyLed do server tính — không cần accumulate client-side
+    if (payload.dailyLed) {
+      setTodayLed(payload.dailyLed);
+    }
+
     if (payload.type === 'alert') {
       setAlerts((prev) => {
         const next = [payload, ...prev].slice(0, MAX_ALERTS);
@@ -86,7 +147,7 @@ export function AiProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AiContext.Provider value={{ status, alerts, clearAlerts }}>
+    <AiContext.Provider value={{ status, alerts, clearAlerts, todayLed, ledHistory, ledHistoryLoading }}>
       {children}
     </AiContext.Provider>
   );
