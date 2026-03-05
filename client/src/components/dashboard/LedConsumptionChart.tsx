@@ -1,0 +1,317 @@
+'use client';
+
+import React, { useState } from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+import { useAiContext } from '@/contexts/AiContext';
+import type { LedDayEntry } from '@/hooks/useSocket';
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+
+/** Công suất từng LED (W) — khớp với server và Python led_analyzer.py */
+export const LED1_POWER_W = 0.5;  // 500 mW
+export const LED2_POWER_W = 0.8;  // 800 mW
+
+// ── Simulated seed data (fallback khi server chưa có lịch sử) ─────────────────
+
+const SEED_DAYS = [
+  { led1_min: 268, led2_min: 0   },
+  { led1_min: 173, led2_min: 1   },
+  { led1_min: 720, led2_min: 660 },
+  { led1_min: 420, led2_min: 300 },
+  { led1_min: 95,  led2_min: 45  },
+  { led1_min: 510, led2_min: 480 },
+  { led1_min: 330, led2_min: 210 },
+];
+
+function buildSeedHistory(): LedDayEntry[] {
+  const today = new Date();
+  return SEED_DAYS.map((s, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() - (SEED_DAYS.length - i));
+    return {
+      date:              d.toISOString().slice(0, 10),
+      led1_wh:           parseFloat(((s.led1_min / 60) * LED1_POWER_W).toFixed(4)),
+      led2_wh:           parseFloat(((s.led2_min / 60) * LED2_POWER_W).toFixed(4)),
+      led1_on_minutes:   s.led1_min,
+      led2_on_minutes:   s.led2_min,
+    };
+  });
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function shortDate(iso: string): string {
+  if (!iso) return '';
+  const [, m, d] = iso.split('-');
+  return `${d}/${m}`;
+}
+
+function formatWh(wh: number): string {
+  if (wh === 0) return '0 Wh';
+  return wh >= 1 ? `${wh.toFixed(2)} Wh` : `${(wh * 1000).toFixed(0)} mWh`;
+}
+
+function formatMin(min: number): string {
+  const h = Math.floor(min / 60);
+  const m = Math.round(min % 60);
+  if (h === 0) return `${m} phút`;
+  if (m === 0) return `${h} giờ`;
+  return `${h}g ${m}p`;
+}
+
+// ── Custom Tooltip ────────────────────────────────────────────────────────────
+
+function CustomTooltip({ active, payload, label, mode }: any) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-white border border-gray-200 rounded-lg shadow-lg px-3 py-2 text-xs">
+      <p className="font-semibold text-gray-700 mb-1">{label}</p>
+      {payload.map((p: any) => (
+        <p key={p.dataKey} style={{ color: p.color }} className="flex items-center gap-1">
+          <span className="w-2 h-2 rounded-full inline-block" style={{ background: p.color }} />
+          {p.name}: {mode === 'wh' ? formatWh(p.value) : formatMin(p.value)}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+// ── Stat Mini Card ─────────────────────────────────────────────────────────────
+
+function MiniStat({
+  label,
+  wh,
+  minutes,
+  color,
+  isOn,
+}: {
+  label: string;
+  wh: number;
+  minutes: number;
+  color: string;
+  isOn: boolean;
+}) {
+  return (
+    <div className={`rounded-xl border ${isOn ? 'border-yellow-200 bg-yellow-50' : 'border-gray-100 bg-gray-50'} px-4 py-3 flex flex-col gap-1`}>
+      <div className="flex items-center gap-2">
+        <span className="text-base">💡</span>
+        <span className="text-sm font-semibold text-gray-700">{label}</span>
+        {isOn ? (
+          <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-700 font-medium animate-pulse">
+            Đang bật
+          </span>
+        ) : (
+          <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-400 font-medium">
+            Tắt
+          </span>
+        )}
+      </div>
+      <div className="flex items-end justify-between mt-1">
+        <div>
+          <span className={`text-xl font-bold ${isOn ? 'text-yellow-600' : 'text-gray-600'}`}>
+            {formatWh(wh)}
+          </span>
+          <p className="text-[11px] text-gray-400 mt-0.5">{formatMin(minutes)} hôm nay</p>
+        </div>
+        {/* Mini bar — based on 0–4 Wh range */}
+        <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden self-center">
+          <div
+            className="h-2 rounded-full transition-all duration-700"
+            style={{ width: `${Math.min((wh / 4) * 100, 100)}%`, background: color }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Component ─────────────────────────────────────────────────────────────
+
+export default function LedConsumptionChart() {
+  const { todayLed, ledHistory, ledHistoryLoading, status } = useAiContext();
+  const [mode, setMode] = useState<'wh' | 'minutes'>('wh');
+
+  const todayKey = new Date().toISOString().slice(0, 10);
+
+  // --- Build chart rows ---
+  // 1. Base: server history or seed fallback
+  const baseHistory: LedDayEntry[] =
+    ledHistory.length > 0 ? ledHistory : buildSeedHistory();
+
+  // 2. De-dup by date, keep latest, keep last 7 days
+  const byDate = new Map<string, LedDayEntry>();
+  for (const row of baseHistory) byDate.set(row.date, row);
+
+  // 3. Always show today — override with live socket data (more accurate)
+  byDate.set(todayKey, {
+    date:             todayKey,
+    led1_wh:          todayLed.led1_wh,
+    led2_wh:          todayLed.led2_wh,
+    led1_on_minutes:  todayLed.led1_on_minutes,
+    led2_on_minutes:  todayLed.led2_on_minutes,
+  });
+
+  const chartRows = Array.from(byDate.values())
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(-7);
+
+  const chartData = chartRows.map((entry) => ({
+    date:         shortDate(entry.date),
+    fullDate:     entry.date,
+    led1_wh:      parseFloat(entry.led1_wh.toFixed(4)),
+    led2_wh:      parseFloat(entry.led2_wh.toFixed(4)),
+    led1_minutes: parseFloat(entry.led1_on_minutes.toFixed(1)),
+    led2_minutes: parseFloat(entry.led2_on_minutes.toFixed(1)),
+  }));
+
+  // Totals computed from chartData — same values the chart bars display
+  const totalLed1Wh = chartData.reduce((s, d) => s + d.led1_wh, 0);
+  const totalLed2Wh = chartData.reduce((s, d) => s + d.led2_wh, 0);
+  const totalLed1Min = chartData.reduce((s, d) => s + d.led1_minutes, 0);
+  const totalLed2Min = chartData.reduce((s, d) => s + d.led2_minutes, 0);
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
+            <span className="text-sm">⚡</span>
+          </div>
+          <div>
+            <h2 className="text-sm font-semibold text-gray-800">Tiêu thụ LED theo ngày</h2>
+            <p className="text-[10px] text-gray-400">
+              Đèn 1: {LED1_POWER_W * 1000}mW · Đèn 2: {LED2_POWER_W * 1000}mW · Tính từ server · Lưu DB
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* Badge: real data vs seed */}
+          {ledHistoryLoading ? (
+            <span className="text-[10px] text-gray-400 animate-pulse">Đang tải...</span>
+          ) : ledHistory.length > 0 ? (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-50 text-green-600 font-medium">✓ Dữ liệu thực</span>
+          ) : (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-400 font-medium">Mẫu</span>
+          )}
+          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-0.5">
+          <button
+            onClick={() => setMode('wh')}
+            className={`px-2 py-1 text-xs rounded-md font-medium transition-colors ${
+              mode === 'wh' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Wh
+          </button>
+          <button
+            onClick={() => setMode('minutes')}
+            className={`px-2 py-1 text-xs rounded-md font-medium transition-colors ${
+              mode === 'minutes' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            Phút
+          </button>
+        </div>
+        </div>
+      </div>
+
+      {/* Today's live stats */}
+      <div className="grid grid-cols-2 gap-3 px-4 pt-3 pb-2">
+        <MiniStat
+          label="Đèn 1"
+          wh={todayLed.led1_wh}
+          minutes={todayLed.led1_on_minutes}
+          color="#f59e0b"
+          isOn={status?.led1 ?? false}
+        />
+        <MiniStat
+          label="Đèn 2"
+          wh={todayLed.led2_wh}
+          minutes={todayLed.led2_on_minutes}
+          color="#3b82f6"
+          isOn={status?.led2 ?? false}
+        />
+      </div>
+
+      {/* Weekly bar chart */}
+      <div className="px-2 pb-2 flex-1">
+        <ResponsiveContainer width="100%" height={180}>
+            <BarChart
+              data={chartData}
+              barCategoryGap="25%"
+              barGap={2}
+              margin={{ top: 4, right: 8, bottom: 0, left: -10 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 11, fill: '#9ca3af' }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fontSize: 10, fill: '#9ca3af' }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip content={<CustomTooltip mode={mode} />} />
+              <Legend
+                iconType="circle"
+                iconSize={7}
+                wrapperStyle={{ fontSize: '11px', paddingTop: '4px' }}
+              />
+              {mode === 'wh' ? (
+                <>
+                  <Bar dataKey="led1_wh"      name="Đèn 1 (Wh)"   fill="#f59e0b" radius={[3,3,0,0]} />
+                  <Bar dataKey="led2_wh"      name="Đèn 2 (Wh)"   fill="#3b82f6" radius={[3,3,0,0]} />
+                </>
+              ) : (
+                <>
+                  <Bar dataKey="led1_minutes" name="Đèn 1 (phút)" fill="#f59e0b" radius={[3,3,0,0]} />
+                  <Bar dataKey="led2_minutes" name="Đèn 2 (phút)" fill="#3b82f6" radius={[3,3,0,0]} />
+                </>
+              )}
+            </BarChart>
+          </ResponsiveContainer>
+      </div>
+
+      {/* Weekly summary footer — mirrors exactly what the chart shows */}
+      <div className="px-4 py-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
+        {mode === 'wh' ? (
+          <>
+            <span>
+              7 ngày · Đèn 1:{' '}
+              <span className="text-yellow-600 font-medium">{formatWh(totalLed1Wh)}</span>
+              {'  '}Đèn 2:{' '}
+              <span className="text-blue-500 font-medium">{formatWh(totalLed2Wh)}</span>
+            </span>
+            <span>
+              Tổng: <span className="text-gray-600 font-semibold">{formatWh(totalLed1Wh + totalLed2Wh)}</span>
+            </span>
+          </>
+        ) : (
+          <>
+            <span>
+              7 ngày · Đèn 1:{' '}
+              <span className="text-yellow-600 font-medium">{formatMin(totalLed1Min)}</span>
+              {'  '}Đèn 2:{' '}
+              <span className="text-blue-500 font-medium">{formatMin(totalLed2Min)}</span>
+            </span>
+            <span>
+              Tổng: <span className="text-gray-600 font-semibold">{formatMin(totalLed1Min + totalLed2Min)}</span>
+            </span>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

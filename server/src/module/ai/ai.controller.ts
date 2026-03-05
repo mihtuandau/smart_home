@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AiService } from './ai.service';
 import { AiBillingService } from './ai-billing.service';
 import { AiBaselineService } from './ai-baseline.service';
+import { AiLedStatsService } from './ai-led-stats.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('AI')
@@ -14,6 +15,7 @@ export class AiController {
     private aiService: AiService,
     private billing: AiBillingService,
     private baseline: AiBaselineService,
+    private ledStats: AiLedStatsService,
   ) {}
 
   /** Kết quả AI mới nhất (analysis, anomaly, advice, billing) */
@@ -40,5 +42,14 @@ export class AiController {
   @ApiOperation({ summary: 'Profile tiêu thụ điện trung bình theo giờ/ngày' })
   getBaseline() {
     return this.baseline.getProfile();
+  }
+
+  /** Lịch sử tiêu thụ LED theo ngày (N ngày gần nhất, bao gồm hôm nay) */
+  @Get('led-daily')
+  @ApiOperation({ summary: 'Lịch sử tiêu thụ Wh và số phút bật của từng LED' })
+  async getLedDaily(@Query('days') days?: string) {
+    const n = days ? Math.min(Math.max(parseInt(days, 10) || 7, 1), 90) : 7;
+    const history = await this.ledStats.getHistory(n);
+    return { days: n, data: history };
   }
 }
