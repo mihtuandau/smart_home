@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import StatsGrid from '@/components/dashboard/StatsGrid';
 import EnvironmentStatus from '@/components/dashboard/EnvironmentStatus';
 import DeviceControl from '@/components/dashboard/DeviceControl';
-import RecentActivitiesChart from '@/components/dashboard/RecentActivitiesChart';
+import LedConsumptionChart from '@/components/dashboard/LedConsumptionChart';
 import AIInsights from '@/components/ai/AIInsights';
 
 export default function DashboardPage() {
@@ -32,13 +32,13 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* AI Insights + Recent Activities */}
+      {/* AI Insights + LED Consumption */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-1">
           <AIInsights />
         </div>
         <div className="lg:col-span-2">
-          <RecentActivitiesChart limit={10} />
+          <LedConsumptionChart />
         </div>
       </div>
     </div>

@@ -1,3 +1,6 @@
+import type { LedDayEntry } from '../ai-led-stats.service';
+export type { LedDayEntry };
+
 /** Shape of the AI analysis result emitted after each MQTT message. */
 export interface AiResultDto {
   /** ISO timestamp of the analysis */
@@ -12,6 +15,8 @@ export interface AiResultDto {
   advice: string[];
   /** Monthly billing forecast (included periodically) */
   billing: BillingForecastDto | null;
+  /** LED daily consumption stats (today) */
+  dailyLed: LedDayEntry;
 }
 
 export interface BillingForecastDto {
