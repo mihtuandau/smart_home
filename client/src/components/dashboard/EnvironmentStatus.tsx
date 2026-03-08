@@ -89,20 +89,11 @@ export default function EnvironmentStatus() {
       </div>
       
       <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <SensorCard 
-            title="Ánh sáng (LDR)"
-            value={`${data.lightLevel} lx`}
-            badge={data.isDark ? 'Ban đêm' : 'Ban ngày'}
-            badgeColor={data.isDark ? 'bg-gray-800 text-white' : 'bg-yellow-100 text-yellow-800'}
-            borderColor="#eab308"
-            bgColor="#fef9c3"
-            icon="☀️"
-          />
+        <div className="grid grid-cols-1 gap-4">
           <SensorCard 
             title="Mưa"
             value={data.isRaining ? 'Có mưa' : 'Không mưa'}
-            badge={data.isRaining ? 'Servo: Đóng' : 'Servo: Mở'}
+            badge={data.isRaining ? 'Có' : 'Không'}
             badgeColor={data.isRaining ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}
             borderColor="#3b82f6"
             bgColor="#dbeafe"
