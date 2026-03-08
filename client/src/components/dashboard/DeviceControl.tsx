@@ -38,12 +38,6 @@ export default function DeviceControl() {
       icon: '💡' 
     },
     { 
-      name: 'Servo Motor', 
-      status: 'Auto', 
-      statusColor: 'bg-blue-100 text-blue-700', 
-      icon: '🔄' 
-    },
-    { 
       name: 'ESP32 DevKit', 
       status: 'Online', 
       statusColor: 'bg-green-100 text-green-700', 
