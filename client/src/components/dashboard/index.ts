@@ -8,5 +8,6 @@ export { default as LedConsumptionChart } from './LedConsumptionChart';
 
 // Dashboard Components Exports
 export { default as StatsGrid } from './StatsGrid';
+export { default as QuickLEDControl } from './QuickLEDControl';
 export { default as EnvironmentStatus } from './EnvironmentStatus';
 export { default as DeviceControl } from './DeviceControl';

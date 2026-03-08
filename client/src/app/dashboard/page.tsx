@@ -4,7 +4,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import StatsGrid from '@/components/dashboard/StatsGrid';
 import EnvironmentStatus from '@/components/dashboard/EnvironmentStatus';
-import DeviceControl from '@/components/dashboard/DeviceControl';
+import QuickLEDControl from '@/components/dashboard/QuickLEDControl';
 import LedConsumptionChart from '@/components/dashboard/LedConsumptionChart';
 import AIInsights from '@/components/ai/AIInsights';
 
@@ -28,7 +28,7 @@ export default function DashboardPage() {
           <EnvironmentStatus />
         </div>
         <div>
-          <DeviceControl />
+          <QuickLEDControl />
         </div>
       </div>
 

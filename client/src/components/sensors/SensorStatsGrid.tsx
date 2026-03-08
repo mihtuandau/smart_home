@@ -97,7 +97,7 @@ export default function SensorStatsGrid() {
     },
     {
       label: 'Áp suất',
-      value: data?.pressure !== undefined ? `${(data.pressure / 100).toFixed(1)} hPa` : '--',
+      value: data?.pressure !== undefined ? `${data.pressure.toFixed(1)} hPa` : '--',
       subtitle: 'BMP280 Sensor',
       color: '#8b5cf6',
       icon: (
