@@ -1,6 +1,7 @@
 'use client';
 
 import SensorStatsGrid from '@/components/sensors/SensorStatsGrid';
+import RainProbabilityPredictor from '@/components/sensors/RainProbabilityPredictor';
 import TemperatureHumidityChart from '@/components/sensors/TemperatureHumidityChart';
 import SensorHistoryTable from '@/components/sensors/SensorHistoryTable';
 
@@ -15,6 +16,9 @@ export default function SensorsPage() {
 
       {/* Sensor Stats Grid */}
       <SensorStatsGrid />
+
+      {/* Rain Probability Predictor */}
+      <RainProbabilityPredictor />
 
       {/* Charts */}
       <div className="grid grid-cols-1 gap-6">
