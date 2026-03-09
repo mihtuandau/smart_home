@@ -87,7 +87,7 @@ export default function CurrentVoltageChart() {
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-900">
           Dòng điện & Điện áp Pin

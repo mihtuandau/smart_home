@@ -33,7 +33,7 @@ export default function SolarPowerChart() {
 
   if (chartData.length === 0) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
+      <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
         <div className="mb-4">
           <h2 className="text-lg font-semibold text-gray-900">Công suất Solar Panel</h2>
           <p className="text-sm text-gray-500">Công suất phát điện theo thời gian</p>
@@ -52,7 +52,7 @@ export default function SolarPowerChart() {
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-900">Công suất Solar Panel</h2>
         <p className="text-sm text-gray-500">Công suất phát điện theo thời gian</p>

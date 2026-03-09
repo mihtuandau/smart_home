@@ -88,7 +88,7 @@ export default function EnvironmentStatus() {
   const colorScheme = getColorScheme(rainProbability);
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-900">Trạng thái môi trường</h2>
         <p className="text-sm text-gray-500 mt-1">Thông tin từ các cảm biến và thiết bị</p>

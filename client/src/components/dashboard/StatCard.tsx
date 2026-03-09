@@ -12,7 +12,7 @@ interface StatCardProps {
 export default function StatCard({ label, value, color, subtitle, progress, index }: StatCardProps) {
   return (
     <div
-      className="relative bg-white rounded-lg p-5 border-l-4 border-t border-r border-b border-gray-100 transition-shadow hover:shadow-md"
+      className="relative bg-white rounded-lg p-4 md:p-5 border-l-4 border-t border-r border-b border-gray-100 transition-shadow hover:shadow-md"
       style={{ borderLeftColor: color }}
     >
       <div className="mb-3">
@@ -20,7 +20,7 @@ export default function StatCard({ label, value, color, subtitle, progress, inde
       </div>
       
       <div className="mb-2">
-        <h3 className="text-3xl font-bold text-gray-900">{value}</h3>
+        <h3 className="text-2xl md:text-3xl font-bold text-gray-900">{value}</h3>
       </div>
       
       {subtitle && (

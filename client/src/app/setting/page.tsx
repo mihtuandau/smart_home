@@ -17,22 +17,22 @@ export default function SettingsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">⚙️ Cài đặt</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Cài đặt</h1>
         <p className="text-gray-600 mt-1">Quản lý thông tin cá nhân và cài đặt hệ thống</p>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 flex gap-8">
+      <div className="border-b border-gray-200 flex gap-1 sm:gap-6 overflow-x-auto">
         {[
-          { id: 'profile', label: '👤 Hồ sơ' },
-          { id: 'password', label: '🔐 Mật khẩu' },
-          { id: 'system', label: '🖥️ Hệ thống' },
-          { id: 'notifications', label: '🔔 Thông báo' },
+          { id: 'profile', label: 'Hồ sơ' },
+          { id: 'password', label: 'Mật khẩu' },
+          { id: 'system', label: 'Hệ thống' },
+          { id: 'notifications', label: 'Thông báo' },
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-3 font-medium border-b-2 transition ${
+            className={`px-2 sm:px-4 py-3 font-medium border-b-2 transition whitespace-nowrap text-sm ${
               activeTab === tab.id
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-600 hover:text-gray-900'
