@@ -142,7 +142,7 @@ export default function RainProbabilityPredictor() {
   const factors = getFactorAnalysis();
 
   return (
-    <div className={`rounded-lg p-6 border-2 ${colorScheme.bg}`} style={{ borderColor: colorScheme.border }}>
+    <div className={`rounded-lg p-4 sm:p-6 border-2 ${colorScheme.bg}`} style={{ borderColor: colorScheme.border }}>
       <div className="mb-6">
         <h2 className={`text-lg font-bold ${colorScheme.text} mb-1`}>🔮 Liệu hôm nay có mưa không?</h2>
         <p className="text-sm text-gray-600">Dự báo dựa trên: Áp suất (50%) + Độ ẩm (35%) + Nhiệt độ (15%)</p>
@@ -151,7 +151,7 @@ export default function RainProbabilityPredictor() {
       {/* Hiển thị xác suất chính - Lớn và nổi bật */}
       <div className="mb-6 bg-white/80 rounded-lg p-4 border border-gray-200">
         <div className="text-center mb-3">
-          <span className={`text-5xl font-bold ${colorScheme.text}`}>{probability}%</span>
+          <span className={`text-4xl sm:text-5xl font-bold ${colorScheme.text}`}>{probability}%</span>
           <p className="text-sm text-gray-600 mt-1">Khả năng mưa</p>
         </div>
         <div className="bg-gray-200 rounded-full h-4 overflow-hidden">

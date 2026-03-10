@@ -32,8 +32,8 @@ function EnergyStatCard({
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-sm transition-shadow">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200 hover:shadow-sm transition-shadow">
+      <div className="flex items-center justify-between mb-3 md:mb-4">
         <span className="text-sm text-gray-600">{title}</span>
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -43,8 +43,8 @@ function EnergyStatCard({
         </div>
       </div>
       <div className="mb-2">
-        <span className="text-4xl font-bold text-gray-900">{value}</span>
-        <span className="text-xl text-gray-500 ml-1">{unit}</span>
+        <span className="text-2xl md:text-4xl font-bold text-gray-900">{value}</span>
+        <span className="text-base md:text-xl text-gray-500 ml-1">{unit}</span>
       </div>
       <div className="flex items-center gap-2">
         <span className="text-xs text-gray-500">{subtitle}</span>

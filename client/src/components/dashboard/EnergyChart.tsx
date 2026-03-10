@@ -104,16 +104,9 @@ const EnergyChart: React.FC<EnergyChartProps> = ({ hours = 24 }) => {
   const peakConsumption = hasData ? Math.max(...rawData.map((item: any) => item.energy || 0)) : 0;
   
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
-            <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          Biểu đồ Năng lượng
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900">Biểu đồ Năng lượng</h2>
         <div className="text-sm text-gray-500">
           {hours} giờ qua
         </div>
