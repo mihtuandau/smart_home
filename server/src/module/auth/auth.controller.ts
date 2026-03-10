@@ -16,7 +16,8 @@ import {
   ApiBearerAuth,
   ApiBody,
 } from '@nestjs/swagger';
-import { AuthService, UpdateProfileDto, ChangePasswordDto } from './auth.service';
+import { AuthService } from './auth.service';
+import type { UpdateProfileDto, ChangePasswordDto } from './auth.service';
 import { LoginDto, RegisterDto, AuthResponseDto } from './dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
