@@ -10,6 +10,16 @@ import { LoginDto, RegisterDto, AuthResponseDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { UserRole } from '@prisma/client';
 
+export interface UpdateProfileDto {
+  username?: string;
+  email?: string;
+}
+
+export interface ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -136,6 +146,52 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  async updateProfile(userId: string, dto: UpdateProfileDto) {
+    const { username, email } = dto;
+
+    if (username) {
+      const existing = await this.prismaService.user.findFirst({
+        where: { username, NOT: { id: userId } },
+      });
+      if (existing) throw new ConflictException('Username already taken');
+    }
+
+    if (email) {
+      const existing = await this.prismaService.user.findFirst({
+        where: { email, NOT: { id: userId } },
+      });
+      if (existing) throw new ConflictException('Email already taken');
+    }
+
+    return this.prismaService.user.update({
+      where: { id: userId },
+      data: { ...(username && { username }), ...(email && { email }) },
+      select: { id: true, email: true, username: true, role: true },
+    });
+  }
+
+  async changePassword(userId: string, dto: ChangePasswordDto) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) throw new BadRequestException('User not found');
+
+    const isValid = await bcrypt.compare(dto.currentPassword, user.password);
+    if (!isValid) throw new UnauthorizedException('Current password is incorrect');
+
+    if (dto.newPassword.length < 6) {
+      throw new BadRequestException('New password must be at least 6 characters');
+    }
+
+    const hashed = await bcrypt.hash(dto.newPassword, 10);
+    await this.prismaService.user.update({
+      where: { id: userId },
+      data: { password: hashed },
+    });
+
+    return { message: 'Password changed successfully' };
   }
 
   private generateToken(user: {

@@ -1,6 +1,8 @@
-import { Controller, Get, Query, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { EnergyService } from './energy.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('energy')
 export class EnergyController {
   constructor(private energyService: EnergyService) {}

@@ -10,6 +10,12 @@ export * from './useDashboard';
 // Automation hooks
 export * from './useAutomation';
 
+// Energy hooks
+export { energyKeys, useBatteryStatus, useSolarStats, usePowerSources, useEfficiencyMetrics } from './useEnergy';
+
+// Billing hooks
+export * from './useBilling';
+
 // Socket hooks - explicit exports to avoid naming conflicts
 export {
   useSocket,

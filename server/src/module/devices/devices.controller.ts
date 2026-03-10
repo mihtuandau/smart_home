@@ -7,11 +7,14 @@ import {
   Body,
   Query,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { DevicesService } from './devices.service';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { DeviceType } from '@prisma/client';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('devices')
 export class DevicesController {
   constructor(private devicesService: DevicesService) {}

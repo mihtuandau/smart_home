@@ -6,6 +6,8 @@ export { devicesApi } from './devices';
 export { iotApi } from './iot';
 export { automationApi } from './automation';
 export { energyApi } from './energy';
+export { aiApi } from './ai';
+export { settingsApi } from './settings';
 
 // Re-export all APIs as default for convenience
 import { authApi } from './auth';
@@ -15,6 +17,8 @@ import { devicesApi } from './devices';
 import { iotApi } from './iot';
 import { automationApi } from './automation';
 import { energyApi } from './energy';
+import { aiApi } from './ai';
+import { settingsApi } from './settings';
 
 export const api = {
   auth: authApi,
@@ -24,6 +28,8 @@ export const api = {
   iot: iotApi,
   automation: automationApi,
   energy: energyApi,
+  ai: aiApi,
+  settings: settingsApi,
 };
 
 export default api;
