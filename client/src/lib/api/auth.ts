@@ -3,14 +3,14 @@ import { API_ENDPOINTS } from '@/config';
 
 export const authApi = {
   async login(email: string, password: string) {
-    const data = await apiClient.request<{ access_token: string; user: any }>(
+    const data = await apiClient.request<{ accessToken: string; user: any }>(
       API_ENDPOINTS.LOGIN,
       {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }
     );
-    apiClient.setToken(data.access_token);
+    apiClient.setToken(data.accessToken);
     return data;
   },
 
