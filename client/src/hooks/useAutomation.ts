@@ -1,8 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { automationService, type AutomationRule, type CreateAutomationData, type UpdateAutomationData } from '@/services/automation.service';
+import { useAuth } from '@/contexts/AuthContext';
 import toast from 'react-hot-toast';
 
 export function useAutomation() {
+  const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
 
   // Lấy tất cả automation rules
@@ -14,6 +16,7 @@ export function useAutomation() {
   } = useQuery<AutomationRule[]>({
     queryKey: ['automation', 'rules'],
     queryFn: automationService.getAllRules,
+    enabled: isAuthenticated,
   });
 
   // Lấy automation rules đang hoạt động
@@ -23,6 +26,7 @@ export function useAutomation() {
   } = useQuery<AutomationRule[]>({
     queryKey: ['automation', 'active'],
     queryFn: automationService.getActiveRules,
+    enabled: isAuthenticated,
   });
 
   // Tạo automation rule mới

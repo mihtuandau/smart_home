@@ -37,6 +37,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const token = authService.getStoredToken();
 
         if (storedUser && token) {
+          // Set token on API client before making requests
+          authService.setTokenOnClient(token);
+          
           // Verify token by fetching profile
           const profile = await authService.getProfile();
           setUser(profile);
