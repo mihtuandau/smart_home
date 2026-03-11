@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { deviceService } from '../services/device.service';
+import { useAuth } from '../contexts/AuthContext';
 
 // Query keys
 export const deviceKeys = {
@@ -15,34 +16,42 @@ export const deviceKeys = {
 
 // Get all devices
 export const useDevices = () => {
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: deviceKeys.lists(),
     queryFn: deviceService.getDevices,
+    enabled: isAuthenticated,
   });
 };
 
 // Get device stats
 export const useDeviceStats = () => {
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: deviceKeys.stats(),
     queryFn: deviceService.getDeviceStats,
+    enabled: isAuthenticated,
   });
 };
 
 // Get latest IoT data
 export const useLatestDeviceData = (refetchInterval?: number) => {
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: deviceKeys.latestData(),
     queryFn: deviceService.getLatestData,
+    enabled: isAuthenticated,
     refetchInterval: refetchInterval ?? 5000, // Refetch every 5 seconds by default; undefined disables polling
   });
 };
 
 // Get IoT status
 export const useDeviceStatus = (refetchInterval?: number) => {
+  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: deviceKeys.status(),
     queryFn: deviceService.getStatus,
+    enabled: isAuthenticated,
     refetchInterval: refetchInterval || 10000, // Refetch every 10 seconds by default
   });
 };

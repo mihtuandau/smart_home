@@ -6,13 +6,16 @@ import {
   Delete,
   Param,
   Body,
+  UseGuards,
 } from '@nestjs/common';
 import { AutomationService } from './automation.service';
 import {
   CreateAutomationRuleDto,
   UpdateAutomationRuleDto,
 } from './dto/automation.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('automation')
 export class AutomationController {
   constructor(private automationService: AutomationService) {}

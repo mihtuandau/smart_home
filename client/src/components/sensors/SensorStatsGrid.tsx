@@ -27,11 +27,11 @@ interface StatCardProps {
 
 function SensorStatCard({ label, value, subtitle, color, icon, trend }: StatCardProps) {
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200 hover:shadow-lg transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <p className="text-sm text-gray-500 mb-1">{label}</p>
-          <p className="text-3xl font-bold text-gray-900 mb-1">{value}</p>
+          <p className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{value}</p>
           <p className="text-xs text-gray-400">{subtitle}</p>
           {trend && (
             <div className={`flex items-center gap-1 mt-2 text-sm ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
@@ -97,7 +97,7 @@ export default function SensorStatsGrid() {
     },
     {
       label: 'Áp suất',
-      value: data?.pressure !== undefined ? `${(data.pressure / 100).toFixed(1)} hPa` : '--',
+      value: data?.pressure !== undefined ? `${data.pressure.toFixed(1)} hPa` : '--',
       subtitle: 'BMP280 Sensor',
       color: '#8b5cf6',
       icon: (

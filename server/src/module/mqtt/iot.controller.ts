@@ -5,11 +5,14 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { MqttService } from './mqtt.service';
 import { PrismaService } from '../../common/prisma.service';
 import { ControlLedDto } from './dto/control-led.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('iot')
 export class IotController {
   constructor(

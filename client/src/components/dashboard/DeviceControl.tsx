@@ -38,12 +38,6 @@ export default function DeviceControl() {
       icon: '💡' 
     },
     { 
-      name: 'Servo Motor', 
-      status: 'Auto', 
-      statusColor: 'bg-blue-100 text-blue-700', 
-      icon: '🔄' 
-    },
-    { 
       name: 'ESP32 DevKit', 
       status: 'Online', 
       statusColor: 'bg-green-100 text-green-700', 
@@ -58,7 +52,7 @@ export default function DeviceControl() {
   ];
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-900">Thiết bị điều khiển</h2>
         <p className="text-sm text-gray-500 mt-1">Trạng thái các thiết bị</p>

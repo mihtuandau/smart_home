@@ -26,14 +26,9 @@ export default function SensorHistoryTable() {
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-          </svg>
-          Lịch sử cảm biến
-        </h2>
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">Lịch sử cảm biến</h2>
         <div className="flex gap-2">
           <select
             value={hours}
@@ -45,6 +40,7 @@ export default function SensorHistoryTable() {
             <option value={24}>24 giờ qua</option>
             <option value={48}>48 giờ qua</option>
             <option value={168}>7 ngày qua</option>
+            <option value={720}>30 ngày qua</option>
           </select>
           <button className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
             Xuất CSV
@@ -94,7 +90,7 @@ export default function SensorHistoryTable() {
         </div>
       )}
 
-      <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-gray-500">
         <span>Hiển thị {data.length} / {total} bản ghi</span>
         <div className="flex items-center gap-2">
           <button

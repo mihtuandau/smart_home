@@ -56,16 +56,9 @@ const RecentActivitiesChart: React.FC<RecentActivitiesChartProps> = ({ limit = 1
   const chartData = Object.values(activityTypes);
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-          <div className="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center">
-            <svg className="w-4 h-4 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"/>
-            </svg>
-          </div>
-          Hoạt động gần đây
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900">Hoạt động gần đây</h2>
         <div className="text-sm text-gray-500">
           {activities.length} hoạt động
         </div>

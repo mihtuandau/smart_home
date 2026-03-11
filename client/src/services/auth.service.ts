@@ -1,15 +1,16 @@
 import { AuthResponse, LoginCredentials, User } from '../types';
 import { authApi } from '../lib/api';
+import { apiClient } from '@/lib/api/client';
 
 class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await authApi.login(credentials.email, credentials.password);
     this.saveAuthData({
-      accessToken: response.access_token,
+      accessToken: response.accessToken,
       user: response.user
     });
     return {
-      accessToken: response.access_token,
+      accessToken: response.accessToken,
       user: response.user
     };
   }
@@ -26,8 +27,13 @@ class AuthService {
   }
 
   saveAuthData(authResponse: AuthResponse) {
-    if (typeof window !== 'undefined' && authResponse.user) {
-      localStorage.setItem('user', JSON.stringify(authResponse.user));
+    if (typeof window !== 'undefined') {
+      if (authResponse.user) {
+        localStorage.setItem('user', JSON.stringify(authResponse.user));
+      }
+      if (authResponse.accessToken) {
+        localStorage.setItem('auth_token', authResponse.accessToken);
+      }
     }
   }
 
@@ -44,6 +50,10 @@ class AuthService {
       return localStorage.getItem('auth_token');
     }
     return null;
+  }
+
+  setTokenOnClient(token: string): void {
+    apiClient.setToken(token);
   }
 }
 

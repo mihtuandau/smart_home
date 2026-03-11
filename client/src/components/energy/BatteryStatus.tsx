@@ -41,7 +41,7 @@ export default function BatteryStatus() {
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
           <svg

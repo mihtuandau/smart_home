@@ -1,6 +1,7 @@
 'use client';
 
 import { useSensors } from '@/hooks/useSensors';
+import { calculateRainProbability, getColorScheme } from '@/lib/rainProbabilityUtils';
 
 
 interface SensorCardProps {
@@ -81,39 +82,35 @@ export default function EnvironmentStatus() {
     );
   }
 
+  // Tính xác suất mưa dùng weighted formula (3 yếu tố)
+  const analysis = calculateRainProbability(data.temperature, data.humidity, data.pressure, data.isRaining);
+  const rainProbability = analysis.probability;
+  const colorScheme = getColorScheme(rainProbability);
+
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
       <div className="mb-4">
         <h2 className="text-lg font-semibold text-gray-900">Trạng thái môi trường</h2>
         <p className="text-sm text-gray-500 mt-1">Thông tin từ các cảm biến và thiết bị</p>
       </div>
       
       <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <SensorCard 
-            title="Ánh sáng (LDR)"
-            value={`${data.lightLevel} lx`}
-            badge={data.isDark ? 'Ban đêm' : 'Ban ngày'}
-            badgeColor={data.isDark ? 'bg-gray-800 text-white' : 'bg-yellow-100 text-yellow-800'}
-            borderColor="#eab308"
-            bgColor="#fef9c3"
-            icon="☀️"
-          />
-          <SensorCard 
-            title="Mưa"
-            value={data.isRaining ? 'Có mưa' : 'Không mưa'}
-            badge={data.isRaining ? 'Servo: Đóng' : 'Servo: Mở'}
-            badgeColor={data.isRaining ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}
-            borderColor="#3b82f6"
-            bgColor="#dbeafe"
-            icon="🌧️"
+            title="Xác suất mưa"
+            value={`${rainProbability}%`}
+            badge={data.isRaining ? '🌧️ Đang mưa' : rainProbability >= 80 ? '⚠️ Cao' : rainProbability >= 60 ? '⚡ Trung' : rainProbability >= 40 ? '☁️ Thấp-Trung' : '☀️ Thấp'}
+            badgeColor={colorScheme.badge}
+            borderColor={colorScheme.border}
+            bgColor={colorScheme.bg}
+            icon="🔮"
           />
         </div>
         
         <PressureCard 
           title="Áp suất khí quyển (BMP280)"
-          subtitle="Áp suất hiện tại"
-          value={`${data.pressure.toFixed(2)} hPa`}
+          subtitle="Áp suất hiện tại (dùng để tính xác suất mưa)"
+          value={`${data.pressure.toFixed(1)} hPa`}
           status="Ổn định"
           borderColor="#a855f7"
           bgColor="#f3e8ff"
