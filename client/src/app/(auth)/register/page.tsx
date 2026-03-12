@@ -4,39 +4,51 @@ import React, { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authApi } from '@/lib/api';
+import { registerSchema } from '@/lib/validations/auth';
 
 export default function RegisterPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    username: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
   const [error, setError] = useState<string>('');
+  const [fieldErrors, setFieldErrors] = useState<{
+    name?: string;
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
+  }>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
+    setFieldErrors({});
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp.');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('Mật khẩu phải có ít nhất 6 ký tự.');
+    // Validate bằng Zod schema (bao gồm kiểm tra confirmPassword)
+    const result = registerSchema.safeParse(formData);
+    if (!result.success) {
+      const errors: typeof fieldErrors = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof typeof errors;
+        if (!errors[field]) errors[field] = issue.message;
+      });
+      setFieldErrors(errors);
       return;
     }
 
     setIsLoading(true);
     try {
-      await authApi.register(formData.username, formData.email, formData.password);
+      // Dùng name làm username
+      await authApi.register(formData.name, formData.email, formData.password);
       router.push('/login?registered=1');
-    } catch (err: any) {
-      setError(err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Đăng ký thất bại. Vui lòng thử lại.';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +69,7 @@ export default function RegisterPage() {
             <p className="text-gray-600 text-sm">Đăng ký để quản lý nhà thông minh của bạn</p>
           </div>
 
-          {/* Error Message */}
+          {/* API Error */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6 flex items-center gap-2">
               <svg className="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -68,9 +80,9 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Username */}
+            {/* Name */}
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                 Tên người dùng
               </label>
               <div className="relative">
@@ -80,17 +92,17 @@ export default function RegisterPage() {
                   </svg>
                 </div>
                 <input
-                  id="username"
+                  id="name"
                   type="text"
-                  required
-                  minLength={3}
-                  maxLength={20}
-                  value={formData.username}
-                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                    fieldErrors.name ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                  }`}
                   placeholder="username"
                 />
               </div>
+              {fieldErrors.name && <p className="mt-1 text-xs text-red-600">{fieldErrors.name}</p>}
             </div>
 
             {/* Email */}
@@ -107,13 +119,15 @@ export default function RegisterPage() {
                 <input
                   id="email"
                   type="email"
-                  required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                    fieldErrors.email ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                  }`}
                   placeholder="your@email.com"
                 />
               </div>
+              {fieldErrors.email && <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>}
             </div>
 
             {/* Password */}
@@ -130,14 +144,15 @@ export default function RegisterPage() {
                 <input
                   id="password"
                   type="password"
-                  required
-                  minLength={6}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                    fieldErrors.password ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                  }`}
                   placeholder="••••••••"
                 />
               </div>
+              {fieldErrors.password && <p className="mt-1 text-xs text-red-600">{fieldErrors.password}</p>}
             </div>
 
             {/* Confirm Password */}
@@ -154,16 +169,18 @@ export default function RegisterPage() {
                 <input
                   id="confirmPassword"
                   type="password"
-                  required
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                  className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                    fieldErrors.confirmPassword ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                  }`}
                   placeholder="••••••••"
                 />
               </div>
+              {fieldErrors.confirmPassword && <p className="mt-1 text-xs text-red-600">{fieldErrors.confirmPassword}</p>}
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading}

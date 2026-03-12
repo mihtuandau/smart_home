@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { dashboardService } from '../services/dashboard.service';
 import { useAuth } from '../contexts/AuthContext';
+import { QUERY_CONFIG } from '@/config';
+
 
 export const dashboardKeys = {
   all: ['dashboard'] as const,
@@ -15,10 +17,10 @@ export const useDashboardOverview = () => {
   return useQuery({
     queryKey: dashboardKeys.overview(),
     queryFn: dashboardService.getOverview,
-    staleTime: 1000 * 60 * 2,
-    gcTime: 1000 * 60 * 5,
+    staleTime: QUERY_CONFIG.STALE_TIME.DASHBOARD,
+    gcTime: QUERY_CONFIG.CACHE_TIME,
     enabled: isAuthenticated,
-    retry: 1,
+    retry: QUERY_CONFIG.RETRY,
   });
 };
 
@@ -27,10 +29,10 @@ export const useEnergyStats = (hours: number = 24) => {
   return useQuery({
     queryKey: dashboardKeys.energy(hours),
     queryFn: () => dashboardService.getEnergyStats(hours),
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10,
+    staleTime: QUERY_CONFIG.STALE_TIME.ENERGY,
+    gcTime: QUERY_CONFIG.CACHE_TIME,
     enabled: isAuthenticated,
-    retry: 1,
+    retry: QUERY_CONFIG.RETRY,
   });
 };
 
@@ -39,10 +41,10 @@ export const useSystemHealth = (refetchInterval?: number) => {
   return useQuery({
     queryKey: dashboardKeys.health(),
     queryFn: dashboardService.getSystemHealth,
-    refetchInterval: refetchInterval || 30000,
+    refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SYSTEM_HEALTH,
     enabled: isAuthenticated,
-    gcTime: 1000 * 60 * 5,
-    retry: 1,
+    gcTime: QUERY_CONFIG.CACHE_TIME,
+    retry: QUERY_CONFIG.RETRY,
   });
 };
 
@@ -51,9 +53,9 @@ export const useRecentActivities = (limit: number = 10) => {
   return useQuery({
     queryKey: dashboardKeys.activities(limit),
     queryFn: () => dashboardService.getRecentActivities(limit),
-    staleTime: 1000 * 60,
-    gcTime: 1000 * 60 * 3,
+    staleTime: QUERY_CONFIG.STALE_TIME.DEFAULT,
+    gcTime: QUERY_CONFIG.CACHE_TIME,
     enabled: isAuthenticated,
-    retry: 1,
+    retry: QUERY_CONFIG.RETRY,
   });
 };

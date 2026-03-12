@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { sensorService } from '../services/sensor.service';
 import { useAuth } from '../contexts/AuthContext';
+import { QUERY_CONFIG } from '@/config';
+
 
 // Query keys
 export const sensorKeys = {
@@ -21,7 +23,7 @@ export const useSensors = (limit: number = 10, refetchInterval?: number) => {
     queryKey: sensorKeys.list(limit),
     queryFn: () => sensorService.getSensors(limit),
     enabled: isAuthenticated,
-    refetchInterval: refetchInterval || 5000, // Refetch every 5 seconds by default
+    refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SENSORS,
   });
 };
 
@@ -32,7 +34,7 @@ export const useCurrentSensors = (refetchInterval?: number) => {
     queryKey: sensorKeys.current(),
     queryFn: sensorService.getCurrentSensors,
     enabled: isAuthenticated,
-    refetchInterval: refetchInterval || 5000, // Refetch every 5 seconds by default
+    refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SENSORS,
   });
 };
 
@@ -42,7 +44,7 @@ export const useSensorHistory = (hours: number = 24, page: number = 1, pageSize:
   return useQuery({
     queryKey: sensorKeys.history(hours, page, pageSize),
     queryFn: () => sensorService.getSensorHistory(hours, page, pageSize),
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: QUERY_CONFIG.STALE_TIME.SENSORS,
     enabled: isAuthenticated,
   });
 };
@@ -53,7 +55,7 @@ export const useSensorStats = () => {
   return useQuery({
     queryKey: sensorKeys.stats(),
     queryFn: sensorService.getSensorStats,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: QUERY_CONFIG.STALE_TIME.DEFAULT,
     enabled: isAuthenticated,
   });
 };
@@ -63,8 +65,8 @@ export const useSensorChart = (type: string) => {
   return useQuery({
     queryKey: sensorKeys.chart(type),
     queryFn: () => sensorService.getSensorChart(type),
-    enabled: !!type, // Only fetch if type is provided
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    enabled: !!type,
+    staleTime: QUERY_CONFIG.STALE_TIME.SENSORS,
   });
 };
 
@@ -75,7 +77,7 @@ export const useIoTSensors = (refetchInterval?: number) => {
     queryKey: sensorKeys.iot(),
     queryFn: sensorService.getIoTSensors,
     enabled: isAuthenticated,
-    refetchInterval: refetchInterval || 5000, // Refetch every 5 seconds by default
+    refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SENSORS,
   });
 };
 
