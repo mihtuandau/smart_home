@@ -4,6 +4,7 @@ import React, { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { LoginCredentials } from '@/types';
+import { loginSchema } from '@/lib/validations/auth';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,18 +15,33 @@ export default function LoginPage() {
     password: '',
   });
   const [error, setError] = useState<string>('');
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
+    setFieldErrors({});
 
+    // Validate bằng Zod schema
+    const result = loginSchema.safeParse(credentials);
+    if (!result.success) {
+      const errors: { email?: string; password?: string } = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as 'email' | 'password';
+        if (!errors[field]) errors[field] = issue.message;
+      });
+      setFieldErrors(errors);
+      return;
+    }
+
+    setIsLoading(true);
     try {
       await login(credentials);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Đăng nhập thất bại. Vui lòng thử lại.';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -34,7 +50,6 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 px-4 py-12">
       <div className="max-w-md w-full space-y-8">
-        {/* Glass Card */}
         <div className="bg-white/80 backdrop-blur-sm border border-gray-200 p-10 rounded-2xl shadow-xl">
           {/* Logo & Title */}
           <div className="text-center mb-8">
@@ -47,20 +62,19 @@ export default function LoginPage() {
             <p className="text-gray-600 text-sm">Quản lý nhà thông minh của bạn</p>
           </div>
 
-          {/* Error Message */}
+          {/* API Error */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6 flex items-center gap-2">
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
               {error}
             </div>
           )}
 
-          {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-4">
-              {/* Email Input */}
+              {/* Email */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                   Email
@@ -76,16 +90,20 @@ export default function LoginPage() {
                     name="email"
                     type="email"
                     autoComplete="email"
-                    required
                     value={credentials.email}
                     onChange={(e) => setCredentials({ ...credentials, email: e.target.value })}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                      fieldErrors.email ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                    }`}
                     placeholder="your@email.com"
                   />
                 </div>
+                {fieldErrors.email && (
+                  <p className="mt-1 text-xs text-red-600">{fieldErrors.email}</p>
+                )}
               </div>
 
-              {/* Password Input */}
+              {/* Password */}
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                   Mật khẩu
@@ -101,13 +119,17 @@ export default function LoginPage() {
                     name="password"
                     type="password"
                     autoComplete="current-password"
-                    required
                     value={credentials.password}
                     onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400"
+                    className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder-gray-400 ${
+                      fieldErrors.password ? 'border-red-400 bg-red-50' : 'border-gray-300'
+                    }`}
                     placeholder="••••••••"
                   />
                 </div>
+                {fieldErrors.password && (
+                  <p className="mt-1 text-xs text-red-600">{fieldErrors.password}</p>
+                )}
               </div>
             </div>
 
@@ -124,7 +146,6 @@ export default function LoginPage() {
                   Ghi nhớ đăng nhập
                 </label>
               </div>
-
               <div className="text-sm">
                 <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
                   Quên mật khẩu?
@@ -132,7 +153,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={isLoading}

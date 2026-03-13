@@ -1,8 +1,8 @@
-import { type ClassValue, clsx } from 'clsx';
-
-export function cn(...inputs: ClassValue[]) {
-  return clsx(inputs);
-}
+/**
+ * @deprecated Dùng `@/lib/utils` thay thế.
+ * File này sẽ bị xoá. Các hàm đã được chuyển sang `lib/utils.ts` (có thêm twMerge).
+ */
+export { cn } from '@/lib/utils';
 
 export function formatDate(date: string | Date): string {
   const d = new Date(date);

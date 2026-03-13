@@ -16,7 +16,8 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
     if (pathname === '/sensors') return 'Cảm biến';
     if (pathname?.includes('/devices')) return 'Thiết bị';
     if (pathname?.includes('/automation')) return 'Tự động hóa';
-    if (pathname?.includes('/setting')) return 'Cài đặt';
+    if (pathname?.includes('/settings')) return 'Cài đặt';
+    if (pathname?.includes('/reports')) return 'Báo cáo';
     return 'Dashboard';
   };
 
@@ -24,6 +25,10 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
     if (pathname === '/dashboard') return 'Giám sát và điều khiển hệ thống Smart Home';
     if (pathname === '/energy') return 'Theo dõi hệ thống năng lượng mặt trời và pin';
     if (pathname === '/sensors') return 'Theo dõi các thông số môi trường từ cảm biến';
+    if (pathname?.includes('/devices')) return 'Ngắt tắt, bật đèn LED và quản lý thiết bị IoT';
+    if (pathname?.includes('/automation')) return 'Tạo và quản lý quy tắc tự động hóa';
+    if (pathname?.includes('/settings')) return 'Cấu hình hệ thống và tài khoản';
+    if (pathname?.includes('/reports')) return 'Xem báo cáo chi tiết và xuất dữ liệu';
     return '';
   };
 
