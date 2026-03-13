@@ -1,9 +1,11 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import * as mqtt from 'mqtt';
 import { MQTT_CONFIG, MQTT_TOPICS } from '../../config/mqtt.config';
-import { PrismaService } from '../../common/prisma.service';
 import { AiService } from '../ai/ai.service';
-import { PowerSource } from '@prisma/client';
+import { MqttPersistenceService } from './mqtt-persistence.service';
+import { MqttDeviceStateService } from './mqtt-device-state.service';
+import { MqttCommandService } from './mqtt-command.service';
+import { MqttPersistenceDecisionService } from './mqtt-persistence-decision.service';
 
 export interface SensorPayload {
   temperature: number;
@@ -17,28 +19,24 @@ export interface SensorPayload {
   led2: boolean;
 }
 
+/**
+ * Main MQTT service responsible for:
+ * - Connecting to MQTT broker
+ * - Receiving sensor data
+ * - Orchestrating persistence, device state updates, and commands
+ * - Providing access to latest sensor data
+ */
 @Injectable()
 export class MqttService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(MqttService.name);
   private mqttClient: mqtt.MqttClient;
   private latestData: SensorPayload | null = null;
-  private lastPersisted: { timestamp: number; data: SensorPayload } | null = null;
-  private lastLedState: { led1?: boolean; led2?: boolean } = {};
-  /** Timestamp (ms) của lần lưu power_data trước — dùng tính energy đúng */
-  private lastPowerSavedAt: number | null = null;
-
-  private static readonly HEARTBEAT_MS = 10 * 60 * 1000; // 10 minutes (optimized)
-  private static readonly THRESHOLDS = {
-    temperature: 0.5,    // 0.5°C
-    humidity: 5.0,       // 5%
-    pressure: 10,        // 10 Pa (hPa × 100)
-    voltage: 0.1,
-    current: 0.05,
-    power: 0.2,
-  };
+  private commandService: MqttCommandService;
 
   constructor(
-    private prisma: PrismaService,
+    private persistenceService: MqttPersistenceService,
+    private deviceStateService: MqttDeviceStateService,
+    private persistenceDecision: MqttPersistenceDecisionService,
     private aiService: AiService,
   ) {}
 
@@ -55,7 +53,7 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
   private connectMqtt() {
     const url = `${MQTT_CONFIG.protocol}://${MQTT_CONFIG.host}:${MQTT_CONFIG.port}`;
-    
+
     this.logger.log('🔄 Connecting to MQTT broker...');
     this.logger.log(`📍 URL: ${url}`);
     this.logger.log(`👤 Username: ${MQTT_CONFIG.username}`);
@@ -71,9 +69,14 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       rejectUnauthorized: MQTT_CONFIG.rejectUnauthorized,
     });
 
+    // Initialize command service after client is created
+    this.commandService = new MqttCommandService(this.mqttClient);
+
     this.mqttClient.on('connect', () => {
       this.logger.log('✅ Connected to EMQX broker successfully!');
-      this.logger.log(`📊 Connection status: ${this.mqttClient.connected ? 'CONNECTED' : 'DISCONNECTED'}`);
+      this.logger.log(
+        `📊 Connection status: ${this.mqttClient.connected ? 'CONNECTED' : 'DISCONNECTED'}`,
+      );
       this.subscribeToTopics();
     });
 
@@ -113,246 +116,116 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       if (topic === MQTT_TOPICS.DATA_TOPIC) {
         const data: SensorPayload = JSON.parse(message);
         this.latestData = data;
-        
-        this.logger.log(`🌡️  Temp: ${data.temperature}°C | 💧 Humidity: ${data.humidity}% | 🔋 Voltage: ${data.voltage}V`);
-        this.logger.log(`💡 LED1: ${data.led1 ? 'ON' : 'OFF'} | LED2: ${data.led2 ? 'ON' : 'OFF'}`);
-        const shouldPersist = this.shouldPersistRaw(data);
-        if (shouldPersist) {
-          await this.saveSensorData(data);
-          await this.savePowerData(data);
-          this.lastPersisted = { timestamp: Date.now(), data };
-          this.logger.log('💾 Data saved to database successfully');
-        }
 
-        await this.updateDeviceStatesIfChanged(data);
+        this.logger.log(
+          `🌡️  Temp: ${data.temperature}°C | 💧 Humidity: ${data.humidity}% | 🔋 Voltage: ${data.voltage}V`,
+        );
+        this.logger.log(
+          `💡 LED1: ${data.led1 ? 'ON' : 'OFF'} | LED2: ${data.led2 ? 'ON' : 'OFF'}`,
+        );
 
-        // AI analysis — equivalent to on_message() in ai_mqtt.py
-        try {
-          await this.aiService.analyze(data);
-        } catch (aiErr) {
-          this.logger.debug(`AI analysis error: ${aiErr.message}`);
-        }
+        // Process sensor data
+        await this.processSensorData(data);
       }
     } catch (error) {
       this.logger.error(`Error handling message: ${error.message}`);
     }
   }
 
-  private shouldPersistRaw(data: SensorPayload): boolean {
-    if (!this.lastPersisted) {
-      return true;
-    }
-
-    const now = Date.now();
-    if (now - this.lastPersisted.timestamp >= MqttService.HEARTBEAT_MS) {
-      return true;
-    }
-
-    const prev = this.lastPersisted.data;
-    const deltaTemp = Math.abs(data.temperature - prev.temperature);
-    const deltaHum = Math.abs(data.humidity - prev.humidity);
-    const deltaPres = Math.abs(data.pressure - prev.pressure);
-    const deltaVolt = Math.abs(data.voltage - prev.voltage);
-    const deltaCurrent = Math.abs(
-      data.current_mA / 1000 - prev.current_mA / 1000,
-    );
-    const deltaPower = Math.abs(data.power_mW / 1000 - prev.power_mW / 1000);
-
-    if (data.rain !== prev.rain) {
-      return true;
-    }
-
-    return (
-      deltaTemp >= MqttService.THRESHOLDS.temperature ||
-      deltaHum >= MqttService.THRESHOLDS.humidity ||
-      deltaPres >= MqttService.THRESHOLDS.pressure ||
-      deltaVolt >= MqttService.THRESHOLDS.voltage ||
-      deltaCurrent >= MqttService.THRESHOLDS.current ||
-      deltaPower >= MqttService.THRESHOLDS.power
-    );
-  }
-
-  private async saveSensorData(data: SensorPayload) {
-    try {
-      await this.prisma.sensorData.create({
-        data: {
-          temperature: data.temperature,
-          humidity: data.humidity,
-          pressure: data.pressure,
-          lightLevel: 0, // Not provided by ESP32, default to 0
-          isDark: false,
-          isRaining: data.rain,
-        },
-      });
-      this.logger.debug('Sensor data saved to database');
-    } catch (error) {
-      this.logger.error(`Failed to save sensor data: ${error.message}`);
-    }
-  }
-
-  private async savePowerData(data: SensorPayload) {
-    try {
-      // Energy (Wh) = Power (W) × độ dài giửa hai lần lưu thực tế
-      const now = Date.now();
-      const elapsedHours = this.lastPowerSavedAt
-        ? Math.min((now - this.lastPowerSavedAt) / 3_600_000, 1) // thiết đệ cap 1h phòng gián đoạn mạng
-        : 10 / 60; // fallback 10 phút khi lần đầu tiên
-      const energyWh = (data.power_mW / 1000) * elapsedHours;
-      this.lastPowerSavedAt = now;
-      
-      await this.prisma.powerData.create({
-        data: {
-          voltage: data.voltage,
-          current: data.current_mA / 1000, 
-          power: data.power_mW / 1000, 
-          energy: parseFloat(energyWh.toFixed(2)),
-          source: PowerSource.SOLAR,
-          batteryLevel: null,
-        },
-      });
-      this.logger.debug('Power data saved to database');
-    } catch (error) {
-      this.logger.error(`Failed to save power data: ${error.message}`);
-    }
-  }
-
-  private async updateDeviceStatesIfChanged(data: SensorPayload) {
-    try {
-      if (this.lastLedState.led1 !== data.led1) {
-        const led1 = await this.prisma.device.findFirst({
-          where: { name: 'LED1' },
-        });
-        if (led1) {
-          await this.prisma.device.update({
-            where: { id: led1.id },
-            data: {
-              status: data.led1 ? 'ON' : 'OFF',
-              value: data.led1 ? 100 : 0,
-              lastActive: new Date(),
-            },
-          });
-        }
-        this.lastLedState.led1 = data.led1;
+  /**
+   * Main orchestration method for sensor data processing
+   */
+  private async processSensorData(data: SensorPayload) {
+    // Determine if we should persist
+    if (this.persistenceDecision.shouldPersist(data)) {
+      try {
+        await this.persistenceService.saveSensorData(data);
+        await this.persistenceService.savePowerData(data);
+        this.logger.log('💾 Data saved to database successfully');
+      } catch (error) {
+        this.logger.error(`Failed to persist data: ${error.message}`);
       }
+    }
 
-      if (this.lastLedState.led2 !== data.led2) {
-        const led2 = await this.prisma.device.findFirst({
-          where: { name: 'LED2' },
-        });
-        if (led2) {
-          await this.prisma.device.update({
-            where: { id: led2.id },
-            data: {
-              status: data.led2 ? 'ON' : 'OFF',
-              value: data.led2 ? 100 : 0,
-              lastActive: new Date(),
-            },
-          });
-        }
-        this.lastLedState.led2 = data.led2;
-      }
-    } catch (error) {
-      this.logger.error(`Failed to update device states: ${error.message}`);
+    // Update device states based on sensor data
+    await this.deviceStateService.updateDeviceStatesIfChanged(data);
+
+    // Trigger AI analysis
+    try {
+      await this.aiService.analyze(data);
+    } catch (aiErr) {
+      this.logger.debug(`AI analysis error: ${aiErr.message}`);
     }
   }
 
-  // Public methods for API
+  // ─ Public API Methods ─
+
+  /**
+   * Get latest sensor data from broker
+   */
   getLatestData(): SensorPayload | null {
     return this.latestData;
   }
 
+  /**
+   * Control single LED
+   */
   async controlLed(led: 'led1' | 'led2', state: boolean): Promise<void> {
-    const command = {
-      [led]: state,
-    };
-
-    return new Promise((resolve, reject) => {
-      this.mqttClient.publish(
-        MQTT_TOPICS.CMD_TOPIC,
-        JSON.stringify(command),
-        { qos: 1 },
-        (error) => {
-          if (error) {
-            this.logger.error(`Failed to publish command: ${error.message}`);
-            reject(error);
-          } else {
-            this.logger.log(`Command sent: ${led} = ${state}`);
-
-            // Log activity
-            this.logActivity(led, state);
-            resolve();
-          }
-        },
-      );
-    });
+    await this.commandService.controlLed(led, state);
+    // Log activity after successful command
+    await this.persistenceService.logActivity(led, state);
   }
 
+  /**
+   * Control both LEDs simultaneously
+   */
   async controlBothLeds(led1State: boolean, led2State: boolean): Promise<void> {
-    const command = {
-      led1: led1State,
-      led2: led2State,
-    };
-
-    return new Promise((resolve, reject) => {
-      this.mqttClient.publish(
-        MQTT_TOPICS.CMD_TOPIC,
-        JSON.stringify(command),
-        { qos: 1 },
-        (error) => {
-          if (error) {
-            this.logger.error(`Failed to publish command: ${error.message}`);
-            reject(error);
-          } else {
-            this.logger.log(`Commands sent: LED1=${led1State}, LED2=${led2State}`);
-            resolve();
-          }
-        },
-      );
-    });
+    await this.commandService.controlBothLeds(led1State, led2State);
   }
 
-  private async logActivity(device: string, state: boolean) {
-    try {
-      await this.prisma.activityLog.create({
-        data: {
-          action: `${device.toUpperCase()}_${state ? 'ON' : 'OFF'}`,
-          details: {
-            device,
-            state,
-            timestamp: new Date().toISOString(),
-          },
-        },
-      });     
-    } catch (error) {
-      this.logger.error(`Failed to log activity: ${error.message}`);
-    }
-  }
-
+  /**
+   * Control servo motor angle
+   */
   async controlServo(angle: number): Promise<void> {
-    const command = {
-      servo: angle,
-    };
-
-    return new Promise((resolve, reject) => {
-      this.mqttClient.publish(
-        MQTT_TOPICS.CMD_TOPIC,
-        JSON.stringify(command),
-        { qos: 1 },
-        (error) => {
-          if (error) {
-            this.logger.error(`Failed to publish servo command: ${error.message}`);
-            reject(error);
-          } else {
-            this.logger.log(`Servo command sent: angle = ${angle}`);
-            resolve();
-          }
-        },
-      );
-    });
+    await this.commandService.controlServo(angle);
   }
 
+  /**
+   * Add new custom IoT device
+   */
+  async addIoTDevice(name: string, powerConsumption: number): Promise<void> {
+    await this.commandService.addIoTDevice(name, powerConsumption);
+  }
+
+  /**
+   * Control custom IoT devices (device1/device2)
+   */
+  async controlIoTDevice(device1?: boolean, device2?: boolean): Promise<void> {
+    await this.commandService.controlIoTDevice(device1, device2);
+  }
+
+  /**
+   * Update custom IoT device properties
+   */
+  async updateIoTDevice(
+    deviceIndex: number,
+    name?: string,
+    powerConsumption?: number
+  ): Promise<void> {
+    await this.commandService.updateIoTDevice(deviceIndex, name, powerConsumption);
+  }
+
+  /**
+   * Delete custom IoT device
+   */
+  async deleteIoTDevice(deviceIndex: number): Promise<void> {
+    await this.commandService.deleteIoTDevice(deviceIndex);
+  }
+
+  /**
+   * Check if MQTT client is connected
+   */
   isConnected(): boolean {
-    return this.mqttClient?.connected || false;
+    return this.mqttClient?.connected ?? false;
   }
 }
-

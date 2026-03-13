@@ -3,6 +3,7 @@
 import { ThemeProvider } from 'next-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '../contexts/AuthContext';
 import { AiProvider } from '../contexts/AiContext';
 import { ReactNode, useState, useEffect } from 'react';
@@ -35,6 +36,36 @@ export function Providers({ children }: { children: ReactNode }) {
           <AiProvider>{children}</AiProvider>
         </AuthProvider>
       </ThemeProvider>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        gutter={8}
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+          success: {
+            style: {
+              background: '#10b981',
+            },
+            iconTheme: {
+              primary: '#fff',
+              secondary: '#10b981',
+            },
+          },
+          error: {
+            style: {
+              background: '#ef4444',
+            },
+            iconTheme: {
+              primary: '#fff',
+              secondary: '#ef4444',
+            },
+          },
+        }}
+      />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
