@@ -62,17 +62,12 @@ export function validateEnv(): void {
   }
 
   if (missing.length > 0) {
-    console.error('❌ Missing required environment variables:', missing);
-    throw new Error(`Missing environment variables: ${missing.join(', ')}`);
+    console.warn(
+      `⚠️ Missing environment variables: ${missing.join(', ')}. App may not work correctly.`
+    );
   }
 }
 
-// Validate environment on module load (only in development)
-if (isDevelopment() && typeof window !== 'undefined') {
-  try {
-    validateEnv();
-    console.log('✅ Environment variables validated successfully');
-  } catch (error) {
-    console.error(error);
-  }
-}
+// Ghi chú: Gọi validateEnv() từ phía app (ví dụ provider.tsx) thay vì tự chạy ở đây,
+// vì Next.js evaluate module trên cả server và client.
+

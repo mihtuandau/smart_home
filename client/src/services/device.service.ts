@@ -28,7 +28,7 @@ export const deviceService = {
 
   // Control single LED
   controlSingleLED: async (ledNumber: number, state: boolean) => {
-    return iotApi.controlLed(ledNumber, state);
+    return iotApi.controlLedSingle(ledNumber, state);
   },
 
   // Control servo motor

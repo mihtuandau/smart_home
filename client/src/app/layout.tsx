@@ -18,6 +18,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Smart Home Management System',
   description: 'Hệ thống quản lý nhà thông minh với IoT',
+  icons: {
+    icon: '/images/logo_smart.png',
+    apple: '/images/logo_smart.png',
+  },
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: '#1f2937' },
+  ],
 };
 
 export default function RootLayout({

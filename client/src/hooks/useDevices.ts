@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { deviceService } from '../services/device.service';
 import { useAuth } from '../contexts/AuthContext';
+import { QUERY_CONFIG } from '@/config';
+
 
 // Query keys
 export const deviceKeys = {
@@ -41,7 +43,7 @@ export const useLatestDeviceData = (refetchInterval?: number) => {
     queryKey: deviceKeys.latestData(),
     queryFn: deviceService.getLatestData,
     enabled: isAuthenticated,
-    refetchInterval: refetchInterval ?? 5000, // Refetch every 5 seconds by default; undefined disables polling
+    refetchInterval: refetchInterval ?? QUERY_CONFIG.REFETCH_INTERVAL.DEVICES,
   });
 };
 
@@ -52,7 +54,7 @@ export const useDeviceStatus = (refetchInterval?: number) => {
     queryKey: deviceKeys.status(),
     queryFn: deviceService.getStatus,
     enabled: isAuthenticated,
-    refetchInterval: refetchInterval || 10000, // Refetch every 10 seconds by default
+    refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.DEVICES,
   });
 };
 

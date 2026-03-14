@@ -8,7 +8,6 @@ import { AuthModule } from './module/auth/auth.module';
 import { MqttModule } from './module/mqtt/mqtt.module';
 import { SensorsModule } from './module/sensors/sensors.module';
 import { DevicesModule } from './module/devices/devices.module';
-import { AutomationModule } from './module/automation/automation.module';
 import { SettingsModule } from './module/settings/settings.module';
 import { DashboardModule } from './module/dashboard/dashboard.module';
 import { EnergyModule } from './module/energy/energy.module';
@@ -27,7 +26,6 @@ import { AiModule } from './module/ai/ai.module';
     MqttModule,
     SensorsModule,
     DevicesModule,
-    AutomationModule,
     SettingsModule,
     DashboardModule,
     EnergyModule,
