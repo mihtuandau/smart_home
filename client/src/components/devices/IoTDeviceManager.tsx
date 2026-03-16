@@ -18,6 +18,9 @@ export default function IoTDeviceManager() {
   const { data: latestRaw } = useLatestDeviceData(2000);
   const latest = (latestRaw as { data?: LatestData })?.data as LatestData | undefined;
 
+  console.log('📥 Latest RAW from useLatestDeviceData:', latestRaw);
+  console.log('📥 Latest PARSED for sync:', latest);
+
   const {
     localDevices,
     syncDevicesFromServer,
@@ -51,8 +54,14 @@ export default function IoTDeviceManager() {
 
   // Calculate displayed devices
   const devices: (IoTDevice & { index: number })[] = [];
-  if (localDevices[0]) devices.push({ ...localDevices[0], index: 0 });
-  if (localDevices[1]) devices.push({ ...localDevices[1], index: 1 });
+  if (localDevices[0]) {
+    console.log('📍 localDevices[0]:', localDevices[0]);
+    devices.push({ ...localDevices[0], index: 0 });
+  }
+  if (localDevices[1]) {
+    console.log('📍 localDevices[1]:', localDevices[1]);
+    devices.push({ ...localDevices[1], index: 1 });
+  }
 
   // Sync with server data
   useEffect(() => {
@@ -124,7 +133,7 @@ export default function IoTDeviceManager() {
           <div className="space-y-2">
             {devices.map((device) => (
               <div
-                key={device.index}
+                key={`device-${device.index}`}
                 className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -138,26 +147,34 @@ export default function IoTDeviceManager() {
                       {device.name}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {device.power}W · Slot {device.index + 1}
+                      {device.power}W{device.pin ? ` · Pin ${device.pin}` : ` · Slot ${device.index + 1}`}
                     </p>
                   </div>
                 </div>
 
                 {/* Controls */}
                 <div className="flex items-center gap-2 shrink-0 ml-4">
-                  {/* Toggle */}
+                  {/* Power button - Apple Home style */}
                   <button
                     onClick={() => handleControl(device.index, !device.state)}
                     disabled={controlLoading === device.index}
-                    className={`w-10 h-6 rounded-full transition-colors ${
-                      device.state ? 'bg-green-500' : 'bg-gray-300'
-                    } ${controlLoading === device.index ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title={device.state ? 'Nhấn để tắt' : 'Nhấn để bật'}
+                    className={`relative w-12 h-12 rounded-full flex items-center justify-center
+                      transition-all duration-200 select-none
+                      ${device.state
+                        ? 'bg-green-500 shadow-[0_0_16px_4px_rgba(34,197,94,0.4)]'
+                        : 'bg-gray-200 shadow-inner'}
+                      ${controlLoading === device.index ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-90 hover:brightness-105'}`}
                   >
-                    <span
-                      className={`block w-5 h-5 rounded-full bg-white transition-transform mx-0.5 ${
-                        device.state ? 'translate-x-4' : 'translate-x-0'
-                      }`}
-                    />
+                    {/* Power icon */}
+                    <svg
+                      className={`w-5 h-5 transition-colors duration-200 ${device.state ? 'text-white' : 'text-gray-400'}`}
+                      viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}
+                      strokeLinecap="round" strokeLinejoin="round"
+                    >
+                      <path d="M12 2v6" />
+                      <path d="M6.343 5.657A8 8 0 1 0 17.657 5.657" />
+                    </svg>
                   </button>
 
                   {/* Edit */}
@@ -174,7 +191,16 @@ export default function IoTDeviceManager() {
 
                   {/* Delete */}
                   <button
-                    onClick={() => handleDelete(device.index, device.name)}
+                    onClick={() => {
+                      const deviceInfo = {
+                        name: device.name,
+                        index: device.index,
+                        pin: device.pin,
+                        allDevices: localDevices
+                      };
+                      console.log('🗑️ DELETING:', deviceInfo);
+                      handleDelete(device.index, device.name);
+                    }}
                     disabled={deleteLoading === device.index}
                     className="px-2.5 py-1 text-xs text-red-600 hover:bg-red-50 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >

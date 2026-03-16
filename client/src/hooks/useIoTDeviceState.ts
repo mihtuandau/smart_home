@@ -8,6 +8,7 @@ export interface IoTDevice {
   name: string;
   power: number;
   state: boolean;
+  pin?: number;
 }
 
 export type ToastType = 'success' | 'error' | 'info';
@@ -57,12 +58,34 @@ export function useIoTDeviceState() {
   }, []);
 
   const syncDevicesFromServer = useCallback((latest: LatestData | undefined) => {
-    if (!latest) return;
+    if (!latest) {
+      console.log('⚠️ No latest data to sync');
+      return;
+    }
+
+    console.log('📡 Syncing from server:', {
+      device1: latest.device1,
+      device2: latest.device2,
+      pendingOps: Array.from(pendingOpsRef.current),
+    });
 
     setLocalDevices((prev) => {
-      const next = { ...prev };
-      if (!pendingOpsRef.current.has(0)) next[0] = latest.device1 || null;
-      if (!pendingOpsRef.current.has(1)) next[1] = latest.device2 || null;
+      const next: Record<number, IoTDevice | null> = {};
+      
+      // ALWAYS sync from server unless actively mutating
+      if (!pendingOpsRef.current.has(0)) {
+        next[0] = latest.device1 || null;
+      } else {
+        next[0] = prev[0] || null;
+      }
+      
+      if (!pendingOpsRef.current.has(1)) {
+        next[1] = latest.device2 || null;
+      } else {
+        next[1] = prev[1] || null;
+      }
+      
+      console.log('✅ After sync - localDevices:', next);
       return next;
     });
   }, []);
@@ -97,8 +120,9 @@ export function useIoTDeviceState() {
         setAddPower('');
         setShowAddForm(false);
 
+        // Always invalidate to ensure localDevices reflects the real slot assignment
+        await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
         if (slotIndex >= 0) {
-          await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
           pendingOpsRef.current.delete(slotIndex);
         }
       } catch {
@@ -167,21 +191,41 @@ export function useIoTDeviceState() {
   const handleDelete = useCallback(
     async (index: number, name: string) => {
       if (!confirm(`Xóa "${name}"?`)) return;
-      setDeleteLoading(index);
 
+      // Save for rollback in case of error
       const originalDevice = localDevices[index];
 
+      console.log(`🚀 Sending DELETE request for index=${index}, name="${name}"`);
+      setDeleteLoading(index);
+
+      // Optimistic removal — immediately hide the device so the user sees feedback
       setLocalDevices((prev) => ({ ...prev, [index]: null }));
       pendingOpsRef.current.add(index);
 
       try {
         await iotApi.deleteIoTDevice(index);
+        console.log(`✅ DELETE successful for index=${index}`);
+
         showToast('success', `Đã xóa "${name}"`);
+
+        // Lock both slots while waiting for ESP32 to publish the updated state
+        pendingOpsRef.current.add(0);
+        pendingOpsRef.current.add(1);
+
+        // Wait for ESP32 to process and publish new MQTT data
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        console.log(`🔄 Waiting done, allowing sync now`);
+
+        // Clear pending and allow sync
+        pendingOpsRef.current.clear();
+
+        // Force invalidate to fetch new data from server
         await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
-        pendingOpsRef.current.delete(index);
-      } catch {
+      } catch (error) {
+        console.error(`❌ DELETE failed for index=${index}:`, error);
+        // Rollback optimistic removal
         setLocalDevices((prev) => ({ ...prev, [index]: originalDevice }));
-        pendingOpsRef.current.delete(index);
+        pendingOpsRef.current.clear();
         showToast('error', 'Xóa thất bại');
       } finally {
         setDeleteLoading(null);

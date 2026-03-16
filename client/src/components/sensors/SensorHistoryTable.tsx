@@ -29,7 +29,7 @@ export default function SensorHistoryTable() {
     <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <h2 className="text-lg font-semibold text-gray-900">Lịch sử cảm biến</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 text-gray-700 items-center text-xl">
           <select
             value={hours}
             onChange={(e) => handleHoursChange(Number(e.target.value))}
