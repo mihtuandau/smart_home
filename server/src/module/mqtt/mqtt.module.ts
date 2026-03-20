@@ -9,6 +9,7 @@ import { IotController } from './iot.controller';
 import { AiEventsGateway } from './ai-events.gateway';
 import { PrismaModule } from '../../common/prisma.module';
 import { AiModule } from '../ai/ai.module';
+import { WsJwtGuard } from '../../common/guards/ws-jwt.guard';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { AiModule } from '../ai/ai.module';
     MqttDeviceStateService,
     MqttPersistenceDecisionService,
     AiEventsGateway,
+    WsJwtGuard,
   ],
   exports: [MqttService],
 })

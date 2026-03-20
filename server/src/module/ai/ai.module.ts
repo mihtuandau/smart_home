@@ -7,7 +7,6 @@ import { AiAdvisorService } from './ai-advisor.service';
 import { AiBaselineService } from './ai-baseline.service';
 import { AiBillingService } from './ai-billing.service';
 import { AiLedStatsService } from './ai-led-stats.service';
-import { AiEventsGateway } from '../mqtt/ai-events.gateway';
 
 @Module({
   imports: [PrismaModule],
@@ -19,8 +18,7 @@ import { AiEventsGateway } from '../mqtt/ai-events.gateway';
     AiBaselineService,
     AiBillingService,
     AiLedStatsService,
-    AiEventsGateway,
   ],
-  exports: [AiService, AiEventsGateway],
+  exports: [AiService],
 })
 export class AiModule {}

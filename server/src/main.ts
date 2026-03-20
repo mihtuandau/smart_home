@@ -12,6 +12,8 @@ async function bootstrap() {
       'http://localhost:3001',
       'http://localhost:3002',
       'http://localhost:5173',
+      'https://dautuan.com',
+      'https://www.dautuan.com',
       'http://dautuan.com:3100',
       'http://dautuan.com',
       process.env.CORS_ORIGIN,
