@@ -125,22 +125,19 @@ export default function LEDControl() {
       
       <div className="space-y-4">
         {leds.map((led) => (
-          <div key={led.id} className="flex items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                led.enabled ? 'bg-yellow-100' : 'bg-gray-200'
-              }`}>
-                <svg className={`w-5 h-5 ${led.enabled ? 'text-yellow-600' : 'text-gray-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">{led.name}</p>
-                <p className="text-sm text-gray-500">{led.description}</p>
-                <p className={`text-xs font-medium mt-1 ${
-                  led.enabled ? 'text-green-600' : 'text-gray-400'
-                }`}>
-                  {controlLEDMutation.isPending ? '⏳ Đang xử lý...' : (led.enabled ? '● Đang bật' : '○ Đã tắt')}
+          <div key={led.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div
+                className={`w-2 h-2 rounded-full shrink-0 ${
+                  led.enabled ? 'bg-yellow-500' : 'bg-gray-400'
+                }`}
+              />
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {led.name}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {led.description}
                 </p>
               </div>
             </div>
@@ -150,7 +147,7 @@ export default function LEDControl() {
               onClick={() => toggleLed(led.id as 1 | 2)}
               disabled={controlLEDMutation.isPending}
               title={led.enabled ? 'Nhấn để tắt' : 'Nhấn để bật'}
-              className={`relative w-14 h-14 rounded-full flex items-center justify-center
+              className={`relative w-12 h-12 rounded-full flex items-center justify-center shrink-0 ml-4
                 transition-all duration-200 select-none
                 ${led.enabled
                   ? 'bg-yellow-400 shadow-[0_0_16px_4px_rgba(250,204,21,0.55)]'
@@ -159,7 +156,7 @@ export default function LEDControl() {
             >
               {/* Power icon */}
               <svg
-                className={`w-6 h-6 transition-colors duration-200 ${led.enabled ? 'text-yellow-900' : 'text-gray-400'}`}
+                className={`w-5 h-5 transition-colors duration-200 ${led.enabled ? 'text-yellow-900' : 'text-gray-400'}`}
                 viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}
                 strokeLinecap="round" strokeLinejoin="round"
               >
