@@ -5,8 +5,9 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import { WsJwtGuard } from '../../common/guards/ws-jwt.guard';
 
 import type { LedDayEntry } from '../ai/ai-led-stats.service';
 
@@ -36,6 +37,7 @@ export interface AiAdvicePayload {
     credentials: true,
   },
 })
+@UseGuards(WsJwtGuard)
 export class AiEventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -49,11 +51,13 @@ export class AiEventsGateway
   }
 
   handleConnection(client: Socket) {
-    this.logger.debug(`Client connected: ${client.id}`);
+    const user = (client as any).user;
+    this.logger.log(`✅ Client connected: ${client.id} (User: ${user?.email})`);
   }
 
   handleDisconnect(client: Socket) {
-    this.logger.debug(`Client disconnected: ${client.id}`);
+    const user = (client as any).user;
+    this.logger.log(`❌ Client disconnected: ${client.id} (User: ${user?.email})`);
   }
 
   /**

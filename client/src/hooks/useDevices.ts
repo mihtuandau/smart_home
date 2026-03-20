@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useRef } from 'react';
 import { deviceService } from '../services/device.service';
 import { useAuth } from '../contexts/AuthContext';
+import { socketService } from '@/lib/socket';
 import { QUERY_CONFIG } from '@/config';
 
 
@@ -26,25 +28,194 @@ export const useDevices = () => {
   });
 };
 
-// Get device stats
+// Get device stats with real-time socket updates
 export const useDeviceStats = () => {
   const { isAuthenticated } = useAuth();
-  return useQuery({
+  const queryClient = useQueryClient();
+  const socketListenerRef = useRef<((data: any) => void) | null>(null);
+  const aiListenerRef = useRef<((data: any) => void) | null>(null);
+
+  const query = useQuery({
     queryKey: deviceKeys.stats(),
     queryFn: deviceService.getDeviceStats,
     enabled: isAuthenticated,
   });
+
+  // Add real-time socket listeners for device status updates
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    const handleDeviceStatus = (statusData: any) => {
+      queryClient.setQueryData(deviceKeys.stats(), (oldData: any) => {
+        if (!oldData) {
+          return { data: statusData };
+        }
+
+        // Merge socket data with existing cache
+        const merged = { ...oldData };
+        const dataObj = merged.data || merged;
+        
+        // Update device counts from socket
+        if (statusData.online !== undefined) {
+          dataObj.online = statusData.online;
+        }
+        if (statusData.total !== undefined) {
+          dataObj.total = statusData.total;
+        }
+        
+        return merged;
+      });
+    };
+
+    // Handle AI advice to detect LED state changes (indicates active devices)
+    const handleAiAdvice = (aiData: any) => {
+      // AI advice includes led1 and led2 status, indicating device activity
+      queryClient.setQueryData(deviceKeys.stats(), (oldData: any) => {
+        if (!oldData) {
+          return oldData;
+        }
+
+        // Count active LEDs
+        const activeLeds = (aiData.led1 ? 1 : 0) + (aiData.led2 ? 1 : 0);
+        
+        // Update online count if we have LED data
+        const merged = { ...oldData };
+        const dataObj = merged.data || merged;
+        
+        // Conservative update: don't change total, just ensure online reflects current activity
+        if (activeLeds > 0) {
+          dataObj.online = Math.max(dataObj.online || 0, activeLeds);
+        }
+        
+        return merged;
+      });
+    };
+
+    socketListenerRef.current = handleDeviceStatus;
+    aiListenerRef.current = handleAiAdvice;
+    
+    socketService.onDeviceStatus(handleDeviceStatus);
+    socketService.onAiAdvice(handleAiAdvice);
+
+    // Cleanup listeners on unmount
+    return () => {
+      if (socketListenerRef.current) {
+        socketService.offDeviceStatus(socketListenerRef.current);
+        socketListenerRef.current = null;
+      }
+      if (aiListenerRef.current) {
+        socketService.offAiAdvice(aiListenerRef.current);
+        aiListenerRef.current = null;
+      }
+    };
+  }, [isAuthenticated, queryClient]);
+
+  return query;
 };
 
-// Get latest IoT data
+// Get latest IoT data with real-time socket updates
 export const useLatestDeviceData = (refetchInterval?: number) => {
   const { isAuthenticated } = useAuth();
-  return useQuery({
+  const queryClient = useQueryClient();
+  const iotListenerRef = useRef<((data: any) => void) | null>(null);
+  const aiListenerRef = useRef<((data: any) => void) | null>(null);
+
+  const query = useQuery({
     queryKey: deviceKeys.latestData(),
     queryFn: deviceService.getLatestData,
     enabled: isAuthenticated,
     refetchInterval: refetchInterval ?? QUERY_CONFIG.REFETCH_INTERVAL.DEVICES,
   });
+
+  // Add real-time socket listeners for data updates
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    // Handle IoT data socket events
+    const handleIoTData = (socketData: any) => {
+      queryClient.setQueryData(deviceKeys.latestData(), (oldData: any) => {
+        if (!oldData) {
+          return { data: socketData };
+        }
+
+        // Merge socket data with existing cache
+        const merged = { ...oldData };
+        const dataObj = merged.data || merged;
+        
+        // Update fields from socket (LED status, sensor data, etc.)
+        if (socketData.led1 !== undefined) {
+          dataObj.led1 = socketData.led1;
+        }
+        if (socketData.led2 !== undefined) {
+          dataObj.led2 = socketData.led2;
+        }
+        if (socketData.temperature !== undefined) {
+          dataObj.temperature = socketData.temperature;
+        }
+        if (socketData.humidity !== undefined) {
+          dataObj.humidity = socketData.humidity;
+        }
+        if (socketData.voltage !== undefined) {
+          dataObj.voltage = socketData.voltage;
+        }
+        if (socketData.current_mA !== undefined) {
+          dataObj.current_mA = socketData.current_mA;
+        }
+        if (socketData.power !== undefined) {
+          dataObj.power = socketData.power;
+        }
+        
+        return merged;
+      });
+    };
+
+    // Handle AI advice socket events (which include LED status)
+    const handleAiAdvice = (aiData: any) => {
+      queryClient.setQueryData(deviceKeys.latestData(), (oldData: any) => {
+        if (!oldData) {
+          return { data: { led1: aiData.led1, led2: aiData.led2 } };
+        }
+
+        // Merge AI data with existing cache
+        const merged = { ...oldData };
+        const dataObj = merged.data || merged;
+        
+        // Update LED status from AI advice
+        if (aiData.led1 !== undefined) {
+          dataObj.led1 = aiData.led1;
+        }
+        if (aiData.led2 !== undefined) {
+          dataObj.led2 = aiData.led2;
+        }
+        
+        return merged;
+      });
+    };
+
+    iotListenerRef.current = handleIoTData;
+    aiListenerRef.current = handleAiAdvice;
+    
+    socketService.onIoTData(handleIoTData);
+    socketService.onAiAdvice(handleAiAdvice);
+
+    // Cleanup listeners on unmount
+    return () => {
+      if (iotListenerRef.current) {
+        socketService.offIoTData(iotListenerRef.current);
+        iotListenerRef.current = null;
+      }
+      if (aiListenerRef.current) {
+        socketService.offAiAdvice(aiListenerRef.current);
+        aiListenerRef.current = null;
+      }
+    };
+  }, [isAuthenticated, queryClient]);
+
+  return query;
 };
 
 // Get IoT status
@@ -65,10 +236,10 @@ export const useControlLED = () => {
   return useMutation({
     mutationFn: (data: { led1?: boolean; led2?: boolean }) =>
       deviceService.controlLED(data),
-    onSuccess: () => {
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
-      queryClient.invalidateQueries({ queryKey: deviceKeys.lists() });
+    onSuccess: async () => {
+      // Invalidate and refetch immediately
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData(), refetchType: 'all' });
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.lists(), refetchType: 'all' });
     },
   });
 };
@@ -149,9 +320,9 @@ export const useControlServo = () => {
 
   return useMutation({
     mutationFn: (angle: number) => deviceService.controlServo(angle),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
-      queryClient.invalidateQueries({ queryKey: deviceKeys.lists() });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData(), refetchType: 'all' });
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.lists(), refetchType: 'all' });
     },
   });
 };
@@ -162,9 +333,10 @@ export const useToggleDevice = () => {
 
   return useMutation({
     mutationFn: (id: string) => deviceService.toggleDevice(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: deviceKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.lists(), refetchType: 'all' });
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData(), refetchType: 'all' });
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.stats(), refetchType: 'all' });
     },
   });
 };
@@ -176,9 +348,10 @@ export const useUpdateDevice = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) =>
       deviceService.updateDevice(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: deviceKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.lists(), refetchType: 'all' });
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData(), refetchType: 'all' });
+      await queryClient.invalidateQueries({ queryKey: deviceKeys.stats(), refetchType: 'all' });
     },
   });
 };

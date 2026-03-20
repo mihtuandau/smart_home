@@ -41,4 +41,4 @@ export const IOT_DEVICE_MANAGER = {
   AUTO_SYNC_INTERVAL: 2000, // 2 seconds
 } as const;
 
-export { CustomIoTDevice };
+export type { CustomIoTDevice };

@@ -5,9 +5,9 @@ import { useLatestDeviceData, useDeviceStats } from '@/hooks/useDevices';
 import { useEnergyStats } from '@/hooks/useEnergy';
 
 export default function StatsGrid() {
-  const { data: latestResponse, isLoading: latestLoading } = useLatestDeviceData(3000);
+  const { data: latestResponse, isLoading: latestLoading } = useLatestDeviceData(2000); // Reduced from 3000ms
   const { data: statsResponse, isLoading: statsLoading } = useDeviceStats();
-  const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24, 5000); // Refetch every 5 seconds
+  const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24, 3000); // Reduced from 5000ms
 
   const latestData = (latestResponse as any)?.data;
   const statsData = (statsResponse as any)?.data;
