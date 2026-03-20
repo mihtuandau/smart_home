@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PrismaModule } from '../../common/prisma.module';
 import { AiService } from './ai.service';
 import { AiController } from './ai.controller';
@@ -7,9 +7,10 @@ import { AiAdvisorService } from './ai-advisor.service';
 import { AiBaselineService } from './ai-baseline.service';
 import { AiBillingService } from './ai-billing.service';
 import { AiLedStatsService } from './ai-led-stats.service';
+import { MqttModule } from '../mqtt/mqtt.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, forwardRef(() => MqttModule)],
   controllers: [AiController],
   providers: [
     AiService,

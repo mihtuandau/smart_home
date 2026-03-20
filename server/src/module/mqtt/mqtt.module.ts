@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MqttService } from './mqtt.service';
@@ -14,7 +14,7 @@ import { WsJwtGuard } from '../../common/guards/ws-jwt.guard';
 @Module({
   imports: [
     PrismaModule,
-    AiModule,
+    forwardRef(() => AiModule),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: (
@@ -37,6 +37,6 @@ import { WsJwtGuard } from '../../common/guards/ws-jwt.guard';
     AiEventsGateway,
     WsJwtGuard,
   ],
-  exports: [MqttService],
+  exports: [MqttService, AiEventsGateway],
 })
 export class MqttModule {}
