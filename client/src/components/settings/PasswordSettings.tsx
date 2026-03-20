@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
-import apiClient from '@/lib/api';
+import { apiClient } from '@/lib/api';
 
 export default function PasswordSettings() {
   const [isLoading, setIsLoading] = useState(false);

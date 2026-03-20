@@ -71,7 +71,7 @@ function PressureCard({ title, subtitle, value, status, borderColor, bgColor, ic
 }
 
 export default function EnvironmentStatus() {
-  const { data: response, isLoading } = useSensors(1, 3000); 
+  const { data: response, isLoading } = useSensors(1, 2000); // Reduced from 3000ms 
   const data = (response as any)?.data?.[0] || null;
 
   if (isLoading || !data) {

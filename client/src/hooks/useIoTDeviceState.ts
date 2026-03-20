@@ -121,7 +121,7 @@ export function useIoTDeviceState() {
         setShowAddForm(false);
 
         // Always invalidate to ensure localDevices reflects the real slot assignment
-        await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
+        await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData(), refetchType: 'all' });
         if (slotIndex >= 0) {
           pendingOpsRef.current.delete(slotIndex);
         }
@@ -174,7 +174,7 @@ export function useIoTDeviceState() {
         setEditIndex(null);
         setEditName('');
         setEditPower('');
-        await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
+        await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData(), refetchType: 'all' });
         pendingOpsRef.current.delete(index);
       } catch {
         setLocalDevices((prev) => ({ ...prev, [index]: originalDevice }));
@@ -220,7 +220,7 @@ export function useIoTDeviceState() {
         pendingOpsRef.current.clear();
 
         // Force invalidate to fetch new data from server
-        await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
+        await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData(), refetchType: 'all' });
       } catch (error) {
         console.error(`❌ DELETE failed for index=${index}:`, error);
         // Rollback optimistic removal
@@ -253,7 +253,7 @@ export function useIoTDeviceState() {
           device1: index === 0 ? state : undefined,
           device2: index === 1 ? state : undefined,
         });
-        await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData() });
+        await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData(), refetchType: 'all' });
         pendingOpsRef.current.delete(index);
       } catch {
         setLocalDevices((prev) => ({

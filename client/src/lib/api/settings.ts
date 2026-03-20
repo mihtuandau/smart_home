@@ -32,3 +32,4 @@ export const settingsApi = {
     return apiClient.request('/settings/toggle/ai-learning', { method: 'POST' });
   },
 };
+export default settingsApi;
