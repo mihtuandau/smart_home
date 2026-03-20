@@ -9,11 +9,16 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
+      'http://localhost:3001',
       'http://localhost:3002',
       'http://localhost:5173',
+      'http://dautuan.com:3100',
+      'http://dautuan.com',
       process.env.CORS_ORIGIN,
     ].filter(Boolean),
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   app.useGlobalPipes(
@@ -56,7 +61,7 @@ async function bootstrap() {
     },
   });
 
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT || 3100;
   await app.listen(port);
 
   console.log(` Server is running on: http://localhost:${port}`);
