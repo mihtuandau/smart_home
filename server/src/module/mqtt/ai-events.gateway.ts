@@ -32,6 +32,7 @@ export interface AiAdvicePayload {
       'http://localhost:3000',
       'http://localhost:3002',
       'http://localhost:5173',
+      'https://smart.dautuan.com',
       process.env.CORS_ORIGIN,
     ].filter(Boolean),
     credentials: true,

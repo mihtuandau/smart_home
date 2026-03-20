@@ -2,7 +2,7 @@
  * IoT Device Manager Constants & Types
  */
 
-import { CustomIoTDevice } from '@/hooks/useIoTForms';
+import type { CustomIoTDevice } from '@/hooks/useIoTForms';
 
 export interface LatestDeviceData {
   device1?: CustomIoTDevice;

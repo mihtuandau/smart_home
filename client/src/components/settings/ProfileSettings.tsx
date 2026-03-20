@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import apiClient from '@/lib/api';
+import { apiClient } from '@/lib/api/client';
 
 interface ProfileSettingsProps {
   user: any;
