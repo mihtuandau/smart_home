@@ -1,18 +1,22 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from './provider';
 import MainLayout from '@/components/layout/MainLayout';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const brandSans = Plus_Jakarta_Sans({
+  variable: '--font-brand-sans',
   subsets: ['latin'],
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const brandMono = JetBrains_Mono({
+  variable: '--font-brand-mono',
   subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500', '600'],
 });
 
 export const metadata: Metadata = {
@@ -35,7 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${brandSans.variable} ${brandMono.variable} antialiased`}>
         <ErrorBoundary>
           <Providers>
             <MainLayout>{children}</MainLayout>

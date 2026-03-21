@@ -95,7 +95,7 @@ export default function LEDControl() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg border border-gray-200 p-6 animate-pulse">
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 animate-pulse">
         <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
         <div className="space-y-4">
           {[1, 2].map(i => (
@@ -116,12 +116,12 @@ export default function LEDControl() {
         />
       )}
       
-      <div className="bg-white rounded-lg border border-gray-200 p-4 md:p-6">
-      <div className="mb-6">
-        <h3 className="font-semibold text-gray-900">Điều khiển đèn LED (x2)</h3>
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5 md:p-6">
+      <div className="mb-4 sm:mb-6">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900">Điều khiển đèn LED (x2)</h3>
       </div>
       
-      <p className="text-sm text-gray-500 mb-6">Hệ thống chiếu sáng trong nhà</p>
+      <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">Hệ thống chiếu sáng trong nhà</p>
       
       <div className="space-y-4">
         {leds.map((led) => (
@@ -147,7 +147,7 @@ export default function LEDControl() {
               onClick={() => toggleLed(led.id as 1 | 2)}
               disabled={controlLEDMutation.isPending}
               title={led.enabled ? 'Nhấn để tắt' : 'Nhấn để bật'}
-              className={`relative w-12 h-12 rounded-full flex items-center justify-center shrink-0 ml-4
+              className={`relative w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center shrink-0 ml-4
                 transition-all duration-200 select-none
                 ${led.enabled
                   ? 'bg-yellow-400 shadow-[0_0_16px_4px_rgba(250,204,21,0.55)]'

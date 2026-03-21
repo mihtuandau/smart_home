@@ -180,17 +180,20 @@ export default function LedConsumptionChart() {
   const totalLed2Min = chartData.reduce((s, d) => s + d.led2_minutes, 0);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 flex flex-col h-full">
+    <div className="section-card border border-gray-200 rounded-xl shadow-sm flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
             <span className="text-sm">⚡</span>
           </div>
           <div>
             <h2 className="text-sm font-semibold text-gray-800">Tiêu thụ LED theo ngày</h2>
-            <p className="text-[10px] text-gray-400">
+            <p className="text-[10px] text-gray-400 hidden sm:block">
               Đèn 1: {LED1_POWER_W * 1000}mW · Đèn 2: {LED2_POWER_W * 1000}mW · Tính từ server · Lưu DB
+            </p>
+            <p className="text-[10px] text-gray-400 sm:hidden">
+              Đèn 1: {LED1_POWER_W * 1000}mW · Đèn 2: {LED2_POWER_W * 1000}mW
             </p>
           </div>
         </div>
@@ -225,7 +228,7 @@ export default function LedConsumptionChart() {
       </div>
 
       {/* Today's live stats */}
-      <div className="grid grid-cols-2 gap-3 px-4 pt-3 pb-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 pt-3 pb-2">
         <MiniStat
           label="Đèn 1"
           wh={todayLed.led1_wh}
@@ -243,8 +246,8 @@ export default function LedConsumptionChart() {
       </div>
 
       {/* Weekly bar chart */}
-      <div className="px-2 pb-2 flex-1">
-        <ResponsiveContainer width="100%" height={180}>
+      <div className="px-2 pb-2 flex-1 min-h-[160px] sm:min-h-[200px]">
+        <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
               barCategoryGap="25%"

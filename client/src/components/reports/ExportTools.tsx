@@ -100,8 +100,8 @@ export default function ExportTools() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm space-y-5">
-      <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+    <div className="section-card border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-5">
+      <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
         <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
         </svg>
@@ -116,7 +116,7 @@ export default function ExportTools() {
             <button
               key={p}
               onClick={() => setPreset(p)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition ${
+              className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium border transition ${
                 preset === p
                   ? 'bg-blue-600 text-white border-blue-600'
                   : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
@@ -129,7 +129,7 @@ export default function ExportTools() {
 
         {/* Custom date range */}
         {preset === 'custom' && (
-          <div className="flex flex-wrap gap-3 items-center pt-1">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-end pt-1">
             <div className="flex flex-col gap-1">
               <label className="text-xs text-gray-500">Từ ngày</label>
               <input
@@ -152,7 +152,7 @@ export default function ExportTools() {
                 placeholder={today}
               />
             </div>
-            <p className="text-xs text-gray-400 self-end pb-2">
+            <p className="text-xs text-gray-400 sm:self-end pb-2">
               Để trống "Đến ngày" = đến hiện tại
             </p>
           </div>
@@ -187,12 +187,12 @@ export default function ExportTools() {
             key={type}
             onClick={() => exportToCSV(type)}
             disabled={isExporting !== null}
-            className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition disabled:opacity-50 disabled:cursor-not-allowed text-left"
+            className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition disabled:opacity-50 disabled:cursor-not-allowed text-left"
           >
             <div className="text-blue-600 shrink-0">{icon}</div>
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-gray-900">{label}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{sublabel}</p>
+              <p className="text-sm sm:text-base font-medium text-gray-900">{label}</p>
+              <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">{sublabel}</p>
             </div>
             {isExporting === type ? (
               <svg className="animate-spin h-4 w-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24">

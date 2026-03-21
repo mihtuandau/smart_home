@@ -12,19 +12,19 @@ interface StatCardProps {
 export default function StatCard({ label, value, color, subtitle, progress, index }: StatCardProps) {
   return (
     <div
-      className="relative bg-white rounded-lg p-4 md:p-5 border-l-4 border-t border-r border-b border-gray-100 transition-shadow hover:shadow-md"
+      className="relative section-card shadow-sm border border-gray-200 border-l-4 p-3 sm:p-4 md:p-5 transition-shadow hover:shadow-md"
       style={{ borderLeftColor: color }}
     >
-      <div className="mb-3">
-        <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</span>
+      <div className="mb-2 sm:mb-3">
+        <span className="text-[10px] sm:text-xs font-semibold text-gray-500 uppercase tracking-wide">{label}</span>
       </div>
       
-      <div className="mb-2">
-        <h3 className="text-2xl md:text-3xl font-bold text-gray-900">{value}</h3>
+      <div className="mb-1.5 sm:mb-2">
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">{value}</h3>
       </div>
       
       {subtitle && (
-        <p className="text-xs text-gray-600">{subtitle}</p>
+        <p className="text-[11px] sm:text-xs text-gray-600">{subtitle}</p>
       )}
       
       {progress !== undefined && (

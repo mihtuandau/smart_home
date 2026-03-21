@@ -22,9 +22,14 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   const { data: historyResponse, isLoading, error } = useSensorHistory(hours);
   const { data: currentResponse } = useSensorData();
 
+  const toNumberOrNull = (value: unknown) => {
+    const parsed = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
         <div className="animate-pulse">
           <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
           <div className="h-64 bg-gray-100 rounded"></div>
@@ -46,41 +51,55 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   const chartData = historyData
     .slice()
     .reverse()
-    .map((item) => ({
-      time: new Date(item.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-      temperature: item.temperature,
-      humidity: item.humidity,
-      timestamp: item.timestamp,
-    }));
+    .map((item) => {
+      const temperature = toNumberOrNull(item.temperature);
+      const humidity = toNumberOrNull(item.humidity);
+      const time = new Date(item.timestamp);
+
+      if (temperature === null || humidity === null || Number.isNaN(time.getTime())) {
+        return null;
+      }
+
+      return {
+        time: time.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+        temperature,
+        humidity,
+        timestamp: item.timestamp,
+      };
+    })
+    .filter((item): item is { time: string; temperature: number; humidity: number; timestamp: string } => item !== null);
 
   // If no history data, show placeholder message
   if (chartData.length === 0) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Nhiệt độ & Độ ẩm</h2>
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Nhiệt độ & Độ ẩm</h2>
         <p className="text-gray-500 text-center py-8">Không có dữ liệu lịch sử</p>
       </div>
     );
   }
 
-  const currentTemp = ((currentResponse as any)?.data?.temperature || 0);
-  const currentHumidity = ((currentResponse as any)?.data?.humidity || 0);
+  const currentTemp = toNumberOrNull((currentResponse as any)?.data?.temperature) ?? 0;
+  const currentHumidity = toNumberOrNull((currentResponse as any)?.data?.humidity) ?? 0;
   
   const avgTemp = chartData.reduce((sum, item) => sum + item.temperature, 0) / chartData.length;
   const avgHumidity = chartData.reduce((sum, item) => sum + item.humidity, 0) / chartData.length;
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
+      const humidityPayload = payload.find((entry: any) => entry?.dataKey === 'humidity');
+      const temperaturePayload = payload.find((entry: any) => entry?.dataKey === 'temperature');
+
       return (
         <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="text-xs font-semibold text-gray-700 mb-2">{payload[0].payload.time}</p>
+          <p className="text-xs font-semibold text-gray-700 mb-2">{payload[0]?.payload?.time ?? '--:--'}</p>
           <p className="text-xs text-blue-600 flex items-center gap-1">
             <span className="inline-block w-3 h-3 bg-blue-500 rounded-full"></span>
-            Độ ẩm: {payload[0].value}%
+            Độ ẩm: {humidityPayload?.value ?? '--'}%
           </p>
           <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
             <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
-            Nhiệt độ: {payload[1].value}°C
+            Nhiệt độ: {temperaturePayload?.value ?? '--'}°C
           </p>
         </div>
       );
@@ -89,14 +108,15 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 min-w-0">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Nhiệt độ & Độ ẩm</h2>
-        <p className="text-sm text-gray-500 mt-1">{hours} giờ qua</p>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Nhiệt độ & Độ ẩm</h2>
+        <p className="text-xs sm:text-sm text-gray-500 mt-1">{hours} giờ qua</p>
       </div>
 
       {/* Chart */}
-      <ResponsiveContainer width="100%" height={400}>
+      <div className="h-64 sm:h-96 min-w-0">
+        <ResponsiveContainer width="100%" height="100%">
         <ComposedChart data={chartData}>
           <defs>
             <linearGradient id="colorHumidity" x1="0" y1="0" x2="0" y2="1">
@@ -147,7 +167,8 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
             name="Nhiệt độ (°C)"
           />
         </ComposedChart>
-      </ResponsiveContainer>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

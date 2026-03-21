@@ -65,23 +65,23 @@ export default function NotificationSettings() {
   ];
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-8 space-y-6">
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Cài đặt thông báo</h2>
-        <p className="text-gray-600">Chọn loại thông báo bạn muốn nhận</p>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Cài đặt thông báo</h2>
+        <p className="text-xs sm:text-sm text-gray-600">Chọn loại thông báo bạn muốn nhận</p>
       </div>
 
       <div className="space-y-4">
         {notificationOptions.map((option) => (
           <div
             key={option.key}
-            className="flex items-start justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
+            className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition"
           >
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900">
+              <h3 className="text-sm sm:text-base font-semibold text-gray-900">
                 {option.icon} {option.label}
               </h3>
-              <p className="text-sm text-gray-600 mt-1">{option.description}</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">{option.description}</p>
             </div>
 
             <label className="relative inline-flex items-center cursor-pointer ml-4">
@@ -99,12 +99,12 @@ export default function NotificationSettings() {
 
       {/* Quiet Hours */}
       <div className="border-t pt-6">
-        <h3 className="font-semibold text-gray-900 mb-4">🔇 Giờ yên tĩnh</h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4">🔇 Giờ yên tĩnh</h3>
+        <p className="text-xs sm:text-sm text-gray-600 mb-4">
           Không gửi thông báo trong khoảng thời gian này (trừ cảnh báo khẩn cấp)
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Từ
@@ -122,9 +122,9 @@ export default function NotificationSettings() {
 
       {/* Email Frequency */}
       <div className="border-t pt-6">
-        <h3 className="font-semibold text-gray-900 mb-4">📧 Tần suất Email</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4">📧 Tần suất Email</h3>
 
-        <select className="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+        <select className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
           <option value="real-time">🔴 Real-time (Ngay lập tức)</option>
           <option value="hourly">Mỗi giờ</option>
           <option value="daily">Hàng ngày</option>

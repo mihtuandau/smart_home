@@ -48,12 +48,12 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-8 space-y-6">
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 space-y-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Thông tin cá nhân</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Thông tin cá nhân</h2>
         <button
           onClick={() => setIsEditing(!isEditing)}
-          className={`px-4 py-2 rounded-lg transition ${
+          className={`px-3 sm:px-4 py-2 rounded-lg transition text-sm ${
             isEditing
               ? 'bg-gray-200 text-gray-900 hover:bg-gray-300'
               : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -101,14 +101,14 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
         </form>
       ) : (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <p className="text-sm text-gray-600 mb-1">Tên đăng nhập</p>
-              <p className="text-lg font-medium text-gray-900">{formData.username}</p>
+              <p className="text-base sm:text-lg font-medium text-gray-900">{formData.username}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600 mb-1">Email</p>
-              <p className="text-lg font-medium text-gray-900">{formData.email}</p>
+              <p className="text-base sm:text-lg font-medium text-gray-900">{formData.email}</p>
             </div>
           </div>
 

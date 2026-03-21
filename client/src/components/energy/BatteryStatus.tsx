@@ -34,14 +34,14 @@ export default function BatteryStatus() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 animate-pulse">
         <div className="h-40"></div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5 md:p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
           <svg
@@ -58,10 +58,10 @@ export default function BatteryStatus() {
           </svg>
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-900">
             Trạng thái Pin
           </h2>
-          <p className="text-sm text-gray-500">
+          <p className="text-xs sm:text-sm text-gray-500">
             Pin Cell qua CN3791 Solar Charger Module
           </p>
         </div>
@@ -69,14 +69,14 @@ export default function BatteryStatus() {
 
       <div className="space-y-4">
         <div>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
             <span className="text-sm text-gray-600">Mức pin</span>
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-gray-900">
+              <span className="text-xl sm:text-2xl font-bold text-gray-900">
                 {batteryLevel}%
               </span>
               <span
-                className={`px-2 py-1 rounded-md text-xs font-semibold ${statusColor}`}
+                className={`px-2 py-1 rounded-md text-[11px] sm:text-xs font-semibold ${statusColor}`}
               >
                 ⚡ {statusText}
               </span>
@@ -97,18 +97,18 @@ export default function BatteryStatus() {
         </div>
 
         {/* Battery Info */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <div>
             <p className="text-xs text-gray-600 mb-1">Điện áp</p>
-            <p className="text-lg font-bold text-gray-900">{voltage}</p>
+            <p className="text-base sm:text-lg font-bold text-gray-900">{voltage}</p>
           </div>
           <div>
             <p className="text-xs text-gray-600 mb-1">Dòng điện</p>
-            <p className="text-lg font-bold text-gray-900">{current}</p>
+            <p className="text-base sm:text-lg font-bold text-gray-900">{current}</p>
           </div>
           <div>
             <p className="text-xs text-gray-600 mb-1">Trạng thái</p>
-            <p className="text-lg font-bold text-gray-900">{statusText}</p>
+            <p className="text-base sm:text-lg font-bold text-gray-900">{statusText}</p>
           </div>
         </div>
       </div>

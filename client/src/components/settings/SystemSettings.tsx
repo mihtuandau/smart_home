@@ -19,17 +19,17 @@ export default function SystemSettings() {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-8 space-y-8">
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Cài đặt hệ thống</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Cài đặt hệ thống</h2>
       </div>
 
       {/* Auto Refresh */}
       <div className="border-b pb-6">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="font-semibold text-gray-900">🔄 Tự động làm mới dữ liệu</h3>
-            <p className="text-sm text-gray-600 mt-1">Tự động cập nhật dữ liệu từ cảm biến</p>
+            <h3 className="text-sm sm:text-base font-semibold text-gray-900">🔄 Tự động làm mới dữ liệu</h3>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">Tự động cập nhật dữ liệu từ cảm biến</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
@@ -52,7 +52,7 @@ export default function SystemSettings() {
               onChange={(e) => handleChange('refreshInterval', e.target.value)}
               min="10"
               max="300"
-              className="w-full md:w-40 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full sm:w-40 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>
         )}
@@ -60,8 +60,8 @@ export default function SystemSettings() {
 
       {/* Theme */}
       <div className="border-b pb-6">
-        <h3 className="font-semibold text-gray-900 mb-3">🎨 Chủ đề</h3>
-        <div className="flex gap-4">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">🎨 Chủ đề</h3>
+        <div className="flex flex-wrap gap-4">
           {['light', 'dark'].map((theme) => (
             <label key={theme} className="flex items-center gap-2 cursor-pointer">
               <input
@@ -82,7 +82,7 @@ export default function SystemSettings() {
 
       {/* Language */}
       <div className="border-b pb-6">
-        <h3 className="font-semibold text-gray-900 mb-3">🌐 Ngôn ngữ</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">🌐 Ngôn ngữ</h3>
         <select
           value={settings.language}
           onChange={(e) => handleChange('language', e.target.value)}
@@ -96,7 +96,7 @@ export default function SystemSettings() {
 
       {/* Timezone */}
       <div className="border-b pb-6">
-        <h3 className="font-semibold text-gray-900 mb-3">🕐 Múi giờ</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">🕐 Múi giờ</h3>
         <select
           value={settings.timezone}
           onChange={(e) => handleChange('timezone', e.target.value)}
@@ -111,8 +111,8 @@ export default function SystemSettings() {
 
       {/* Data Retention */}
       <div className="pb-6">
-        <h3 className="font-semibold text-gray-900 mb-3">💾 Lưu giữ dữ liệu</h3>
-        <div className="flex gap-2 items-center">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">💾 Lưu giữ dữ liệu</h3>
+        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
           <select
             value={settings.dataRetention}
             onChange={(e) => handleChange('dataRetention', e.target.value)}
@@ -124,13 +124,13 @@ export default function SystemSettings() {
             <option value="180">6 tháng</option>
             <option value="365">1 năm</option>
           </select>
-          <span className="text-sm text-gray-600">Dữ liệu cũ hơn sẽ được xóa</span>
+          <span className="text-xs sm:text-sm text-gray-600">Dữ liệu cũ hơn sẽ được xóa</span>
         </div>
       </div>
 
       {/* Danger Zone */}
       <div className="border-t pt-6">
-        <h3 className="font-semibold text-red-600 mb-3">⚠️ Vùng nguy hiểm</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-red-600 mb-3">⚠️ Vùng nguy hiểm</h3>
         <button className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
           🗑️ Xóa tất cả dữ liệu
         </button>

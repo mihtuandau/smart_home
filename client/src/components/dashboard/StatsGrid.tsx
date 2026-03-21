@@ -28,7 +28,7 @@ export default function StatsGrid() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
             <div className="h-20 bg-gray-200 rounded"></div>
@@ -72,7 +72,7 @@ export default function StatsGrid() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {stats.map((stat, index) => (
         <StatCard key={index} {...stat} index={index} />
       ))}

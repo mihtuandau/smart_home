@@ -26,13 +26,17 @@ interface StatCardProps {
 
 function SensorStatCard({ label, value, color, icon, trend }: StatCardProps) {
   return (
-    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200 hover:shadow-lg transition-shadow">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-sm text-gray-500 mb-1">{label}</p>
-          <p className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{value}</p>
+    <div className="section-card shadow-sm border border-gray-200 p-3 sm:p-4 md:p-6 hover:shadow-md md:hover:shadow-lg transition-shadow">
+      <div className="flex items-center gap-3 md:items-start md:justify-between md:gap-0">
+        <div className="order-1 md:order-2 p-2 md:p-2.5 rounded-lg flex-shrink-0" style={{ backgroundColor: color + '18' }}>
+          <div className="w-5 h-5 md:w-6 md:h-6" style={{ color }}>{icon}</div>
+        </div>
+
+        <div className="order-2 md:order-1 flex-1 min-w-0">
+          <p className="text-[11px] sm:text-xs md:text-sm font-medium text-gray-500 mb-0.5 md:mb-1 truncate">{label}</p>
+          <p className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 leading-tight">{value}</p>
           {trend && (
-            <div className={`flex items-center gap-1 mt-2 text-sm ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`flex items-center gap-1 mt-1 md:mt-2 text-[11px] sm:text-xs md:text-sm ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
               {trend.isPositive ? (
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
@@ -46,9 +50,6 @@ function SensorStatCard({ label, value, color, icon, trend }: StatCardProps) {
             </div>
           )}
         </div>
-        <div className={`p-3 rounded-lg`} style={{ backgroundColor: color + '20' }}>
-          <div style={{ color }}>{icon}</div>
-        </div>
       </div>
     </div>
   );
@@ -58,12 +59,22 @@ export default function SensorStatsGrid() {
   const { data: response, isLoading } = useSensorData(3000);
   const data = (response as any)?.data as SensorCurrentData | undefined; 
 
+  const formatNumber = (value: unknown, digits: number) => {
+    const parsed = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(parsed) ? parsed.toFixed(digits) : '--';
+  };
+
+  const formatWithUnit = (value: unknown, digits: number, unit: string) => {
+    const formatted = formatNumber(value, digits);
+    return formatted === '--' ? '--' : `${formatted}${unit}`;
+  };
+
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
-            <div className="h-24 bg-gray-200 rounded"></div>
+          <div key={i} className="section-card shadow-sm border border-gray-200 p-3 sm:p-4 md:p-6 animate-pulse">
+            <div className="h-14 md:h-24 bg-gray-200 rounded"></div>
           </div>
         ))}
       </div>
@@ -73,7 +84,7 @@ export default function SensorStatsGrid() {
   const stats: StatCardProps[] = [
     {
       label: 'Nhiệt độ',
-      value: data?.temperature !== undefined ? `${data.temperature.toFixed(1)}°C` : '--',
+      value: formatWithUnit(data?.temperature, 1, '°C'),
       color: '#ef4444',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,7 +94,7 @@ export default function SensorStatsGrid() {
     },
     {
       label: 'Độ ẩm',
-      value: data?.humidity !== undefined ? `${data.humidity.toFixed(1)}%` : '--',
+      value: formatWithUnit(data?.humidity, 1, '%'),
       color: '#3b82f6',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -93,7 +104,7 @@ export default function SensorStatsGrid() {
     },
     {
       label: 'Áp suất',
-      value: data?.pressure !== undefined ? `${data.pressure.toFixed(1)} hPa` : '--',
+      value: formatWithUnit(data?.pressure, 1, ' hPa'),
       color: '#8b5cf6',
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +115,7 @@ export default function SensorStatsGrid() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
       {stats.map((stat, index) => (
         <SensorStatCard key={index} {...stat} />
       ))}

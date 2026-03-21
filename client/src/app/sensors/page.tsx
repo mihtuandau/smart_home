@@ -7,11 +7,11 @@ import SensorHistoryTable from '@/components/sensors/SensorHistoryTable';
 
 export default function SensorsPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 min-w-0">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Giám sát cảm biến</h1>
-        <p className="text-sm text-gray-500 mt-1">Theo dõi nhiệt độ, độ ẩm và các cảm biến môi trường</p>
+      <div className="space-y-1">
+        <h1 className="page-title">Giám sát cảm biến</h1>
+        <p className="page-subtitle">Theo dõi nhiệt độ, độ ẩm và các cảm biến môi trường</p>
       </div>
 
       {/* Sensor Stats Grid */}
@@ -21,7 +21,7 @@ export default function SensorsPage() {
       <RainProbabilityPredictor />
 
       {/* Charts */}
-      <div className="grid grid-cols-1 gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 min-w-0">
         <TemperatureHumidityChart hours={24} />
       </div>
 
