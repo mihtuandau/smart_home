@@ -32,8 +32,8 @@ export function useAutomation() {
   // Tạo automation rule mới
   const createRuleMutation = useMutation({
     mutationFn: (data: CreateAutomationData) => automationService.createRule(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['automation'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['automation'], refetchType: 'all' });
       toast.success('Quy tắc đã được tạo thành công!');
     },
     onError: (error: Error) => {
@@ -45,8 +45,8 @@ export function useAutomation() {
   const updateRuleMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateAutomationData }) =>
       automationService.updateRule(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['automation'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['automation'], refetchType: 'all' });
       toast.success('Quy tắc đã được cập nhật!');
     },
     onError: (error: Error) => {
@@ -57,8 +57,8 @@ export function useAutomation() {
   // Xóa automation rule
   const deleteRuleMutation = useMutation({
     mutationFn: (id: string) => automationService.deleteRule(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['automation'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['automation'], refetchType: 'all' });
       toast.success('Quy tắc đã được xóa!');
     },
     onError: (error: Error) => {
@@ -69,8 +69,8 @@ export function useAutomation() {
   // Bật/tắt automation rule
   const toggleRuleMutation = useMutation({
     mutationFn: (id: string) => automationService.toggleRule(id),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['automation'] });
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ['automation'], refetchType: 'all' });
       toast.success(
         `Quy tắc đã ${data.isActive ? 'kích hoạt' : 'vô hiệu hóa'}!`
       );

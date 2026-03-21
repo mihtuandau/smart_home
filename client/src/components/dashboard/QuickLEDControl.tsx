@@ -20,7 +20,7 @@ export default function QuickLEDControl() {
   const initializedRef = useRef<boolean>(false);
 
   const { data: response, isLoading } = useLatestDeviceData(2000); // Reduced from 5000ms to 2000ms
-  const data = (response as any)?.data || response;
+  const data = (response as any)?.data || response || {};
 
   useEffect(() => {
     if (!data) return;

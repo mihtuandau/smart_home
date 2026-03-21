@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 import { PrismaModule } from '../../common/prisma.module';
+import { MqttModule } from '../mqtt/mqtt.module';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, MqttModule],
   controllers: [DashboardController],
   providers: [DashboardService],
   exports: [DashboardService],

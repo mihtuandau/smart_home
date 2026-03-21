@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
+import { MqttService } from '../mqtt/mqtt.service';
 
 @Injectable()
 export class DashboardService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mqttService: MqttService,
+  ) {}
 
   async getOverview() {
     const [deviceStats, sensorData, powerData, activityLogs] =
@@ -24,30 +28,58 @@ export class DashboardService {
   }
 
   async getDeviceStats() {
-    const total = await this.prisma.device.count();
-
+    // DB devices
+    const dbTotal = await this.prisma.device.count();
     const byStatus = await this.prisma.device.groupBy({
       by: ['status'],
       _count: true,
     });
-
     const byType = await this.prisma.device.groupBy({
       by: ['type'],
       _count: true,
     });
 
+    // Built-in LEDs (always 2 devices)
+    const ledsTotal = 2;
+    let ledsOnCount = 0;
+
+    const latestMqttData = this.mqttService.getLatestData();
+    if (latestMqttData) {
+      if (latestMqttData.led1 === true) ledsOnCount++;
+      if (latestMqttData.led2 === true) ledsOnCount++;
+    }
+
+    // Custom IoT devices from MQTT snapshot
+    let customDevicesTotal = 0;
+    let customDevicesOnCount = 0;
+    if (latestMqttData) {
+      if (latestMqttData.device1 !== undefined) {
+        customDevicesTotal++;
+        if (latestMqttData.device1) customDevicesOnCount++;
+      }
+      if (latestMqttData.device2 !== undefined) {
+        customDevicesTotal++;
+        if (latestMqttData.device2) customDevicesOnCount++;
+      }
+    }
+
+    const dbOnCount = byStatus.find((s) => s.status === 'ON')?._count || 0;
+    const total = dbTotal + ledsTotal + customDevicesTotal;
+    const online = dbOnCount + ledsOnCount + customDevicesOnCount;
+    const offline = total - online;
+
     return {
       total,
-      online: byStatus.find((s) => s.status === 'ON')?._count || 0,
-      offline: byStatus.find((s) => s.status === 'OFF')?._count || 0,
+      online,
+      offline,
       byStatus: byStatus.reduce((acc, item) => {
         acc[item.status] = item._count;
         return acc;
-      }, {}),
+      }, {} as Record<string, number>),
       byType: byType.reduce((acc, item) => {
         acc[item.type] = item._count;
         return acc;
-      }, {}),
+      }, {} as Record<string, number>),
     };
   }
 
