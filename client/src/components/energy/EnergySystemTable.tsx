@@ -62,19 +62,34 @@ export default function EnergySystemTable() {
 
   if (energyLoading || sourcesLoading) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 animate-pulse">
         <div className="h-64"></div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Thông tin hệ thống năng lượng</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Thông tin hệ thống năng lượng</h2>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="space-y-3 md:hidden">
+        {components.map((component, index) => (
+          <div key={index} className="border border-gray-200 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-gray-900">{component.name}</span>
+              <span className={`text-sm font-bold ${component.valueColor || 'text-gray-900'}`}>{component.value}</span>
+            </div>
+            <div className="mt-2 text-xs text-gray-600">
+              {component.spec}
+            </div>
+            <div className="mt-1 text-xs text-gray-500">{component.status}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200">
@@ -86,7 +101,7 @@ export default function EnergySystemTable() {
           </thead>
           <tbody>
             {components.map((component, index) => (
-              <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                 <td className="py-4 px-4">
                   <span className="text-sm font-medium text-gray-900">{component.name}</span>
                 </td>

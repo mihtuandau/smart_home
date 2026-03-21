@@ -14,11 +14,11 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Cài đặt</h1>
-        <p className="text-gray-600 mt-1">Quản lý thông tin cá nhân và cài đặt hệ thống</p>
+      <div className="space-y-1">
+        <h1 className="page-title">Cài đặt</h1>
+        <p className="page-subtitle">Quản lý thông tin cá nhân và cài đặt hệ thống</p>
       </div>
 
       {/* Tabs */}
@@ -32,7 +32,7 @@ export default function SettingsPage() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-2 sm:px-4 py-3 font-medium border-b-2 transition whitespace-nowrap text-sm ${
+            className={`px-2 sm:px-4 py-2.5 sm:py-3 font-medium border-b-2 transition whitespace-nowrap text-xs sm:text-sm ${
               activeTab === tab.id
                 ? 'border-blue-600 text-blue-600'
                 : 'border-transparent text-gray-600 hover:text-gray-900'

@@ -17,14 +17,14 @@ interface SensorCardProps {
 function SensorCard({ title, value, badge, badgeColor, borderColor, bgColor, icon }: SensorCardProps) {
   return (
     <div 
-      className="rounded-lg p-5 border transition-shadow hover:shadow-sm"
+      className="rounded-lg p-4 sm:p-5 border transition-shadow hover:shadow-sm"
       style={{ backgroundColor: bgColor, borderColor: borderColor }}
     >
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">{icon}</span>
         <span className="text-sm font-semibold text-gray-700">{title}</span>
       </div>
-      <h3 className="text-3xl font-bold text-gray-900 mb-3">{value}</h3>
+      <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{value}</h3>
       {badge && (
         <span className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${badgeColor || 'bg-black text-white'}`}>
           {badge}
@@ -47,7 +47,7 @@ interface PressureCardProps {
 function PressureCard({ title, subtitle, value, status, borderColor, bgColor, icon }: PressureCardProps) {
   return (
     <div 
-      className="rounded-lg p-5 border"
+      className="rounded-lg p-4 sm:p-5 border"
       style={{ backgroundColor: bgColor, borderColor: borderColor }}
     >
       <div className="flex items-start justify-between">
@@ -57,7 +57,7 @@ function PressureCard({ title, subtitle, value, status, borderColor, bgColor, ic
             <span className="text-sm font-semibold text-gray-700">{title}</span>
           </div>
           <p className="text-xs text-gray-600 mb-2">{subtitle}</p>
-          <h3 className="text-3xl font-bold text-gray-900">{value}</h3>
+          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">{value}</h3>
         </div>
         <div className="text-right">
           <p className="text-xs text-gray-600 mb-2">Trạng thái</p>
@@ -88,10 +88,10 @@ export default function EnvironmentStatus() {
   const colorScheme = getColorScheme(rainProbability);
 
   return (
-    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5 md:p-6">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Trạng thái môi trường</h2>
-        <p className="text-sm text-gray-500 mt-1">Thông tin từ các cảm biến và thiết bị</p>
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Trạng thái môi trường</h2>
+        <p className="text-xs sm:text-sm text-gray-500 mt-1">Thông tin từ các cảm biến và thiết bị</p>
       </div>
       
       <div className="space-y-4">

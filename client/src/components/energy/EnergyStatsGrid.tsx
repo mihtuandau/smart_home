@@ -25,16 +25,16 @@ function EnergyStatCard({
 }: StatCardProps) {
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 animate-pulse">
         <div className="h-20"></div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200 hover:shadow-sm transition-shadow">
-      <div className="flex items-center justify-between mb-3 md:mb-4">
-        <span className="text-sm text-gray-600">{title}</span>
+    <div className="section-card shadow-sm border border-gray-200 p-3 sm:p-4 md:p-6 hover:shadow-sm transition-shadow">
+      <div className="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
+        <span className="text-xs sm:text-sm text-gray-600">{title}</span>
         <div
           className="w-8 h-8 rounded-lg flex items-center justify-center"
           style={{ backgroundColor: `${iconColor}20` }}
@@ -43,11 +43,11 @@ function EnergyStatCard({
         </div>
       </div>
       <div className="mb-2">
-        <span className="text-2xl md:text-4xl font-bold text-gray-900">{value}</span>
-        <span className="text-base md:text-xl text-gray-500 ml-1">{unit}</span>
+        <span className="text-xl sm:text-2xl md:text-4xl font-bold text-gray-900">{value}</span>
+        <span className="text-sm sm:text-base md:text-xl text-gray-500 ml-1">{unit}</span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-xs text-gray-500">{subtitle}</span>
+        <span className="text-[11px] sm:text-xs text-gray-500">{subtitle}</span>
         {trend === "up" && (
           <svg
             className="w-4 h-4 text-green-500"
@@ -124,7 +124,7 @@ export default function EnergyStatsGrid() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {stats.map((stat, index) => (
         <EnergyStatCard key={index} {...stat} isLoading={isLoading} />
       ))}

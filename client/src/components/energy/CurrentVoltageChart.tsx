@@ -80,24 +80,24 @@ export default function CurrentVoltageChart() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 animate-pulse">
         <div className="h-64"></div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900">
           Dòng điện & Điện áp Pin
         </h2>
-        <p className="text-sm text-gray-500">
+        <p className="text-xs sm:text-sm text-gray-500">
           Theo dõi dòng và áp qua thời gian
         </p>
       </div>
 
-      <div className="h-64">
+      <div className="h-52 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={chartData}

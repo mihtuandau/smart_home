@@ -65,14 +65,14 @@ export default function QuickLEDControl() {
     <>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <h3 className="font-semibold text-gray-900 mb-3">🔆 Bật/Tắt Đèn LED</h3>
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5">
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">🔆 Bật/Tắt Đèn LED</h3>
         
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => toggleLed(1)}
             disabled={controlLEDMutation.isPending}
-            className={`p-3 rounded-lg font-medium text-sm transition-all ${
+            className={`p-3.5 sm:p-3 rounded-lg font-medium text-xs sm:text-sm transition-all ${
               localLEDs.led1
                 ? 'bg-yellow-100 text-yellow-800 border-2 border-yellow-400'
                 : 'bg-gray-100 text-gray-600 border-2 border-gray-300'
@@ -80,13 +80,13 @@ export default function QuickLEDControl() {
           >
             <div className="text-lg mb-1">{localLEDs.led1 ? '💡' : '🔦'}</div>
             <div>Đèn 1</div>
-            <div className="text-xs mt-1">{localLEDs.led1 ? 'BẬT' : 'TẮT'}</div>
+            <div className="text-[11px] sm:text-xs mt-1">{localLEDs.led1 ? 'BẬT' : 'TẮT'}</div>
           </button>
           
           <button
             onClick={() => toggleLed(2)}
             disabled={controlLEDMutation.isPending}
-            className={`p-3 rounded-lg font-medium text-sm transition-all ${
+            className={`p-3.5 sm:p-3 rounded-lg font-medium text-xs sm:text-sm transition-all ${
               localLEDs.led2
                 ? 'bg-blue-100 text-blue-800 border-2 border-blue-400'
                 : 'bg-gray-100 text-gray-600 border-2 border-gray-300'
@@ -94,11 +94,11 @@ export default function QuickLEDControl() {
           >
             <div className="text-lg mb-1">{localLEDs.led2 ? '💡' : '🔦'}</div>
             <div>Đèn 2</div>
-            <div className="text-xs mt-1">{localLEDs.led2 ? 'BẬT' : 'TẮT'}</div>
+            <div className="text-[11px] sm:text-xs mt-1">{localLEDs.led2 ? 'BẬT' : 'TẮT'}</div>
           </button>
         </div>
         
-        <p className="text-xs text-gray-500 mt-3 text-center">Trạng thái: {localLEDs.led1 || localLEDs.led2 ? `${localLEDs.led1 ? '1' : ''}${localLEDs.led1 && localLEDs.led2 ? ',' : ''}${localLEDs.led2 ? '2' : ''}` : 'Tất cả tắt'}</p>
+        <p className="text-[11px] sm:text-xs text-gray-500 mt-3 text-center">Trạng thái: {localLEDs.led1 || localLEDs.led2 ? `${localLEDs.led1 ? '1' : ''}${localLEDs.led1 && localLEDs.led2 ? ',' : ''}${localLEDs.led2 ? '2' : ''}` : 'Tất cả tắt'}</p>
       </div>
     </>
   );

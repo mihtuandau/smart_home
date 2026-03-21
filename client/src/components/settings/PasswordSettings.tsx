@@ -50,8 +50,8 @@ export default function PasswordSettings() {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-8 max-w-md">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Đổi mật khẩu</h2>
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 max-w-md">
+      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Đổi mật khẩu</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -104,7 +104,7 @@ export default function PasswordSettings() {
       </form>
 
       <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-        <p className="text-sm text-yellow-800">
+        <p className="text-xs sm:text-sm text-yellow-800">
           ⚠️ <strong>Lưu ý:</strong> Đảm bảo bạn sử dụng mật khẩu mạnh và không chia sẻ với ai.
         </p>
       </div>

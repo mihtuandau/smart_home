@@ -41,16 +41,16 @@ export default function AutomationPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Tự động hóa</h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-1">Tạo và quản lý các quy tắc tự động cho hệ thống</p>
+          <h1 className="page-title">Tự động hóa</h1>
+          <p className="page-subtitle mt-1">Tạo và quản lý các quy tắc tự động cho hệ thống</p>
         </div>
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
+          className="w-full sm:w-auto px-4 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
         >
           <span>+</span> Thêm quy tắc mới
         </button>

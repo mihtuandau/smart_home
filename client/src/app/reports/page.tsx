@@ -6,12 +6,10 @@ import ExportTools from '@/components/reports/ExportTools';
 
 export default function ReportsPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Báo cáo & Xuất dữ liệu</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Xem thống kê tổng hợp và xuất dữ liệu hệ thống
-        </p>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-1">
+        <h1 className="page-title">Báo cáo & Xuất dữ liệu</h1>
+        <p className="page-subtitle">Xem thống kê tổng hợp và xuất dữ liệu hệ thống</p>
       </div>
 
       <ReportGenerator />

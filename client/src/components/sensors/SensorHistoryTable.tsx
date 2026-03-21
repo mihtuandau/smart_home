@@ -9,6 +9,11 @@ export default function SensorHistoryTable() {
   const PAGE_SIZE = 20;
   const { data: response, isLoading, error } = useSensorHistory(hours, page, PAGE_SIZE);
 
+  const formatNumber = (value: unknown, digits = 1) => {
+    const parsed = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(parsed) ? parsed.toFixed(digits) : '--';
+  };
+
   const historyData = ((response as any)?.data || []) as any[];
   const totalPages: number = (response as any)?.totalPages || 1;
   const total: number = (response as any)?.total || 0;
@@ -26,14 +31,14 @@ export default function SensorHistoryTable() {
   };
 
   return (
-    <div className="bg-white rounded-lg p-4 md:p-6 border border-gray-200">
+    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Lịch sử cảm biến</h2>
-        <div className="flex gap-2 text-gray-700 items-center text-xl">
+        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Lịch sử cảm biến</h2>
+        <div className="flex flex-wrap gap-2 text-gray-700 items-center">
           <select
             value={hours}
             onChange={(e) => handleHoursChange(Number(e.target.value))}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value={6}>6 giờ qua</option>
             <option value={12}>12 giờ qua</option>
@@ -42,7 +47,7 @@ export default function SensorHistoryTable() {
             <option value={168}>7 ngày qua</option>
             <option value={720}>30 ngày qua</option>
           </select>
-          <button className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
             Xuất CSV
           </button>
         </div>
@@ -61,22 +66,22 @@ export default function SensorHistoryTable() {
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[640px] text-xs sm:text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-4 py-3 text-left font-semibold text-gray-700">Thời gian</th>
-                <th className="px-4 py-3 text-right font-semibold text-gray-700">Nhiệt độ (°C)</th>
-                <th className="px-4 py-3 text-right font-semibold text-gray-700">Độ ẩm (%)</th>
-                <th className="px-4 py-3 text-right font-semibold text-gray-700">Áp suất (hPa)</th>
+                <th className="px-4 py-3 text-left font-semibold text-gray-700 whitespace-nowrap">Thời gian</th>
+                <th className="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Nhiệt độ (°C)</th>
+                <th className="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Độ ẩm (%)</th>
+                <th className="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Áp suất (hPa)</th>
               </tr>
             </thead>
             <tbody>
               {data.map((row, index) => (
                 <tr key={row.id} className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                  <td className="px-4 py-3 text-gray-900 font-medium">{row.timestamp}</td>
-                  <td className="px-4 py-3 text-right text-red-600 font-medium">{row.temperature !== undefined ? row.temperature.toFixed(1) : '--'}</td>
-                  <td className="px-4 py-3 text-right text-blue-600 font-medium">{row.humidity !== undefined ? row.humidity.toFixed(1) : '--'}</td>
-                  <td className="px-4 py-3 text-right text-purple-600 font-medium">{row.pressure ?? '--'}</td>
+                  <td className="px-4 py-3 text-gray-900 font-medium whitespace-nowrap">{row.timestamp}</td>
+                  <td className="px-4 py-3 text-right text-red-600 font-medium whitespace-nowrap">{formatNumber(row.temperature, 1)}</td>
+                  <td className="px-4 py-3 text-right text-blue-600 font-medium whitespace-nowrap">{formatNumber(row.humidity, 1)}</td>
+                  <td className="px-4 py-3 text-right text-purple-600 font-medium whitespace-nowrap">{formatNumber(row.pressure, 1)}</td>
                 </tr>
               ))}
             </tbody>

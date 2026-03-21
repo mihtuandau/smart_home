@@ -87,7 +87,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 z-30 bg-gray-100 bg-opacity-20 md:hidden"
+          className="fixed inset-0 z-30 bg-black/40 backdrop-blur-[2px] md:hidden"
           onClick={onClose}
         />
       )}
@@ -95,9 +95,9 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
       <aside
         className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
-        } bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 w-64 shadow-lg md:relative md:translate-x-0 md:z-0`}
+        } bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 w-72 max-w-[85vw] shadow-lg md:relative md:translate-x-0 md:z-0 md:w-64`}
       >
-      <div className="h-full px-4 py-6 overflow-y-auto flex flex-col">
+      <div className="h-full px-4 py-5 overflow-y-auto flex flex-col">
         <div className="flex items-center justify-between mb-8 px-2">
           <div className="flex items-center flex-1">
             <div className="h-11 w-11 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
@@ -127,7 +127,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
           )}
         </div>
 
-        <nav className="space-y-1 flex-1">
+        <nav className="space-y-1.5 flex-1">
           {menuItems.map((item) => {
             const isActive = pathname === item.path;
             return (
@@ -135,7 +135,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
                 key={item.path}
                 href={item.path}
                 onClick={onClose} 
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                className={`flex items-center gap-3 px-3 py-3 md:py-2.5 rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-50 text-blue-700 font-semibold shadow-sm'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
@@ -144,14 +144,14 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
                 <div className={isActive ? 'text-blue-600' : 'text-gray-500'}>
                   {item.icon}
                 </div>
-                <span className="text-sm">{item.label}</span>
+                <span className="text-base md:text-sm">{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
         <div className="pt-4 mt-4 border-t border-gray-200">
-          <div className="flex items-center justify-between bg-white rounded-lg p-3 shadow-sm">
+          <div className="flex items-center justify-between bg-white rounded-xl p-3.5 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
                 {user?.username?.charAt(0).toUpperCase() || 'U'}

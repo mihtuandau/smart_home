@@ -107,17 +107,17 @@ export default function IoTDeviceManager() {
         }}
       />
 
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5 md:p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
           <div>
-            <h3 className="font-semibold text-gray-900">Thiết bị IoT</h3>
-            <p className="text-xs text-gray-500 mt-1">Tối đa 2 thiết bị · Cập nhật qua MQTT</p>
+            <h3 className="text-sm sm:text-base font-semibold text-gray-900">Thiết bị IoT</h3>
+            <p className="text-[11px] sm:text-xs text-gray-500 mt-1">Tối đa 2 thiết bị · Cập nhật qua MQTT</p>
           </div>
           {devices.length < 2 && !showAddForm && (
             <button
               onClick={() => setShowAddForm(true)}
-              className="px-3 py-1.5 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              className="w-full sm:w-auto px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
             >
               Thêm thiết bị
             </button>
@@ -134,7 +134,7 @@ export default function IoTDeviceManager() {
             {devices.map((device) => (
               <div
                 key={`device-${device.index}`}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div
@@ -153,7 +153,7 @@ export default function IoTDeviceManager() {
                 </div>
 
                 {/* Controls */}
-                <div className="flex items-center gap-2 shrink-0 ml-4">
+                <div className="flex flex-wrap items-center gap-2 shrink-0 sm:ml-4">
                   {/* Power button - Apple Home style */}
                   <button
                     onClick={() => handleControl(device.index, !device.state)}

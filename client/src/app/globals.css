@@ -5,26 +5,26 @@
 @layer base {
   :root {
     /* CSS Variables cho light mode */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 40% 98%;
+    --foreground: 222 25% 12%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
+    --card-foreground: 222 25% 12%;
+    --primary: 200 85% 38%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --secondary: 24 95% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --accent: 210 35% 95%;
+    --accent-foreground: 222 25% 12%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 214 28% 90%;
+    --input: 214 28% 90%;
+    --ring: 200 85% 38%;
     --radius: 0.5rem;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 35% 96%;
+    --muted-foreground: 215 15% 45%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 25% 12%;
   }
 
   .dark {
@@ -56,8 +56,13 @@
 
   body {
     background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(1200px 600px at 10% -10%, rgba(14, 116, 144, 0.12), transparent 60%),
+      radial-gradient(900px 500px at 90% 0%, rgba(249, 115, 22, 0.12), transparent 60%),
+      linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.95));
     color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: var(--font-brand-sans), ui-sans-serif, system-ui;
   }
 
   html {
@@ -84,6 +89,25 @@
 }
 
 @layer components {
+  .page-title {
+    font-size: clamp(1.125rem, 2.2vw, 1.75rem);
+    font-weight: 700;
+    color: black;
+    letter-spacing: -0.01em;
+  }
+
+  .page-subtitle {
+    font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+    color: gray;
+  }
+
+  .section-card {
+    border-radius: 0.75rem;
+    background-color: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 12px 30px -24px rgba(15, 23, 42, 0.35);
+  }
+
   .btn-primary {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
