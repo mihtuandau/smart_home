@@ -1,10 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 import { DeviceStatus, DeviceType } from '@prisma/client';
+import { MqttService } from '../mqtt/mqtt.service';
 
 @Injectable()
 export class DevicesService {
-  constructor(private prisma: PrismaService) {}
+  private readonly logger = new Logger(DevicesService.name);
+
+  constructor(
+    private prisma: PrismaService,
+    private mqttService: MqttService,
+  ) {}
 
   async findAll() {
     return this.prisma.device.findMany({
@@ -106,31 +112,102 @@ export class DevicesService {
   }
 
   async getStats() {
-    const total = await this.prisma.device.count();
-    const byStatus = await this.prisma.device.groupBy({
+    // Get database devices count
+    const dbTotal = await this.prisma.device.count();
+    const dbByStatus = await this.prisma.device.groupBy({
       by: ['status'],
       _count: true,
     });
 
-    const byType = await this.prisma.device.groupBy({
-      by: ['type'],
-      _count: true,
-    });
+    // Get LED status from MQTT (built-in devices)
+    const latestMqttData = this.mqttService.getLatestData();
+    let ledsOnCount = 0;
+    const ledsTotal = 2; // LED1 and LED2 always exist as built-in devices
 
-    const statusMap = byStatus.reduce((acc, item) => {
+    if (latestMqttData) {
+      if (latestMqttData.led1 === true) ledsOnCount++;
+      if (latestMqttData.led2 === true) ledsOnCount++;
+      
+      this.logger.log(
+        `📊 MQTT Data: LED1=${latestMqttData.led1}, LED2=${latestMqttData.led2}, ledsOnCount=${ledsOnCount}`
+      );
+    } else {
+      this.logger.warn(`⚠️ MQTT Data not available yet`);
+    }
+
+    // Count custom IoT devices from MQTT
+    // device1 and device2 are custom devices that can be added by user
+    let customDevicesTotal = 0;
+    let customDevicesOnCount = 0;
+    
+    if (latestMqttData) {
+      // Check if device1 field exists (means it was added)
+      if ((latestMqttData as any).device1 !== undefined) {
+        customDevicesTotal++;
+        if ((latestMqttData as any).device1 === true) customDevicesOnCount++;
+      }
+      // Check if device2 field exists (means it was added)
+      if ((latestMqttData as any).device2 !== undefined) {
+        customDevicesTotal++;
+        if ((latestMqttData as any).device2 === true) customDevicesOnCount++;
+      }
+      
+      if (customDevicesTotal > 0) {
+        this.logger.log(
+          `📊 Custom Devices: Total=${customDevicesTotal}, Online=${customDevicesOnCount}`
+        );
+      }
+    }
+
+    // Combine all device counts
+    const total = dbTotal + ledsTotal + customDevicesTotal;
+    
+    // Calculate online count
+    const dbOnCount = dbByStatus.find((s) => s.status === 'ON')?._count || 0;
+    const online = dbOnCount + ledsOnCount + customDevicesOnCount;
+    const offline = total - online;
+
+    this.logger.log(
+      `📈 Device Stats - DB: ${dbTotal}/${dbOnCount}ON, LEDs: ${ledsTotal}/${ledsOnCount}ON, Custom: ${customDevicesTotal}/${customDevicesOnCount}ON, Total: ${total}/${online}ON`
+    );
+
+    const dbStatusMap = dbByStatus.reduce((acc, item) => {
       acc[item.status] = item._count;
       return acc;
     }, {} as Record<string, number>);
 
+    const dbByType = await this.prisma.device.groupBy({
+      by: ['type'],
+      _count: true,
+    });
+
     return {
       total,
-      online: statusMap['ON'] || 0,
-      offline: statusMap['OFF'] || 0,
-      byStatus: statusMap,
-      byType: byType.reduce((acc, item) => {
+      online,
+      offline,
+      byStatus: dbStatusMap,
+      byType: dbByType.reduce((acc, item) => {
         acc[item.type] = item._count;
         return acc;
       }, {}),
+      // Add detailed breakdown for frontend
+      breakdown: {
+        database: {
+          total: dbTotal,
+          online: dbOnCount,
+          offline: dbTotal - dbOnCount,
+        },
+        leds: {
+          total: ledsTotal,
+          online: ledsOnCount,
+          offline: ledsTotal - ledsOnCount,
+        },
+        customDevices: {
+          total: customDevicesTotal,
+          online: customDevicesOnCount,
+          offline: customDevicesTotal - customDevicesOnCount,
+        },
+      },
     };
   }
 }

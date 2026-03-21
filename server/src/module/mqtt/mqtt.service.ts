@@ -17,6 +17,8 @@ export interface SensorPayload {
   rain: boolean;
   led1: boolean;
   led2: boolean;
+  device1?: boolean; // Optional custom device 1
+  device2?: boolean; // Optional custom device 2
 }
 
 /**
@@ -115,17 +117,22 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
       if (topic === MQTT_TOPICS.DATA_TOPIC) {
         const data: SensorPayload = JSON.parse(message);
-        this.latestData = data;
+        // Merge with previous snapshot to avoid dropping LED/custom states when payload is partial
+        const mergedData: SensorPayload = {
+          ...(this.latestData ?? ({} as SensorPayload)),
+          ...data,
+        };
+        this.latestData = mergedData;
 
         this.logger.log(
-          `🌡️  Temp: ${data.temperature}°C | 💧 Humidity: ${data.humidity}% | 🔋 Voltage: ${data.voltage}V`,
+          `🌡️  Temp: ${mergedData.temperature}°C | 💧 Humidity: ${mergedData.humidity}% | 🔋 Voltage: ${mergedData.voltage}V`,
         );
         this.logger.log(
-          `💡 LED1: ${data.led1 ? 'ON' : 'OFF'} | LED2: ${data.led2 ? 'ON' : 'OFF'}`,
+          `💡 LED1: ${mergedData.led1 ? 'ON' : 'OFF'} | LED2: ${mergedData.led2 ? 'ON' : 'OFF'}`,
         );
 
-        // Process sensor data
-        await this.processSensorData(data);
+        // Process sensor data using merged snapshot
+        await this.processSensorData(mergedData);
       }
     } catch (error) {
       this.logger.error(`Error handling message: ${error.message}`);

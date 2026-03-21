@@ -11,6 +11,14 @@ export default function StatsGrid() {
 
   const latestData = (latestResponse as any)?.data;
   const statsData = (statsResponse as any)?.data;
+
+  const isCustomDevicePresent = (value: any) => {
+    if (value === undefined || value === null) return false;
+    if (typeof value === 'object') {
+      return Boolean(value.name) || value.state !== undefined || value.power !== undefined;
+    }
+    return true;
+  };
   
   // Energy response is an array of power data, calculate total
   const energyArray = (energyResponse as any)?.data || [];
@@ -31,8 +39,10 @@ export default function StatsGrid() {
   }
 
   // Get device stats from the response
-  const devicesOn = statsData?.online || 0;
-  const totalDevices = statsData?.total || 0;
+  const devicesOn = Math.max(0, statsData?.online ?? 0);
+  const customCountFromLatest = [latestData?.device1, latestData?.device2].filter(isCustomDevicePresent).length;
+  const totalFromLatest = 2 + customCountFromLatest;
+  const totalDevices = Math.max(2, statsData?.total ?? 2, totalFromLatest); // keep total correct on initial load
 
   const stats = [
     { 
