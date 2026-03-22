@@ -14,8 +14,7 @@ export default function DevicesPage() {
       <QuickControls />
 
       <LEDControl />
-
-      {/* Thiết bị IoT tùy chỉnh — thêm/sửa/xóa qua MQTT */}
+      
       <IoTDeviceManager />
 
       <DeviceSummary />
