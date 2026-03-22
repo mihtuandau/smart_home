@@ -151,26 +151,39 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
         </nav>
 
         <div className="pt-4 mt-4 border-t border-gray-200">
-          <div className="flex items-center justify-between bg-white rounded-xl p-3.5 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
-                {user?.username?.charAt(0).toUpperCase() || 'U'}
+          {user ? (
+            <div className="flex items-center justify-between bg-white rounded-xl p-3.5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold shadow-md">
+                  {user.username?.charAt(0).toUpperCase() || 'U'}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">{user.username || 'User'}</p>
+                  <p className="text-xs text-gray-500">ADMIN</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-900">{user?.username || 'User'}</p>
-                <p className="text-xs text-gray-500">ADMIN</p>
-              </div>
+              <button
+                onClick={onLogout}
+                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                title="Đăng xuất"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
             </div>
-            <button
-              onClick={onLogout}
-              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-              title="Đăng xuất"
+          ) : (
+            <Link
+              href="/login"
+              onClick={onClose}
+              className="flex items-center justify-center gap-2 bg-blue-600 text-white rounded-xl p-3.5 shadow-sm hover:bg-blue-700 transition-colors"
             >
               <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
-            </button>
-          </div>
+              <span className="text-sm font-semibold">Đăng nhập</span>
+            </Link>
+          )}
         </div>
       </div>
     </aside>

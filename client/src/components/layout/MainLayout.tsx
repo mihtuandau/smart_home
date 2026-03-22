@@ -11,12 +11,16 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const { user, logout } = useAuth();
+  const { user, isLoading, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
 
   const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
+
+  // Pages that require authentication
+  const protectedPages = ['/automation', '/settings'];
+  const isProtectedPage = protectedPages.some(page => pathname?.startsWith(page));
 
   const handleLogout = () => {
     logout();
@@ -31,20 +35,45 @@ export default function MainLayout({ children }: MainLayoutProps) {
     return <>{children}</>;
   }
 
-  return (
-    <div className="flex h-screen bg-gray-50">
-      <DashboardSidebar 
-        isOpen={isSidebarOpen} 
-        user={user} 
-        onLogout={handleLogout}
-        onClose={handleCloseSidebar}
-      />
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
+          <p className="text-gray-500">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-      <div className="flex flex-col flex-1 min-h-0 min-w-0">
-        <DashboardHeader onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
-        <main className="flex-1 min-h-0 min-w-0 py-3 sm:py-4 md:py-6 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable_both-edges]">
-          <div className="mx-auto w-full max-w-[1400px] min-w-0 px-2 sm:px-6">{children}</div>
-        </main>
+  if (isProtectedPage && !isAuthenticated) {
+    router.push('/login');
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
+          <p className="text-gray-500">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-screen bg-gray-50 flex-col">
+      <div className="flex flex-1 h-screen overflow-hidden">
+        <DashboardSidebar 
+          isOpen={isSidebarOpen} 
+          user={user} 
+          onLogout={handleLogout}
+          onClose={handleCloseSidebar}
+        />
+
+        <div className="flex flex-col flex-1 min-h-0 min-w-0">
+          <DashboardHeader onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+          <main className="flex-1 min-h-0 min-w-0 py-3 sm:py-4 md:py-6 overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable_both-edges]">
+            <div className="mx-auto w-full max-w-[1400px] min-w-0 px-2 sm:px-6">{children}</div>
+          </main>
+        </div>
       </div>
     </div>
   );

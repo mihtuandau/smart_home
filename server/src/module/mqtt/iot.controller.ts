@@ -15,7 +15,6 @@ import { PrismaService } from '../../common/prisma.service';
 import { ControlLedDto } from './dto/control-led.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @Controller('iot')
 export class IotController {
   constructor(
@@ -66,6 +65,7 @@ export class IotController {
     return { success: true, count: devices.length, data: devices };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('control/led')
   async controlLed(@Body() dto: ControlLedDto) {
     try {
@@ -92,6 +92,7 @@ export class IotController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('control/servo')
   async controlServo(@Body() dto: { angle: number }) {
     try {
@@ -114,6 +115,7 @@ export class IotController {
 
   // ─── IoT Device CRUD qua MQTT ───────────────────────────────────────
 
+  @UseGuards(JwtAuthGuard)
   @Post('device/add')
   async addIoTDevice(@Body() dto: { name: string; power_consumption: number }) {
     if (!dto.name || dto.power_consumption <= 0) {
@@ -133,6 +135,7 @@ export class IotController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('device/control')
   async controlIoTDevice(
     @Body() dto: { device1?: boolean; device2?: boolean },
@@ -154,6 +157,7 @@ export class IotController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch('device/update/:index')
   async updateIoTDevice(
     @Param('index') index: string,
@@ -174,6 +178,7 @@ export class IotController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('device/delete/:index')
   async deleteIoTDevice(@Param('index') index: string) {
     const idx = parseInt(index, 10);

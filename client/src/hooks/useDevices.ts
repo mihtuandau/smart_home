@@ -58,11 +58,10 @@ const syncStatsFromLatestCache = (queryClient: QueryClient) => {
 
 // Get all devices
 export const useDevices = () => {
-  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: deviceKeys.lists(),
     queryFn: deviceService.getDevices,
-    enabled: isAuthenticated,
+    enabled: true,
   });
 };
 
@@ -76,7 +75,7 @@ export const useDeviceStats = () => {
   const query = useQuery({
     queryKey: deviceKeys.stats(),
     queryFn: deviceService.getDeviceStats,
-    enabled: isAuthenticated,
+    enabled: true,
     // Avoid periodic API overwrite (causes 0/2 flicker); rely on realtime sockets + explicit invalidation
     refetchInterval: false,
     refetchOnWindowFocus: false,
@@ -223,7 +222,7 @@ export const useLatestDeviceData = (refetchInterval?: number) => {
   const query = useQuery({
     queryKey: deviceKeys.latestData(),
     queryFn: deviceService.getLatestData,
-    enabled: isAuthenticated,
+    enabled: true,
     refetchInterval: refetchInterval ?? QUERY_CONFIG.REFETCH_INTERVAL.DEVICES,
   });
 
@@ -318,11 +317,10 @@ export const useLatestDeviceData = (refetchInterval?: number) => {
 
 // Get IoT status
 export const useDeviceStatus = (refetchInterval?: number) => {
-  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: deviceKeys.status(),
     queryFn: deviceService.getStatus,
-    enabled: isAuthenticated,
+    enabled: true,
     refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.DEVICES,
   });
 };
