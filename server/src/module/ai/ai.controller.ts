@@ -1,14 +1,12 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AiService } from './ai.service';
 import { AiBillingService } from './ai-billing.service';
 import { AiBaselineService } from './ai-baseline.service';
 import { AiLedStatsService } from './ai-led-stats.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('AI')
 @ApiBearerAuth('JWT-auth')
-@UseGuards(JwtAuthGuard)
 @Controller('ai')
 export class AiController {
   constructor(

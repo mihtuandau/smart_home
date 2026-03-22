@@ -14,7 +14,6 @@ import { UpdateDeviceDto } from './dto/update-device.dto';
 import { DeviceType } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @Controller('devices')
 export class DevicesController {
   constructor(private devicesService: DevicesService) {}
@@ -57,6 +56,7 @@ export class DevicesController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() dto: UpdateDeviceDto) {
     const device = await this.devicesService.update(id, dto);
@@ -67,6 +67,7 @@ export class DevicesController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':id/toggle')
   async toggle(@Param('id') id: string) {
     const device = await this.devicesService.toggle(id);

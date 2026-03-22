@@ -29,7 +29,7 @@ export const useSensors = (limit: number = 10, refetchInterval?: number) => {
   const query = useQuery({
     queryKey: sensorKeys.list(limit),
     queryFn: () => sensorService.getSensors(limit),
-    enabled: isAuthenticated,
+    enabled: true,
     refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SENSORS,
   });
 
@@ -121,7 +121,7 @@ export const useCurrentSensors = (refetchInterval?: number) => {
   const query = useQuery({
     queryKey: sensorKeys.current(),
     queryFn: sensorService.getCurrentSensors,
-    enabled: isAuthenticated,
+    enabled: true,
     refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SENSORS,
   });
 
@@ -202,23 +202,21 @@ export const useCurrentSensors = (refetchInterval?: number) => {
 
 // Get sensor history
 export const useSensorHistory = (hours: number = 24, page: number = 1, pageSize: number = 20) => {
-  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: sensorKeys.history(hours, page, pageSize),
     queryFn: () => sensorService.getSensorHistory(hours, page, pageSize),
     staleTime: QUERY_CONFIG.STALE_TIME.SENSORS,
-    enabled: isAuthenticated,
+    enabled: true,
   });
 };
 
 // Get sensor stats
 export const useSensorStats = () => {
-  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: sensorKeys.stats(),
     queryFn: sensorService.getSensorStats,
     staleTime: QUERY_CONFIG.STALE_TIME.DEFAULT,
-    enabled: isAuthenticated,
+    enabled: true,
   });
 };
 
@@ -234,11 +232,10 @@ export const useSensorChart = (type: string) => {
 
 // Get IoT sensors
 export const useIoTSensors = (refetchInterval?: number) => {
-  const { isAuthenticated } = useAuth();
   return useQuery({
     queryKey: sensorKeys.iot(),
     queryFn: sensorService.getIoTSensors,
-    enabled: isAuthenticated,
+    enabled: true,
     refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SENSORS,
   });
 };

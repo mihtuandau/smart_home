@@ -1,8 +1,6 @@
-import { Controller, Get, Query, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Param, ParseIntPipe } from '@nestjs/common';
 import { SensorsService } from './sensors.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@UseGuards(JwtAuthGuard)
 @Controller('sensors')
 export class SensorsController {
   constructor(private sensorsService: SensorsService) {}
