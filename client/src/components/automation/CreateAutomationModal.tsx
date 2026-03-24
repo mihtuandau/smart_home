@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Bell, ChartColumn, Clock3, Pencil, Plus, Plug } from 'lucide-react';
 
 interface CreateAutomationModalProps {
   rule?: any;
@@ -90,8 +91,9 @@ export default function CreateAutomationModal({
       <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">
-            {rule ? '✎ Sửa quy tắc' : '+ Tạo quy tắc mới'}
+          <h2 className="text-2xl font-bold text-gray-900 inline-flex items-center gap-2">
+            {rule ? <Pencil className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+            {rule ? 'Sửa quy tắc' : 'Tạo quy tắc mới'}
           </h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl">
             ×
@@ -146,7 +148,7 @@ export default function CreateAutomationModal({
                     : 'border-gray-200'
                 }`}
               >
-                📊 Cảm biến
+                <span className="inline-flex items-center gap-2"><ChartColumn className="w-4 h-4" />Cảm biến</span>
               </button>
               <button
                 type="button"
@@ -157,7 +159,7 @@ export default function CreateAutomationModal({
                     : 'border-gray-200'
                 }`}
               >
-                🕐 Thời gian
+                <span className="inline-flex items-center gap-2"><Clock3 className="w-4 h-4" />Thời gian</span>
               </button>
             </div>
 
@@ -174,11 +176,11 @@ export default function CreateAutomationModal({
                     required
                   >
                     <option value="">Chọn cảm biến</option>
-                    <option value="temperature">🌡️ Nhiệt độ (AHT20)</option>
-                    <option value="humidity">💧 Độ ẩm (AHT20)</option>
-                    <option value="pressure">🔽 Áp suất (BMP280)</option>
-                    <option value="light">💡 Ánh sáng (LM393 LDR)</option>
-                    <option value="motion">🔴 Chuyển động (PIR)</option>
+                    <option value="temperature">Nhiệt độ (AHT20)</option>
+                    <option value="humidity">Độ ẩm (AHT20)</option>
+                    <option value="pressure">Áp suất (BMP280)</option>
+                    <option value="light">Ánh sáng (LM393 LDR)</option>
+                    <option value="motion">Chuyển động (PIR)</option>
                   </select>
                 </div>
 
@@ -245,7 +247,7 @@ export default function CreateAutomationModal({
                     : 'border-gray-200'
                 }`}
               >
-                🔌 Thiết bị
+                <span className="inline-flex items-center gap-2"><Plug className="w-4 h-4" />Thiết bị</span>
               </button>
               <button
                 type="button"
@@ -256,7 +258,7 @@ export default function CreateAutomationModal({
                     : 'border-gray-200'
                 }`}
               >
-                📢 Thông báo
+                <span className="inline-flex items-center gap-2"><Bell className="w-4 h-4" />Thông báo</span>
               </button>
             </div>
 
@@ -273,10 +275,10 @@ export default function CreateAutomationModal({
                     required
                   >
                     <option value="">Chọn thiết bị</option>
-                    <option value="LED_1">💡 Đèn LED 1</option>
-                    <option value="LED_2">💡 Đèn LED 2</option>
-                    <option value="SERVO">🔄 Servo Motor</option>
-                    <option value="FAN">🌀 Quạt</option>
+                    <option value="LED_1">Đèn LED 1</option>
+                    <option value="LED_2">Đèn LED 2</option>
+                    <option value="SERVO">Servo Motor</option>
+                    <option value="FAN">Quạt</option>
                   </select>
                 </div>
 
@@ -289,9 +291,9 @@ export default function CreateAutomationModal({
                     onChange={(e) => setFormData({ ...formData, action: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="ON">🔴 Bật</option>
-                    <option value="OFF">⚫ Tắt</option>
-                    <option value="TOGGLE">🔄 Chuyển đổi</option>
+                    <option value="ON">Bật</option>
+                    <option value="OFF">Tắt</option>
+                    <option value="TOGGLE">Chuyển đổi</option>
                   </select>
                 </div>
               </div>
@@ -305,9 +307,9 @@ export default function CreateAutomationModal({
                   onChange={(e) => setFormData({ ...formData, notificationType: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="alert">⚠️ Cảnh báo</option>
-                  <option value="info">ℹ️ Thông tin</option>
-                  <option value="success">✅ Thành công</option>
+                  <option value="alert">Cảnh báo</option>
+                  <option value="info">Thông tin</option>
+                  <option value="success">Thành công</option>
                 </select>
               </div>
             )}

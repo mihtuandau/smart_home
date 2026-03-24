@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLatestDeviceData, useControlSingleLED } from '@/hooks/useDevices';
 import Toast from '@/components/ui/Toast';
+import { Flashlight, Lightbulb, Sun } from 'lucide-react';
 
 interface ToastState {
   message: string;
@@ -66,7 +67,7 @@ export default function QuickLEDControl() {
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       
       <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">🔆 Bật/Tắt Đèn LED</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 inline-flex items-center gap-2"><Sun className="w-4 h-4" />Bật/Tắt Đèn LED</h3>
         
         <div className="grid grid-cols-2 gap-3">
           <button
@@ -78,7 +79,7 @@ export default function QuickLEDControl() {
                 : 'bg-gray-100 text-gray-600 border-2 border-gray-300'
             } hover:shadow-sm disabled:opacity-50`}
           >
-            <div className="text-lg mb-1">{localLEDs.led1 ? '💡' : '🔦'}</div>
+            <div className="text-lg mb-1 inline-flex items-center justify-center">{localLEDs.led1 ? <Lightbulb className="w-5 h-5" /> : <Flashlight className="w-5 h-5" />}</div>
             <div>Đèn 1</div>
             <div className="text-[11px] sm:text-xs mt-1">{localLEDs.led1 ? 'BẬT' : 'TẮT'}</div>
           </button>
@@ -92,7 +93,7 @@ export default function QuickLEDControl() {
                 : 'bg-gray-100 text-gray-600 border-2 border-gray-300'
             } hover:shadow-sm disabled:opacity-50`}
           >
-            <div className="text-lg mb-1">{localLEDs.led2 ? '💡' : '🔦'}</div>
+            <div className="text-lg mb-1 inline-flex items-center justify-center">{localLEDs.led2 ? <Lightbulb className="w-5 h-5" /> : <Flashlight className="w-5 h-5" />}</div>
             <div>Đèn 2</div>
             <div className="text-[11px] sm:text-xs mt-1">{localLEDs.led2 ? 'BẬT' : 'TẮT'}</div>
           </button>

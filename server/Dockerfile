@@ -54,6 +54,9 @@ COPY --from=builder /app/package.json ./package.json
 # Copy Prisma schema & migrations (needed for prisma migrate deploy)
 COPY --from=builder /app/prisma ./prisma
 
+# Fix file ownership for nestjs user
+RUN chown -R nestjs:nestjs /app
+
 # Switch to non-root user
 USER nestjs
 

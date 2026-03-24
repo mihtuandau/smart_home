@@ -1,10 +1,16 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, LogLevel } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const logLevels: LogLevel[] = process.env.NODE_ENV === 'production'
+    ? ['error', 'warn']
+    : ['debug', 'log', 'warn', 'error'];
+
+  const app = await NestFactory.create(AppModule, {
+    logger: logLevels,
+  });
 
   app.enableCors({
     origin: [

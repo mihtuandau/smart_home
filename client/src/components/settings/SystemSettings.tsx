@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { Database, Globe, Moon, RefreshCw, Sun, Timer, Trash2, TriangleAlert } from 'lucide-react';
 
 export default function SystemSettings() {
   const [settings, setSettings] = useState({
@@ -28,7 +29,7 @@ export default function SystemSettings() {
       <div className="border-b pb-6">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h3 className="text-sm sm:text-base font-semibold text-gray-900">🔄 Tự động làm mới dữ liệu</h3>
+            <h3 className="text-sm sm:text-base font-semibold text-gray-900 inline-flex items-center gap-2"><RefreshCw className="w-4 h-4" />Tự động làm mới dữ liệu</h3>
             <p className="text-xs sm:text-sm text-gray-600 mt-1">Tự động cập nhật dữ liệu từ cảm biến</p>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
@@ -60,7 +61,7 @@ export default function SystemSettings() {
 
       {/* Theme */}
       <div className="border-b pb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">🎨 Chủ đề</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 inline-flex items-center gap-2"><Sun className="w-4 h-4" />Chủ đề</h3>
         <div className="flex flex-wrap gap-4">
           {['light', 'dark'].map((theme) => (
             <label key={theme} className="flex items-center gap-2 cursor-pointer">
@@ -73,7 +74,7 @@ export default function SystemSettings() {
                 className="w-4 h-4"
               />
               <span className="text-gray-700">
-                {theme === 'light' ? '☀️ Sáng' : '🌙 Tối'}
+                <span className="inline-flex items-center gap-1.5">{theme === 'light' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}{theme === 'light' ? 'Sáng' : 'Tối'}</span>
               </span>
             </label>
           ))}
@@ -82,7 +83,7 @@ export default function SystemSettings() {
 
       {/* Language */}
       <div className="border-b pb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">🌐 Ngôn ngữ</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 inline-flex items-center gap-2"><Globe className="w-4 h-4" />Ngôn ngữ</h3>
         <select
           value={settings.language}
           onChange={(e) => handleChange('language', e.target.value)}
@@ -96,7 +97,7 @@ export default function SystemSettings() {
 
       {/* Timezone */}
       <div className="border-b pb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">🕐 Múi giờ</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 inline-flex items-center gap-2"><Timer className="w-4 h-4" />Múi giờ</h3>
         <select
           value={settings.timezone}
           onChange={(e) => handleChange('timezone', e.target.value)}
@@ -111,7 +112,7 @@ export default function SystemSettings() {
 
       {/* Data Retention */}
       <div className="pb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3">💾 Lưu giữ dữ liệu</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 inline-flex items-center gap-2"><Database className="w-4 h-4" />Lưu giữ dữ liệu</h3>
         <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
           <select
             value={settings.dataRetention}
@@ -130,9 +131,9 @@ export default function SystemSettings() {
 
       {/* Danger Zone */}
       <div className="border-t pt-6">
-        <h3 className="text-sm sm:text-base font-semibold text-red-600 mb-3">⚠️ Vùng nguy hiểm</h3>
-        <button className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-          🗑️ Xóa tất cả dữ liệu
+        <h3 className="text-sm sm:text-base font-semibold text-red-600 mb-3 inline-flex items-center gap-2"><TriangleAlert className="w-4 h-4" />Vùng nguy hiểm</h3>
+        <button className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition inline-flex items-center gap-2">
+          <Trash2 className="w-4 h-4" /> Xóa tất cả dữ liệu
         </button>
         <p className="text-xs text-red-600 mt-2">Hành động này không thể được hoàn tác</p>
       </div>

@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { useAiContext } from '@/contexts/AiContext';
 import type { LedDayEntry } from '@/hooks/useSocket';
+import { Lightbulb, Zap } from 'lucide-react';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -103,7 +104,7 @@ function MiniStat({
   return (
     <div className={`rounded-xl border ${isOn ? 'border-yellow-200 bg-yellow-50' : 'border-gray-100 bg-gray-50'} px-4 py-3 flex flex-col gap-1`}>
       <div className="flex items-center gap-2">
-        <span className="text-base">💡</span>
+        <Lightbulb className="w-4 h-4" />
         <span className="text-sm font-semibold text-gray-700">{label}</span>
         {isOn ? (
           <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-700 font-medium animate-pulse">
@@ -185,16 +186,12 @@ export default function LedConsumptionChart() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
-            <span className="text-sm">⚡</span>
+            <Zap className="w-4 h-4 text-yellow-700" />
           </div>
           <div>
             <h2 className="text-sm font-semibold text-gray-800">Tiêu thụ LED theo ngày</h2>
-            <p className="text-[10px] text-gray-400 hidden sm:block">
-              Đèn 1: {LED1_POWER_W * 1000}mW · Đèn 2: {LED2_POWER_W * 1000}mW · Tính từ server · Lưu DB
-            </p>
-            <p className="text-[10px] text-gray-400 sm:hidden">
-              Đèn 1: {LED1_POWER_W * 1000}mW · Đèn 2: {LED2_POWER_W * 1000}mW
-            </p>
+          
+         
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -202,7 +199,7 @@ export default function LedConsumptionChart() {
           {ledHistoryLoading ? (
             <span className="text-[10px] text-gray-400 animate-pulse">Đang tải...</span>
           ) : ledHistory.length > 0 ? (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-50 text-green-600 font-medium">✓ Dữ liệu thực</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-50 text-green-600 font-medium"></span>
           ) : (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-400 font-medium">Mẫu</span>
           )}

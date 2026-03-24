@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useLatestDeviceData, useControlSingleLED } from '@/hooks/useDevices';
 import Toast from '@/components/ui/Toast';
+import { Power } from 'lucide-react';
 
 interface ToastState {
   message: string;
@@ -155,14 +156,7 @@ export default function LEDControl() {
                 ${controlLEDMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-90 hover:brightness-105'}`}
             >
               {/* Power icon */}
-              <svg
-                className={`w-5 h-5 transition-colors duration-200 ${led.enabled ? 'text-yellow-900' : 'text-gray-400'}`}
-                viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}
-                strokeLinecap="round" strokeLinejoin="round"
-              >
-                <path d="M12 2v6" />
-                <path d="M6.343 5.657A8 8 0 1 0 17.657 5.657" />
-              </svg>
+              <Power className={`w-5 h-5 transition-colors duration-200 ${led.enabled ? 'text-yellow-900' : 'text-gray-400'}`} />
             </button>
           </div>
         ))}

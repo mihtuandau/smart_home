@@ -2,6 +2,7 @@
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useSolarStats } from '@/hooks/useEnergy';
+import { BarChart3 } from 'lucide-react';
 
 export default function SolarPowerChart() {
   const { data, isLoading } = useSolarStats(24);
@@ -40,9 +41,7 @@ export default function SolarPowerChart() {
         </div>
         <div className="h-52 sm:h-64 flex items-center justify-center">
           <div className="text-center">
-            <svg className="w-16 h-16 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+            <BarChart3 className="w-16 h-16 text-gray-300 mx-auto mb-3" />
             <p className="text-gray-500 font-medium">Chưa có dữ liệu Solar Panel</p>
             <p className="text-xs text-gray-400 mt-1">Dữ liệu sẽ xuất hiện khi hệ thống bắt đầu thu thập</p>
           </div>
