@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { BellRing, ChartColumn, Mail, Moon, Plug, Smartphone, TriangleAlert, Zap } from 'lucide-react';
 
 export default function NotificationSettings() {
   const [notifications, setNotifications] = useState({
@@ -22,43 +23,43 @@ export default function NotificationSettings() {
   const notificationOptions = [
     {
       key: 'emailAlerts',
-      icon: '📧',
+      icon: <Mail className="w-4 h-4" />,
       label: 'Email Alerts',
       description: 'Nhận email khi có sự cố hoặc cảnh báo',
     },
     {
       key: 'pushNotifications',
-      icon: '📲',
+      icon: <Smartphone className="w-4 h-4" />,
       label: 'Push Notifications',
       description: 'Thông báo đẩy trên trình duyệt',
     },
     {
       key: 'deviceAlerts',
-      icon: '🔌',
+      icon: <Plug className="w-4 h-4" />,
       label: 'Device Alerts',
       description: 'Thông báo khi thiết bị bị lỗi hoặc ngắt kết nối',
     },
     {
       key: 'automationAlerts',
-      icon: '🤖',
+      icon: <BellRing className="w-4 h-4" />,
       label: 'Automation Alerts',
       description: 'Thông báo khi quy tắc tự động được kích hoạt',
     },
     {
       key: 'systemAlerts',
-      icon: '⚠️',
+      icon: <TriangleAlert className="w-4 h-4" />,
       label: 'System Alerts',
       description: 'Cảnh báo hệ thống quan trọng',
     },
     {
       key: 'energyAlerts',
-      icon: '⚡',
+      icon: <Zap className="w-4 h-4" />,
       label: 'Energy Alerts',
       description: 'Thông báo về tiêu thụ năng lượng bất thường',
     },
     {
       key: 'dailyReport',
-      icon: '📊',
+      icon: <ChartColumn className="w-4 h-4" />,
       label: 'Daily Report',
       description: 'Báo cáo tóm tắt hàng ngày',
     },
@@ -79,7 +80,7 @@ export default function NotificationSettings() {
           >
             <div className="flex-1">
               <h3 className="text-sm sm:text-base font-semibold text-gray-900">
-                {option.icon} {option.label}
+                <span className="inline-flex items-center gap-2">{option.icon} {option.label}</span>
               </h3>
               <p className="text-xs sm:text-sm text-gray-600 mt-1">{option.description}</p>
             </div>
@@ -99,7 +100,7 @@ export default function NotificationSettings() {
 
       {/* Quiet Hours */}
       <div className="border-t pt-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4">🔇 Giờ yên tĩnh</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4 inline-flex items-center gap-2"><Moon className="w-4 h-4" />Giờ yên tĩnh</h3>
         <p className="text-xs sm:text-sm text-gray-600 mb-4">
           Không gửi thông báo trong khoảng thời gian này (trừ cảnh báo khẩn cấp)
         </p>
@@ -122,10 +123,10 @@ export default function NotificationSettings() {
 
       {/* Email Frequency */}
       <div className="border-t pt-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4">📧 Tần suất Email</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-4 inline-flex items-center gap-2"><Mail className="w-4 h-4" />Tần suất Email</h3>
 
         <select className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-          <option value="real-time">🔴 Real-time (Ngay lập tức)</option>
+          <option value="real-time">Real-time (Ngay lập tức)</option>
           <option value="hourly">Mỗi giờ</option>
           <option value="daily">Hàng ngày</option>
           <option value="weekly">Hàng tuần</option>

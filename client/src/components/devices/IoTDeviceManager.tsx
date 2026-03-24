@@ -7,6 +7,7 @@ import Toast from '@/components/ui/Toast';
 import { AddIoTDeviceModal } from './AddIoTDeviceModal';
 import { EditIoTDeviceModal } from './EditIoTDeviceModal';
 import type { IoTDevice } from '@/hooks/useIoTDeviceState';
+import { Power } from 'lucide-react';
 
 interface LatestData {
   device1?: IoTDevice;
@@ -18,8 +19,8 @@ export default function IoTDeviceManager() {
   const { data: latestRaw } = useLatestDeviceData(2000);
   const latest = (latestRaw as { data?: LatestData })?.data as LatestData | undefined;
 
-  console.log('📥 Latest RAW from useLatestDeviceData:', latestRaw);
-  console.log('📥 Latest PARSED for sync:', latest);
+  console.log('Latest RAW from useLatestDeviceData:', latestRaw);
+  console.log('Latest PARSED for sync:', latest);
 
   const {
     localDevices,
@@ -55,11 +56,11 @@ export default function IoTDeviceManager() {
   // Calculate displayed devices
   const devices: (IoTDevice & { index: number })[] = [];
   if (localDevices[0]) {
-    console.log('📍 localDevices[0]:', localDevices[0]);
+    console.log('localDevices[0]:', localDevices[0]);
     devices.push({ ...localDevices[0], index: 0 });
   }
   if (localDevices[1]) {
-    console.log('📍 localDevices[1]:', localDevices[1]);
+    console.log('localDevices[1]:', localDevices[1]);
     devices.push({ ...localDevices[1], index: 1 });
   }
 
@@ -167,14 +168,7 @@ export default function IoTDeviceManager() {
                       ${controlLoading === device.index ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-90 hover:brightness-105'}`}
                   >
                     {/* Power icon */}
-                    <svg
-                      className={`w-5 h-5 transition-colors duration-200 ${device.state ? 'text-white' : 'text-gray-400'}`}
-                      viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2}
-                      strokeLinecap="round" strokeLinejoin="round"
-                    >
-                      <path d="M12 2v6" />
-                      <path d="M6.343 5.657A8 8 0 1 0 17.657 5.657" />
-                    </svg>
+                    <Power className={`w-5 h-5 transition-colors duration-200 ${device.state ? 'text-white' : 'text-gray-400'}`} />
                   </button>
 
                   {/* Edit */}
@@ -198,7 +192,7 @@ export default function IoTDeviceManager() {
                         pin: device.pin,
                         allDevices: localDevices
                       };
-                      console.log('🗑️ DELETING:', deviceInfo);
+                      console.log('DELETING:', deviceInfo);
                       handleDelete(device.index, device.name);
                     }}
                     disabled={deleteLoading === device.index}

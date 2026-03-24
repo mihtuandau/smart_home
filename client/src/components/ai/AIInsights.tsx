@@ -4,6 +4,7 @@ import React from 'react';
 import { useAiContext } from '@/contexts/AiContext';
 import { useSocket } from '@/hooks/useSocket';
 import type { AiAdvicePayload } from '@/hooks/useSocket';
+import { Activity, Bell, Bot, Lightbulb } from 'lucide-react';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────────────
 
@@ -59,16 +60,16 @@ function barPct(powerMw: number) {
 }
 
 function analysisBg(text: string) {
-  if (text.startsWith('⚠️') || text.startsWith('🚨')) return 'bg-red-50 text-red-700 border-red-100';
-  if (text.startsWith('✅')) return 'bg-green-50 text-green-700 border-green-100';
-  if (text.startsWith('💡') || text.startsWith('🌙') || text.startsWith('🔄')) return 'bg-blue-50 text-blue-700 border-blue-100';
+  if (/cảnh báo|bất thường|nguy cơ|cao/i.test(text)) return 'bg-red-50 text-red-700 border-red-100';
+  if (/ổn định|an toàn|thành công|tốt/i.test(text)) return 'bg-green-50 text-green-700 border-green-100';
+  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100';
   return 'bg-gray-50 text-gray-500 border-gray-100';
 }
 
 function alertBorderClass(text: string): string {
-  if (text.startsWith('⚠️') || text.startsWith('🚨') || text.startsWith('🔋'))
+  if (/cảnh báo|bất thường|nguy cơ|cao/i.test(text))
     return 'border-red-400 bg-red-50 text-red-800';
-  if (text.startsWith('💡') || text.startsWith('🌙') || text.startsWith('🔄'))
+  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu/i.test(text))
     return 'border-green-400 bg-green-50 text-green-800';
   return 'border-blue-400 bg-blue-50 text-blue-800';
 }
@@ -114,12 +115,12 @@ function PowerGauge({ powerMw, led1, led2 }: { powerMw: number; led1: boolean; l
           <span className={`px-2 py-0.5 rounded-full font-medium transition-colors ${
             led1 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-400'
           }`}>
-            💡 Đèn 1
+            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />Đèn 1</span>
           </span>
           <span className={`px-2 py-0.5 rounded-full font-medium transition-colors ${
             led2 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-400'
           }`}>
-            💡 Đèn 2
+            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />Đèn 2</span>
           </span>
         </div>
       </div>
@@ -151,7 +152,7 @@ export default function AIInsights() {
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-gray-100">
         <div className="flex items-center flex-wrap gap-2">
-          <span className="text-xl">🤖</span>
+          <Bot className="w-5 h-5 text-gray-700" />
           <span className="text-sm sm:text-base font-semibold text-gray-800">AI Theo dõi Điện</span>
           {isConnected ? (
             <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
@@ -189,8 +190,9 @@ export default function AIInsights() {
           />
         );
       })() : (
-        <div className="px-4 py-3 border-b border-gray-100 text-sm text-gray-400">
-          📊 Đang chờ dữ liệu từ cảm biến...
+        <div className="px-4 py-3 border-b border-gray-100 text-sm text-gray-400 inline-flex items-center gap-2">
+          <Activity className="w-4 h-4" />
+          Đang chờ dữ liệu từ cảm biến...
         </div>
       )}
 
@@ -205,7 +207,7 @@ export default function AIInsights() {
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 max-h-56 sm:max-h-64">
         {alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-gray-400">
-            <span className="text-3xl mb-2">🔔</span>
+            <Bell className="w-8 h-8 mb-2" />
             <p className="text-sm font-medium">Chưa có cảnh báo nào</p>
             <p className="text-xs mt-1 text-center text-gray-400">
               AI sẽ thông báo khi bật/tắt đèn hoặc phát hiện bất thường

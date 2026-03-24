@@ -1,5 +1,7 @@
 'use client';
 
+import { TriangleAlert, X } from 'lucide-react';
+
 interface AddDeviceModalProps {
   isOpen: boolean;
   name: string;
@@ -46,7 +48,7 @@ export default function AddDeviceModal({
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
 
@@ -86,7 +88,7 @@ export default function AddDeviceModal({
 
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-700 font-medium">⚠ {error}</p>
+                <p className="text-sm text-red-700 font-medium inline-flex items-center gap-1.5"><TriangleAlert className="w-4 h-4" />{error}</p>
               </div>
             )}
           </div>

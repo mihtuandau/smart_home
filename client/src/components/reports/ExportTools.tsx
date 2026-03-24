@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { apiClient } from '@/lib/api/client';
 import toast from 'react-hot-toast';
+import { Activity, Download, Loader2, Zap } from 'lucide-react';
 
 type Preset = '24h' | '7d' | '30d' | 'custom';
 
@@ -102,9 +103,7 @@ export default function ExportTools() {
   return (
     <div className="section-card border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-5">
       <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
-        <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-        </svg>
+        <Download className="w-5 h-5 text-gray-600" />
         Xuất dữ liệu CSV
       </h2>
 
@@ -166,21 +165,13 @@ export default function ExportTools() {
             type: 'sensors' as const,
             label: 'Xuất dữ liệu cảm biến',
             sublabel: 'Nhiệt độ, độ ẩm, áp suất, ánh sáng, mưa',
-            icon: (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-            ),
+            icon: <Activity className="w-5 h-5" />,
           },
           {
             type: 'energy' as const,
             label: 'Xuất dữ liệu năng lượng',
             sublabel: 'Điện áp, dòng điện, công suất, năng lượng',
-            icon: (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            ),
+            icon: <Zap className="w-5 h-5" />,
           },
         ].map(({ type, label, sublabel, icon }) => (
           <button
@@ -195,14 +186,9 @@ export default function ExportTools() {
               <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">{sublabel}</p>
             </div>
             {isExporting === type ? (
-              <svg className="animate-spin h-4 w-4 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
+              <Loader2 className="animate-spin h-4 w-4 text-blue-600 shrink-0" />
             ) : (
-              <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
+              <Download className="w-4 h-4 text-gray-400 shrink-0" />
             )}
           </button>
         ))}

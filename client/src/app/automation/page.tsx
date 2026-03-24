@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import AutomationRuleList from '@/components/automation/AutomationRuleList';
 import CreateAutomationModal from '@/components/automation/CreateAutomationModal';
 import { useAutomation } from '@/hooks/useAutomation';
+import { Plus, Rocket } from 'lucide-react';
 
 export default function AutomationPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -52,7 +53,7 @@ export default function AutomationPage() {
           onClick={() => setIsCreateModalOpen(true)}
           className="w-full sm:w-auto px-4 py-2.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center justify-center gap-2"
         >
-          <span>+</span> Thêm quy tắc mới
+          <Plus className="w-4 h-4" /> Thêm quy tắc mới
         </button>
       </div>
 
@@ -71,7 +72,7 @@ export default function AutomationPage() {
       {/* Empty State */}
       {!isLoading && rules.length === 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-          <div className="text-5xl mb-4">🚀</div>
+          <Rocket className="w-12 h-12 text-blue-500 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Chưa có quy tắc nào</h3>
           <p className="text-gray-600 mb-6">Tạo quy tắc tự động đầu tiên để bắt đầu</p>
           <button

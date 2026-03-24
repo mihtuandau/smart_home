@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { apiClient } from '@/lib/api/client';
+import { TriangleAlert } from 'lucide-react';
 
 export default function PasswordSettings() {
   const [isLoading, setIsLoading] = useState(false);
@@ -104,8 +105,9 @@ export default function PasswordSettings() {
       </form>
 
       <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-        <p className="text-xs sm:text-sm text-yellow-800">
-          ⚠️ <strong>Lưu ý:</strong> Đảm bảo bạn sử dụng mật khẩu mạnh và không chia sẻ với ai.
+        <p className="text-xs sm:text-sm text-yellow-800 inline-flex items-start gap-1.5">
+          <TriangleAlert className="w-4 h-4 mt-0.5 shrink-0" />
+          <span><strong>Lưu ý:</strong> Đảm bảo bạn sử dụng mật khẩu mạnh và không chia sẻ với ai.</span>
         </p>
       </div>
     </div>

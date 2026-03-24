@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useControlSingleLED } from "@/hooks/useDevices";
 import { useQueryClient } from "@tanstack/react-query";
 import Toast from "@/components/ui/Toast";
+import { Lightbulb, Power } from 'lucide-react';
 
 interface ToastState {
   message: string;
@@ -91,19 +92,7 @@ export default function QuickControls() {
             disabled={controlLED.isPending}
             className="w-full px-4 py-4 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-              />
-            </svg>
+            <Lightbulb className="w-4 h-4" />
             {controlLED.isPending ? "Đang xử lý..." : "Bật đèn"}
           </button>
 
@@ -112,19 +101,7 @@ export default function QuickControls() {
             disabled={controlLED.isPending}
             className="w-full px-4 py-4 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 2v10m6.364-6.364a9 9 0 11-12.728 0"
-              />
-            </svg>
+            <Power className="w-4 h-4" />
             {controlLED.isPending ? "Đang xử lý..." : "Tắt đèn"}
           </button>
         </div>

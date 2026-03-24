@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { ChartColumn, Pencil, Play, Plug, Trash2, Volume2 } from 'lucide-react';
 
 interface AutomationRule {
   id: string;
@@ -77,8 +78,8 @@ export default function AutomationRuleList({
               </p>
               <div className="space-y-1">
                 {rule.condition?.sensor && (
-                  <p className="text-sm text-gray-800">
-                    📊 {rule.condition.sensor}
+                  <p className="text-sm text-gray-800 inline-flex items-center gap-1.5">
+                    <ChartColumn className="w-4 h-4" /> {rule.condition.sensor}
                     {rule.condition.operator && ` ${rule.condition.operator}`}
                     {rule.condition.value && ` ${rule.condition.value}`}
                   </p>
@@ -97,14 +98,14 @@ export default function AutomationRuleList({
               </p>
               <div className="space-y-1">
                 {rule.action?.device && (
-                  <p className="text-sm text-gray-800">
-                    🔌 {rule.action.device}
+                  <p className="text-sm text-gray-800 inline-flex items-center gap-1.5">
+                    <Plug className="w-4 h-4" /> {rule.action.device}
                     {rule.action.status && ` → ${rule.action.status}`}
                   </p>
                 )}
                 {rule.action?.notification && (
-                  <p className="text-sm text-gray-800">
-                    📢 {rule.action.notification}
+                  <p className="text-sm text-gray-800 inline-flex items-center gap-1.5">
+                    <Volume2 className="w-4 h-4" /> {rule.action.notification}
                   </p>
                 )}
               </div>
@@ -115,23 +116,23 @@ export default function AutomationRuleList({
             <button
               onClick={() => onTrigger(rule.id)}
               disabled={!rule.isActive}
-              className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition inline-flex items-center gap-1"
             >
-              ▶ Test
+              <Play className="w-3.5 h-3.5" /> Test
             </button>
 
             <div className="flex gap-2">
               <button
                 onClick={() => onEdit(rule)}
-                className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition"
+                className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition inline-flex items-center gap-1"
               >
-                ✎ Sửa
+                <Pencil className="w-3.5 h-3.5" /> Sửa
               </button>
               <button
                 onClick={() => onDelete(rule.id)}
-                className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition"
+                className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition inline-flex items-center gap-1"
               >
-                🗑 Xóa
+                <Trash2 className="w-3.5 h-3.5" /> Xóa
               </button>
             </div>
           </div>

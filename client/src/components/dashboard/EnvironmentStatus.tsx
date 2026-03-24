@@ -2,6 +2,7 @@
 
 import { useSensors } from '@/hooks/useSensors';
 import { calculateRainProbability, getColorScheme } from '@/lib/rainProbabilityUtils';
+import { CloudRain, Gauge, Sparkles } from 'lucide-react';
 
 
 interface SensorCardProps {
@@ -11,7 +12,7 @@ interface SensorCardProps {
   badgeColor?: string;
   borderColor: string;
   bgColor: string;
-  icon: string;
+  icon: React.ReactNode;
 }
 
 function SensorCard({ title, value, badge, badgeColor, borderColor, bgColor, icon }: SensorCardProps) {
@@ -21,7 +22,7 @@ function SensorCard({ title, value, badge, badgeColor, borderColor, bgColor, ico
       style={{ backgroundColor: bgColor, borderColor: borderColor }}
     >
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-lg">{icon}</span>
+        <span className="text-lg inline-flex items-center">{icon}</span>
         <span className="text-sm font-semibold text-gray-700">{title}</span>
       </div>
       <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{value}</h3>
@@ -41,7 +42,7 @@ interface PressureCardProps {
   status: string;
   borderColor: string;
   bgColor: string;
-  icon: string;
+  icon: React.ReactNode;
 }
 
 function PressureCard({ title, subtitle, value, status, borderColor, bgColor, icon }: PressureCardProps) {
@@ -53,7 +54,7 @@ function PressureCard({ title, subtitle, value, status, borderColor, bgColor, ic
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-lg">{icon}</span>
+            <span className="text-lg inline-flex items-center">{icon}</span>
             <span className="text-sm font-semibold text-gray-700">{title}</span>
           </div>
           <p className="text-xs text-gray-600 mb-2">{subtitle}</p>
@@ -99,11 +100,11 @@ export default function EnvironmentStatus() {
           <SensorCard 
             title="Xác suất mưa"
             value={`${rainProbability}%`}
-            badge={data.isRaining ? '🌧️ Đang mưa' : rainProbability >= 80 ? '⚠️ Cao' : rainProbability >= 60 ? '⚡ Trung' : rainProbability >= 40 ? '☁️ Thấp-Trung' : '☀️ Thấp'}
+            badge={data.isRaining ? 'Đang mưa' : rainProbability >= 80 ? 'Cao' : rainProbability >= 60 ? 'Trung bình' : rainProbability >= 40 ? 'Thấp-Trung' : 'Thấp'}
             badgeColor={colorScheme.badge}
             borderColor={colorScheme.border}
             bgColor={colorScheme.bg}
-            icon="🔮"
+            icon={<Sparkles className="w-5 h-5" />}
           />
         </div>
         
@@ -114,7 +115,7 @@ export default function EnvironmentStatus() {
           status="Ổn định"
           borderColor="#a855f7"
           bgColor="#f3e8ff"
-          icon="🌡️"
+          icon={<Gauge className="w-5 h-5" />}
         />
       </div>
     </div>

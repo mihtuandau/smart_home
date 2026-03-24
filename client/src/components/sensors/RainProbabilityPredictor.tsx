@@ -2,6 +2,7 @@
 
 import { useSensors } from '@/hooks/useSensors';
 import { calculateRainProbability, getColorScheme } from '@/lib/rainProbabilityUtils';
+import { ChartColumn, CircleHelp, Lightbulb, Search, ShieldCheck, Sparkles, TriangleAlert, Zap } from 'lucide-react';
 
 interface FactorAnalysis {
   name: string;
@@ -152,19 +153,29 @@ export default function RainProbabilityPredictor() {
   const factors = getFactorAnalysis();
 
   return (
-    <div className={`rounded-lg p-4 sm:p-6 border-2 ${colorScheme.bg}`} style={{ borderColor: colorScheme.border }}>
-      <div className="mb-6">
-        <h2 className={`text-base sm:text-lg font-bold ${colorScheme.text} mb-1`}>🔮 Liệu hôm nay có mưa không?</h2>
-        <p className="text-xs sm:text-sm text-gray-600">Dự báo dựa trên: Áp suất (50%) + Độ ẩm (35%) + Nhiệt độ (15%)</p>
+    <div className={`rounded-xl p-4 sm:p-5 border ${colorScheme.bg} shadow-sm`} style={{ borderColor: colorScheme.border }}>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <h2 className={`text-sm sm:text-base font-semibold ${colorScheme.text} inline-flex items-center gap-1.5`}><Sparkles className="w-4 h-4" />Liệu hôm nay có mưa không?</h2>
+          <p className="text-xs text-gray-600 mt-1">Áp suất (50%) + Độ ẩm (35%) + Nhiệt độ (15%)</p>
+        </div>
+        <span className="text-[10px] sm:text-xs px-2 py-1 rounded-full bg-white/80 border border-gray-200 text-gray-600">Cập nhật realtime</span>
       </div>
 
-      {/* Hiển thị xác suất chính - Lớn và nổi bật */}
-      <div className="mb-6 bg-white/80 rounded-lg p-4 border border-gray-200">
-        <div className="text-center mb-3">
-          <span className={`text-3xl sm:text-5xl font-bold ${colorScheme.text}`}>{probability}%</span>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1">Khả năng mưa</p>
+      <div className="mb-4 bg-white rounded-xl p-3 sm:p-4 border border-gray-200">
+        <div className="mb-2.5 flex items-center justify-between gap-3">
+          <div className="flex-1 flex flex-col items-center text-center gap-1.5">
+            <p className="text-xs text-gray-600">Khả năng mưa</p>
+            <span className={`inline-block text-4xl sm:text-5xl leading-none font-extrabold tracking-tight ${colorScheme.text} drop-shadow-[0_1px_0_rgba(255,255,255,0.65)]`}>
+              {probability}%
+            </span>
+          </div>
+          <span className={`min-w-[96px] text-center text-xs px-2.5 py-1 rounded-full font-semibold ${probability >= 80 ? 'bg-red-100 text-red-700' : probability >= 60 ? 'bg-yellow-100 text-yellow-700' : probability >= 40 ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+            {probability >= 80 ? 'Cao' : probability >= 60 ? 'Trung bình' : probability >= 40 ? 'Theo dõi' : 'Thấp'}
+          </span>
         </div>
-        <div className="bg-gray-200 rounded-full h-4 overflow-hidden">
+
+        <div className="bg-gray-200 rounded-full h-3.5 overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-300"
             style={{
@@ -175,43 +186,47 @@ export default function RainProbabilityPredictor() {
         </div>
       </div>
 
-      {/* Kết luận - Đặt trước chi tiết */}
-      <div className="bg-white/80 rounded-lg p-4 border-l-4 mb-6" style={{ borderColor: colorScheme.border }}>
-        <p className={`font-bold text-sm sm:text-base mb-2 ${colorScheme.text}`}>{analysis.conclusion.title}</p>
-        <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">{analysis.conclusion.description}</p>
+      <div className="bg-white/80 rounded-lg p-3 sm:p-4 border-l-4 mb-4" style={{ borderColor: colorScheme.border }}>
+        <p className={`font-semibold text-sm mb-1 ${colorScheme.text}`}>{analysis.conclusion.title}</p>
+        <p className="text-xs text-gray-700 leading-relaxed">{analysis.conclusion.description}</p>
       </div>
 
-      {/* Chi tiết từng yếu tố */}
-      <div className="mb-6 space-y-3">
-        <p className="font-semibold text-gray-900 text-xs sm:text-sm">📊 Điều kiện thời tiết:</p>
-        {factors.map((factor, idx) => (
-          <div key={idx} className="bg-white/60 rounded-lg p-3 border border-gray-100">
-            <div className="flex items-center justify-between mb-2">
-              <span className={`text-xs sm:text-sm font-medium ${factor.color}`}>{factor.name}</span>
-              <span className={`text-xs font-bold px-2 py-1 rounded ${factor.color === 'text-red-600' ? 'bg-red-100' : factor.color === 'text-yellow-600' ? 'bg-yellow-100' : factor.color === 'text-blue-600' ? 'bg-blue-100' : 'bg-green-100'}`}>
-                {factor.percentage.toFixed(0)}%
-              </span>
+      <div className="mb-5">
+        <p className="font-semibold text-gray-900 text-xs inline-flex items-center gap-1.5 mb-2.5"><ChartColumn className="w-4 h-4" />Điều kiện thời tiết</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {factors.map((factor, idx) => (
+            <div key={idx} className="bg-white/80 rounded-lg p-3 border border-gray-200 h-full flex flex-col">
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <span className="text-[11px] font-semibold text-gray-800 leading-snug">{factor.name}</span>
+                <span
+                  className={`shrink-0 text-[11px] sm:text-xs font-semibold px-2.5 py-1 rounded-md leading-none ${factor.color === 'text-red-600' ? 'bg-red-600 text-white' : factor.color === 'text-yellow-600' ? 'bg-yellow-600 text-white' : factor.color === 'text-blue-600' ? 'bg-blue-600 text-white' : 'bg-green-600 text-white'}`}
+                >
+                  {factor.percentage.toFixed(0)}%
+                </span>
+              </div>
+              <div className="mt-auto">
+                <div className="bg-gray-100 rounded-full h-1.5 overflow-hidden mb-1.5">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${factor.percentage}%`,
+                      backgroundColor: factor.bgColor,
+                    }}
+                  />
+                </div>
+                <p className={`text-[10px] leading-relaxed ${factor.color}`}>{factor.interpretation}</p>
+              </div>
             </div>
-            <div className="bg-gray-100 rounded-full h-2 overflow-hidden mb-2">
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{
-                  width: `${factor.percentage}%`,
-                  backgroundColor: factor.bgColor,
-                }}
-              />
-            </div>
-            <p className={`text-[11px] sm:text-xs leading-relaxed ${factor.color}`}>→ {factor.interpretation}</p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Gợi ý hành động */}
-      <div className={`rounded-lg p-4 mb-4 border-l-4 ${probability >= 80 ? 'bg-red-50 border-l-red-600' : probability >= 60 ? 'bg-yellow-50 border-l-yellow-600' : probability >= 40 ? 'bg-blue-50 border-l-blue-600' : 'bg-green-50 border-l-green-600'}`}>
-        <p className={`text-xs sm:text-sm font-bold mb-2 ${probability >= 80 ? 'text-red-700' : probability >= 60 ? 'text-yellow-700' : probability >= 40 ? 'text-blue-700' : 'text-green-700'}`}>
-          💡 {probability >= 80 ? '⚠️ Chuẩn bị ngay' : probability >= 60 ? '⚡ Để ý' : probability >= 40 ? '🔍 Theo dõi' : '✅ An tâm'}
+      <div className={`rounded-lg p-3 sm:p-4 mb-3 border-l-4 ${probability >= 80 ? 'bg-red-50 border-l-red-600' : probability >= 60 ? 'bg-yellow-50 border-l-yellow-600' : probability >= 40 ? 'bg-blue-50 border-l-blue-600' : 'bg-green-50 border-l-green-600'}`}>
+        <p className={`text-xs font-semibold mb-1.5 inline-flex items-center gap-1.5 ${probability >= 80 ? 'text-red-700' : probability >= 60 ? 'text-yellow-700' : probability >= 40 ? 'text-blue-700' : 'text-green-700'}`}>
+          <Lightbulb className="w-4 h-4" />
+          {probability >= 80 ? (<><TriangleAlert className="w-4 h-4" />Chuẩn bị ngay</>) : probability >= 60 ? (<><Zap className="w-4 h-4" />Để ý</>) : probability >= 40 ? (<><Search className="w-4 h-4" />Theo dõi</>) : (<><ShieldCheck className="w-4 h-4" />An tâm</>)}
         </p>
-        <p className="text-[11px] sm:text-xs text-gray-700 leading-relaxed">
+        <p className="text-[11px] text-gray-700 leading-relaxed">
           {probability >= 80 ? 'Mưa sắp tới. Có thể mưa bất kỳ lúc nào trong hôm nay.'
           : probability >= 60 ? 'Có khả năng mưa vào chiều hoặc tối nay.'
           : probability >= 40 ? 'Thời tiết có thể thay đổi. Theo dõi cập nhật trong vài giờ tới.'
@@ -219,9 +234,8 @@ export default function RainProbabilityPredictor() {
         </p>
       </div>
 
-      {/* Disclaimer */}
-      <div className="mt-4 text-[11px] sm:text-xs text-gray-500 bg-gray-50 rounded p-3 text-center border border-gray-200">
-        ℹ️ <strong>Lưu ý:</strong> Đây chỉ là dự báo sơ bộ. Để chính xác 100%, hãy kiểm tra thời tiết từ các nguồn chính thức.
+      <div className="mt-3 text-[11px] text-gray-500 bg-white/70 rounded-lg p-2.5 sm:p-3 border border-gray-200">
+        <span className="inline-flex items-center gap-1.5"><CircleHelp className="w-3.5 h-3.5" /><strong>Lưu ý:</strong> Đây là dự báo sơ bộ. Để chính xác hơn, hãy kiểm tra thêm từ nguồn thời tiết chính thức.</span>
       </div>
     </div>
   );
