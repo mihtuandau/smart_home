@@ -5,8 +5,8 @@
 
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
-  WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001',
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://dautuan.com',
+  WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'wss://dautuan.com/socket.io',
   MQTT_URL: process.env.NEXT_PUBLIC_MQTT_URL || 'ws://localhost:1883',
   TIMEOUT: 30000, // 30 seconds
 } as const;

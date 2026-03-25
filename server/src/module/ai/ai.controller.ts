@@ -6,7 +6,6 @@ import { AiBaselineService } from './ai-baseline.service';
 import { AiLedStatsService } from './ai-led-stats.service';
 
 @ApiTags('AI')
-@ApiBearerAuth('JWT-auth')
 @Controller('ai')
 export class AiController {
   constructor(
