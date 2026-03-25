@@ -1,4 +1,9 @@
-import { Controller, Get, Query, ParseIntPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { EnergyService } from './energy.service';
 
 @Controller('energy')
@@ -68,36 +73,5 @@ export class EnergyController {
       data,
     };
   }
-
-  /**
-   * Test endpoint: Seed sample power data
-   */
-  @Get('test/seed')
-  async seedTestData() {
-    return this.energyService.seedTestPowerData();
-  }
-
-  /**
-   * Test endpoint: Clean old power data with energy = 0
-   */
-  @Get('test/cleanup')
-  async cleanupOldData() {
-    const result = await this.energyService.cleanupZeroEnergyData();
-    return {
-      success: true,
-      message: result,
-    };
-  }
-
-  /**
-   * Test endpoint: Delete all old SOLAR data before fix
-   */
-  @Get('test/delete-old')
-  async deleteOldSolar() {
-    const result = await this.energyService.deleteOldSolarData();
-    return {
-      success: true,
-      message: result,
-    };
-  }
 }
+

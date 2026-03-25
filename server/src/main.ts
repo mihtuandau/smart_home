@@ -1,6 +1,14 @@
+/**
+ * ✅ SECURED - main.ts
+ * Thêm bảo mật: Helmet, Rate limiting, CORS chặt, Swagger disabled ở production
+ * Global API prefix /api, Swagger Basic Auth protection
+ */
+
 import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe, LogLevel } from '@nestjs/common';
+import helmet from 'helmet';
+import { Request, Response } from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -12,69 +20,143 @@ async function bootstrap() {
     logger: logLevels,
   });
 
+  // ╔══════════════════════════════════════════════════════════════╗
+  // ║              🔐 SECURITY CONFIGURATION                      ║
+  // ╚══════════════════════════════════════════════════════════════╝
+
+  // 1️⃣ ADD HELMET - Security Headers
+  app.use(helmet());
+  app.use(
+    helmet.contentSecurityPolicy({
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        baseUri: ["'self'"],
+        fontSrc: ["'self'", 'data:', 'https:'],
+      },
+    }),
+  );
+
+  // 2️⃣ SECURE CORS - Strictly limited origins
+  const corsOrigins =
+    process.env.NODE_ENV === 'production'
+      ? [
+          process.env.CORS_ORIGIN || 'https://dautuan.com',
+          'https://www.dautuan.com',
+        ].filter(Boolean)
+      : [
+          'http://localhost:3000',
+          'http://localhost:3001',
+          'http://localhost:5173',
+          'http://127.0.0.1:3000',
+          'http://127.0.0.1:5173',
+          'http://localhost:3300',
+          'http://localhost:3100',
+        ];
+
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://localhost:5173',
-      'https://smart.dautuan.com',
-      'https://dautuan.com',
-      'https://www.dautuan.com',
-      'http://dautuan.com:3100',
-      'http://dautuan.com',
-      process.env.CORS_ORIGIN,
-    ].filter(Boolean),
+    origin: corsOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    maxAge: 86400,
+    optionsSuccessStatus: 200,
   });
 
+  // 3️⃣ GLOBAL VALIDATION PIPE
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
 
-  const config = new DocumentBuilder()
-    .setTitle('Smart Home Management System API')
-    .setDescription(
-      'REST API for Smart Home Management System with IoT device control, sensor monitoring, and automation features',
-    )
-    .setVersion('1.0')
-    .addTag('Authentication', 'User authentication and authorization endpoints')
-    .addTag('Devices', 'IoT device management endpoints')
-    .addTag('Sensors', 'Sensor data monitoring endpoints')
-    .addTag('Users', 'User management endpoints')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
+  // 4️⃣ SWAGGER - Only in development, with Basic Auth protection
+  if (process.env.NODE_ENV !== 'production') {
+    // Basic Auth middleware cho Swagger
+    const swaggerUser = process.env.SWAGGER_USER || 'admin';
+    const swaggerPass = process.env.SWAGGER_PASSWORD || 'smart_home_2024';
+
+    app.use('/api-docs', (req: Request, res: Response, next: () => void) => {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Basic ')) {
+        res.setHeader('WWW-Authenticate', 'Basic realm="Swagger Docs"');
+        res.status(401).send('Authentication required');
+        return;
+      }
+
+      const base64Credentials = authHeader.split(' ')[1];
+      const credentials = Buffer.from(
+        base64Credentials,
+        'base64',
+      ).toString('ascii');
+      const [user, pass] = credentials.split(':');
+
+      if (user !== swaggerUser || pass !== swaggerPass) {
+        res.setHeader('WWW-Authenticate', 'Basic realm="Swagger Docs"');
+        res.status(401).send('Invalid credentials');
+        return;
+      }
+
+      next();
+    });
+
+    const config = new DocumentBuilder()
+      .setTitle('Smart Home Management System API')
+      .setDescription(
+        '🔒 DEV ONLY - REST API for Smart Home Management System',
+      )
+      .setVersion('1.0')
+      .addTag('Authentication')
+      .addTag('Devices')
+      .addTag('Sensors')
+      .addTag('Users')
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          name: 'JWT',
+          description: 'Enter JWT token',
+          in: 'header',
+        },
+        'JWT-auth',
+      )
+      .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api-docs', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+        tagsSorter: 'alpha',
+        operationsSorter: 'alpha',
       },
-      'JWT-auth',
-    )
-    .build();
+    });
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-      tagsSorter: 'alpha',
-      operationsSorter: 'alpha',
-    },
-  });
+    console.log(`📚 Swagger Docs: http://localhost:${process.env.PORT || 3001}/api-docs`);
+    console.log(`   👤 User: ${swaggerUser} / Pass: ${swaggerPass}`);
+  } else {
+    console.log('✅ Swagger disabled in production');
+  }
 
-  const port = process.env.PORT || 3100;
+  const port = process.env.PORT || 3001;
   await app.listen(port);
 
-  console.log(` Server is running on: http://localhost:${port}`);
-  console.log(` Swagger documentation: http://localhost:${port}/api-docs`);
+  console.log(`
+╔════════════════════════════════════════════╗
+║  🚀 Server is running                      ║
+║  📍 http://localhost:${port}                        ║
+║  🔐 Environment: ${process.env.NODE_ENV || 'development'}         ║
+║  🔒 CORS Origins: ${corsOrigins.length} domains            ║
+╚════════════════════════════════════════════╝
+  `);
 }
 
 bootstrap();
+

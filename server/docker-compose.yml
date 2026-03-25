@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: smarthome_db
-    restart: unless-stopped
+    restart: always
     env_file:
       - .env
     ports:
@@ -22,10 +22,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: smarthome_server
-    restart: unless-stopped
+    restart: always
     ports:
-      - "3002:3001"
-      # - "3100:3100"
+      - "3100:3100"
     env_file:
       - .env
     depends_on:
