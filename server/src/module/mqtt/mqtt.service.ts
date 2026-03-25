@@ -117,11 +117,15 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
       if (topic === MQTT_TOPICS.DATA_TOPIC) {
         const data: SensorPayload = JSON.parse(message);
-        // Merge with previous snapshot to avoid dropping LED/custom states when payload is partial
+        // Merge with previous snapshot, but remove device fields if not in new data
+        const prev = this.latestData ?? ({} as SensorPayload);
         const mergedData: SensorPayload = {
-          ...(this.latestData ?? ({} as SensorPayload)),
+          ...prev,
           ...data,
         };
+        // If new payload doesn't have device1/device2, remove them (device was deleted)
+        if (!('device1' in data)) delete (mergedData as any).device1;
+        if (!('device2' in data)) delete (mergedData as any).device2;
         this.latestData = mergedData;
 
         this.logger.log(
