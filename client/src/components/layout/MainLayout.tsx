@@ -59,8 +59,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 flex-col">
-      <div className="flex flex-1 h-screen overflow-hidden">
+    <div className="flex h-[100dvh] bg-gray-50 flex-col">
+      <div className="flex flex-1 h-[100dvh] overflow-hidden">
         <DashboardSidebar 
           isOpen={isSidebarOpen} 
           user={user} 

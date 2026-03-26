@@ -69,11 +69,11 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
       )}
 
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
+        className={`fixed top-0 left-0 z-40 h-[100dvh] transition-transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } bg-gradient-to-b from-white to-gray-50 border-r border-gray-200 w-72 max-w-[85vw] shadow-lg md:relative md:translate-x-0 md:z-0 md:w-64`}
       >
-      <div className="h-full px-4 py-5 overflow-y-auto flex flex-col">
+      <div className="h-full px-4 py-5 pb-[env(safe-area-inset-bottom,20px)] overflow-y-auto flex flex-col">
         <div className="flex items-center justify-between mb-8 px-2">
           <div className="flex items-center flex-1">
             <div className="h-11 w-11 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
@@ -124,7 +124,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
           })}
         </nav>
 
-        <div className="pt-4 mt-4 border-t border-gray-200">
+        <div className="pt-4 mt-4 mb-4 border-t border-gray-200">
           {user ? (
             <div className="flex items-center justify-between bg-white rounded-xl p-3.5 shadow-sm">
               <div className="flex items-center gap-3">

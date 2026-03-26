@@ -19,7 +19,9 @@ export class AiController {
   @Get('status')
   @ApiOperation({ summary: 'Kết quả AI phân tích mới nhất' })
   getStatus() {
-    return this.aiService.getLatestResult() ?? { message: 'Chưa có dữ liệu AI' };
+    return (
+      this.aiService.getLatestResult() ?? { message: 'Chưa có dữ liệu AI' }
+    );
   }
 
   /** Dự báo hóa đơn điện tháng hiện tại */

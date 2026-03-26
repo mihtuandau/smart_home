@@ -42,10 +42,10 @@ async function bootstrap() {
   // 2️⃣ SECURE CORS - Strictly limited origins
   const corsOrigins =
     process.env.NODE_ENV === 'production'
-      ? [
-          process.env.CORS_ORIGIN || 'https://dautuan.com',
-          'https://www.dautuan.com',
-        ].filter(Boolean)
+      ? (process.env.CORS_ORIGIN || '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean)
       : [
           'http://localhost:3000',
           'http://localhost:3001',
@@ -77,73 +77,64 @@ async function bootstrap() {
     }),
   );
 
-  // 4️⃣ SWAGGER - Only in development, with Basic Auth protection
-  if (process.env.NODE_ENV !== 'production') {
-    // Basic Auth middleware cho Swagger
-    const swaggerUser = process.env.SWAGGER_USER || 'admin';
-    const swaggerPass = process.env.SWAGGER_PASSWORD || 'smart_home_2024';
+  // Basic Auth middleware cho Swagger (bảo vệ bằng mật khẩu)
+  const swaggerUser = process.env.SWAGGER_USER || 'admin';
+  const swaggerPass = process.env.SWAGGER_PASSWORD || 'smart_home_2024';
 
-    app.use('/api-docs', (req: Request, res: Response, next: () => void) => {
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Basic ')) {
-        res.setHeader('WWW-Authenticate', 'Basic realm="Swagger Docs"');
-        res.status(401).send('Authentication required');
-        return;
-      }
+  app.use('/api-docs', (req: Request, res: Response, next: () => void) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Basic ')) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Swagger Docs"');
+      res.status(401).send('Authentication required');
+      return;
+    }
 
-      const base64Credentials = authHeader.split(' ')[1];
-      const credentials = Buffer.from(
-        base64Credentials,
-        'base64',
-      ).toString('ascii');
-      const [user, pass] = credentials.split(':');
+    const base64Credentials = authHeader.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString(
+      'ascii',
+    );
+    const [user, pass] = credentials.split(':');
 
-      if (user !== swaggerUser || pass !== swaggerPass) {
-        res.setHeader('WWW-Authenticate', 'Basic realm="Swagger Docs"');
-        res.status(401).send('Invalid credentials');
-        return;
-      }
+    if (user !== swaggerUser || pass !== swaggerPass) {
+      res.setHeader('WWW-Authenticate', 'Basic realm="Swagger Docs"');
+      res.status(401).send('Invalid credentials');
+      return;
+    }
 
-      next();
-    });
+    next();
+  });
 
-    const config = new DocumentBuilder()
-      .setTitle('Smart Home Management System API')
-      .setDescription(
-        '🔒 DEV ONLY - REST API for Smart Home Management System',
-      )
-      .setVersion('1.0')
-      .addTag('Authentication')
-      .addTag('Devices')
-      .addTag('Sensors')
-      .addTag('Users')
-      .addBearerAuth(
-        {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          name: 'JWT',
-          description: 'Enter JWT token',
-          in: 'header',
-        },
-        'JWT-auth',
-      )
-      .build();
-
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api-docs', app, document, {
-      swaggerOptions: {
-        persistAuthorization: true,
-        tagsSorter: 'alpha',
-        operationsSorter: 'alpha',
+  const config = new DocumentBuilder()
+    .setTitle('Smart Home Management System API')
+    .setDescription('🔒 REST API for Smart Home Management System')
+    .setVersion('1.0')
+    .addTag('Authentication')
+    .addTag('Devices')
+    .addTag('Sensors')
+    .addTag('Users')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
       },
-    });
+      'JWT-auth',
+    )
+    .build();
 
-    console.log(`📚 Swagger Docs: http://localhost:${process.env.PORT || 3001}/api-docs`);
-    console.log(`   👤 User: ${swaggerUser} / Pass: ${swaggerPass}`);
-  } else {
-    console.log('✅ Swagger disabled in production');
-  }
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  });
+
+  console.log(`📚 Swagger Docs: /api-docs (Protected by Basic Auth)`);
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
@@ -159,4 +150,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-
