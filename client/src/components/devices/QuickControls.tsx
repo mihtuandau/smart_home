@@ -76,12 +76,12 @@ export default function QuickControls() {
         />
       )}
 
-      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5 md:p-6">
+      <div className="section-card shadow-sm border border-border p-4 sm:p-5 md:p-6">
         <div className="mb-6 text-center">
-          <h3 className="text-sm sm:text-base font-semibold text-gray-900">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground">
             Điều khiển nhanh
           </h3>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Bật/tắt toàn bộ đèn LED một cách nhanh chóng
           </p>
         </div>
@@ -90,7 +90,7 @@ export default function QuickControls() {
           <button
             onClick={handleAllLedsOn}
             disabled={controlLED.isPending}
-            className="w-full px-4 py-4 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Lightbulb className="w-4 h-4" />
             {controlLED.isPending ? "Đang xử lý..." : "Bật đèn"}
@@ -99,7 +99,7 @@ export default function QuickControls() {
           <button
             onClick={handleAllLedsOff}
             disabled={controlLED.isPending}
-            className="w-full px-4 py-4 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-4 bg-card text-foreground border border-border rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Power className="w-4 h-4" />
             {controlLED.isPending ? "Đang xử lý..." : "Tắt đèn"}

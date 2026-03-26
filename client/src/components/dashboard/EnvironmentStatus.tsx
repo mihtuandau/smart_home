@@ -18,16 +18,16 @@ interface SensorCardProps {
 function SensorCard({ title, value, badge, badgeColor, borderColor, bgColor, icon }: SensorCardProps) {
   return (
     <div 
-      className="rounded-lg p-4 sm:p-5 border transition-shadow hover:shadow-sm"
-      style={{ backgroundColor: bgColor, borderColor: borderColor }}
+      className={`rounded-lg p-4 sm:p-5 border transition-shadow hover:shadow-sm ${bgColor}`}
+      style={{ borderColor: borderColor }}
     >
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg inline-flex items-center">{icon}</span>
-        <span className="text-sm font-semibold text-gray-700">{title}</span>
+        <span className="text-sm font-semibold text-foreground/80">{title}</span>
       </div>
-      <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">{value}</h3>
+      <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">{value}</h3>
       {badge && (
-        <span className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${badgeColor || 'bg-black text-white'}`}>
+        <span className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${badgeColor || 'bg-blue-600 text-white'}`}>
           {badge}
         </span>
       )}
@@ -48,20 +48,20 @@ interface PressureCardProps {
 function PressureCard({ title, subtitle, value, status, borderColor, bgColor, icon }: PressureCardProps) {
   return (
     <div 
-      className="rounded-lg p-4 sm:p-5 border"
-      style={{ backgroundColor: bgColor, borderColor: borderColor }}
+      className={`rounded-lg p-4 sm:p-5 border ${bgColor} dark:bg-card`}
+      style={{ borderColor: borderColor }}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg inline-flex items-center">{icon}</span>
-            <span className="text-sm font-semibold text-gray-700">{title}</span>
+            <span className="text-sm font-semibold text-foreground/80">{title}</span>
           </div>
-          <p className="text-xs text-gray-600 mb-2">{subtitle}</p>
-          <h3 className="text-2xl sm:text-3xl font-bold text-gray-900">{value}</h3>
+          <p className="text-xs text-muted-foreground mb-2">{subtitle}</p>
+          <h3 className="text-2xl sm:text-3xl font-bold text-foreground">{value}</h3>
         </div>
         <div className="text-right">
-          <p className="text-xs text-gray-600 mb-2">Trạng thái</p>
+          <p className="text-xs text-muted-foreground mb-2">Trạng thái</p>
           <span className="inline-block px-3 py-1 rounded-md text-xs font-semibold bg-green-100 text-green-700">
             {status}
           </span>
@@ -77,8 +77,8 @@ export default function EnvironmentStatus() {
 
   if (isLoading || !data) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
-        <div className="h-40 bg-gray-200 rounded"></div>
+      <div className="bg-card rounded-lg p-6 border border-border animate-pulse">
+        <div className="h-40 bg-muted rounded"></div>
       </div>
     );
   }
@@ -89,10 +89,10 @@ export default function EnvironmentStatus() {
   const colorScheme = getColorScheme(rainProbability);
 
   return (
-    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5 md:p-6">
+    <div className="section-card shadow-sm border border-border p-4 sm:p-5 md:p-6">
       <div className="mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Trạng thái môi trường</h2>
-        <p className="text-xs sm:text-sm text-gray-500 mt-1">Thông tin từ các cảm biến và thiết bị</p>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">Trạng thái môi trường</h2>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">Thông tin từ các cảm biến và thiết bị</p>
       </div>
       
       <div className="space-y-4">
@@ -114,7 +114,7 @@ export default function EnvironmentStatus() {
           value={`${data.pressure.toFixed(1)} hPa`}
           status="Ổn định"
           borderColor="#a855f7"
-          bgColor="#f3e8ff"
+          bgColor="bg-purple-50"
           icon={<Gauge className="w-5 h-5" />}
         />
       </div>

@@ -40,16 +40,16 @@ export function EditIoTDeviceModal({
 
       {/* Modal Dialog */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-md w-full transform transition-all">
+        <div className="bg-card rounded-xl shadow-2xl max-w-md w-full transform transition-all">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between p-6 border-b border-border">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Chỉnh sửa thiết bị</h3>
-              <p className="text-xs text-gray-500 mt-1">{device.name}</p>
+              <h3 className="text-lg font-semibold text-foreground">Chỉnh sửa thiết bị</h3>
+              <p className="text-xs text-muted-foreground mt-1">{device.name}</p>
             </div>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+              className="text-muted-foreground hover:text-foreground w-8 h-8 flex items-center justify-center rounded-lg hover:bg-accent transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -58,7 +58,7 @@ export function EditIoTDeviceModal({
           {/* Content */}
           <div className="p-6 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Tên thiết bị <span className="text-red-500">*</span>
               </label>
               <input
@@ -67,13 +67,13 @@ export function EditIoTDeviceModal({
                 onChange={(e) => onNameChange(e.target.value)}
                 placeholder={device.name}
                 disabled={loading}
-                className="w-full px-3 py-2.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                className="w-full px-3 py-2.5 text-sm text-foreground bg-card border border-border rounded-lg placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
               />
-              <p className="text-xs text-gray-500 mt-1">Để trống để giữ tên hiện tại</p>
+              <p className="text-xs text-muted-foreground mt-1">Để trống để giữ tên hiện tại</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
                 Công suất (W) <span className="text-red-500">*</span>
               </label>
               <input
@@ -84,9 +84,9 @@ export function EditIoTDeviceModal({
                 min="0.1"
                 step="0.1"
                 disabled={loading}
-                className="w-full px-3 py-2.5 text-sm text-gray-900 bg-white border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
+                className="w-full px-3 py-2.5 text-sm text-foreground bg-card border border-border rounded-lg placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
               />
-              <p className="text-xs text-gray-500 mt-1">Để trống để giữ công suất hiện tại</p>
+              <p className="text-xs text-muted-foreground mt-1">Để trống để giữ công suất hiện tại</p>
             </div>
 
             {error && (
@@ -97,10 +97,10 @@ export function EditIoTDeviceModal({
           </div>
 
           {/* Footer */}
-          <div className="flex gap-3 p-6 border-t border-gray-200 bg-gray-50 rounded-b-xl">
+          <div className="flex gap-3 p-6 border-t border-border bg-muted/50 rounded-b-xl">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 font-medium rounded-lg transition-colors"
+              className="flex-1 px-4 py-2.5 text-foreground bg-card border border-border hover:bg-muted font-medium rounded-lg transition-colors"
             >
               Hủy
             </button>

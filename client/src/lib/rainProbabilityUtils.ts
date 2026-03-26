@@ -133,13 +133,13 @@ export function calculateRainProbability(
  */
 export function getColorScheme(probability: number) {
   if (probability >= 80) {
-    return { bg: 'bg-red-50', border: '#dc2626', text: 'text-red-700', badge: 'bg-red-600 text-white' };
+    return { bg: 'bg-red-50 dark:bg-red-950/30', border: '#dc2626', text: 'text-red-700 dark:text-red-400', badge: 'bg-red-600 text-white' };
   }
   if (probability >= 60) {
-    return { bg: 'bg-yellow-50', border: '#f59e0b', text: 'text-yellow-700', badge: 'bg-yellow-100 text-yellow-800' };
+    return { bg: 'bg-yellow-50 dark:bg-yellow-950/30', border: '#f59e0b', text: 'text-yellow-700 dark:text-yellow-400', badge: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300' };
   }
   if (probability >= 40) {
-    return { bg: 'bg-blue-50', border: '#3b82f6', text: 'text-blue-700', badge: 'bg-blue-100 text-blue-800' };
+    return { bg: 'bg-blue-50 dark:bg-blue-950/30', border: '#3b82f6', text: 'text-blue-700 dark:text-blue-400', badge: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300' };
   }
-  return { bg: 'bg-green-50', border: '#10b981', text: 'text-green-700', badge: 'bg-green-100 text-green-800' };
+  return { bg: 'bg-green-50 dark:bg-green-950/30', border: '#10b981', text: 'text-green-700 dark:text-green-400', badge: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300' };
 }

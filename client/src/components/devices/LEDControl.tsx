@@ -96,11 +96,11 @@ export default function LEDControl() {
 
   if (isLoading) {
     return (
-      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 animate-pulse">
-        <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
+      <div className="section-card shadow-sm border border-border p-4 sm:p-6 animate-pulse">
+        <div className="h-6 bg-muted rounded w-1/3 mb-6"></div>
         <div className="space-y-4">
           {[1, 2].map(i => (
-            <div key={i} className="h-20 bg-gray-200 rounded"></div>
+            <div key={i} className="h-20 bg-muted rounded"></div>
           ))}
         </div>
       </div>
@@ -117,16 +117,16 @@ export default function LEDControl() {
         />
       )}
       
-      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5 md:p-6">
+      <div className="section-card shadow-sm border border-border p-4 sm:p-5 md:p-6">
       <div className="mb-4 sm:mb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900">Điều khiển đèn LED (x2)</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-foreground">Điều khiển đèn LED (x2)</h3>
       </div>
       
-      <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6">Hệ thống chiếu sáng trong nhà</p>
+      <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">Hệ thống chiếu sáng trong nhà</p>
       
       <div className="space-y-4">
         {leds.map((led) => (
-          <div key={led.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors">
+          <div key={led.id} className="flex items-center justify-between p-3 bg-muted rounded-md hover:bg-accent transition-colors">
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div
                 className={`w-2 h-2 rounded-full shrink-0 ${
@@ -134,10 +134,10 @@ export default function LEDControl() {
                 }`}
               />
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-foreground truncate">
                   {led.name}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   {led.description}
                 </p>
               </div>
@@ -152,7 +152,7 @@ export default function LEDControl() {
                 transition-all duration-200 select-none
                 ${led.enabled
                   ? 'bg-yellow-400 shadow-[0_0_16px_4px_rgba(250,204,21,0.55)]'
-                  : 'bg-gray-200 shadow-inner'}
+                  : 'bg-muted shadow-inner'}
                 ${controlLEDMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-90 hover:brightness-105'}`}
             >
               {/* Power icon */}

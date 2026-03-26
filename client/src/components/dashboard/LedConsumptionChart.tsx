@@ -74,8 +74,8 @@ function formatMin(min: number): string {
 function CustomTooltip({ active, payload, label, mode }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-lg px-3 py-2 text-xs">
-      <p className="font-semibold text-gray-700 mb-1">{label}</p>
+    <div className="bg-card border border-border rounded-lg shadow-lg px-3 py-2 text-xs">
+      <p className="font-semibold text-foreground/80 mb-1">{label}</p>
       {payload.map((p: any) => (
         <p key={p.dataKey} style={{ color: p.color }} className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full inline-block" style={{ background: p.color }} />
@@ -102,29 +102,29 @@ function MiniStat({
   isOn: boolean;
 }) {
   return (
-    <div className={`rounded-xl border ${isOn ? 'border-yellow-200 bg-yellow-50' : 'border-gray-100 bg-gray-50'} px-4 py-3 flex flex-col gap-1`}>
+    <div className={`rounded-xl border ${isOn ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-700 dark:bg-yellow-950' : 'border-border bg-muted'} px-4 py-3 flex flex-col gap-1`}>
       <div className="flex items-center gap-2">
         <Lightbulb className="w-4 h-4" />
-        <span className="text-sm font-semibold text-gray-700">{label}</span>
+        <span className="text-sm font-semibold text-foreground/80">{label}</span>
         {isOn ? (
           <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-700 font-medium animate-pulse">
             Đang bật
           </span>
         ) : (
-          <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-400 font-medium">
+          <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium">
             Tắt
           </span>
         )}
       </div>
       <div className="flex items-end justify-between mt-1">
         <div>
-          <span className={`text-xl font-bold ${isOn ? 'text-yellow-600' : 'text-gray-600'}`}>
+          <span className={`text-xl font-bold ${isOn ? 'text-yellow-600' : 'text-muted-foreground'}`}>
             {formatWh(wh)}
           </span>
           <p className="text-[11px] text-gray-400 mt-0.5">{formatMin(minutes)} hôm nay</p>
         </div>
         {/* Mini bar — based on 0–4 Wh range */}
-        <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden self-center">
+        <div className="w-16 h-2 bg-muted rounded-full overflow-hidden self-center">
           <div
             className="h-2 rounded-full transition-all duration-700"
             style={{ width: `${Math.min((wh / 4) * 100, 100)}%`, background: color }}
@@ -181,15 +181,15 @@ export default function LedConsumptionChart() {
   const totalLed2Min = chartData.reduce((s, d) => s + d.led2_minutes, 0);
 
   return (
-    <div className="section-card border border-gray-200 rounded-xl shadow-sm flex flex-col h-full">
+    <div className="section-card border border-border rounded-xl shadow-sm flex flex-col h-full">
       {/* Header */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-gray-100">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
             <Zap className="w-4 h-4 text-yellow-700" />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-gray-800">Tiêu thụ LED theo ngày</h2>
+            <h2 className="text-sm font-semibold text-foreground">Tiêu thụ LED theo ngày</h2>
           
          
           </div>
@@ -203,11 +203,11 @@ export default function LedConsumptionChart() {
           ) : (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-400 font-medium">Mẫu</span>
           )}
-          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-0.5">
+          <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
           <button
             onClick={() => setMode('wh')}
             className={`px-2 py-1 text-xs rounded-md font-medium transition-colors ${
-              mode === 'wh' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              mode === 'wh' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Wh
@@ -215,7 +215,7 @@ export default function LedConsumptionChart() {
           <button
             onClick={() => setMode('minutes')}
             className={`px-2 py-1 text-xs rounded-md font-medium transition-colors ${
-              mode === 'minutes' ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              mode === 'minutes' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Phút
@@ -285,7 +285,7 @@ export default function LedConsumptionChart() {
       </div>
 
       {/* Weekly summary footer — mirrors exactly what the chart shows */}
-      <div className="px-4 py-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400">
+      <div className="px-4 py-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
         {mode === 'wh' ? (
           <>
             <span>
@@ -295,7 +295,7 @@ export default function LedConsumptionChart() {
               <span className="text-blue-500 font-medium">{formatWh(totalLed2Wh)}</span>
             </span>
             <span>
-              Tổng: <span className="text-gray-600 font-semibold">{formatWh(totalLed1Wh + totalLed2Wh)}</span>
+              Tổng: <span className="text-foreground font-semibold">{formatWh(totalLed1Wh + totalLed2Wh)}</span>
             </span>
           </>
         ) : (
@@ -307,7 +307,7 @@ export default function LedConsumptionChart() {
               <span className="text-blue-500 font-medium">{formatMin(totalLed2Min)}</span>
             </span>
             <span>
-              Tổng: <span className="text-gray-600 font-semibold">{formatMin(totalLed1Min + totalLed2Min)}</span>
+              Tổng: <span className="text-foreground font-semibold">{formatMin(totalLed1Min + totalLed2Min)}</span>
             </span>
           </>
         )}

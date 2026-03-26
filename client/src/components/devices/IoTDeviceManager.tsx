@@ -108,12 +108,12 @@ export default function IoTDeviceManager() {
         }}
       />
 
-      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-5 md:p-6">
+      <div className="section-card shadow-sm border border-border p-4 sm:p-5 md:p-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
           <div>
-            <h3 className="text-sm sm:text-base font-semibold text-gray-900">Thiết bị IoT</h3>
-            <p className="text-[11px] sm:text-xs text-gray-500 mt-1">Tối đa 2 thiết bị · Cập nhật qua MQTT</p>
+            <h3 className="text-sm sm:text-base font-semibold text-foreground">Thiết bị IoT</h3>
+            <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">Tối đa 2 thiết bị · Cập nhật qua MQTT</p>
           </div>
           {devices.length < 2 && !showAddForm && (
             <button
@@ -127,7 +127,7 @@ export default function IoTDeviceManager() {
 
         {/* Device List */}
         {devices.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-muted-foreground">
             <p className="text-sm">Chưa có thiết bị nào</p>
           </div>
         ) : (
@@ -135,7 +135,7 @@ export default function IoTDeviceManager() {
             {devices.map((device) => (
               <div
                 key={`device-${device.index}`}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-gray-50 rounded-md hover:bg-gray-100 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 bg-muted rounded-md hover:bg-accent transition-colors"
               >
                 <div className="flex items-center gap-3 flex-1 min-w-0">
                   <div
@@ -144,10 +144,10 @@ export default function IoTDeviceManager() {
                     }`}
                   />
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-medium text-foreground truncate">
                       {device.name}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {device.power}W{device.pin ? ` · Pin ${device.pin}` : ` · Slot ${device.index + 1}`}
                     </p>
                   </div>
@@ -164,7 +164,7 @@ export default function IoTDeviceManager() {
                       transition-all duration-200 select-none
                       ${device.state
                         ? 'bg-green-500 shadow-[0_0_16px_4px_rgba(34,197,94,0.4)]'
-                        : 'bg-gray-200 shadow-inner'}
+                        : 'bg-muted shadow-inner'}
                       ${controlLoading === device.index ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-90 hover:brightness-105'}`}
                   >
                     {/* Power icon */}
@@ -178,7 +178,7 @@ export default function IoTDeviceManager() {
                       setEditName(device.name);
                       setEditPower(String(device.power));
                     }}
-                    className="px-2.5 py-1 text-xs text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                    className="px-2.5 py-1 text-xs text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950 rounded-md transition-colors"
                   >
                     Sửa
                   </button>
@@ -196,7 +196,7 @@ export default function IoTDeviceManager() {
                       handleDelete(device.index, device.name);
                     }}
                     disabled={deleteLoading === device.index}
-                    className="px-2.5 py-1 text-xs text-red-600 hover:bg-red-50 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-2.5 py-1 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Xóa
                   </button>

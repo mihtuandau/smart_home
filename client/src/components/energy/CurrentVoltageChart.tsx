@@ -11,9 +11,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useEnergyStats } from "@/hooks/useEnergy";
+import { useChartColors } from "@/lib/chartDarkModeUtils";
 
 export default function CurrentVoltageChart() {
   const { data, isLoading } = useEnergyStats(24);
+  const colors = useChartColors();
 
   const energyData = (data as any)?.data || [];
 
@@ -80,19 +82,19 @@ export default function CurrentVoltageChart() {
 
   if (isLoading) {
     return (
-      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 animate-pulse">
+      <div className="section-card shadow-sm border border-border p-4 sm:p-6 animate-pulse">
         <div className="h-64"></div>
       </div>
     );
   }
 
   return (
-    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
+    <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <div className="mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">
           Dòng điện & Điện áp Pin
         </h2>
-        <p className="text-xs sm:text-sm text-gray-500">
+        <p className="text-xs sm:text-sm text-muted-foreground">
           Theo dõi dòng và áp qua thời gian
         </p>
       </div>
@@ -103,11 +105,11 @@ export default function CurrentVoltageChart() {
             data={chartData}
             margin={{ top: 10, right: 30, left: -20, bottom: 0 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+            <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} />
             <XAxis
               dataKey="time"
-              tick={{ fontSize: 12, fill: "#9ca3af" }}
-              axisLine={{ stroke: "#e5e7eb" }}
+              tick={{ fontSize: 12, fill: colors.axisLabelColor }}
+              axisLine={{ stroke: colors.axisColor }}
             />
             <YAxis
               yAxisId="left"
@@ -134,14 +136,15 @@ export default function CurrentVoltageChart() {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid #e5e7eb",
+                backgroundColor: colors.backgroundColor,
+                border: `1px solid ${colors.borderColor}`,
                 borderRadius: "8px",
                 fontSize: "12px",
+                color: colors.textColor
               }}
             />
             <Legend
-              wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }}
+              wrapperStyle={{ fontSize: "12px", paddingTop: "10px", color: colors.axisLabelColor }}
               iconType="line"
             />
             <Line

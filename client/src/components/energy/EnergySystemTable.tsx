@@ -26,7 +26,7 @@ export default function EnergySystemTable() {
       name: 'Solar Panel',
       spec: `${(latestEnergy.voltage || 0).toFixed(1)}V ${(latestEnergy.current || 0).toFixed(1)}A`,
       status: 'Công suất hiện tại',
-      statusColor: 'text-gray-900',
+      statusColor: 'text-foreground',
       metric: `${(latestEnergy.power || 0).toFixed(2)} W`,
       value: `${(latestEnergy.power || 0).toFixed(2)} W`,
       valueColor: 'text-orange-600'
@@ -53,7 +53,7 @@ export default function EnergySystemTable() {
       name: 'Hiệu suất',
       spec: 'Hệ thống',
       status: 'Tỷ lệ chuyển đổi',
-      statusColor: 'text-gray-900',
+      statusColor: 'text-foreground',
       metric: '85%',
       value: '85%',
       valueColor: 'text-green-700'
@@ -62,29 +62,29 @@ export default function EnergySystemTable() {
 
   if (energyLoading || sourcesLoading) {
     return (
-      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 animate-pulse">
+      <div className="section-card shadow-sm border border-border p-4 sm:p-6 animate-pulse">
         <div className="h-64"></div>
       </div>
     );
   }
 
   return (
-    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
+    <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <div className="mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Thông tin hệ thống năng lượng</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">Thông tin hệ thống năng lượng</h2>
       </div>
 
       <div className="space-y-3 md:hidden">
         {components.map((component, index) => (
-          <div key={index} className="border border-gray-200 rounded-lg p-3">
+          <div key={index} className="border border-border rounded-lg p-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-gray-900">{component.name}</span>
-              <span className={`text-sm font-bold ${component.valueColor || 'text-gray-900'}`}>{component.value}</span>
+              <span className="text-sm font-semibold text-foreground">{component.name}</span>
+              <span className={`text-sm font-bold ${component.valueColor || 'text-foreground'}`}>{component.value}</span>
             </div>
-            <div className="mt-2 text-xs text-gray-600">
+            <div className="mt-2 text-xs text-muted-foreground">
               {component.spec}
             </div>
-            <div className="mt-1 text-xs text-gray-500">{component.status}</div>
+            <div className="mt-1 text-xs text-muted-foreground">{component.status}</div>
           </div>
         ))}
       </div>
@@ -92,18 +92,18 @@ export default function EnergySystemTable() {
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">Phần cứng</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">Thông số</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">Thông kế hôm nay</th>
-              <th className="text-right py-3 px-4 text-sm font-semibold text-gray-600"></th>
+            <tr className="border-b border-border">
+              <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Phần cứng</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Thông số</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Thông kế hôm nay</th>
+              <th className="text-right py-3 px-4 text-sm font-semibold text-muted-foreground"></th>
             </tr>
           </thead>
           <tbody>
             {components.map((component, index) => (
-                <tr key={index} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <tr key={index} className="border-b border-border hover:bg-muted transition-colors">
                 <td className="py-4 px-4">
-                  <span className="text-sm font-medium text-gray-900">{component.name}</span>
+                  <span className="text-sm font-medium text-foreground">{component.name}</span>
                 </td>
                 <td className="py-4 px-4">
                   <span className={`text-sm font-semibold ${component.statusColor}`}>
@@ -111,10 +111,10 @@ export default function EnergySystemTable() {
                   </span>
                 </td>
                 <td className="py-4 px-4">
-                  <span className="text-sm text-gray-600">{component.status}</span>
+                  <span className="text-sm text-muted-foreground">{component.status}</span>
                 </td>
                 <td className="py-4 px-4 text-right">
-                  <span className={`text-sm font-bold ${component.valueColor || 'text-gray-900'}`}>
+                  <span className={`text-sm font-bold ${component.valueColor || 'text-foreground'}`}>
                     {component.value}
                   </span>
                 </td>

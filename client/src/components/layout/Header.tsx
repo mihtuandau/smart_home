@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { Bell, Clock3, Menu } from 'lucide-react';
+import { Bell, Clock3, Menu, Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 interface DashboardHeaderProps {
   onToggleSidebar: () => void;
@@ -10,6 +11,10 @@ interface DashboardHeaderProps {
 
 export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const getPageTitle = () => {
     if (pathname === '/dashboard') return 'Tổng quan';
@@ -34,22 +39,22 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+    <header className="bg-card border-b border-border sticky top-0 z-30 shadow-sm">
       <div className="px-3 sm:px-6 py-2.5 sm:py-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <button
               onClick={onToggleSidebar}
-              className="p-2.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all"
+              className="p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
               aria-label="Toggle sidebar"
             >
               <Menu className="h-6 w-6" />
             </button>
             
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-gray-900">{getPageTitle()}</h2>
+              <h2 className="text-base sm:text-lg font-bold text-foreground">{getPageTitle()}</h2>
               {getPageSubtitle() && (
-                <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5 line-clamp-2">
+                <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5 line-clamp-2">
                   {getPageSubtitle()}
                 </p>
               )}
@@ -58,15 +63,31 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
 
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Time */}
-            <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg">
-              <Clock3 className="w-4 h-4 text-gray-500" />
-              <span className="text-sm text-gray-700 font-medium">
+            <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
+              <Clock3 className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm text-foreground font-medium">
                 {new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
 
+            {/* Theme Toggle */}
+            {mounted && (
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
+                aria-label="Chuyển theme"
+                title={theme === 'dark' ? 'Chuyển sang sáng' : 'Chuyển sang tối'}
+              >
+                {theme === 'dark' ? (
+                  <Sun className="h-5 w-5 text-yellow-400" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </button>
+            )}
+
             {/* Notifications */}
-            <button className="relative p-2.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-all group">
+            <button className="relative p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all group">
               <Bell className="h-6 w-6" />
               <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>
               <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full opacity-75 group-hover:animate-ping"></span>

@@ -13,6 +13,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useSensorHistory, useSensorData } from '@/hooks/useSensors';
+import { useChartColors } from '@/lib/chartDarkModeUtils';
 
 interface TemperatureHumidityChartProps {
   hours?: number;
@@ -21,6 +22,7 @@ interface TemperatureHumidityChartProps {
 const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hours = 24 }) => {
   const { data: historyResponse, isLoading, error } = useSensorHistory(hours);
   const { data: currentResponse } = useSensorData();
+  const colors = useChartColors();
 
   const toNumberOrNull = (value: unknown) => {
     const parsed = typeof value === 'number' ? value : Number(value);
@@ -29,10 +31,10 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
 
   if (isLoading) {
     return (
-      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
+      <div className="section-card shadow-sm border border-border p-4 sm:p-6">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-100 rounded"></div>
+          <div className="h-6 bg-muted rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-muted rounded"></div>
         </div>
       </div>
     );
@@ -40,7 +42,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-red-200">
+      <div className="bg-card rounded-lg p-6 border border-red-200 dark:border-red-800">
         <p className="text-red-600">Không thể tải dữ liệu nhiệt độ & độ ẩm</p>
       </div>
     );
@@ -72,9 +74,9 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   // If no history data, show placeholder message
   if (chartData.length === 0) {
     return (
-      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Nhiệt độ & Độ ẩm</h2>
-        <p className="text-gray-500 text-center py-8">Không có dữ liệu lịch sử</p>
+      <div className="section-card shadow-sm border border-border p-4 sm:p-6">
+        <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">Nhiệt độ & Độ ẩm</h2>
+        <p className="text-muted-foreground text-center py-8">Không có dữ liệu lịch sử</p>
       </div>
     );
   }
@@ -91,13 +93,13 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
       const temperaturePayload = payload.find((entry: any) => entry?.dataKey === 'temperature');
 
       return (
-        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-          <p className="text-xs font-semibold text-gray-700 mb-2">{payload[0]?.payload?.time ?? '--:--'}</p>
-          <p className="text-xs text-blue-600 flex items-center gap-1">
+        <div className="bg-card dark:bg-slate-800 p-3 border border-border dark:border-slate-700 rounded-lg shadow-lg">
+          <p className="text-xs font-semibold text-foreground/80 mb-2">{payload[0]?.payload?.time ?? '--:--'}</p>
+          <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
             <span className="inline-block w-3 h-3 bg-blue-500 rounded-full"></span>
             Độ ẩm: {humidityPayload?.value ?? '--'}%
           </p>
-          <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
+          <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1 mt-1">
             <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
             Nhiệt độ: {temperaturePayload?.value ?? '--'}°C
           </p>
@@ -108,10 +110,10 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   };
 
   return (
-    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 min-w-0">
+    <div className="section-card shadow-sm border border-border p-4 sm:p-6 min-w-0">
       <div className="mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Nhiệt độ & Độ ẩm</h2>
-        <p className="text-xs sm:text-sm text-gray-500 mt-1">{hours} giờ qua</p>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">Nhiệt độ & Độ ẩm</h2>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">{hours} giờ qua</p>
       </div>
 
       {/* Chart */}
@@ -124,27 +126,29 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
               <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} />
           <XAxis 
             dataKey="time" 
-            stroke="#6b7280"
-            style={{ fontSize: '12px' }}
+            stroke={colors.axisColor}
+            tick={{ fill: colors.axisLabelColor, fontSize: 12 }}
           />
           <YAxis 
             yAxisId="left"
             stroke="#ef4444"
-            style={{ fontSize: '12px' }}
+            tick={{ fill: '#ef4444', fontSize: 12 }}
             label={{ value: '°C', angle: -90, position: 'insideLeft' }}
           />
           <YAxis 
             yAxisId="right"
             orientation="right"
             stroke="#3b82f6"
-            style={{ fontSize: '12px' }}
+            tick={{ fill: '#3b82f6', fontSize: 12 }}
             label={{ value: '%', angle: 90, position: 'insideRight' }}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend />
+          <Legend 
+            wrapperStyle={{ paddingTop: '10px', fontSize: '12px', color: colors.axisLabelColor }}
+          />
           <Area
             yAxisId="right"
             type="natural"

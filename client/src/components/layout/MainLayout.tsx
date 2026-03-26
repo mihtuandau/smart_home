@@ -37,10 +37,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
-          <p className="text-gray-500">Loading...</p>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-muted border-t-blue-500"></div>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -49,17 +49,17 @@ export default function MainLayout({ children }: MainLayoutProps) {
   if (isProtectedPage && !isAuthenticated) {
     router.push('/login');
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
+      <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
-          <p className="text-gray-500">Redirecting...</p>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-muted border-t-blue-500"></div>
+          <p className="text-muted-foreground">Redirecting...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-[100dvh] bg-gray-50 flex-col">
+    <div className="flex h-[100dvh] bg-background flex-col">
       <div className="flex flex-1 h-[100dvh] overflow-hidden">
         <DashboardSidebar 
           isOpen={isSidebarOpen} 

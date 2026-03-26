@@ -28,16 +28,16 @@ interface StatCardProps {
 
 function SensorStatCard({ label, value, subtitle, color, icon, trend }: StatCardProps) {
   return (
-    <div className="section-card shadow-sm border border-gray-200 p-3 sm:p-4 md:p-6 hover:shadow-md md:hover:shadow-lg transition-shadow">
+    <div className="section-card shadow-sm border border-border p-3 sm:p-4 md:p-6 hover:shadow-md md:hover:shadow-lg transition-shadow">
       <div className="flex items-center gap-3 md:items-start md:justify-between md:gap-0">
         <div className="order-1 md:order-2 flex-shrink-0" style={{ color }}>
           {icon}
         </div>
 
         <div className="order-2 md:order-1 flex-1 min-w-0">
-          <p className="text-[11px] sm:text-xs md:text-sm font-medium text-gray-500 mb-2.5 md:mb-3 truncate">{label}</p>
-          <p className="text-lg sm:text-xl md:text-3xl font-bold text-gray-900 leading-tight mb-2">{value}</p>
-          <p className="text-[11px] sm:text-xs text-gray-500 leading-relaxed">{subtitle}</p>
+          <p className="text-[11px] sm:text-xs md:text-sm font-medium text-muted-foreground mb-2.5 md:mb-3 truncate">{label}</p>
+          <p className="text-lg sm:text-xl md:text-3xl font-bold text-foreground leading-tight mb-2">{value}</p>
+          <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">{subtitle}</p>
           {trend && (
             <div className={`flex items-center gap-1 mt-1 md:mt-2 text-[11px] sm:text-xs md:text-sm ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
               {trend.isPositive ? (
@@ -72,8 +72,8 @@ export default function SensorStatsGrid() {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="section-card shadow-sm border border-gray-200 p-3 sm:p-4 md:p-6 animate-pulse">
-            <div className="h-14 md:h-24 bg-gray-200 rounded"></div>
+          <div key={i} className="section-card shadow-sm border border-border p-3 sm:p-4 md:p-6 animate-pulse">
+            <div className="h-14 md:h-24 bg-muted rounded"></div>
           </div>
         ))}
       </div>

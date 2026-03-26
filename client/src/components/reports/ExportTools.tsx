@@ -101,15 +101,15 @@ export default function ExportTools() {
   };
 
   return (
-    <div className="section-card border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-5">
-      <h2 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
-        <Download className="w-5 h-5 text-gray-600" />
+    <div className="section-card border border-border rounded-xl p-4 sm:p-6 shadow-sm space-y-5">
+      <h2 className="text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
+        <Download className="w-5 h-5 text-foreground/70" />
         Xuất dữ liệu CSV
       </h2>
 
       {/* Period selector */}
       <div className="space-y-3">
-        <p className="text-sm font-medium text-gray-700">Khoảng thời gian</p>
+        <p className="text-sm font-medium text-foreground/80">Khoảng thời gian</p>
         <div className="flex flex-wrap gap-2">
           {(['24h', '7d', '30d', 'custom'] as Preset[]).map((p) => (
             <button
@@ -117,8 +117,8 @@ export default function ExportTools() {
               onClick={() => setPreset(p)}
               className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium border transition ${
                 preset === p
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
+                  ? 'bg-card text-primary border-primary shadow-sm'
+                  : 'bg-background text-foreground/70 border-border hover:border-primary/40'
               }`}
             >
               {p === 'custom' ? 'Tùy chỉnh' : presetLabels[p]}
@@ -130,28 +130,28 @@ export default function ExportTools() {
         {preset === 'custom' && (
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-end pt-1">
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-gray-500">Từ ngày</label>
+              <label className="text-xs text-muted-foreground">Từ ngày</label>
               <input
                 type="date"
                 max={today}
                 value={fromDate}
                 onChange={(e) => setFromDate(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                className="border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground bg-card"
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-gray-500">Đến ngày</label>
+              <label className="text-xs text-muted-foreground">Đến ngày</label>
               <input
                 type="date"
                 min={fromDate}
                 max={today}
                 value={toDate}
                 onChange={(e) => setToDate(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                className="border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary text-foreground bg-card"
                 placeholder={today}
               />
             </div>
-            <p className="text-xs text-gray-400 sm:self-end pb-2">
+            <p className="text-xs text-muted-foreground sm:self-end pb-2">
               Để trống "Đến ngày" = đến hiện tại
             </p>
           </div>
@@ -178,17 +178,17 @@ export default function ExportTools() {
             key={type}
             onClick={() => exportToCSV(type)}
             disabled={isExporting !== null}
-            className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition disabled:opacity-50 disabled:cursor-not-allowed text-left"
+            className="flex items-center gap-3 p-4 rounded-lg border border-border hover:border-primary/40 dark:hover:bg-primary/10 hover:bg-primary/5 transition disabled:opacity-50 disabled:cursor-not-allowed text-left"
           >
-            <div className="text-blue-600 shrink-0">{icon}</div>
+            <div className="text-primary shrink-0">{icon}</div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm sm:text-base font-medium text-gray-900">{label}</p>
-              <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">{sublabel}</p>
+              <p className="text-sm sm:text-base font-medium text-foreground">{label}</p>
+              <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">{sublabel}</p>
             </div>
             {isExporting === type ? (
-              <Loader2 className="animate-spin h-4 w-4 text-blue-600 shrink-0" />
+              <Loader2 className="animate-spin h-4 w-4 text-primary shrink-0" />
             ) : (
-              <Download className="w-4 h-4 text-gray-400 shrink-0" />
+              <Download className="w-4 h-4 text-muted-foreground/70 shrink-0" />
             )}
           </button>
         ))}

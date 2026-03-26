@@ -30,8 +30,8 @@ export default function StatsGrid() {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white rounded-lg p-6 border border-gray-200 animate-pulse">
-            <div className="h-20 bg-gray-200 rounded"></div>
+          <div key={i} className="bg-card rounded-lg p-6 border border-border animate-pulse">
+            <div className="h-20 bg-muted rounded"></div>
           </div>
         ))}
       </div>

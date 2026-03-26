@@ -31,14 +31,14 @@ export default function SensorHistoryTable() {
   };
 
   return (
-    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
+    <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Lịch sử cảm biến</h2>
-        <div className="flex flex-wrap gap-2 text-gray-700 items-center">
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">Lịch sử cảm biến</h2>
+        <div className="flex flex-wrap gap-2 text-foreground/80 items-center">
           <select
             value={hours}
             onChange={(e) => handleHoursChange(Number(e.target.value))}
-            className="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-card text-foreground"
           >
             <option value={6}>6 giờ qua</option>
             <option value={12}>12 giờ qua</option>
@@ -55,9 +55,9 @@ export default function SensorHistoryTable() {
 
       {isLoading ? (
         <div className="animate-pulse">
-          <div className="h-10 bg-gray-200 rounded mb-2"></div>
+          <div className="h-10 bg-muted rounded mb-2"></div>
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-12 bg-gray-100 rounded mb-1"></div>
+            <div key={i} className="h-12 bg-muted/60 rounded mb-1"></div>
           ))}
         </div>
       ) : error ? (
@@ -68,17 +68,17 @@ export default function SensorHistoryTable() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-xs sm:text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 whitespace-nowrap">Thời gian</th>
-                <th className="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Nhiệt độ (°C)</th>
-                <th className="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Độ ẩm (%)</th>
-                <th className="px-4 py-3 text-right font-semibold text-gray-700 whitespace-nowrap">Áp suất (hPa)</th>
+              <tr className="bg-muted/50 border-b border-border">
+                <th className="px-4 py-3 text-left font-semibold text-foreground/80 whitespace-nowrap">Thời gian</th>
+                <th className="px-4 py-3 text-right font-semibold text-foreground/80 whitespace-nowrap">Nhiệt độ (°C)</th>
+                <th className="px-4 py-3 text-right font-semibold text-foreground/80 whitespace-nowrap">Độ ẩm (%)</th>
+                <th className="px-4 py-3 text-right font-semibold text-foreground/80 whitespace-nowrap">Áp suất (hPa)</th>
               </tr>
             </thead>
             <tbody>
               {data.map((row, index) => (
-                <tr key={row.id} className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                  <td className="px-4 py-3 text-gray-900 font-medium whitespace-nowrap">{row.timestamp}</td>
+                <tr key={row.id} className={`border-b border-border/50 hover:bg-muted/50 transition-colors ${index % 2 === 0 ? 'bg-card' : 'bg-muted/30'}`}>
+                  <td className="px-4 py-3 text-foreground font-medium whitespace-nowrap">{row.timestamp}</td>
                   <td className="px-4 py-3 text-right text-red-600 font-medium whitespace-nowrap">{formatNumber(row.temperature, 1)}</td>
                   <td className="px-4 py-3 text-right text-blue-600 font-medium whitespace-nowrap">{formatNumber(row.humidity, 1)}</td>
                   <td className="px-4 py-3 text-right text-purple-600 font-medium whitespace-nowrap">{formatNumber(row.pressure, 1)}</td>
@@ -90,18 +90,18 @@ export default function SensorHistoryTable() {
       )}
 
       {!isLoading && !error && data.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-muted-foreground">
           Không có dữ liệu trong khoảng thời gian này
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-gray-500">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
         <span>Hiển thị {data.length} / {total} bản ghi</span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1 border border-border rounded hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Trước
           </button>
@@ -109,7 +109,7 @@ export default function SensorHistoryTable() {
           <button
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page >= totalPages}
-            className="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-3 py-1 border border-border rounded hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Sau
           </button>

@@ -37,18 +37,18 @@ export default function ReportGenerator() {
     : 0;
 
   return (
-    <div className="section-card border border-gray-200 rounded-xl p-4 sm:p-6 shadow-sm space-y-6">
+    <div className="section-card border border-border rounded-xl p-4 sm:p-6 shadow-sm space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">Báo cáo tổng hợp</h2>
-        <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-full sm:w-auto">
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">Báo cáo tổng hợp</h2>
+        <div className="flex gap-1 bg-muted rounded-lg p-1 w-full sm:w-auto">
           {(['24h', '7d', '30d'] as Period[]).map((p) => (
             <button
               key={p}
               onClick={() => setPeriod(p)}
               className={`flex-1 sm:flex-none px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition ${
                 period === p
-                  ? 'bg-white text-blue-600 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-card text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {p === '24h' ? '24 giờ' : p === '7d' ? '7 ngày' : '30 ngày'}
@@ -60,44 +60,44 @@ export default function ReportGenerator() {
       {loading ? (
         <div className="animate-pulse space-y-3">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-12 bg-gray-100 rounded" />
+            <div key={i} className="h-12 bg-muted rounded" />
           ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Sensor Stats */}
           <div className="space-y-3">
-            <h3 className="font-medium text-gray-700 text-xs sm:text-sm uppercase tracking-wide">Môi trường</h3>
+            <h3 className="font-medium text-foreground/80 text-xs sm:text-sm uppercase tracking-wide">Môi trường</h3>
             {sData ? (
               [
                 { label: 'Nhiệt độ TB', value: `${sData.temperature?.avg?.toFixed(1) ?? '--'}°C`, sub: `${sData.temperature?.min?.toFixed(1)}°C – ${sData.temperature?.max?.toFixed(1)}°C` },
                 { label: 'Độ ẩm TB', value: `${sData.humidity?.avg?.toFixed(1) ?? '--'}%`, sub: `${sData.humidity?.min?.toFixed(1)}% – ${sData.humidity?.max?.toFixed(1)}%` },
                 { label: 'Áp suất TB', value: `${sData.pressure?.avg?.toFixed(0) ?? '--'} hPa`, sub: `${sData.pressure?.min?.toFixed(0)} – ${sData.pressure?.max?.toFixed(0)} hPa` },
               ].map((item) => (
-                <div key={item.label} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-xs sm:text-sm text-gray-600">{item.label}</span>
+                <div key={item.label} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <span className="text-xs sm:text-sm text-foreground/70">{item.label}</span>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">{item.value}</p>
-                    <p className="text-[11px] sm:text-xs text-gray-400">{item.sub}</p>
+                    <p className="font-semibold text-foreground">{item.value}</p>
+                    <p className="text-[11px] sm:text-xs text-muted-foreground">{item.sub}</p>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-gray-400 text-sm">Không có dữ liệu</p>
+              <p className="text-muted-foreground text-sm">Không có dữ liệu</p>
             )}
           </div>
 
           {/* Energy Stats */}
           <div className="space-y-3">
-            <h3 className="font-medium text-gray-700 text-xs sm:text-sm uppercase tracking-wide">Năng lượng</h3>
+            <h3 className="font-medium text-foreground/80 text-xs sm:text-sm uppercase tracking-wide">Năng lượng</h3>
             {[
               { label: 'Tổng điện tiêu thụ', value: `${totalEnergy.toFixed(3)} Wh` },
               { label: 'Công suất trung bình', value: `${avgPower.toFixed(2)} W` },
               { label: 'Số mẫu đo', value: `${eData.length}` },
             ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-xs sm:text-sm text-gray-600">{item.label}</span>
-                <p className="font-semibold text-gray-900">{item.value}</p>
+              <div key={item.label} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                <span className="text-xs sm:text-sm text-foreground/70">{item.label}</span>
+                <p className="font-semibold text-foreground">{item.value}</p>
               </div>
             ))}
           </div>
