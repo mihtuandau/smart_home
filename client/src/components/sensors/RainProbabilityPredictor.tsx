@@ -157,7 +157,6 @@ export default function RainProbabilityPredictor() {
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
           <h2 className={`text-sm sm:text-base font-semibold ${colorScheme.text} inline-flex items-center gap-1.5`}><Sparkles className="w-4 h-4" />Liệu hôm nay có mưa không?</h2>
-          <p className="text-xs text-gray-600 mt-1">Áp suất (50%) + Độ ẩm (35%) + Nhiệt độ (15%)</p>
         </div>
         <span className="text-[10px] sm:text-xs px-2 py-1 rounded-full bg-white/80 border border-gray-200 text-gray-600">Cập nhật realtime</span>
       </div>
