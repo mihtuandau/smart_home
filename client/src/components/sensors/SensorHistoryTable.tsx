@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import { useSensorHistory } from '@/hooks/useSensors';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SensorHistoryTable() {
   const [hours, setHours] = useState(24);
   const [page, setPage] = useState(1);
   const PAGE_SIZE = 20;
+  const { t, language } = useLanguage();
   const { data: response, isLoading, error } = useSensorHistory(hours, page, PAGE_SIZE);
 
   const formatNumber = (value: unknown, digits = 1) => {
@@ -19,7 +21,7 @@ export default function SensorHistoryTable() {
   const total: number = (response as any)?.total || 0;
   const data = historyData.map((item, index) => ({
     id: index,
-    timestamp: new Date(item.timestamp).toLocaleString('vi-VN'),
+    timestamp: new Date(item.timestamp).toLocaleString(language === 'en' ? 'en-US' : 'vi-VN'),
     temperature: item.temperature,
     humidity: item.humidity,
     pressure: item.pressure,
@@ -33,22 +35,22 @@ export default function SensorHistoryTable() {
   return (
     <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-foreground">Lịch sử cảm biến</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('sensors.historyTable')}</h2>
         <div className="flex flex-wrap gap-2 text-foreground/80 items-center">
           <select
             value={hours}
             onChange={(e) => handleHoursChange(Number(e.target.value))}
             className="px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-card text-foreground"
           >
-            <option value={6}>6 giờ qua</option>
-            <option value={12}>12 giờ qua</option>
-            <option value={24}>24 giờ qua</option>
-            <option value={48}>48 giờ qua</option>
-            <option value={168}>7 ngày qua</option>
-            <option value={720}>30 ngày qua</option>
+            <option value={6}>{t('sensors.lastHours').replace('{hours}', '6')}</option>
+            <option value={12}>{t('sensors.lastHours').replace('{hours}', '12')}</option>
+            <option value={24}>{t('sensors.lastHours').replace('{hours}', '24')}</option>
+            <option value={48}>{t('sensors.lastHours').replace('{hours}', '48')}</option>
+            <option value={168}>{t('sensors.lastDays').replace('{days}', '7')}</option>
+            <option value={720}>{t('sensors.lastDays').replace('{days}', '30')}</option>
           </select>
           <button className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            Xuất CSV
+            {t('sensors.exportCsv')}
           </button>
         </div>
       </div>
@@ -62,17 +64,17 @@ export default function SensorHistoryTable() {
         </div>
       ) : error ? (
         <div className="text-center py-8 text-red-600">
-          Không thể tải dữ liệu lịch sử
+          {t('sensors.loadHistoryError')}
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-xs sm:text-sm">
             <thead>
               <tr className="bg-muted/50 border-b border-border">
-                <th className="px-4 py-3 text-left font-semibold text-foreground/80 whitespace-nowrap">Thời gian</th>
-                <th className="px-4 py-3 text-right font-semibold text-foreground/80 whitespace-nowrap">Nhiệt độ (°C)</th>
-                <th className="px-4 py-3 text-right font-semibold text-foreground/80 whitespace-nowrap">Độ ẩm (%)</th>
-                <th className="px-4 py-3 text-right font-semibold text-foreground/80 whitespace-nowrap">Áp suất (hPa)</th>
+                <th className="px-4 py-3 text-left font-semibold text-foreground/80 whitespace-nowrap">{t('sensors.time')}</th>
+                <th className="px-4 py-3 text-right font-semibold text-foreground/80 whitespace-nowrap">{t('sensors.temperature')} (°C)</th>
+                <th className="px-4 py-3 text-right font-semibold text-foreground/80 whitespace-nowrap">{t('sensors.humidity')} (%)</th>
+                <th className="px-4 py-3 text-right font-semibold text-foreground/80 whitespace-nowrap">{t('sensors.pressure')} (hPa)</th>
               </tr>
             </thead>
             <tbody>
@@ -91,19 +93,19 @@ export default function SensorHistoryTable() {
 
       {!isLoading && !error && data.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
-          Không có dữ liệu trong khoảng thời gian này
+          {t('sensors.noDataInRange')}
         </div>
       )}
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
-        <span>Hiển thị {data.length} / {total} bản ghi</span>
+        <span>{t('sensors.showingRecords').replace('{shown}', String(data.length)).replace('{total}', String(total))}</span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
             className="px-3 py-1 border border-border rounded hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Trước
+            {t('sensors.previous')}
           </button>
           <span className="px-2">{page} / {totalPages}</span>
           <button
@@ -111,7 +113,7 @@ export default function SensorHistoryTable() {
             disabled={page >= totalPages}
             className="px-3 py-1 border border-border rounded hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            Sau
+            {t('sensors.next')}
           </button>
         </div>
       </div>

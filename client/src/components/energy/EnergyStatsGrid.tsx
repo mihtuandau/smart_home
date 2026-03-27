@@ -2,6 +2,7 @@
 
 import { useEnergyStats } from "@/hooks/useEnergy";
 import { ChartNoAxesColumn, Plug, Sun, TrendingUp, Zap } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface StatCardProps {
   title: string;
@@ -55,6 +56,7 @@ function EnergyStatCard({
 }
 
 export default function EnergyStatsGrid() {
+  const { t } = useLanguage();
   const { data, isLoading } = useEnergyStats(24);
 
   const energyData = (data as any)?.data || [];
@@ -74,37 +76,37 @@ export default function EnergyStatsGrid() {
 
   const stats = [
     {
-      title: "Solar Panel",
+      title: t('energy.solarPower'),
       value: (latestData.power || 0).toFixed(2),
       unit: "W",
-      subtitle: "Công suất hiện tại",
+      subtitle: t('energy.currentPower'),
       icon: <Sun className="w-5 h-5" />,
       iconColor: "#f59e0b",
       trend: "up" as const,
     },
     {
-      title: "Dòng điện",
+      title: t('energy.current'),
       value: (latestData.current || 0).toFixed(2),
       unit: "A",
-      subtitle: "Dòng tiêu thụ",
+      subtitle: t('energy.currentConsumption'),
       icon: <Zap className="w-5 h-5" />,
       iconColor: "#f97316",
       trend: undefined,
     },
     {
-      title: "Điện áp",
+      title: t('energy.voltage'),
       value: (latestData.voltage || 0).toFixed(2),
       unit: "V",
-      subtitle: "Điện áp đầu ra",
+      subtitle: t('energy.outputVoltage'),
       icon: <Plug className="w-5 h-5" />,
       iconColor: "#a855f7",
       trend: undefined,
     },
     {
-      title: "Năng lượng",
+      title: t('energy.totalEnergy'),
       value: totalEnergy.toFixed(2),
       unit: "Wh",
-      subtitle: "24 giờ qua",
+      subtitle: t('energy.last24Hours'),
       icon: <ChartNoAxesColumn className="w-5 h-5" />,
       iconColor: "#10b981",
       trend: undefined,

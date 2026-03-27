@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useAiContext } from '@/contexts/AiContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useSocket } from '@/hooks/useSocket';
 import type { AiAdvicePayload } from '@/hooks/useSocket';
 import { Activity, Bell, Bot, Lightbulb } from 'lucide-react';
@@ -48,34 +49,87 @@ function badgeClass(level: ReturnType<typeof powerLevel>) {
   if (level === 'medium') return 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300';
   return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300';
 }
-function levelLabel(level: ReturnType<typeof powerLevel>) {
-  if (level === 'idle')   return 'Không tiêu thụ';
-  if (level === 'normal') return 'Bình thường';
-  if (level === 'medium') return 'Hơi cao';
-  return 'Cao — cảnh báo';
+function levelLabel(level: ReturnType<typeof powerLevel>, t: (key: string) => string) {
+  if (level === 'idle')   return t('ai.idle');
+  if (level === 'normal') return t('ai.normal');
+  if (level === 'medium') return t('ai.medium');
+  return t('ai.high');
 }
 function barPct(powerMw: number) {
   // Tỷ lệ thực tế theo thang 0–6000 mW
   return Math.min(Math.round((powerMw / 6000) * 100), 100);
 }
 
+function localizeAiText(text: string, language: 'vi' | 'en') {
+  if (!text || language === 'vi') return text;
+
+  const source = text.trim();
+
+  if (/^🚨\s*Điện tiêu thụ đột ngột bất thường\s*[—–-]\s*vui lòng kiểm tra thiết bị trong nhà$/i.test(source)) {
+    return '🚨 Abnormal sudden power consumption detected — please check devices in your home';
+  }
+
+  const turnedOn = source.match(/^💡\s*Đèn\s*(\d+)\s*vừa bật\s*[—–-]\s*điện tăng thêm\s*([\d.]+)\s*W\s*\(đang dùng:\s*([\d.]+)\s*W\)$/i);
+  if (turnedOn) {
+    return `💡 Light ${turnedOn[1]} just turned on — power increased by ${turnedOn[2]} W (now using: ${turnedOn[3]} W)`;
+  }
+
+  const turnedOff = source.match(/^💡\s*Đèn\s*(\d+)\s*vừa tắt\s*[—–-]\s*điện giảm\s*([\d.]+)\s*W\s*\(hiện tiêu thụ:\s*([\d.]+)\s*W\)$/i);
+  if (turnedOff) {
+    return `💡 Light ${turnedOff[1]} just turned off — power decreased by ${turnedOff[2]} W (current consumption: ${turnedOff[3]} W)`;
+  }
+
+  const changedCurrent = source.match(/^🔄\s*Đèn\s*(\d+)\s*thay đổi\s*[—–-]\s*điện tiêu thụ hiện tại:\s*([\d.]+)\s*W$/i);
+  if (changedCurrent) {
+    return `🔄 Light ${changedCurrent[1]} changed — current power consumption: ${changedCurrent[2]} W`;
+  }
+
+  const allOffNormal = source.match(/^✅\s*Đèn đã tắt hết\s*[—–-]\s*điện tiêu thụ thấp, bình thường\s*\(([\d.]+)\s*W\)$/i);
+  if (allOffNormal) {
+    return `✅ All lights are off — low power consumption, normal (${allOffNormal[1]} W)`;
+  }
+
+  const allOffButHigh = source.match(/^⚠️?\s*Điện vẫn cao dù đèn đã tắt hết\s*\(([\d.]+)\s*W,\s*mức thường:\s*~?([\d.]+)\s*W\)\s*[—–-]\s*có thiết bị nào quên tắt không\?$/i);
+  if (allOffButHigh) {
+    return `⚠️ Power is still high even though all lights are off (${allOffButHigh[1]} W, usual level: ~${allOffButHigh[2]} W) — did you forget to turn off another device?`;
+  }
+
+  const higherThanUsual = source.match(/^⚠️?\s*Điện cao hơn mức thường\s*([\d.]+)%\s*[—–-]\s*nên kiểm tra xem có thiết bị nào bật quên không\??$/i);
+  if (higherThanUsual) {
+    return `⚠️ Power is ${higherThanUsual[1]}% higher than usual — please check whether any device was left on`;
+  }
+
+  return source
+    .replace(/đang dùng:/gi, 'now using:')
+    .replace(/hiện tiêu thụ:/gi, 'current consumption:')
+    .replace(/Điện tiêu thụ đột ngột bất thường/gi, 'Abnormal sudden power consumption detected')
+    .replace(/vui lòng kiểm tra thiết bị trong nhà/gi, 'please check devices in your home')
+    .replace(/Đèn đã tắt hết\s*[—–-]\s*điện tiêu thụ thấp, bình thường/gi, 'All lights are off — low power consumption, normal')
+    .replace(/Điện vẫn cao dù đèn đã tắt hết/gi, 'Power is still high even though all lights are off')
+    .replace(/Điện cao hơn mức thường\s*([\d.]+)%/gi, 'Power is $1% higher than usual')
+    .replace(/mức thường:/gi, 'usual level:')
+    .replace(/có thiết bị nào quên tắt không\?/gi, 'did you forget to turn off another device?')
+    .replace(/nên kiểm tra xem có thiết bị nào bật quên không\??/gi, 'please check whether any device was left on')
+    .replace(/Đèn\s*(\d+)\s*thay đổi\s*[—–-]\s*điện tiêu thụ hiện tại:/gi, 'Light $1 changed — current power consumption:');
+}
+
 function analysisBg(text: string) {
-  if (/cảnh báo|bất thường|nguy cơ|cao/i.test(text)) return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
-  if (/ổn định|an toàn|thành công|tốt/i.test(text)) return 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
-  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
+  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high/i.test(text)) return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
+  if (/ổn định|an toàn|thành công|tốt|stable|safe|success|good/i.test(text)) return 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
+  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu|recommend|saving|monitor|optimi/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
   return 'bg-muted text-muted-foreground border-border';
 }
 
 function alertBorderClass(text: string): string {
-  if (/cảnh báo|bất thường|nguy cơ|cao/i.test(text))
+  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high/i.test(text))
     return 'border-red-400 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300';
-  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu/i.test(text))
+  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu|recommend|saving|monitor|optimi/i.test(text))
     return 'border-green-400 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900/20 dark:text-green-300';
   return 'border-blue-400 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300';
 }
 
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('vi-VN', {
+function formatTime(iso: string, language: 'vi' | 'en') {
+  return new Date(iso).toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', {
     hour: '2-digit', minute: '2-digit', second: '2-digit',
   });
 }
@@ -90,7 +144,7 @@ function formatPower(mw: number): { value: string; unit: string } {
   return { value: parseFloat(w.toFixed(2)).toString(), unit: 'W' };
 }
 
-function PowerGauge({ powerMw, led1, led2 }: { powerMw: number; led1: boolean; led2: boolean }) {
+function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean; led2: boolean; t: (key: string) => string }) {
   const level = powerLevel(powerMw);
   const { value, unit } = formatPower(powerMw);
 
@@ -107,7 +161,7 @@ function PowerGauge({ powerMw, led1, led2 }: { powerMw: number; led1: boolean; l
           }`}>{value}</span>
           <span className="text-sm text-muted-foreground font-medium">{unit}</span>
           <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${badgeClass(level)}`}>
-            {levelLabel(level)}
+            {levelLabel(level, t)}
           </span>
         </div>
         {/* LED state indicators */}
@@ -115,12 +169,12 @@ function PowerGauge({ powerMw, led1, led2 }: { powerMw: number; led1: boolean; l
           <span className={`px-2 py-0.5 rounded-full font-medium transition-colors ${
             led1 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-muted text-muted-foreground'
           }`}>
-            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />Đèn 1</span>
+            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />{t('ai.led1')}</span>
           </span>
           <span className={`px-2 py-0.5 rounded-full font-medium transition-colors ${
             led2 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-muted text-muted-foreground'
           }`}>
-            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />Đèn 2</span>
+            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />{t('ai.led2')}</span>
           </span>
         </div>
       </div>
@@ -146,6 +200,8 @@ function PowerGauge({ powerMw, led1, led2 }: { powerMw: number; led1: boolean; l
 export default function AIInsights() {
   const { isConnected } = useSocket();
   const { status, alerts, clearAlerts: clear } = useAiContext();
+  const { t, language } = useLanguage();
+  const localizedAnalysis = status ? localizeAiText(status.analysis, language) : '';
 
   return (
     <div className="section-card border border-border rounded-xl shadow-sm flex flex-col h-full">
@@ -153,16 +209,16 @@ export default function AIInsights() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center flex-wrap gap-2">
           <Bot className="w-5 h-5 text-foreground/80" />
-          <span className="text-sm sm:text-base font-semibold text-foreground">AI Theo dõi Điện</span>
+          <span className="text-sm sm:text-base font-semibold text-foreground">{t('ai.title')}</span>
           {isConnected ? (
             <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              Trực tiếp
+              {t('ai.live')}
             </span>
           ) : (
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
               <span className="w-2 h-2 rounded-full bg-muted-foreground" />
-              Offline
+              {t('ai.offline')}
             </span>
           )}
         </div>
@@ -171,7 +227,7 @@ export default function AIInsights() {
             onClick={clear}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            Xóa tất cả
+            {t('ai.clearAll')}
           </button>
         )}
       </div>
@@ -187,19 +243,20 @@ export default function AIInsights() {
             powerMw={mw}
             led1={status.led1 ?? false}
             led2={status.led2 ?? false}
+            t={t}
           />
         );
       })() : (
         <div className="px-4 py-3 border-b border-border text-sm text-muted-foreground inline-flex items-center gap-2">
           <Activity className="w-4 h-4" />
-          Đang chờ dữ liệu từ cảm biến...
+          {t('ai.waitingData')}
         </div>
       )}
 
       {/* Live analysis text */}
       {status && (
-        <div className={`px-4 py-2 border-b text-sm font-medium transition-colors ${analysisBg(status.analysis)}`}>
-          {status.analysis}
+        <div className={`px-4 py-2 border-b text-sm font-medium transition-colors ${analysisBg(localizedAnalysis)}`}>
+          {localizedAnalysis}
         </div>
       )}
 
@@ -208,31 +265,39 @@ export default function AIInsights() {
         {alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
             <Bell className="w-8 h-8 mb-2" />
-            <p className="text-sm font-medium">Chưa có cảnh báo nào</p>
+            <p className="text-sm font-medium">{t('ai.noAlerts')}</p>
             <p className="text-xs mt-1 text-center text-muted-foreground">
-              AI sẽ thông báo khi bật/tắt đèn hoặc phát hiện bất thường
+              {t('ai.alertHint')}
             </p>
           </div>
         ) : (
           alerts.map((msg: AiAdvicePayload, idx: number) => (
             <div key={`${msg.time}-${idx}`} className="space-y-1">
-              <div className="text-[11px] text-muted-foreground font-mono">{formatTime(msg.time)}</div>
+              <div className="text-[11px] text-muted-foreground font-mono">{formatTime(msg.time, language)}</div>
 
               {/* Anomaly (cảnh báo ML) */}
-              {msg.anomaly && (
-                <div className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(msg.anomaly)}`}>
-                  <span>{msg.anomaly}</span>
-                </div>
-              )}
+              {msg.anomaly && (() => {
+                const localizedAnomaly = localizeAiText(msg.anomaly, language);
+                return (
+                  <div className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(localizedAnomaly)}`}>
+                    <span>{localizedAnomaly}</span>
+                  </div>
+                );
+              })()}
 
               {/* Advice items */}
               {msg.advice.map((a, i) => (
+                (() => {
+                  const localizedAdvice = localizeAiText(a, language);
+                  return (
                 <div
                   key={i}
-                  className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(a)}`}
+                  className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(localizedAdvice)}`}
                 >
-                  <span>{a}</span>
+                  <span>{localizedAdvice}</span>
                 </div>
+                  );
+                })()
               ))}
             </div>
           ))
@@ -241,7 +306,7 @@ export default function AIInsights() {
 
       {/* Footer hint */}
       <div className="px-4 py-2 border-t border-border text-[11px] text-muted-foreground text-center">
-        AI tự học theo thói quen sử dụng của bạn • Càng dùng lâu càng chính xác hơn
+        {t('ai.footer')}
       </div>
     </div>
   );

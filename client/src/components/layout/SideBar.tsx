@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Activity, Cpu, FileText, House, LogIn, LogOut, Settings, Sun, X } from 'lucide-react';
 
 interface MenuItem {
@@ -17,6 +18,7 @@ interface DashboardSidebarProps {
   user?: {
     username?: string;
     email?: string;
+    role?: string;
   } | null;
   onLogout: () => void;
   onClose?: () => void;
@@ -24,38 +26,52 @@ interface DashboardSidebarProps {
 
 export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
+  const normalizedRole = user?.role?.toUpperCase();
+  const roleLabel = (() => {
+    switch (normalizedRole) {
+      case 'ADMIN':
+        return t('sidebar.roles.admin');
+      case 'USER':
+        return t('sidebar.roles.user');
+      case 'GUEST':
+        return t('sidebar.roles.guest');
+      default:
+        return normalizedRole || t('sidebar.roles.user');
+    }
+  })();
 
   const menuItems: MenuItem[] = [
     { 
       path: '/dashboard', 
       icon: <House className="w-5 h-5" />,
-      label: 'Tổng quan' 
+      label: t('dashboard.title')
     },
     { 
       path: '/devices', 
       icon: <Cpu className="w-5 h-5" />,
-      label: 'Thiết bị' 
+      label: t('devices.title')
     },
     { 
       path: '/sensors', 
       icon: <Activity className="w-5 h-5" />,
-      label: 'Cảm biến' 
+      label: t('sensors.title')
     },
     { 
       path: '/energy', 
       icon: <Sun className="w-5 h-5" />,
-      label: 'Năng lượng' 
+      label: t('energy.title')
     },
     
     {
       path: '/reports',
       icon: <FileText className="w-5 h-5" />,
-      label: 'Báo cáo'
+      label: t('reports.title')
     },
     { 
       path: '/settings', 
       icon: <Settings className="w-5 h-5" />,
-      label: 'Cài đặt' 
+      label: t('settings.title')
     },
   ];
 
@@ -94,7 +110,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
             <button
               onClick={onClose}
               className="p-2 text-muted-foreground hover:text-foreground md:hidden"
-              title="Đóng menu"
+              title={t('sidebar.closeMenu')}
             >
               <X className="w-5 h-5" />
             </button>
@@ -132,14 +148,14 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
                   {user.username?.charAt(0).toUpperCase() || 'U'}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{user.username || 'User'}</p>
-                  <p className="text-xs text-muted-foreground">ADMIN</p>
+                  <p className="text-sm font-semibold text-foreground">{user.username|| 'User'}</p>
+                  <p className="text-xs text-muted-foreground">{roleLabel}</p>  
                 </div>
               </div>
               <button
                 onClick={onLogout}
                 className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-all"
-                title="Đăng xuất"
+                title={t('sidebar.logout')}
               >
                 <LogOut className="h-5 w-5" />
               </button>
@@ -151,7 +167,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
               className="flex items-center justify-center gap-2 bg-blue-600 text-white rounded-xl p-3.5 shadow-sm hover:bg-blue-700 transition-colors"
             >
               <LogIn className="h-5 w-5" />
-              <span className="text-sm font-semibold">Đăng nhập</span>
+              <span className="text-sm font-semibold">{t('sidebar.login')}</span>
             </Link>
           )}
         </div>

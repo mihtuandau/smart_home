@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import StatsGrid from '@/components/dashboard/StatsGrid';
 import EnvironmentStatus from '@/components/dashboard/EnvironmentStatus';
 import QuickLEDControl from '@/components/dashboard/QuickLEDControl';
@@ -10,12 +11,13 @@ import AIInsights from '@/components/ai/AIInsights';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="space-y-1">
-        <h1 className="page-title">Tổng quan</h1>
-        <p className="page-subtitle">Giám sát nhanh hệ thống smart home của bạn</p>
+        <h1 className="page-title">{t('dashboard.title')}</h1>
+        <p className="page-subtitle">{t('dashboard.subtitle')}</p>
       </div>
 
       <StatsGrid />

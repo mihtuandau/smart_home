@@ -1,6 +1,7 @@
 'use client';
 
 import React, { ReactNode, Component, ErrorInfo } from 'react';
+import { translations } from '@/i18n';
 import { Home, Mail, RotateCcw, TriangleAlert } from 'lucide-react';
 
 interface Props {
@@ -11,6 +12,23 @@ interface State {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
+}
+
+function getLangForErrorBoundary(): 'vi' | 'en' {
+  if (typeof window === 'undefined') return 'vi';
+  const saved = window.localStorage.getItem('language');
+  return saved === 'en' ? 'en' : 'vi';
+}
+
+function tr(key: string, fallback: string): string {
+  const lang = getLangForErrorBoundary();
+  const keys = key.split('.');
+  let value: any = translations[lang];
+  for (const k of keys) {
+    if (value && typeof value === 'object' && k in value) value = value[k];
+    else return fallback;
+  }
+  return typeof value === 'string' ? value : fallback;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
@@ -59,11 +77,11 @@ export class ErrorBoundary extends Component<Props, State> {
               <TriangleAlert className="w-14 h-14 text-red-500 mx-auto" />
             </div>
             <h1 className="text-2xl font-bold text-red-600 text-center mb-2">
-              Oops! Có lỗi xảy ra
+              {tr('errors.oopsError', 'Oops! Có lỗi xảy ra')}
             </h1>
 
             <p className="text-gray-700 text-center mb-4">
-              Ứng dụng gặp lỗi không mong muốn. Vui lòng tải lại trang hoặc liên hệ hỗ trợ.
+              {tr('errors.unexpectedError', 'Ứng dụng gặp lỗi không mong muốn. Vui lòng tải lại trang hoặc liên hệ hỗ trợ.')}
             </p>
 
             {process.env.NODE_ENV === 'development' && this.state.error && (
@@ -85,22 +103,22 @@ export class ErrorBoundary extends Component<Props, State> {
                 className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium inline-flex items-center justify-center gap-2"
               >
                 <RotateCcw className="w-4 h-4" />
-                Thử lại
+                {tr('errors.retry', 'Thử lại')}
               </button>
               <button
                 onClick={() => (window.location.href = '/')}
                 className="flex-1 px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 transition font-medium inline-flex items-center justify-center gap-2"
               >
                 <Home className="w-4 h-4" />
-                Trang chủ
+                {tr('errors.home', 'Trang chủ')}
               </button>
             </div>
 
             <p className="text-xs text-gray-500 text-center mt-4 inline-flex items-center justify-center gap-1.5 w-full">
               <Mail className="w-3.5 h-3.5" />
-              Nếu lỗi tiếp tục xảy ra, vui lòng{' '}
+              {tr('errors.ifIssuePersists', 'Nếu lỗi tiếp tục xảy ra, vui lòng')} 
               <a href="mailto:support@smart-home.local" className="text-blue-600 hover:underline">
-                liên hệ hỗ trợ
+                {tr('errors.contactSupport', 'liên hệ hỗ trợ')}
               </a>
             </p>
           </div>

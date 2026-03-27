@@ -12,8 +12,10 @@ import {
 } from "recharts";
 import { useEnergyStats } from "@/hooks/useEnergy";
 import { useChartColors } from "@/lib/chartDarkModeUtils";
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CurrentVoltageChart() {
+  const { t, language } = useLanguage();
   const { data, isLoading } = useEnergyStats(24);
   const colors = useChartColors();
 
@@ -50,7 +52,7 @@ export default function CurrentVoltageChart() {
   const chartData = hourlySlots.map((slot) => {
     if (slot.data.length === 0) {
       return {
-        time: new Date(slot.timestamp).toLocaleTimeString("vi-VN", {
+        time: new Date(slot.timestamp).toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', {
           hour: "2-digit",
           minute: "2-digit",
         }),
@@ -71,10 +73,10 @@ export default function CurrentVoltageChart() {
       ) / slot.data.length;
 
     return {
-      time: new Date(slot.timestamp).toLocaleTimeString("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      time: new Date(slot.timestamp).toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       current: avgCurrent,
       voltage: avgVoltage,
     };
@@ -92,10 +94,10 @@ export default function CurrentVoltageChart() {
     <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <div className="mb-4">
         <h2 className="text-base sm:text-lg font-semibold text-foreground">
-          Dòng điện & Điện áp Pin
+          {t('energy.currentAndVoltage')}
         </h2>
         <p className="text-xs sm:text-sm text-muted-foreground">
-          Theo dõi dòng và áp qua thời gian
+          {t('energy.monitoringChart')}
         </p>
       </div>
 
@@ -116,7 +118,7 @@ export default function CurrentVoltageChart() {
               tick={{ fontSize: 12, fill: "#10b981" }}
               axisLine={{ stroke: "#10b981" }}
               label={{
-                value: "Dòng điện (A)",
+                value: t('energy.currentAxis'),
                 angle: -90,
                 position: "insideLeft",
                 style: { fontSize: 12, fill: "#10b981" },
@@ -128,7 +130,7 @@ export default function CurrentVoltageChart() {
               tick={{ fontSize: 12, fill: "#3b82f6" }}
               axisLine={{ stroke: "#3b82f6" }}
               label={{
-                value: "Điện áp (V)",
+                value: t('energy.voltageAxis'),
                 angle: 90,
                 position: "insideRight",
                 style: { fontSize: 12, fill: "#3b82f6" },
@@ -153,7 +155,7 @@ export default function CurrentVoltageChart() {
               dataKey="current"
               stroke="#10b981"
               strokeWidth={2}
-              name="Dòng điện (A)"
+              name={t('energy.currentAxis')}
               dot={false}
               activeDot={{ r: 5 }}
             />
@@ -163,7 +165,7 @@ export default function CurrentVoltageChart() {
               dataKey="voltage"
               stroke="#3b82f6"
               strokeWidth={2}
-              name="Điện áp (V)"
+              name={t('energy.voltageAxis')}
               dot={false}
               activeDot={{ r: 5 }}
             />

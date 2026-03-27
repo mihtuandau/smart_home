@@ -3,9 +3,11 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useSolarStats } from '@/hooks/useEnergy';
 import { useChartColors } from '@/lib/chartDarkModeUtils';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { BarChart3 } from 'lucide-react';
 
 export default function SolarPowerChart() {
+  const { t, language } = useLanguage();
   const { data, isLoading } = useSolarStats(24);
   const colors = useChartColors();
   
@@ -18,7 +20,7 @@ export default function SolarPowerChart() {
       : item.timestamp;
     
     return {
-      time: timestamp.toLocaleTimeString('vi-VN', { 
+      time: timestamp.toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', {
         hour: '2-digit', 
         minute: '2-digit' 
       }),
@@ -38,14 +40,14 @@ export default function SolarPowerChart() {
     return (
       <div className="section-card shadow-sm border border-border p-4 sm:p-6">
         <div className="mb-4">
-          <h2 className="text-base sm:text-lg font-semibold text-foreground">Công suất Solar Panel</h2>
-          <p className="text-xs sm:text-sm text-muted-foreground">Công suất phát điện theo thời gian</p>
+          <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('energy.solarPanelPowerChart')}</h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">{t('energy.powerOverTime')}</p>
         </div>
         <div className="h-52 sm:h-64 flex items-center justify-center">
           <div className="text-center">
             <BarChart3 className="w-16 h-16 text-muted-foreground/40 mx-auto mb-3" />
-            <p className="text-muted-foreground font-medium">Chưa có dữ liệu Solar Panel</p>
-            <p className="text-xs text-muted-foreground mt-1">Dữ liệu sẽ xuất hiện khi hệ thống bắt đầu thu thập</p>
+            <p className="text-muted-foreground font-medium">{t('energy.noSolarData')}</p>
+            <p className="text-xs text-muted-foreground mt-1">{t('energy.solarDataHint')}</p>
           </div>
         </div>
       </div>
@@ -55,8 +57,8 @@ export default function SolarPowerChart() {
   return (
     <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <div className="mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-foreground">Công suất Solar Panel</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground">Công suất phát điện theo thời gian</p>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('energy.solarPanelPowerChart')}</h2>
+        <p className="text-xs sm:text-sm text-muted-foreground">{t('energy.powerOverTime')}</p>
       </div>
       
       <div className="h-52 sm:h-64">

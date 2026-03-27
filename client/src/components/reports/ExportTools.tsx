@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { apiClient } from '@/lib/api/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 import toast from 'react-hot-toast';
 import { Activity, Download, Loader2, Zap } from 'lucide-react';
 
@@ -13,13 +14,8 @@ const presetHours: Record<Exclude<Preset, 'custom'>, number> = {
   '30d': 720,
 };
 
-const presetLabels: Record<Exclude<Preset, 'custom'>, string> = {
-  '24h': '24 giờ',
-  '7d': '7 ngày',
-  '30d': '30 ngày',
-};
-
 export default function ExportTools() {
+  const { t } = useLanguage();
   const [isExporting, setIsExporting] = useState<string | null>(null);
   const [preset, setPreset] = useState<Preset>('7d');
   const [fromDate, setFromDate] = useState('');
@@ -30,25 +26,25 @@ export default function ExportTools() {
 
   const getHours = (): number | null => {
     if (preset !== 'custom') return presetHours[preset];
-    if (!fromDate) { toast.error('Vui lòng chọn ngày bắt đầu'); return null; }
+    if (!fromDate) { toast.error(t('reports.selectStartDate')); return null; }
     const from = new Date(fromDate);
     const to = toDate ? new Date(toDate + 'T23:59:59') : new Date();
-    if (from > to) { toast.error('Ngày bắt đầu phải trước ngày kết thúc'); return null; }
+    if (from > to) { toast.error(t('reports.startBeforeEnd')); return null; }
     const diffMs = to.getTime() - from.getTime();
     return Math.ceil(diffMs / (1000 * 60 * 60));
   };
 
   const getPeriodLabel = (): string => {
-    if (preset !== 'custom') return presetLabels[preset];
+    if (preset !== 'custom') return preset === '24h' ? t('reports.last24Hours') : preset === '7d' ? t('reports.last7Days') : t('reports.last30Days');
     if (fromDate && toDate) return `${fromDate} → ${toDate}`;
-    if (fromDate) return `từ ${fromDate}`;
-    return 'tùy chỉnh';
+    if (fromDate) return `${t('reports.fromDatePrefix')} ${fromDate}`;
+    return t('reports.custom');
   };
 
   const exportToCSV = async (type: 'sensors' | 'energy') => {
     const hours = getHours();
     if (hours === null) return;
-    if (hours > 8760) { toast.error('Khoảng thời gian tối đa là 1 năm'); return; }
+    if (hours > 8760) { toast.error(t('reports.maxOneYear')); return; }
 
     setIsExporting(type);
     try {
@@ -77,7 +73,7 @@ export default function ExportTools() {
         filename = `energy_${periodLabel}_${today}.csv`;
       }
 
-      if (!rows.length) { toast.error('Không có dữ liệu trong khoảng thời gian đã chọn'); return; }
+      if (!rows.length) { toast.error(t('reports.noDataRange')); return; }
 
       const headers = Object.keys(rows[0]).join(',');
       const body = rows
@@ -92,9 +88,9 @@ export default function ExportTools() {
       const a = document.createElement('a');
       a.href = url; a.download = filename; a.click();
       URL.revokeObjectURL(url);
-      toast.success(`Đã xuất ${rows.length} dòng → ${filename}`);
+      toast.success(t('reports.exportSuccess').replace('{rows}', String(rows.length)).replace('{filename}', filename));
     } catch {
-      toast.error('Xuất dữ liệu thất bại');
+      toast.error(t('reports.exportFailed'));
     } finally {
       setIsExporting(null);
     }
@@ -104,12 +100,12 @@ export default function ExportTools() {
     <div className="section-card border border-border rounded-xl p-4 sm:p-6 shadow-sm space-y-5">
       <h2 className="text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
         <Download className="w-5 h-5 text-foreground/70" />
-        Xuất dữ liệu CSV
+        {t('reports.exportCsvTitle')}
       </h2>
 
       {/* Period selector */}
       <div className="space-y-3">
-        <p className="text-sm font-medium text-foreground/80">Khoảng thời gian</p>
+        <p className="text-sm font-medium text-foreground/80">{t('reports.dateRange')}</p>
         <div className="flex flex-wrap gap-2">
           {(['24h', '7d', '30d', 'custom'] as Preset[]).map((p) => (
             <button
@@ -121,7 +117,13 @@ export default function ExportTools() {
                   : 'bg-background text-foreground/70 border-border hover:border-primary/40'
               }`}
             >
-              {p === 'custom' ? 'Tùy chỉnh' : presetLabels[p]}
+              {p === 'custom'
+                ? t('reports.custom')
+                : p === '24h'
+                  ? t('reports.last24Hours')
+                  : p === '7d'
+                    ? t('reports.last7Days')
+                    : t('reports.last30Days')}
             </button>
           ))}
         </div>
@@ -130,7 +132,7 @@ export default function ExportTools() {
         {preset === 'custom' && (
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-end pt-1">
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground">Từ ngày</label>
+              <label className="text-xs text-muted-foreground">{t('reports.from')}</label>
               <input
                 type="date"
                 max={today}
@@ -140,7 +142,7 @@ export default function ExportTools() {
               />
             </div>
             <div className="flex flex-col gap-1">
-              <label className="text-xs text-muted-foreground">Đến ngày</label>
+              <label className="text-xs text-muted-foreground">{t('reports.to')}</label>
               <input
                 type="date"
                 min={fromDate}
@@ -152,7 +154,7 @@ export default function ExportTools() {
               />
             </div>
             <p className="text-xs text-muted-foreground sm:self-end pb-2">
-              Để trống "Đến ngày" = đến hiện tại
+              {t('reports.emptyToDateHint')}
             </p>
           </div>
         )}
@@ -163,14 +165,14 @@ export default function ExportTools() {
         {[
           {
             type: 'sensors' as const,
-            label: 'Xuất dữ liệu cảm biến',
-            sublabel: 'Nhiệt độ, độ ẩm, áp suất, ánh sáng, mưa',
+            label: t('reports.exportSensorData'),
+            sublabel: t('reports.sensorSublabel'),
             icon: <Activity className="w-5 h-5" />,
           },
           {
             type: 'energy' as const,
-            label: 'Xuất dữ liệu năng lượng',
-            sublabel: 'Điện áp, dòng điện, công suất, năng lượng',
+            label: t('reports.exportEnergyData'),
+            sublabel: t('reports.energySublabel'),
             icon: <Zap className="w-5 h-5" />,
           },
         ].map(({ type, label, sublabel, icon }) => (

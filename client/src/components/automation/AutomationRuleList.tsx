@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useLanguage } from '@/contexts/LanguageContext';
 import { ChartColumn, Pencil, Play, Plug, Trash2, Volume2 } from 'lucide-react';
 
 interface AutomationRule {
@@ -28,6 +29,8 @@ export default function AutomationRuleList({
   onToggle,
   onTrigger,
 }: AutomationRuleListProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-4">
       {rules.map((rule) => (
@@ -48,7 +51,7 @@ export default function AutomationRuleList({
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >
-                  {rule.isActive ? "✓ Kích hoạt" : "○ Vô hiệu hóa"}
+                  {rule.isActive ? `✓ ${t('automation.active')}` : `○ ${t('automation.inactive')}`}
                 </span>
               </div>
               {rule.description && (
@@ -74,7 +77,7 @@ export default function AutomationRuleList({
             {/* Condition */}
             <div>
               <p className="text-xs font-semibold text-gray-600 uppercase mb-2">
-                Điều kiện
+                {t('automation.condition')}
               </p>
               <div className="space-y-1">
                 {rule.condition?.sensor && (
@@ -94,7 +97,7 @@ export default function AutomationRuleList({
 
             <div>
               <p className="text-xs font-semibold text-gray-600 uppercase mb-2">
-                Hành động
+                {t('automation.action')}
               </p>
               <div className="space-y-1">
                 {rule.action?.device && (
@@ -118,7 +121,7 @@ export default function AutomationRuleList({
               disabled={!rule.isActive}
               className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition inline-flex items-center gap-1"
             >
-              <Play className="w-3.5 h-3.5" /> Test
+              <Play className="w-3.5 h-3.5" /> {t('automation.test')}
             </button>
 
             <div className="flex gap-2">
@@ -126,13 +129,13 @@ export default function AutomationRuleList({
                 onClick={() => onEdit(rule)}
                 className="px-3 py-1 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition inline-flex items-center gap-1"
               >
-                <Pencil className="w-3.5 h-3.5" /> Sửa
+                <Pencil className="w-3.5 h-3.5" /> {t('automation.edit')}
               </button>
               <button
                 onClick={() => onDelete(rule.id)}
                 className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200 transition inline-flex items-center gap-1"
               >
-                <Trash2 className="w-3.5 h-3.5" /> Xóa
+                <Trash2 className="w-3.5 h-3.5" /> {t('common.delete')}
               </button>
             </div>
           </div>

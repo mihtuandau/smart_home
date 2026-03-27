@@ -3,8 +3,10 @@
 import StatCard from './StatCard';
 import { useLatestDeviceData, useDeviceStats } from '@/hooks/useDevices';
 import { useEnergyStats } from '@/hooks/useEnergy';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function StatsGrid() {
+  const { t } = useLanguage();
   const { data: latestResponse, isLoading: latestLoading } = useLatestDeviceData(2000); // Reduced from 3000ms
   const { data: statsResponse, isLoading: statsLoading } = useDeviceStats();
   const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24, 3000); // Reduced from 5000ms
@@ -46,25 +48,25 @@ export default function StatsGrid() {
 
   const stats = [
     { 
-      label: 'Thiết bị hoạt động', 
+      label: t('dashboard.activeDevices'), 
       value: `${devicesOn}/${totalDevices}`, 
       color: '#10b981',
-      subtitle: 'Đang bật'
+      subtitle: t('dashboard.onState')
     },
     { 
-      label: 'Năng lượng hôm nay', 
+      label: t('dashboard.todayEnergy'), 
       value: `${(totalSolarEnergy / 1000).toFixed(2)} kWh`,
       color: '#f59e0b',
-      subtitle: 'Solar power'
+      subtitle: t('energy.solarPower')
     },
     { 
-      label: 'Nhiệt độ', 
+      label: t('sensors.temperature'), 
       value: latestData?.temperature !== undefined ? `${latestData.temperature.toFixed(1)}°C` : '--', 
       color: '#ef4444',
-      subtitle: `Độ ẩm: ${latestData?.humidity !== undefined ? latestData.humidity.toFixed(1) : '--'}%`
+      subtitle: `${t('dashboard.humidityLabel')}: ${latestData?.humidity !== undefined ? latestData.humidity.toFixed(1) : '--'}%`
     },
     { 
-      label: 'Điện áp hệ thống', 
+      label: t('dashboard.systemVoltage'), 
       value: latestData?.voltage !== undefined ? `${latestData.voltage.toFixed(2)}V` : '--', 
       color: '#3b82f6',
       subtitle: `${latestData?.current_mA !== undefined ? (latestData.current_mA / 1000).toFixed(2) : '--'}A`

@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '../contexts/AuthContext';
 import { AiProvider } from '../contexts/AiContext';
+import { LanguageProvider } from '../contexts/LanguageContext';
 import { ReactNode, useState, useEffect } from 'react';
 import { QUERY_CONFIG } from '@/config';
 import { validateEnv } from '@/config/env';
@@ -31,11 +32,13 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-        <AuthProvider>
-          <AiProvider>{children}</AiProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <LanguageProvider>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          <AuthProvider>
+            <AiProvider>{children}</AiProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </LanguageProvider>
       <Toaster
         position="top-right"
         reverseOrder={false}

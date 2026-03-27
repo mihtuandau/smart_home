@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useAiContext } from '@/contexts/AiContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { LedDayEntry } from '@/hooks/useSocket';
 import { Lightbulb, Zap } from 'lucide-react';
 
@@ -61,9 +62,14 @@ function formatWh(wh: number): string {
   return wh >= 1 ? `${wh.toFixed(2)} Wh` : `${(wh * 1000).toFixed(0)} mWh`;
 }
 
-function formatMin(min: number): string {
+function formatMin(min: number, language: 'vi' | 'en'): string {
   const h = Math.floor(min / 60);
   const m = Math.round(min % 60);
+  if (language === 'en') {
+    if (h === 0) return `${m} min`;
+    if (m === 0) return `${h} h`;
+    return `${h}h ${m}m`;
+  }
   if (h === 0) return `${m} phút`;
   if (m === 0) return `${h} giờ`;
   return `${h}g ${m}p`;
@@ -72,6 +78,7 @@ function formatMin(min: number): string {
 // ── Custom Tooltip ────────────────────────────────────────────────────────────
 
 function CustomTooltip({ active, payload, label, mode }: any) {
+  const { t, language } = useLanguage();
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-card border border-border rounded-lg shadow-lg px-3 py-2 text-xs">
@@ -79,7 +86,7 @@ function CustomTooltip({ active, payload, label, mode }: any) {
       {payload.map((p: any) => (
         <p key={p.dataKey} style={{ color: p.color }} className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full inline-block" style={{ background: p.color }} />
-          {p.name}: {mode === 'wh' ? formatWh(p.value) : formatMin(p.value)}
+          {p.name}: {mode === 'wh' ? formatWh(p.value) : formatMin(p.value, language)}
         </p>
       ))}
     </div>
@@ -94,12 +101,16 @@ function MiniStat({
   minutes,
   color,
   isOn,
+  language,
+  t,
 }: {
   label: string;
   wh: number;
   minutes: number;
   color: string;
   isOn: boolean;
+  language: 'vi' | 'en';
+  t: (key: string) => string;
 }) {
   return (
     <div className={`rounded-xl border ${isOn ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-700 dark:bg-yellow-950' : 'border-border bg-muted'} px-4 py-3 flex flex-col gap-1`}>
@@ -108,11 +119,11 @@ function MiniStat({
         <span className="text-sm font-semibold text-foreground/80">{label}</span>
         {isOn ? (
           <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-700 font-medium animate-pulse">
-            Đang bật
+            {t('devices.on')}
           </span>
         ) : (
           <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium">
-            Tắt
+            {t('devices.off')}
           </span>
         )}
       </div>
@@ -121,7 +132,7 @@ function MiniStat({
           <span className={`text-xl font-bold ${isOn ? 'text-yellow-600' : 'text-muted-foreground'}`}>
             {formatWh(wh)}
           </span>
-          <p className="text-[11px] text-gray-400 mt-0.5">{formatMin(minutes)} hôm nay</p>
+          <p className="text-[11px] text-gray-400 mt-0.5">{formatMin(minutes, language)} {t('energy.today')}</p>
         </div>
         {/* Mini bar — based on 0–4 Wh range */}
         <div className="w-16 h-2 bg-muted rounded-full overflow-hidden self-center">
@@ -139,6 +150,7 @@ function MiniStat({
 
 export default function LedConsumptionChart() {
   const { todayLed, ledHistory, ledHistoryLoading, status } = useAiContext();
+  const { t, language } = useLanguage();
   const [mode, setMode] = useState<'wh' | 'minutes'>('wh');
 
   const todayKey = new Date().toISOString().slice(0, 10);
@@ -189,7 +201,7 @@ export default function LedConsumptionChart() {
             <Zap className="w-4 h-4 text-yellow-700" />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-foreground">Tiêu thụ LED theo ngày</h2>
+            <h2 className="text-sm font-semibold text-foreground">{t('dashboard.ledConsumptionDaily')}</h2>
           
          
           </div>
@@ -197,11 +209,11 @@ export default function LedConsumptionChart() {
         <div className="flex items-center gap-2">
           {/* Badge: real data vs seed */}
           {ledHistoryLoading ? (
-            <span className="text-[10px] text-gray-400 animate-pulse">Đang tải...</span>
+            <span className="text-[10px] text-gray-400 animate-pulse">{t('common.loading')}</span>
           ) : ledHistory.length > 0 ? (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-50 text-green-600 font-medium"></span>
           ) : (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-400 font-medium">Mẫu</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-400 font-medium">{t('dashboard.sample')}</span>
           )}
           <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
           <button
@@ -218,7 +230,7 @@ export default function LedConsumptionChart() {
               mode === 'minutes' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            Phút
+            {t('dashboard.minutes')}
           </button>
         </div>
         </div>
@@ -227,18 +239,22 @@ export default function LedConsumptionChart() {
       {/* Today's live stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 pt-3 pb-2">
         <MiniStat
-          label="Đèn 1"
+          label={t('ai.led1')}
           wh={todayLed.led1_wh}
           minutes={todayLed.led1_on_minutes}
           color="#f59e0b"
           isOn={status?.led1 ?? false}
+          language={language}
+          t={t}
         />
         <MiniStat
-          label="Đèn 2"
+          label={t('ai.led2')}
           wh={todayLed.led2_wh}
           minutes={todayLed.led2_on_minutes}
           color="#3b82f6"
           isOn={status?.led2 ?? false}
+          language={language}
+          t={t}
         />
       </div>
 
@@ -271,13 +287,13 @@ export default function LedConsumptionChart() {
               />
               {mode === 'wh' ? (
                 <>
-                  <Bar dataKey="led1_wh"      name="Đèn 1 (Wh)"   fill="#f59e0b" radius={[3,3,0,0]} />
-                  <Bar dataKey="led2_wh"      name="Đèn 2 (Wh)"   fill="#3b82f6" radius={[3,3,0,0]} />
+                  <Bar dataKey="led1_wh"      name={`${t('ai.led1')} (Wh)`}   fill="#f59e0b" radius={[3,3,0,0]} />
+                  <Bar dataKey="led2_wh"      name={`${t('ai.led2')} (Wh)`}   fill="#3b82f6" radius={[3,3,0,0]} />
                 </>
               ) : (
                 <>
-                  <Bar dataKey="led1_minutes" name="Đèn 1 (phút)" fill="#f59e0b" radius={[3,3,0,0]} />
-                  <Bar dataKey="led2_minutes" name="Đèn 2 (phút)" fill="#3b82f6" radius={[3,3,0,0]} />
+                  <Bar dataKey="led1_minutes" name={`${t('ai.led1')} (${t('dashboard.minutes').toLowerCase()})`} fill="#f59e0b" radius={[3,3,0,0]} />
+                  <Bar dataKey="led2_minutes" name={`${t('ai.led2')} (${t('dashboard.minutes').toLowerCase()})`} fill="#3b82f6" radius={[3,3,0,0]} />
                 </>
               )}
             </BarChart>
@@ -289,25 +305,25 @@ export default function LedConsumptionChart() {
         {mode === 'wh' ? (
           <>
             <span>
-              7 ngày · Đèn 1:{' '}
+              {t('dashboard.last7Days')} · {t('ai.led1')}:{' '}
               <span className="text-yellow-600 font-medium">{formatWh(totalLed1Wh)}</span>
-              {'  '}Đèn 2:{' '}
+              {'  '}{t('ai.led2')}:{' '}
               <span className="text-blue-500 font-medium">{formatWh(totalLed2Wh)}</span>
             </span>
             <span>
-              Tổng: <span className="text-foreground font-semibold">{formatWh(totalLed1Wh + totalLed2Wh)}</span>
+              {t('dashboard.total')}: <span className="text-foreground font-semibold">{formatWh(totalLed1Wh + totalLed2Wh)}</span>
             </span>
           </>
         ) : (
           <>
             <span>
-              7 ngày · Đèn 1:{' '}
-              <span className="text-yellow-600 font-medium">{formatMin(totalLed1Min)}</span>
-              {'  '}Đèn 2:{' '}
-              <span className="text-blue-500 font-medium">{formatMin(totalLed2Min)}</span>
+              {t('dashboard.last7Days')} · {t('ai.led1')}:{' '}
+              <span className="text-yellow-600 font-medium">{formatMin(totalLed1Min, language)}</span>
+              {'  '}{t('ai.led2')}:{' '}
+              <span className="text-blue-500 font-medium">{formatMin(totalLed2Min, language)}</span>
             </span>
             <span>
-              Tổng: <span className="text-foreground font-semibold">{formatMin(totalLed1Min + totalLed2Min)}</span>
+              {t('dashboard.total')}: <span className="text-foreground font-semibold">{formatMin(totalLed1Min + totalLed2Min, language)}</span>
             </span>
           </>
         )}

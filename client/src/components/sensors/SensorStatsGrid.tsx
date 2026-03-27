@@ -2,6 +2,7 @@
 
 import { useSensorData } from '@/hooks/useSensors';
 import { CloudRain, Droplets, Gauge, Thermometer, TrendingDown, TrendingUp } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SensorCurrentData {
   temperature: number;
@@ -56,7 +57,8 @@ function SensorStatCard({ label, value, subtitle, color, icon, trend }: StatCard
 
 export default function SensorStatsGrid() {
   const { data: response, isLoading } = useSensorData(3000);
-  const data = (response as any)?.data as SensorCurrentData | undefined; 
+  const data = (response as any)?.data as SensorCurrentData | undefined;
+  const { t, language } = useLanguage(); 
 
   const formatNumber = (value: unknown, digits: number) => {
     const parsed = typeof value === 'number' ? value : Number(value);
@@ -82,30 +84,30 @@ export default function SensorStatsGrid() {
 
   const stats: StatCardProps[] = [
     {
-      label: 'Nhiệt độ',
+      label: t('sensors.temperature'),
       value: formatWithUnit(data?.temperature, 1, '°C'),
-      subtitle: 'Nhiệt độ hiện tại',
+      subtitle: t('sensors.temperatureSubtitle'),
       color: '#ef4444',
       icon: <Thermometer className="w-6 h-6" />,
     },
     {
-      label: 'Độ ẩm',
+      label: t('sensors.humidity'),
       value: formatWithUnit(data?.humidity, 1, '%'),
-      subtitle: 'Độ ẩm môi trường',
+      subtitle: t('sensors.humiditySubtitle'),
       color: '#3b82f6',
       icon: <Droplets className="w-6 h-6" />,
     },
     {
-      label: 'Áp suất',
+      label: t('sensors.pressure'),
       value: formatWithUnit(data?.pressure, 1, ' hPa'),
-      subtitle: 'Áp suất khí quyển',
+      subtitle: t('sensors.pressureSubtitle'),
       color: '#8b5cf6',
       icon: <Gauge className="w-6 h-6" />,
     },
     {
-      label: 'Cảm biến mưa',
-      value: data?.isRaining ? 'Có mưa' : 'Không mưa',
-      subtitle: data?.isRaining ? 'Đang có nước rơi' : 'Trời không có mưa',
+      label: t('sensors.rainSensor'),
+      value: data?.isRaining ? t('sensors.raining') : t('sensors.notRaining'),
+      subtitle: data?.isRaining ? t('sensors.rainingSubtitle') : t('sensors.notRainingSubtitle'),
       color: data?.isRaining ? '#3b82f6' : '#94a3b8',
       icon: <CloudRain className="w-6 h-6" />,
     },

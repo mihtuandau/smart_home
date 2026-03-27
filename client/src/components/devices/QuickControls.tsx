@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useControlSingleLED } from "@/hooks/useDevices";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLanguage } from '@/contexts/LanguageContext';
 import Toast from "@/components/ui/Toast";
 import { Lightbulb, Power } from 'lucide-react';
 
@@ -12,6 +13,7 @@ interface ToastState {
 }
 
 export default function QuickControls() {
+  const { t } = useLanguage();
   const [toast, setToast] = useState<ToastState | null>(null);
   const queryClient = useQueryClient();
   const controlLED = useControlSingleLED();
@@ -27,16 +29,16 @@ export default function QuickControls() {
         return updated;
       });
 
-      setToast({ message: "Đã bật tất cả đèn LED", type: "success" });
+      setToast({ message: t('devices.allOnSuccess'), type: "success" });
 
       Promise.all([
         controlLED.mutateAsync({ ledNumber: 1, state: true }),
         controlLED.mutateAsync({ ledNumber: 2, state: true }),
       ]).catch((error) => {
-        setToast({ message: "Không thể bật LED", type: "error" });
+        setToast({ message: t('devices.allOnError'), type: "error" });
       });
     } catch (error) {
-      setToast({ message: "Không thể bật LED", type: "error" });
+      setToast({ message: t('devices.allOnError'), type: "error" });
     }
   };
 
@@ -51,16 +53,16 @@ export default function QuickControls() {
         return updated;
       });
 
-      setToast({ message: "Đã tắt tất cả đèn LED", type: "success" });
+      setToast({ message: t('devices.allOffSuccess'), type: "success" });
 
       Promise.all([
         controlLED.mutateAsync({ ledNumber: 1, state: false }),
         controlLED.mutateAsync({ ledNumber: 2, state: false }),
       ]).catch((error) => {
-        setToast({ message: "Không thể tắt LED", type: "error" });
+        setToast({ message: t('devices.allOffError'), type: "error" });
       });
     } catch (error) {
-      setToast({ message: "Không thể tắt LED", type: "error" });
+      setToast({ message: t('devices.allOffError'), type: "error" });
     }
   };
 
@@ -79,10 +81,10 @@ export default function QuickControls() {
       <div className="section-card shadow-sm border border-border p-4 sm:p-5 md:p-6">
         <div className="mb-6 text-center">
           <h3 className="text-sm sm:text-base font-semibold text-foreground">
-            Điều khiển nhanh
+            {t('devices.quickControl')}
           </h3>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Bật/tắt toàn bộ đèn LED một cách nhanh chóng
+            {t('devices.quickControlSubtitle')}
           </p>
         </div>
 
@@ -93,7 +95,7 @@ export default function QuickControls() {
             className="w-full px-4 py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Lightbulb className="w-4 h-4" />
-            {controlLED.isPending ? "Đang xử lý..." : "Bật đèn"}
+            {controlLED.isPending ? t('devices.processing') : t('devices.turnOnLights')}
           </button>
 
           <button
@@ -102,7 +104,7 @@ export default function QuickControls() {
             className="w-full px-4 py-4 bg-card text-foreground border border-border rounded-lg hover:bg-muted transition-colors flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Power className="w-4 h-4" />
-            {controlLED.isPending ? "Đang xử lý..." : "Tắt đèn"}
+            {controlLED.isPending ? t('devices.processing') : t('devices.turnOffLights')}
           </button>
         </div>
       </div>

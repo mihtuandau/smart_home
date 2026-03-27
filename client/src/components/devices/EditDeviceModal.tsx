@@ -1,6 +1,7 @@
 'use client';
 
 import { CustomIoTDevice } from '@/hooks/useIoTForms';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { TriangleAlert, X } from 'lucide-react';
 
 interface EditDeviceModalProps {
@@ -28,6 +29,8 @@ export default function EditDeviceModal({
   onSubmit,
   onClose,
 }: EditDeviceModalProps) {
+  const { t } = useLanguage();
+
   if (!isOpen || !device) return null;
 
   return (
@@ -44,7 +47,7 @@ export default function EditDeviceModal({
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-border">
             <div>
-              <h3 className="text-lg font-semibold text-foreground">Chỉnh sửa thiết bị</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('devices.editDevice')}</h3>
               <p className="text-xs text-muted-foreground mt-1">{device.name}</p>
             </div>
             <button
@@ -59,7 +62,7 @@ export default function EditDeviceModal({
           <div className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Tên thiết bị <span className="text-red-500">*</span>
+                {t('devices.deviceName')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -69,12 +72,12 @@ export default function EditDeviceModal({
                 disabled={loading}
                 className="w-full px-3 py-2.5 text-sm text-foreground bg-card border border-border rounded-lg placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
               />
-              <p className="text-xs text-muted-foreground mt-1">Để trống để giữ tên hiện tại</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('devices.keepCurrentName')}</p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Công suất (W) <span className="text-red-500">*</span>
+                {t('devices.power')} (W) <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -86,7 +89,7 @@ export default function EditDeviceModal({
                 disabled={loading}
                 className="w-full px-3 py-2.5 text-sm text-foreground bg-card border border-border rounded-lg placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
               />
-              <p className="text-xs text-muted-foreground mt-1">Để trống để giữ giá trị hiện tại</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('devices.keepCurrentPower')}</p>
             </div>
 
             {error && (
@@ -102,14 +105,14 @@ export default function EditDeviceModal({
               onClick={onClose}
               className="flex-1 px-4 py-2.5 text-foreground bg-card border border-border hover:bg-muted font-medium rounded-lg transition-colors"
             >
-              Hủy
+              {t('devices.cancel')}
             </button>
             <button
               onClick={onSubmit}
               disabled={loading}
               className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium rounded-lg transition-colors"
             >
-              {loading ? 'Đang lưu...' : 'Lưu'}
+              {loading ? t('devices.saving') : t('devices.save')}
             </button>
           </div>
         </div>

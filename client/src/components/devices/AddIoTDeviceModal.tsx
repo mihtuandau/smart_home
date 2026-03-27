@@ -1,5 +1,6 @@
 'use client';
 
+import { useLanguage } from '@/contexts/LanguageContext';
 import { TriangleAlert, X } from 'lucide-react';
 
 interface AddIoTDeviceModalProps {
@@ -25,6 +26,7 @@ export function AddIoTDeviceModal({
   error,
   onSubmit,
 }: AddIoTDeviceModalProps) {
+  const { t } = useLanguage();
   if (!open) return null;
 
   return (
@@ -41,8 +43,8 @@ export function AddIoTDeviceModal({
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-border">
             <div>
-              <h3 className="text-lg font-semibold text-foreground">Thêm thiết bị mới</h3>
-              <p className="text-xs text-muted-foreground mt-1">Tối đa 2 thiết bị IoT</p>
+              <h3 className="text-lg font-semibold text-foreground">{t('devices.newDevice')}</h3>
+              <p className="text-xs text-muted-foreground mt-1">{t('devices.maxTwoDevices')}</p>
             </div>
             <button
               onClick={onClose}
@@ -56,17 +58,17 @@ export function AddIoTDeviceModal({
           <div className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Tên thiết bị <span className="text-red-500">*</span>
+                {t('devices.deviceName')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => onNameChange(e.target.value)}
-                placeholder="VD: Máy điều hòa, Tủ lạnh"
+                placeholder={t('devices.placeholderDeviceName')}
                 disabled={loading}
                 className="w-full px-3 py-2.5 text-sm text-foreground bg-card border border-border rounded-lg placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
               />
-              <p className="text-xs text-muted-foreground mt-1">Tên hiển thị cho thiết bị</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('devices.displayNameHint')}</p>
             </div>
 
             <div>
@@ -84,7 +86,7 @@ export function AddIoTDeviceModal({
                 className="w-full px-3 py-2.5 text-sm text-foreground bg-card border border-border rounded-lg placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Công suất điện khi thiết bị hoạt động
+                {t('devices.powerHint')}
               </p>
             </div>
 
@@ -101,14 +103,14 @@ export function AddIoTDeviceModal({
               onClick={onClose}
               className="flex-1 px-4 py-2.5 text-foreground bg-card border border-border hover:bg-muted font-medium rounded-lg transition-colors"
             >
-              Hủy
+              {t('devices.cancel')}
             </button>
             <button
               onClick={onSubmit}
               disabled={loading}
               className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium rounded-lg transition-colors"
             >
-              {loading ? 'Đang lưu...' : 'Thêm'}
+              {loading ? t('devices.saving') : t('devices.addDevice')}
             </button>
           </div>
         </div>

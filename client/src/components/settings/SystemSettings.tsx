@@ -1,141 +1,91 @@
 'use client';
 
-import React, { useState } from 'react';
-import toast from 'react-hot-toast';
-import { Database, Globe, Moon, RefreshCw, Sun, Timer, Trash2, TriangleAlert } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Globe, Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 export default function SystemSettings() {
-  const [settings, setSettings] = useState({
-    autoRefresh: true,
-    refreshInterval: '30',
-    theme: 'light',
-    language: 'vi',
-    timezone: 'Asia/Ho_Chi_Minh',
-    dataRetention: '90',
-  });
+  const { t, language, setLanguage } = useLanguage();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const currentTheme = theme === 'dark' ? 'dark' : 'light';
 
-  const handleChange = (key: string, value: string | boolean) => {
-    setSettings({ ...settings, [key]: value });
-    toast.success('Cài đặt đã lưu!');
-  };
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
-    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8">
+    <div className="section-card shadow-sm p-4 sm:p-6 md:p-8 space-y-6 bg-card/95">
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Cài đặt hệ thống</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{t('settings.systemSettings')}</h2>
+        <p className="text-sm text-muted-foreground">
+          {t('settings.systemDescription')}
+        </p>
       </div>
 
-      {/* Auto Refresh */}
-      <div className="border-b pb-6">
-        <div className="flex items-center justify-between mb-3">
+      <div className="space-y-4">
+        <div className="rounded-xl border border-border bg-background/60 p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h3 className="text-sm sm:text-base font-semibold text-gray-900 inline-flex items-center gap-2"><RefreshCw className="w-4 h-4" />Tự động làm mới dữ liệu</h3>
-            <p className="text-xs sm:text-sm text-gray-600 mt-1">Tự động cập nhật dữ liệu từ cảm biến</p>
+            <h3 className="text-base sm:text-lg font-semibold text-foreground inline-flex items-center gap-2">
+              <Sun className="w-4 h-4" />
+              {t('common.theme')}
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t('settings.themeDescription')}
+            </p>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={settings.autoRefresh}
-              onChange={(e) => handleChange('autoRefresh', e.target.checked)}
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-          </label>
+
+          <div className="inline-flex items-center gap-2 p-1.5 rounded-lg bg-muted border border-border md:self-center">
+            {['light', 'dark'].map((themeOption) => (
+              <label
+                key={themeOption}
+                className={`flex items-center gap-1.5 cursor-pointer rounded-md px-2.5 py-1.5 transition-colors ${
+                  mounted && currentTheme === themeOption
+                    ? 'bg-background text-foreground shadow-sm border border-border'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="theme"
+                  value={themeOption}
+                  checked={mounted ? currentTheme === themeOption : false}
+                  onChange={() => setTheme(themeOption)}
+                  className="w-3.5 h-3.5 accent-primary"
+                  disabled={!mounted}
+                />
+                <span className="text-sm leading-none">
+                  <span className="inline-flex items-center gap-1">
+                    {themeOption === 'light' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+                    {themeOption === 'light' ? t('common.lightMode') : t('common.darkMode')}
+                  </span>
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
-        {settings.autoRefresh && (
+
+        <div className="rounded-xl border border-border bg-background/60 p-4 sm:p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Khoảng thời gian (giây)
-            </label>
-            <input
-              type="number"
-              value={settings.refreshInterval}
-              onChange={(e) => handleChange('refreshInterval', e.target.value)}
-              min="10"
-              max="300"
-              className="w-full sm:w-40 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-            />
+            <h3 className="text-base sm:text-lg font-semibold text-foreground inline-flex items-center gap-2">
+              <Globe className="w-4 h-4" />
+              {t('common.language')}
+            </h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              {t('settings.languageDescription')}
+            </p>
           </div>
-        )}
-      </div>
 
-      {/* Theme */}
-      <div className="border-b pb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 inline-flex items-center gap-2"><Sun className="w-4 h-4" />Chủ đề</h3>
-        <div className="flex flex-wrap gap-4">
-          {['light', 'dark'].map((theme) => (
-            <label key={theme} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                name="theme"
-                value={theme}
-                checked={settings.theme === theme}
-                onChange={() => handleChange('theme', theme)}
-                className="w-4 h-4"
-              />
-              <span className="text-gray-700">
-                <span className="inline-flex items-center gap-1.5">{theme === 'light' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}{theme === 'light' ? 'Sáng' : 'Tối'}</span>
-              </span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      {/* Language */}
-      <div className="border-b pb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 inline-flex items-center gap-2"><Globe className="w-4 h-4" />Ngôn ngữ</h3>
-        <select
-          value={settings.language}
-          onChange={(e) => handleChange('language', e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="vi">Tiếng Việt</option>
-          <option value="en">English</option>
-          <option value="zh">中文</option>
-        </select>
-      </div>
-
-      {/* Timezone */}
-      <div className="border-b pb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 inline-flex items-center gap-2"><Timer className="w-4 h-4" />Múi giờ</h3>
-        <select
-          value={settings.timezone}
-          onChange={(e) => handleChange('timezone', e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="Asia/Ho_Chi_Minh">Asia/Ho_Chi_Minh (UTC+7)</option>
-          <option value="UTC">UTC</option>
-          <option value="Asia/Bangkok">Asia/Bangkok (UTC+7)</option>
-          <option value="Asia/Shanghai">Asia/Shanghai (UTC+8)</option>
-        </select>
-      </div>
-
-      {/* Data Retention */}
-      <div className="pb-6">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-3 inline-flex items-center gap-2"><Database className="w-4 h-4" />Lưu giữ dữ liệu</h3>
-        <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
           <select
-            value={settings.dataRetention}
-            onChange={(e) => handleChange('dataRetention', e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as 'vi' | 'en')}
+            className="w-full md:w-[220px] px-4 py-2.5 border border-border rounded-lg bg-background text-foreground text-base focus:outline-none focus:ring-2 focus:ring-ring"
           >
-            <option value="30">30 ngày</option>
-            <option value="60">60 ngày</option>
-            <option value="90">90 ngày</option>
-            <option value="180">6 tháng</option>
-            <option value="365">1 năm</option>
+            <option value="vi">Tiếng Việt</option>
+            <option value="en">English</option>
           </select>
-          <span className="text-xs sm:text-sm text-gray-600">Dữ liệu cũ hơn sẽ được xóa</span>
         </div>
-      </div>
-
-      {/* Danger Zone */}
-      <div className="border-t pt-6">
-        <h3 className="text-sm sm:text-base font-semibold text-red-600 mb-3 inline-flex items-center gap-2"><TriangleAlert className="w-4 h-4" />Vùng nguy hiểm</h3>
-        <button className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition inline-flex items-center gap-2">
-          <Trash2 className="w-4 h-4" /> Xóa tất cả dữ liệu
-        </button>
-        <p className="text-xs text-red-600 mt-2">Hành động này không thể được hoàn tác</p>
       </div>
     </div>
   );

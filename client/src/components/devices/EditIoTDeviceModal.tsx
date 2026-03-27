@@ -1,6 +1,7 @@
 'use client';
 
 import type { IoTDevice } from '@/hooks/useIoTDeviceState';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { TriangleAlert, X } from 'lucide-react';
 
 interface EditIoTDeviceModalProps {
@@ -28,6 +29,7 @@ export function EditIoTDeviceModal({
   error,
   onSubmit,
 }: EditIoTDeviceModalProps) {
+  const { t } = useLanguage();
   if (!open || !device) return null;
 
   return (
@@ -44,7 +46,7 @@ export function EditIoTDeviceModal({
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-border">
             <div>
-              <h3 className="text-lg font-semibold text-foreground">Chỉnh sửa thiết bị</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('devices.editDevice')}</h3>
               <p className="text-xs text-muted-foreground mt-1">{device.name}</p>
             </div>
             <button
@@ -59,7 +61,7 @@ export function EditIoTDeviceModal({
           <div className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Tên thiết bị <span className="text-red-500">*</span>
+                {t('devices.deviceName')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
@@ -69,7 +71,7 @@ export function EditIoTDeviceModal({
                 disabled={loading}
                 className="w-full px-3 py-2.5 text-sm text-foreground bg-card border border-border rounded-lg placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
               />
-              <p className="text-xs text-muted-foreground mt-1">Để trống để giữ tên hiện tại</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('devices.keepCurrentName')}</p>
             </div>
 
             <div>
@@ -86,7 +88,7 @@ export function EditIoTDeviceModal({
                 disabled={loading}
                 className="w-full px-3 py-2.5 text-sm text-foreground bg-card border border-border rounded-lg placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50"
               />
-              <p className="text-xs text-muted-foreground mt-1">Để trống để giữ công suất hiện tại</p>
+              <p className="text-xs text-muted-foreground mt-1">{t('devices.keepCurrentPower')}</p>
             </div>
 
             {error && (
@@ -102,14 +104,14 @@ export function EditIoTDeviceModal({
               onClick={onClose}
               className="flex-1 px-4 py-2.5 text-foreground bg-card border border-border hover:bg-muted font-medium rounded-lg transition-colors"
             >
-              Hủy
+              {t('devices.cancel')}
             </button>
             <button
               onClick={onSubmit}
               disabled={loading}
               className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium rounded-lg transition-colors"
             >
-              {loading ? 'Đang lưu...' : 'Cập nhật'}
+              {loading ? t('devices.saving') : t('automation.update')}
             </button>
           </div>
         </div>

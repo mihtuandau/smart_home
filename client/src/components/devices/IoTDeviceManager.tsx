@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useLatestDeviceData } from '@/hooks/useDevices';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useIoTDeviceState } from '@/hooks/useIoTDeviceState';
 import Toast from '@/components/ui/Toast';
 import { AddIoTDeviceModal } from './AddIoTDeviceModal';
@@ -16,6 +17,7 @@ interface LatestData {
 }
 
 export default function IoTDeviceManager() {
+  const { t } = useLanguage();
   const { data: latestRaw } = useLatestDeviceData(2000);
   const latest = (latestRaw as { data?: LatestData })?.data as LatestData | undefined;
 
@@ -112,15 +114,15 @@ export default function IoTDeviceManager() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
           <div>
-            <h3 className="text-sm sm:text-base font-semibold text-foreground">Thiết bị IoT</h3>
-            <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">Tối đa 2 thiết bị · Cập nhật qua MQTT</p>
+            <h3 className="text-sm sm:text-base font-semibold text-foreground">{t('devices.iotDevices')}</h3>
+            <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">{t('devices.iotSubtitle')}</p>
           </div>
           {devices.length < 2 && !showAddForm && (
             <button
               onClick={() => setShowAddForm(true)}
               className="w-full sm:w-auto px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
             >
-              Thêm thiết bị
+              {t('devices.addDevice')}
             </button>
           )}
         </div>
@@ -128,7 +130,7 @@ export default function IoTDeviceManager() {
         {/* Device List */}
         {devices.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            <p className="text-sm">Chưa có thiết bị nào</p>
+            <p className="text-sm">{t('devices.noDevice')}</p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -159,7 +161,7 @@ export default function IoTDeviceManager() {
                   <button
                     onClick={() => handleControl(device.index, !device.state)}
                     disabled={controlLoading === device.index}
-                    title={device.state ? 'Nhấn để tắt' : 'Nhấn để bật'}
+                    title={device.state ? t('devices.clickToOff') : t('devices.clickToOn')}
                     className={`relative w-12 h-12 rounded-full flex items-center justify-center
                       transition-all duration-200 select-none
                       ${device.state
@@ -180,7 +182,7 @@ export default function IoTDeviceManager() {
                     }}
                     className="px-2.5 py-1 text-xs text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950 rounded-md transition-colors"
                   >
-                    Sửa
+                    {t('devices.edit')}
                   </button>
 
                   {/* Delete */}
@@ -198,7 +200,7 @@ export default function IoTDeviceManager() {
                     disabled={deleteLoading === device.index}
                     className="px-2.5 py-1 text-xs text-red-600 hover:bg-red-50 dark:hover:bg-red-950 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    Xóa
+                    {t('devices.delete')}
                   </button>
                 </div>
               </div>

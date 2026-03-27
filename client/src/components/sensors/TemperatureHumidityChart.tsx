@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import { useSensorHistory, useSensorData } from '@/hooks/useSensors';
 import { useChartColors } from '@/lib/chartDarkModeUtils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface TemperatureHumidityChartProps {
   hours?: number;
@@ -23,6 +24,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   const { data: historyResponse, isLoading, error } = useSensorHistory(hours);
   const { data: currentResponse } = useSensorData();
   const colors = useChartColors();
+  const { t, language } = useLanguage();
 
   const toNumberOrNull = (value: unknown) => {
     const parsed = typeof value === 'number' ? value : Number(value);
@@ -43,7 +45,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   if (error) {
     return (
       <div className="bg-card rounded-lg p-6 border border-red-200 dark:border-red-800">
-        <p className="text-red-600">Không thể tải dữ liệu nhiệt độ & độ ẩm</p>
+        <p className="text-red-600">{t('sensors.loadTemperatureHumidityError')}</p>
       </div>
     );
   }
@@ -63,7 +65,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
       }
 
       return {
-        time: time.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+        time: time.toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', { hour: '2-digit', minute: '2-digit' }),
         temperature,
         humidity,
         timestamp: item.timestamp,
@@ -75,8 +77,8 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   if (chartData.length === 0) {
     return (
       <div className="section-card shadow-sm border border-border p-4 sm:p-6">
-        <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">Nhiệt độ & Độ ẩm</h2>
-        <p className="text-muted-foreground text-center py-8">Không có dữ liệu lịch sử</p>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">{t('sensors.temperatureHumidityChart')}</h2>
+        <p className="text-muted-foreground text-center py-8">{t('sensors.noHistoryData')}</p>
       </div>
     );
   }
@@ -97,11 +99,11 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
           <p className="text-xs font-semibold text-foreground/80 mb-2">{payload[0]?.payload?.time ?? '--:--'}</p>
           <p className="text-xs text-blue-600 dark:text-blue-400 flex items-center gap-1">
             <span className="inline-block w-3 h-3 bg-blue-500 rounded-full"></span>
-            Độ ẩm: {humidityPayload?.value ?? '--'}%
+            {t('sensors.humidity')}: {humidityPayload?.value ?? '--'}%
           </p>
           <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1 mt-1">
             <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
-            Nhiệt độ: {temperaturePayload?.value ?? '--'}°C
+            {t('sensors.temperature')}: {temperaturePayload?.value ?? '--'}°C
           </p>
         </div>
       );
@@ -112,8 +114,8 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   return (
     <div className="section-card shadow-sm border border-border p-4 sm:p-6 min-w-0">
       <div className="mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-foreground">Nhiệt độ & Độ ẩm</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground mt-1">{hours} giờ qua</p>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('sensors.temperatureHumidityChart')}</h2>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">{t('sensors.lastHours').replace('{hours}', String(hours))}</p>
       </div>
 
       {/* Chart */}
@@ -158,7 +160,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 6 }}
-            name="Độ ẩm (%)"
+            name={`${t('sensors.humidity')} (%)`}
           />
           <Line
             yAxisId="left"
@@ -168,7 +170,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
             strokeWidth={2}
             dot={false}
             activeDot={{ r: 6, fill: '#ef4444' }}
-            name="Nhiệt độ (°C)"
+            name={`${t('sensors.temperature')} (°C)`}
           />
         </ComposedChart>
         </ResponsiveContainer>

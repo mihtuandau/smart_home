@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { sensorsApi } from '@/lib/api/sensors';
 import { energyApi } from '@/lib/api/energy';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 type Period = '24h' | '7d' | '30d';
 
@@ -15,6 +16,7 @@ const periodHours: Record<Period, number> = {
 
 export default function ReportGenerator() {
   const [period, setPeriod] = useState<Period>('24h');
+  const { t } = useLanguage();
   const hours = periodHours[period];
 
   const { data: sensorStats, isLoading: sensorLoading } = useQuery({
@@ -39,7 +41,7 @@ export default function ReportGenerator() {
   return (
     <div className="section-card border border-border rounded-xl p-4 sm:p-6 shadow-sm space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h2 className="text-base sm:text-lg font-semibold text-foreground">Báo cáo tổng hợp</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('reports.summaryReport')}</h2>
         <div className="flex gap-1 bg-muted rounded-lg p-1 w-full sm:w-auto">
           {(['24h', '7d', '30d'] as Period[]).map((p) => (
             <button
@@ -51,7 +53,7 @@ export default function ReportGenerator() {
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              {p === '24h' ? '24 giờ' : p === '7d' ? '7 ngày' : '30 ngày'}
+              {p === '24h' ? t('reports.last24Hours') : p === '7d' ? t('reports.last7Days') : t('reports.last30Days')}
             </button>
           ))}
         </div>
@@ -67,12 +69,12 @@ export default function ReportGenerator() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Sensor Stats */}
           <div className="space-y-3">
-            <h3 className="font-medium text-foreground/80 text-xs sm:text-sm uppercase tracking-wide">Môi trường</h3>
+            <h3 className="font-medium text-foreground/80 text-xs sm:text-sm uppercase tracking-wide">{t('reports.environment')}</h3>
             {sData ? (
               [
-                { label: 'Nhiệt độ TB', value: `${sData.temperature?.avg?.toFixed(1) ?? '--'}°C`, sub: `${sData.temperature?.min?.toFixed(1)}°C – ${sData.temperature?.max?.toFixed(1)}°C` },
-                { label: 'Độ ẩm TB', value: `${sData.humidity?.avg?.toFixed(1) ?? '--'}%`, sub: `${sData.humidity?.min?.toFixed(1)}% – ${sData.humidity?.max?.toFixed(1)}%` },
-                { label: 'Áp suất TB', value: `${sData.pressure?.avg?.toFixed(0) ?? '--'} hPa`, sub: `${sData.pressure?.min?.toFixed(0)} – ${sData.pressure?.max?.toFixed(0)} hPa` },
+                { label: t('reports.avgTemperature'), value: `${sData.temperature?.avg?.toFixed(1) ?? '--'}°C`, sub: `${sData.temperature?.min?.toFixed(1)}°C – ${sData.temperature?.max?.toFixed(1)}°C` },
+                { label: t('reports.avgHumidity'), value: `${sData.humidity?.avg?.toFixed(1) ?? '--'}%`, sub: `${sData.humidity?.min?.toFixed(1)}% – ${sData.humidity?.max?.toFixed(1)}%` },
+                { label: t('reports.avgPressure'), value: `${sData.pressure?.avg?.toFixed(0) ?? '--'} hPa`, sub: `${sData.pressure?.min?.toFixed(0)} – ${sData.pressure?.max?.toFixed(0)} hPa` },
               ].map((item) => (
                 <div key={item.label} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <span className="text-xs sm:text-sm text-foreground/70">{item.label}</span>
@@ -83,17 +85,17 @@ export default function ReportGenerator() {
                 </div>
               ))
             ) : (
-              <p className="text-muted-foreground text-sm">Không có dữ liệu</p>
+              <p className="text-muted-foreground text-sm">{t('reports.noData')}</p>
             )}
           </div>
 
           {/* Energy Stats */}
           <div className="space-y-3">
-            <h3 className="font-medium text-foreground/80 text-xs sm:text-sm uppercase tracking-wide">Năng lượng</h3>
+            <h3 className="font-medium text-foreground/80 text-xs sm:text-sm uppercase tracking-wide">{t('energy.title')}</h3>
             {[
-              { label: 'Tổng điện tiêu thụ', value: `${totalEnergy.toFixed(3)} Wh` },
-              { label: 'Công suất trung bình', value: `${avgPower.toFixed(2)} W` },
-              { label: 'Số mẫu đo', value: `${eData.length}` },
+              { label: t('reports.totalConsumedEnergy'), value: `${totalEnergy.toFixed(3)} Wh` },
+              { label: t('reports.averagePower'), value: `${avgPower.toFixed(2)} W` },
+              { label: t('reports.sampleCount'), value: `${eData.length}` },
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <span className="text-xs sm:text-sm text-foreground/70">{item.label}</span>

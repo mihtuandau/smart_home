@@ -1,6 +1,7 @@
 'use client';
 
 import { useEnergyStats, usePowerSources } from '@/hooks/useEnergy';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SystemComponent {
   name: string;
@@ -13,6 +14,7 @@ interface SystemComponent {
 }
 
 export default function EnergySystemTable() {
+  const { t } = useLanguage();
   const { data: energyData, isLoading: energyLoading } = useEnergyStats(24);
   const { data: sourcesData, isLoading: sourcesLoading } = usePowerSources(24);
   
@@ -25,34 +27,34 @@ export default function EnergySystemTable() {
     {
       name: 'Solar Panel',
       spec: `${(latestEnergy.voltage || 0).toFixed(1)}V ${(latestEnergy.current || 0).toFixed(1)}A`,
-      status: 'Công suất hiện tại',
+      status: t('energy.currentPower'),
       statusColor: 'text-foreground',
       metric: `${(latestEnergy.power || 0).toFixed(2)} W`,
       value: `${(latestEnergy.power || 0).toFixed(2)} W`,
       valueColor: 'text-orange-600'
     },
     {
-      name: 'Năng lượng thu được',
-      spec: 'Hôm nay',
-      status: 'Tổng năng lượng',
+      name: t('energy.harvestedEnergy'),
+      spec: t('energy.today'),
+      status: t('energy.totalEnergy'),
       statusColor: 'text-green-700',
       metric: `${totalEnergy.toFixed(2)} Wh`,
       value: `${totalEnergy.toFixed(2)} Wh`,
       valueColor: 'text-gray-900'
     },
     {
-      name: 'Nguồn điện',
+      name: t('energy.powerSource'),
       spec: latestEnergy.source || 'UNKNOWN',
-      status: 'Trạng thái',
+      status: t('devices.status'),
       statusColor: 'text-blue-700',
-      metric: 'Hoạt động',
-      value: 'Hoạt động',
+      metric: t('energy.active'),
+      value: t('energy.active'),
       valueColor: 'text-green-700'
     },
     {
-      name: 'Hiệu suất',
-      spec: 'Hệ thống',
-      status: 'Tỷ lệ chuyển đổi',
+      name: t('energy.efficiency'),
+      spec: t('energy.system'),
+      status: t('energy.conversionRate'),
       statusColor: 'text-foreground',
       metric: '85%',
       value: '85%',
@@ -71,7 +73,7 @@ export default function EnergySystemTable() {
   return (
     <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <div className="mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-foreground">Thông tin hệ thống năng lượng</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('energy.systemInfo')}</h2>
       </div>
 
       <div className="space-y-3 md:hidden">
@@ -93,9 +95,9 @@ export default function EnergySystemTable() {
         <table className="w-full">
           <thead>
             <tr className="border-b border-border">
-              <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Phần cứng</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Thông số</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">Thông kế hôm nay</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">{t('energy.hardware')}</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">{t('energy.spec')}</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-muted-foreground">{t('energy.todayStats')}</th>
               <th className="text-right py-3 px-4 text-sm font-semibold text-muted-foreground"></th>
             </tr>
           </thead>
