@@ -99,6 +99,59 @@ function localizeAiText(text: string, language: 'vi' | 'en') {
     return `⚠️ Power is ${higherThanUsual[1]}% higher than usual — please check whether any device was left on`;
   }
 
+  // ✅ Đèn X đang bật — mức điện bình thường (X W)
+  const ledOnNormal = source.match(/^✅\s*(.+?)\s*đang bật\s*[—–-]\s*mức điện bình thường\s*\(([\d.]+)\s*W\)$/i);
+  if (ledOnNormal) {
+    const ledName = ledOnNormal[1]
+      .replace(/Đèn\s*1\s*\+\s*Đèn\s*2/i, 'Light 1 + Light 2')
+      .replace(/Đèn\s*(\d+)/gi, 'Light $1');
+    return `✅ ${ledName} is on — normal power level (${ledOnNormal[2]} W)`;
+  }
+
+  // ✅ Đèn X đang bật — điện tiêu thụ X W (fallback format)
+  const ledOnPower = source.match(/^✅\s*(.+?)\s*đang bật\s*[—–-]\s*điện tiêu thụ\s*([\d.]+)\s*W$/i);
+  if (ledOnPower) {
+    const ledName = ledOnPower[1]
+      .replace(/Đèn\s*1\s*\+\s*Đèn\s*2/i, 'Light 1 + Light 2')
+      .replace(/Đèn\s*(\d+)/gi, 'Light $1');
+    return `✅ ${ledName} is on — power consumption: ${ledOnPower[2]} W`;
+  }
+
+  // 💡 Gợi ý: Tắt bớt đèn không cần thiết để tiết kiệm điện
+  if (/^💡\s*Gợi ý:\s*Tắt bớt đèn không cần thiết để tiết kiệm điện$/i.test(source)) {
+    return '💡 Suggestion: Turn off unnecessary lights to save energy';
+  }
+
+  // 🌙 Đèn vừa tắt — điện giảm X W (điện chờ hiện tại: X W)
+  const lightsOff = source.match(/^🌙\s*Đèn vừa tắt\s*[—–-]\s*điện giảm\s*([\d.]+)\s*W\s*\(điện chờ hiện tại:\s*([\d.]+)\s*W\)$/i);
+  if (lightsOff) {
+    return `🌙 Lights just turned off — power decreased by ${lightsOff[1]} W (standby power: ${lightsOff[2]} W)`;
+  }
+
+  // 📊 AI đang làm quen với thiết bị của bạn... (X/Y)
+  const aiLearning = source.match(/^📊\s*AI đang làm quen với thiết bị của bạn\.*\s*\((\d+)\/(\d+)\)$/i);
+  if (aiLearning) {
+    return `📊 AI is learning your devices... (${aiLearning[1]}/${aiLearning[2]})`;
+  }
+
+  // ⚠️ Điện vẫn cao dù đèn đã tắt (X W) — có thiết bị nào đang bật không?
+  const stillHighNoHet = source.match(/^⚠️?\s*Điện vẫn cao dù đèn đã tắt\s*\(([\d.]+)\s*W\)\s*[—–-]\s*có thiết bị nào đang bật không\?$/i);
+  if (stillHighNoHet) {
+    return `⚠️ Power is still high even though lights are off (${stillHighNoHet[1]} W) — is another device still on?`;
+  }
+
+  // ✅ Đèn đã tắt — điện tiêu thụ thấp (X W)
+  const allOffLow = source.match(/^✅\s*Đèn đã tắt\s*[—–-]\s*điện tiêu thụ thấp\s*\(([\d.]+)\s*W\)$/i);
+  if (allOffLow) {
+    return `✅ Lights are off — low power consumption (${allOffLow[1]} W)`;
+  }
+
+  // 🔋 Điện đang cao hơn mức thường X% — đang dùng X W thay vì ~X W như thường lệ
+  const batteryHigher = source.match(/^🔋\s*Điện đang cao hơn mức thường\s*([\d.]+)%\s*[—–-]\s*đang dùng\s*([\d.]+)\s*W\s*thay vì\s*~?([\d.]+)\s*W\s*như thường lệ$/i);
+  if (batteryHigher) {
+    return `🔋 Power is ${batteryHigher[1]}% higher than usual — using ${batteryHigher[2]} W instead of ~${batteryHigher[3]} W as usual`;
+  }
+
   return source
     .replace(/đang dùng:/gi, 'now using:')
     .replace(/hiện tiêu thụ:/gi, 'current consumption:')
@@ -110,7 +163,22 @@ function localizeAiText(text: string, language: 'vi' | 'en') {
     .replace(/mức thường:/gi, 'usual level:')
     .replace(/có thiết bị nào quên tắt không\?/gi, 'did you forget to turn off another device?')
     .replace(/nên kiểm tra xem có thiết bị nào bật quên không\??/gi, 'please check whether any device was left on')
-    .replace(/Đèn\s*(\d+)\s*thay đổi\s*[—–-]\s*điện tiêu thụ hiện tại:/gi, 'Light $1 changed — current power consumption:');
+    .replace(/Đèn\s*(\d+)\s*thay đổi\s*[—–-]\s*điện tiêu thụ hiện tại:/gi, 'Light $1 changed — current power consumption:')
+    .replace(/đang bật\s*[—–-]\s*mức điện bình thường/gi, 'is on — normal power level')
+    .replace(/đang bật\s*[—–-]\s*điện tiêu thụ/gi, 'is on — power consumption:')
+    .replace(/Gợi ý:\s*Tắt bớt đèn không cần thiết để tiết kiệm điện/gi, 'Suggestion: Turn off unnecessary lights to save energy')
+    .replace(/Đèn vừa tắt\s*[—–-]\s*điện giảm/gi, 'Lights just turned off — power decreased by')
+    .replace(/điện chờ hiện tại:/gi, 'standby power:')
+    .replace(/AI đang làm quen với thiết bị của bạn/gi, 'AI is learning your devices')
+    .replace(/Điện vẫn cao dù đèn đã tắt/gi, 'Power is still high even though lights are off')
+    .replace(/có thiết bị nào đang bật không\?/gi, 'is another device still on?')
+    .replace(/Đèn đã tắt\s*[—–-]\s*điện tiêu thụ thấp/gi, 'Lights are off — low power consumption')
+    .replace(/Điện đang cao hơn mức thường/gi, 'Power is higher than usual')
+    .replace(/đang dùng/gi, 'now using')
+    .replace(/thay vì/gi, 'instead of')
+    .replace(/như thường lệ/gi, 'as usual')
+    .replace(/Đèn\s*(\d+)/gi, 'Light $1')
+    .replace(/Tất cả đèn/gi, 'All lights');
 }
 
 function analysisBg(text: string) {
