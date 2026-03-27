@@ -1,7 +1,7 @@
 'use client';
 
 import { useSensorData } from '@/hooks/useSensors';
-import { Droplets, Gauge, Thermometer, TrendingDown, TrendingUp } from 'lucide-react';
+import { CloudRain, Droplets, Gauge, Thermometer, TrendingDown, TrendingUp } from 'lucide-react';
 
 interface SensorCurrentData {
   temperature: number;
@@ -70,8 +70,8 @@ export default function SensorStatsGrid() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        {[1, 2, 3].map((i) => (
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {[1, 2, 3, 4].map((i) => (
           <div key={i} className="section-card shadow-sm border border-border p-3 sm:p-4 md:p-6 animate-pulse">
             <div className="h-14 md:h-24 bg-muted rounded"></div>
           </div>
@@ -102,10 +102,17 @@ export default function SensorStatsGrid() {
       color: '#8b5cf6',
       icon: <Gauge className="w-6 h-6" />,
     },
+    {
+      label: 'Cảm biến mưa',
+      value: data?.isRaining ? 'Có mưa' : 'Không mưa',
+      subtitle: data?.isRaining ? 'Đang có nước rơi' : 'Trời không có mưa',
+      color: data?.isRaining ? '#3b82f6' : '#94a3b8',
+      icon: <CloudRain className="w-6 h-6" />,
+    },
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {stats.map((stat, index) => (
         <SensorStatCard key={index} {...stat} />
       ))}
