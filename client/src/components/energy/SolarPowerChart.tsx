@@ -6,6 +6,12 @@ import { useChartColors } from '@/lib/chartDarkModeUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BarChart3 } from 'lucide-react';
 
+const dateLocaleMap = {
+  vi: 'vi-VN',
+  en: 'en-US',
+  zh: 'zh-CN',
+} as const;
+
 export default function SolarPowerChart() {
   const { t, language } = useLanguage();
   const { data, isLoading } = useSolarStats(24);
@@ -20,7 +26,7 @@ export default function SolarPowerChart() {
       : item.timestamp;
     
     return {
-      time: timestamp.toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', {
+      time: timestamp.toLocaleTimeString(dateLocaleMap[language], {
         hour: '2-digit', 
         minute: '2-digit' 
       }),

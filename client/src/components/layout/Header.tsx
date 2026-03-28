@@ -7,6 +7,12 @@ import { Bell, Clock3, Menu, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 
+const dateLocaleMap = {
+  vi: 'vi-VN',
+  en: 'en-US',
+  zh: 'zh-CN',
+} as const;
+
 interface DashboardHeaderProps {
   onToggleSidebar: () => void;
 }
@@ -75,7 +81,7 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
             <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
               <Clock3 className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm text-foreground font-medium">
-                {new Date().toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                {new Date().toLocaleTimeString(dateLocaleMap[language], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
 

@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { useAiContext } from '@/contexts/AiContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Language } from '@/i18n';
 import type { LedDayEntry } from '@/hooks/useSocket';
 import { Lightbulb, Zap } from 'lucide-react';
 
@@ -62,13 +63,18 @@ function formatWh(wh: number): string {
   return wh >= 1 ? `${wh.toFixed(2)} Wh` : `${(wh * 1000).toFixed(0)} mWh`;
 }
 
-function formatMin(min: number, language: 'vi' | 'en'): string {
+function formatMin(min: number, language: Language): string {
   const h = Math.floor(min / 60);
   const m = Math.round(min % 60);
   if (language === 'en') {
     if (h === 0) return `${m} min`;
     if (m === 0) return `${h} h`;
     return `${h}h ${m}m`;
+  }
+  if (language === 'zh') {
+    if (h === 0) return `${m} 分钟`;
+    if (m === 0) return `${h} 小时`;
+    return `${h}小时 ${m}分钟`;
   }
   if (h === 0) return `${m} phút`;
   if (m === 0) return `${h} giờ`;
@@ -109,7 +115,7 @@ function MiniStat({
   minutes: number;
   color: string;
   isOn: boolean;
-  language: 'vi' | 'en';
+  language: Language;
   t: (key: string) => string;
 }) {
   return (

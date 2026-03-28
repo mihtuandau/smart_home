@@ -1,7 +1,7 @@
 'use client';
 
 import React, { ReactNode, Component, ErrorInfo } from 'react';
-import { translations } from '@/i18n';
+import { Language, translations } from '@/i18n';
 import { Home, Mail, RotateCcw, TriangleAlert } from 'lucide-react';
 
 interface Props {
@@ -14,10 +14,12 @@ interface State {
   errorInfo: ErrorInfo | null;
 }
 
-function getLangForErrorBoundary(): 'vi' | 'en' {
+function getLangForErrorBoundary(): Language {
   if (typeof window === 'undefined') return 'vi';
   const saved = window.localStorage.getItem('language');
-  return saved === 'en' ? 'en' : 'vi';
+  if (saved === 'en' || saved === 'zh') return saved;
+  if (saved === 'ko' || saved === 'zh-cn' || saved === 'zh-tw' || saved === 'cn') return 'zh';
+  return 'vi';
 }
 
 function tr(key: string, fallback: string): string {

@@ -76,7 +76,7 @@ function PressureCard({ title, subtitle, value, statusLabel, status, borderColor
 export default function EnvironmentStatus() {
   const { data: response, isLoading } = useSensors(1, 2000); // Reduced from 3000ms 
   const data = (response as any)?.data?.[0] || null;
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   if (isLoading || !data) {
     return (
@@ -87,7 +87,7 @@ export default function EnvironmentStatus() {
   }
 
   // Tính xác suất mưa dùng weighted formula (3 yếu tố)
-  const analysis = calculateRainProbability(data.temperature, data.humidity, data.pressure, data.isRaining);
+  const analysis = calculateRainProbability(data.temperature, data.humidity, data.pressure, data.isRaining, language);
   const rainProbability = analysis.probability;
   const colorScheme = getColorScheme(rainProbability);
 

@@ -1,9 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode, useMemo } from 'react';
-import { translations } from '@/i18n';
-
-type Language = 'vi' | 'en';
+import { Language, translations } from '@/i18n';
 
 interface LanguageContextType {
   language: Language;
@@ -13,17 +11,26 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+function normalizeLanguage(value: string | null): Language | null {
+  if (!value) return null;
+  if (value === 'vi' || value === 'en' || value === 'zh') return value;
+  if (value === 'ko' || value === 'zh-cn' || value === 'zh-tw' || value === 'cn') return 'zh';
+  return null;
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>('vi');
   const [mounted, setMounted] = useState(false);
 
   // Initialize language from localStorage on mount
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language | null;
-    const browserLanguage = navigator.language.split('-')[0] as Language;
-    const initialLanguage = savedLanguage || (browserLanguage === 'en' ? 'en' : 'vi');
+    const savedLanguage = normalizeLanguage(localStorage.getItem('language'));
+    const browserLanguage = navigator.language.split('-')[0];
+    const browserDefault: Language = normalizeLanguage(browserLanguage) ?? (browserLanguage === 'en' ? 'en' : browserLanguage === 'zh' ? 'zh' : 'vi');
+    const initialLanguage = savedLanguage || browserDefault;
     setLanguageState(initialLanguage);
     document.documentElement.lang = initialLanguage;
+    localStorage.setItem('language', initialLanguage);
     setMounted(true);
   }, []);
 

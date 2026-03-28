@@ -14,6 +14,107 @@ export interface RainAnalysis {
   };
 }
 
+type RainLanguage = 'vi' | 'en' | 'zh';
+
+function getLocalizedConclusion(
+  probability: number,
+  isRaining: boolean,
+  language: RainLanguage
+): { title: string; description: string } {
+  if (isRaining) {
+    if (language === 'en') {
+      return {
+        title: '🌧️ It is raining now',
+        description: 'The sensor has detected rain at the moment.',
+      };
+    }
+    if (language === 'zh') {
+      return {
+        title: '🌧️ 当前正在下雨',
+        description: '传感器已检测到当前正在降雨。',
+      };
+    }
+    return {
+      title: '🌧️ Đang có mưa',
+      description: 'Cảm biến đã phát hiện mưa hiện tại.',
+    };
+  }
+
+  if (probability >= 80) {
+    if (language === 'en') {
+      return {
+        title: '⚠️ High probability',
+        description: 'Rain is likely in 1-2 hours. Prepare cover or find shelter.',
+      };
+    }
+    if (language === 'zh') {
+      return {
+        title: '⚠️ 高概率',
+        description: '预计 1-2 小时内可能下雨。请提前准备遮挡或避雨。',
+      };
+    }
+    return {
+      title: '⚠️ Xác suất cao',
+      description: 'Mưa sắp tới trong 1-2 giờ. Chuẩn bị che chắn hoặc tìm nơi tránh.',
+    };
+  }
+
+  if (probability >= 60) {
+    if (language === 'en') {
+      return {
+        title: '⚡ Medium probability',
+        description: 'Rain may occur in 2-4 hours. Watch for weather changes.',
+      };
+    }
+    if (language === 'zh') {
+      return {
+        title: '⚡ 中等概率',
+        description: '未来 2-4 小时可能下雨。请留意天气变化迹象。',
+      };
+    }
+    return {
+      title: '⚡ Xác suất trung',
+      description: 'Có khả năng mưa trong 2-4 giờ. Để ý dấu hiệu thay đổi thời tiết.',
+    };
+  }
+
+  if (probability >= 40) {
+    if (language === 'en') {
+      return {
+        title: '☁️ Low-medium probability',
+        description: 'There may be rain in the late afternoon or evening. Keep monitoring updates.',
+      };
+    }
+    if (language === 'zh') {
+      return {
+        title: '☁️ 低至中等概率',
+        description: '下午或傍晚可能有雨，请持续关注天气更新。',
+      };
+    }
+    return {
+      title: '☁️ Xác suất thấp-trung',
+      description: 'Có thể có mưa vào chiều tối. Theo dõi cập nhật thời tiết.',
+    };
+  }
+
+  if (language === 'en') {
+    return {
+      title: '☀️ Low probability',
+      description: 'Weather is stable, rain is unlikely today.',
+    };
+  }
+  if (language === 'zh') {
+    return {
+      title: '☀️ 低概率',
+      description: '天气稳定，今天降雨可能性较低。',
+    };
+  }
+  return {
+    title: '☀️ Xác suất thấp',
+    description: 'Thời tiết ổn định, ít khả năng mưa hôm nay.',
+  };
+}
+
 /**
  * Calculate rain probability using weighted formula
  * - Pressure: 50% weight
@@ -24,7 +125,8 @@ export function calculateRainProbability(
   temperature: number,
   humidity: number,
   pressurePa: number,
-  isRaining: boolean
+  isRaining: boolean,
+  language: RainLanguage = 'vi'
 ): RainAnalysis {
   // Chuyển từ Pa sang hPa
   const pressure = pressurePa / 100;
@@ -35,10 +137,7 @@ export function calculateRainProbability(
       pressureFactor: 100,
       humidityFactor: 100,
       temperatureFactor: 100,
-      conclusion: {
-        title: '🌧️ Đang có mưa',
-        description: 'Cảm biến đã phát hiện mưa hiện tại.',
-      },
+      conclusion: getLocalizedConclusion(100, true, language),
     };
   }
 
@@ -96,31 +195,11 @@ export function calculateRainProbability(
     )
   );
 
-  // Kết luận
-  let conclusion = {
-    title: '☀️ Xác suất thấp',
-    description: 'Thời tiết ổn định, ít khả năng mưa hôm nay.',
-  };
-
-  if (probability >= 80) {
-    conclusion = {
-      title: '⚠️ Xác suất cao',
-      description: 'Mưa sắp tới trong 1-2 giờ. Chuẩn bị che chắn hoặc tìm nơi tránh.',
-    };
-  } else if (probability >= 60) {
-    conclusion = {
-      title: '⚡ Xác suất trung',
-      description: 'Có khả năng mưa trong 2-4 giờ. Để ý dấu hiệu thay đổi thời tiết.',
-    };
-  } else if (probability >= 40) {
-    conclusion = {
-      title: '☁️ Xác suất thấp-trung',
-      description: 'Có thể có mưa vào chiều tối. Theo dõi cập nhật thời tiết.',
-    };
-  }
+  const roundedProbability = Math.round(probability);
+  const conclusion = getLocalizedConclusion(roundedProbability, false, language);
 
   return {
-    probability: Math.round(probability),
+    probability: roundedProbability,
     pressureFactor: Math.round(pressureFactor),
     humidityFactor: Math.round(humidityFactor),
     temperatureFactor: Math.round(temperatureFactor),

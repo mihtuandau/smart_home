@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Language } from '@/i18n';
 import { Globe, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -79,11 +80,12 @@ export default function SystemSettings() {
 
           <select
             value={language}
-            onChange={(e) => setLanguage(e.target.value as 'vi' | 'en')}
+            onChange={(e) => setLanguage(e.target.value as Language)}
             className="w-full md:w-[220px] px-4 py-2.5 border border-border rounded-lg bg-background text-foreground text-base focus:outline-none focus:ring-2 focus:ring-ring"
           >
             <option value="vi">Tiếng Việt</option>
             <option value="en">English</option>
+            <option value="zh">中文</option>
           </select>
         </div>
       </div>

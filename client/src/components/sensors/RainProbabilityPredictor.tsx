@@ -17,7 +17,7 @@ interface FactorAnalysis {
 export default function RainProbabilityPredictor() {
   const { data: response, isLoading } = useSensors(1, 3000);
   const data = (response as any)?.data?.[0] || null;
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const toSafeNumber = (value: unknown, fallback = 0) => {
     const parsed = typeof value === 'number' ? value : Number(value);
@@ -35,7 +35,8 @@ export default function RainProbabilityPredictor() {
       temperature,
       humidity,
       pressure,
-      Boolean(data.isRaining)
+      Boolean(data.isRaining),
+      language
     );
 
     // Pressure
@@ -149,7 +150,7 @@ export default function RainProbabilityPredictor() {
   const temperature = toSafeNumber(data.temperature);
   const humidity = toSafeNumber(data.humidity);
   const pressure = toSafeNumber(data.pressure);
-  const analysis = calculateRainProbability(temperature, humidity, pressure, Boolean(data.isRaining));
+  const analysis = calculateRainProbability(temperature, humidity, pressure, Boolean(data.isRaining), language);
   const probability = analysis.probability;
   const colorScheme = getColorScheme(probability);
   const factors = getFactorAnalysis();

@@ -16,6 +16,12 @@ import { useSensorHistory, useSensorData } from '@/hooks/useSensors';
 import { useChartColors } from '@/lib/chartDarkModeUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+const dateLocaleMap = {
+  vi: 'vi-VN',
+  en: 'en-US',
+  zh: 'zh-CN',
+} as const;
+
 interface LightIntensityChartProps {
   hours?: number;
 }
@@ -51,7 +57,7 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
     .slice()
     .reverse()
     .map((item) => ({
-      time: new Date(item.timestamp).toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      time: new Date(item.timestamp).toLocaleTimeString(dateLocaleMap[language], { hour: '2-digit', minute: '2-digit' }),
       light: item.lightLevel,
       timestamp: item.timestamp,
     }));

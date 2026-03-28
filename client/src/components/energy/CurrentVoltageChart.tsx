@@ -14,6 +14,12 @@ import { useEnergyStats } from "@/hooks/useEnergy";
 import { useChartColors } from "@/lib/chartDarkModeUtils";
 import { useLanguage } from '@/contexts/LanguageContext';
 
+const dateLocaleMap = {
+  vi: 'vi-VN',
+  en: 'en-US',
+  zh: 'zh-CN',
+} as const;
+
 export default function CurrentVoltageChart() {
   const { t, language } = useLanguage();
   const { data, isLoading } = useEnergyStats(24);
@@ -52,7 +58,7 @@ export default function CurrentVoltageChart() {
   const chartData = hourlySlots.map((slot) => {
     if (slot.data.length === 0) {
       return {
-        time: new Date(slot.timestamp).toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', {
+        time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], {
           hour: "2-digit",
           minute: "2-digit",
         }),
@@ -73,7 +79,7 @@ export default function CurrentVoltageChart() {
       ) / slot.data.length;
 
     return {
-      time: new Date(slot.timestamp).toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', {
+      time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], {
           hour: "2-digit",
           minute: "2-digit",
         }),

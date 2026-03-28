@@ -1,6 +1,7 @@
 'use client';
 
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Language } from '@/i18n';
 import { ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
@@ -10,8 +11,9 @@ export default function LanguageSwitcher() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const languages = [
-    { code: 'vi', name: 'Tiếng Việt', flagSrc: '/icon/flag-vn.svg' },
-    { code: 'en', name: 'English', flagSrc: '/icon/flag-us.svg' },
+    { code: 'vi' as Language, name: 'Tiếng Việt', flagSrc: '/icon/flag-vn.png' },
+    { code: 'en' as Language, name: 'English (US)', flagSrc: '/icon/flag-us.png' },
+    { code: 'zh' as Language, name: '中文', flagSrc: '/icon/flag-zh.png' },
   ];
 
   // Close menu when clicking outside
@@ -53,7 +55,7 @@ export default function LanguageSwitcher() {
             <button
               key={lang.code}
               onClick={() => {
-                setLanguage(lang.code as 'vi' | 'en');
+                setLanguage(lang.code);
                 setIsOpen(false);
               }}
               className={`w-full px-4 py-2.5 text-sm text-left hover:bg-accent rounded-none transition-colors flex items-center gap-2 ${

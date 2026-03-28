@@ -16,6 +16,12 @@ import { useSensorHistory, useSensorData } from '@/hooks/useSensors';
 import { useChartColors } from '@/lib/chartDarkModeUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+const dateLocaleMap = {
+  vi: 'vi-VN',
+  en: 'en-US',
+  zh: 'zh-CN',
+} as const;
+
 interface TemperatureHumidityChartProps {
   hours?: number;
 }
@@ -65,7 +71,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
       }
 
       return {
-        time: time.toLocaleTimeString(language === 'en' ? 'en-US' : 'vi-VN', { hour: '2-digit', minute: '2-digit' }),
+        time: time.toLocaleTimeString(dateLocaleMap[language], { hour: '2-digit', minute: '2-digit' }),
         temperature,
         humidity,
         timestamp: item.timestamp,

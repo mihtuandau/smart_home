@@ -13,19 +13,26 @@ interface SystemComponent {
   valueColor?: string;
 }
 
+function localizePowerSource(source: string | undefined, t: (key: string) => string): string {
+  if (!source) return 'UNKNOWN';
+  const normalized = source.toUpperCase();
+  if (normalized === 'SOLAR') return t('energy.solarPower');
+  if (normalized === 'BATTERY') return t('energy.batteryStatus');
+  return source;
+}
+
 export default function EnergySystemTable() {
   const { t } = useLanguage();
   const { data: energyData, isLoading: energyLoading } = useEnergyStats(24);
   const { data: sourcesData, isLoading: sourcesLoading } = usePowerSources(24);
   
   const latestEnergy = ((energyData as any)?.data || [])[((energyData as any)?.data || []).length - 1] || {};
-  const sources = (sourcesData as any)?.data || {};
   
   const totalEnergy = ((energyData as any)?.data || []).reduce((sum: number, item: any) => sum + (item.energy || 0), 0);
 
   const components: SystemComponent[] = [
     {
-      name: 'Solar Panel',
+      name: t('energy.solarPower'),
       spec: `${(latestEnergy.voltage || 0).toFixed(1)}V ${(latestEnergy.current || 0).toFixed(1)}A`,
       status: t('energy.currentPower'),
       statusColor: 'text-foreground',
@@ -44,7 +51,7 @@ export default function EnergySystemTable() {
     },
     {
       name: t('energy.powerSource'),
-      spec: latestEnergy.source || 'UNKNOWN',
+      spec: localizePowerSource(latestEnergy.source, t),
       status: t('devices.status'),
       statusColor: 'text-blue-700',
       metric: t('energy.active'),
