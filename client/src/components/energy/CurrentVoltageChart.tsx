@@ -11,9 +11,19 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useEnergyStats } from "@/hooks/useEnergy";
+import { useChartColors } from "@/lib/chartDarkModeUtils";
+import { useLanguage } from '@/contexts/LanguageContext';
+
+const dateLocaleMap = {
+  vi: 'vi-VN',
+  en: 'en-US',
+  zh: 'zh-CN',
+} as const;
 
 export default function CurrentVoltageChart() {
+  const { t, language } = useLanguage();
   const { data, isLoading } = useEnergyStats(24);
+  const colors = useChartColors();
 
   const energyData = (data as any)?.data || [];
 
@@ -48,7 +58,7 @@ export default function CurrentVoltageChart() {
   const chartData = hourlySlots.map((slot) => {
     if (slot.data.length === 0) {
       return {
-        time: new Date(slot.timestamp).toLocaleTimeString("vi-VN", {
+        time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], {
           hour: "2-digit",
           minute: "2-digit",
         }),
@@ -69,10 +79,10 @@ export default function CurrentVoltageChart() {
       ) / slot.data.length;
 
     return {
-      time: new Date(slot.timestamp).toLocaleTimeString("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       current: avgCurrent,
       voltage: avgVoltage,
     };
@@ -80,20 +90,20 @@ export default function CurrentVoltageChart() {
 
   if (isLoading) {
     return (
-      <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6 animate-pulse">
+      <div className="section-card shadow-sm border border-border p-4 sm:p-6 animate-pulse">
         <div className="h-64"></div>
       </div>
     );
   }
 
   return (
-    <div className="section-card shadow-sm border border-gray-200 p-4 sm:p-6">
+    <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <div className="mb-4">
-        <h2 className="text-base sm:text-lg font-semibold text-gray-900">
-          Dòng điện & Điện áp Pin
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">
+          {t('energy.currentAndVoltage')}
         </h2>
-        <p className="text-xs sm:text-sm text-gray-500">
-          Theo dõi dòng và áp qua thời gian
+        <p className="text-xs sm:text-sm text-muted-foreground">
+          {t('energy.monitoringChart')}
         </p>
       </div>
 
@@ -103,18 +113,18 @@ export default function CurrentVoltageChart() {
             data={chartData}
             margin={{ top: 10, right: 30, left: -20, bottom: 0 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+            <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} />
             <XAxis
               dataKey="time"
-              tick={{ fontSize: 12, fill: "#9ca3af" }}
-              axisLine={{ stroke: "#e5e7eb" }}
+              tick={{ fontSize: 12, fill: colors.axisLabelColor }}
+              axisLine={{ stroke: colors.axisColor }}
             />
             <YAxis
               yAxisId="left"
               tick={{ fontSize: 12, fill: "#10b981" }}
               axisLine={{ stroke: "#10b981" }}
               label={{
-                value: "Dòng điện (A)",
+                value: t('energy.currentAxis'),
                 angle: -90,
                 position: "insideLeft",
                 style: { fontSize: 12, fill: "#10b981" },
@@ -126,7 +136,7 @@ export default function CurrentVoltageChart() {
               tick={{ fontSize: 12, fill: "#3b82f6" }}
               axisLine={{ stroke: "#3b82f6" }}
               label={{
-                value: "Điện áp (V)",
+                value: t('energy.voltageAxis'),
                 angle: 90,
                 position: "insideRight",
                 style: { fontSize: 12, fill: "#3b82f6" },
@@ -134,14 +144,15 @@ export default function CurrentVoltageChart() {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid #e5e7eb",
+                backgroundColor: colors.backgroundColor,
+                border: `1px solid ${colors.borderColor}`,
                 borderRadius: "8px",
                 fontSize: "12px",
+                color: colors.textColor
               }}
             />
             <Legend
-              wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }}
+              wrapperStyle={{ fontSize: "12px", paddingTop: "10px", color: colors.axisLabelColor }}
               iconType="line"
             />
             <Line
@@ -150,7 +161,7 @@ export default function CurrentVoltageChart() {
               dataKey="current"
               stroke="#10b981"
               strokeWidth={2}
-              name="Dòng điện (A)"
+              name={t('energy.currentAxis')}
               dot={false}
               activeDot={{ r: 5 }}
             />
@@ -160,7 +171,7 @@ export default function CurrentVoltageChart() {
               dataKey="voltage"
               stroke="#3b82f6"
               strokeWidth={2}
-              name="Điện áp (V)"
+              name={t('energy.voltageAxis')}
               dot={false}
               activeDot={{ r: 5 }}
             />

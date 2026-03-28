@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Bell, ChartColumn, Clock3, Pencil, Plus, Plug } from 'lucide-react';
 
 interface CreateAutomationModalProps {
@@ -16,6 +17,7 @@ export default function CreateAutomationModal({
   onCreate,
   onUpdate,
 }: CreateAutomationModalProps) {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -93,7 +95,7 @@ export default function CreateAutomationModal({
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-900 inline-flex items-center gap-2">
             {rule ? <Pencil className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-            {rule ? 'Sửa quy tắc' : 'Tạo quy tắc mới'}
+            {rule ? t('automation.editRule') : t('automation.createNew')}
           </h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-2xl">
             ×
@@ -104,17 +106,17 @@ export default function CreateAutomationModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Basic Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">Thông tin cơ bản</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t('automation.basicInfo')}</h3>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tên quy tắc
+                {t('automation.ruleName')}
               </label>
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Ví dụ: Bật quạt khi nóng"
+                placeholder={t('automation.exampleRule')}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 required
               />
@@ -122,12 +124,12 @@ export default function CreateAutomationModal({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mô tả (Tùy chọn)
+                {t('automation.descriptionOptional')}
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Mô tả chi tiết về quy tắc này"
+                placeholder={t('automation.exampleDescription')}
                 rows={2}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
@@ -136,7 +138,7 @@ export default function CreateAutomationModal({
 
           {/* Condition */}
           <div className="space-y-4 border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900">Điều kiện</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t('automation.condition')}</h3>
 
             <div className="grid grid-cols-2 gap-4">
               <button
@@ -148,7 +150,7 @@ export default function CreateAutomationModal({
                     : 'border-gray-200'
                 }`}
               >
-                <span className="inline-flex items-center gap-2"><ChartColumn className="w-4 h-4" />Cảm biến</span>
+                <span className="inline-flex items-center gap-2"><ChartColumn className="w-4 h-4" />{t('automation.sensor')}</span>
               </button>
               <button
                 type="button"
@@ -159,7 +161,7 @@ export default function CreateAutomationModal({
                     : 'border-gray-200'
                 }`}
               >
-                <span className="inline-flex items-center gap-2"><Clock3 className="w-4 h-4" />Thời gian</span>
+                <span className="inline-flex items-center gap-2"><Clock3 className="w-4 h-4" />{t('automation.time')}</span>
               </button>
             </div>
 
@@ -167,7 +169,7 @@ export default function CreateAutomationModal({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Cảm biến
+                    {t('automation.sensor')}
                   </label>
                   <select
                     value={formData.sensor}
@@ -175,41 +177,41 @@ export default function CreateAutomationModal({
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     required
                   >
-                    <option value="">Chọn cảm biến</option>
-                    <option value="temperature">Nhiệt độ (AHT20)</option>
-                    <option value="humidity">Độ ẩm (AHT20)</option>
-                    <option value="pressure">Áp suất (BMP280)</option>
-                    <option value="light">Ánh sáng (LM393 LDR)</option>
-                    <option value="motion">Chuyển động (PIR)</option>
+                    <option value="">{t('automation.selectSensor')}</option>
+                    <option value="temperature">{t('automation.temperatureSensor')}</option>
+                    <option value="humidity">{t('automation.humiditySensor')}</option>
+                    <option value="pressure">{t('automation.pressureSensor')}</option>
+                    <option value="light">{t('automation.lightSensor')}</option>
+                    <option value="motion">{t('automation.motionSensor')}</option>
                   </select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Toán tử
+                      {t('automation.operator')}
                     </label>
                     <select
                       value={formData.operator}
                       onChange={(e) => setFormData({ ...formData, operator: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
-                      <option value=">">&gt; Lớn hơn</option>
-                      <option value="<">&lt; Nhỏ hơn</option>
-                      <option value=">=">&gt;= Lớn hơn hoặc bằng</option>
-                      <option value="<=">&lt;= Nhỏ hơn hoặc bằng</option>
-                      <option value="==">=== Bằng</option>
+                      <option value=">">&gt; {t('automation.greaterThan')}</option>
+                      <option value="<">&lt; {t('automation.lessThan')}</option>
+                      <option value=">=">&gt;= {t('automation.greaterOrEqual')}</option>
+                      <option value="<=">&lt;= {t('automation.lessOrEqual')}</option>
+                      <option value="==">=== {t('automation.equal')}</option>
                     </select>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Giá trị
+                      {t('automation.value')}
                     </label>
                     <input
                       type="number"
                       value={formData.value}
                       onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-                      placeholder="Ví dụ: 28"
+                      placeholder={t('automation.exampleValue')}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       required
                     />
@@ -219,7 +221,7 @@ export default function CreateAutomationModal({
             ) : (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Thời gian
+                  {t('automation.time')}
                 </label>
                 <input
                   type="time"
@@ -228,14 +230,14 @@ export default function CreateAutomationModal({
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   required
                 />
-                <p className="text-xs text-gray-500 mt-1">Quy tắc sẽ kích hoạt vào thời gian này mỗi ngày</p>
+                <p className="text-xs text-gray-500 mt-1">{t('automation.triggerDaily')}</p>
               </div>
             )}
           </div>
 
           {/* Action */}
           <div className="space-y-4 border-t pt-6">
-            <h3 className="text-lg font-semibold text-gray-900">Hành động</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{t('automation.action')}</h3>
 
             <div className="grid grid-cols-2 gap-4">
               <button
@@ -247,7 +249,7 @@ export default function CreateAutomationModal({
                     : 'border-gray-200'
                 }`}
               >
-                <span className="inline-flex items-center gap-2"><Plug className="w-4 h-4" />Thiết bị</span>
+                <span className="inline-flex items-center gap-2"><Plug className="w-4 h-4" />{t('automation.device')}</span>
               </button>
               <button
                 type="button"
@@ -258,7 +260,7 @@ export default function CreateAutomationModal({
                     : 'border-gray-200'
                 }`}
               >
-                <span className="inline-flex items-center gap-2"><Bell className="w-4 h-4" />Thông báo</span>
+                <span className="inline-flex items-center gap-2"><Bell className="w-4 h-4" />{t('automation.notification')}</span>
               </button>
             </div>
 
@@ -266,7 +268,7 @@ export default function CreateAutomationModal({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Thiết bị
+                    {t('automation.device')}
                   </label>
                   <select
                     value={formData.device}
@@ -274,42 +276,42 @@ export default function CreateAutomationModal({
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     required
                   >
-                    <option value="">Chọn thiết bị</option>
-                    <option value="LED_1">Đèn LED 1</option>
-                    <option value="LED_2">Đèn LED 2</option>
+                    <option value="">{t('automation.selectDevice')}</option>
+                    <option value="LED_1">{t('devices.led1')}</option>
+                    <option value="LED_2">{t('devices.led2')}</option>
                     <option value="SERVO">Servo Motor</option>
-                    <option value="FAN">Quạt</option>
+                    <option value="FAN">{t('automation.fan')}</option>
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hành động
+                    {t('automation.action')}
                   </label>
                   <select
                     value={formData.action}
                     onChange={(e) => setFormData({ ...formData, action: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="ON">Bật</option>
-                    <option value="OFF">Tắt</option>
-                    <option value="TOGGLE">Chuyển đổi</option>
+                    <option value="ON">{t('devices.on')}</option>
+                    <option value="OFF">{t('devices.off')}</option>
+                    <option value="TOGGLE">{t('automation.toggle')}</option>
                   </select>
                 </div>
               </div>
             ) : (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Loại thông báo
+                  {t('automation.notificationType')}
                 </label>
                 <select
                   value={formData.notificationType}
                   onChange={(e) => setFormData({ ...formData, notificationType: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="alert">Cảnh báo</option>
-                  <option value="info">Thông tin</option>
-                  <option value="success">Thành công</option>
+                  <option value="alert">{t('automation.alert')}</option>
+                  <option value="info">{t('automation.info')}</option>
+                  <option value="success">{t('automation.success')}</option>
                 </select>
               </div>
             )}
@@ -322,13 +324,13 @@ export default function CreateAutomationModal({
               onClick={onClose}
               className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
             >
-              Hủy
+              {t('automation.cancel')}
             </button>
             <button
               type="submit"
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
-              {rule ? 'Cập nhật' : 'Tạo quy tắc'}
+              {rule ? t('automation.update') : t('automation.createRule')}
             </button>
           </div>
         </form>

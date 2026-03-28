@@ -13,6 +13,14 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { useSensorHistory, useSensorData } from '@/hooks/useSensors';
+import { useChartColors } from '@/lib/chartDarkModeUtils';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+const dateLocaleMap = {
+  vi: 'vi-VN',
+  en: 'en-US',
+  zh: 'zh-CN',
+} as const;
 
 interface LightIntensityChartProps {
   hours?: number;
@@ -21,13 +29,15 @@ interface LightIntensityChartProps {
 const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 }) => {
   const { data: historyResponse, isLoading, error } = useSensorHistory(hours);
   const { data: currentResponse } = useSensorData();
+  const colors = useChartColors();
+  const { t, language } = useLanguage();
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
+      <div className="bg-card rounded-lg p-6 border border-border">
         <div className="animate-pulse">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-64 bg-gray-100 rounded"></div>
+          <div className="h-6 bg-muted rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-muted rounded"></div>
         </div>
       </div>
     );
@@ -35,8 +45,8 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-red-200">
-        <p className="text-red-600">Không thể tải dữ liệu cường độ ánh sáng</p>
+      <div className="bg-card rounded-lg p-6 border border-red-200 dark:border-red-800">
+        <p className="text-red-600">{t('sensors.loadLightError')}</p>
       </div>
     );
   }
@@ -47,7 +57,7 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
     .slice()
     .reverse()
     .map((item) => ({
-      time: new Date(item.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+      time: new Date(item.timestamp).toLocaleTimeString(dateLocaleMap[language], { hour: '2-digit', minute: '2-digit' }),
       light: item.lightLevel,
       timestamp: item.timestamp,
     }));
@@ -55,9 +65,9 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
   // If no history data, show placeholder message
   if (chartData.length === 0) {
     return (
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Cường độ ánh sáng</h2>
-        <p className="text-gray-500 text-center py-8">Không có dữ liệu lịch sử</p>
+      <div className="bg-card rounded-lg p-6 border border-border">
+        <h2 className="text-lg font-semibold text-foreground mb-4">{t('sensors.lightIntensity')}</h2>
+        <p className="text-muted-foreground text-center py-8">{t('sensors.noHistoryData')}</p>
       </div>
     );
   }
@@ -66,41 +76,44 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
   const avgLight = chartData.reduce((sum, item) => sum + item.light, 0) / chartData.length;
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
+    <div className="bg-card rounded-lg p-6 border border-border">
       <div className="mb-4">
-        <h2 className="text-lg font-semibold text-gray-900">Cường độ ánh sáng</h2>
-        <p className="text-sm text-gray-500 mt-1">{hours} giờ qua</p>
+        <h2 className="text-lg font-semibold text-foreground">{t('sensors.lightIntensity')}</h2>
+        <p className="text-sm text-muted-foreground mt-1">{t('sensors.lastHours').replace('{hours}', String(hours))}</p>
       </div>
 
       {/* Chart */}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+          <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} />
           <XAxis 
             dataKey="time" 
-            stroke="#6b7280"
+            stroke={colors.axisColor}
             style={{ fontSize: '12px' }}
+            tick={{ fill: colors.axisLabelColor }}
           />
           <YAxis 
-            stroke="#6b7280"
+            stroke={colors.axisColor}
             style={{ fontSize: '12px' }}
+            tick={{ fill: colors.axisLabelColor }}
             label={{ value: 'lux', angle: -90, position: 'insideLeft' }}
           />
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: '#fff', 
-              border: '1px solid #e5e7eb',
+              backgroundColor: colors.backgroundColor, 
+              border: `1px solid ${colors.borderColor}`,
               borderRadius: '0.5rem',
-              fontSize: '12px'
+              fontSize: '12px',
+              color: colors.textColor
             }}
-            formatter={(value: number | undefined) => [`${value || 0} lux`, 'Ánh sáng']}
+            formatter={(value: number | undefined) => [`${value || 0} lux`, t('sensors.lightIntensity')]}
           />
-          <Legend />
+          <Legend wrapperStyle={{ color: colors.axisLabelColor }} />
           <ReferenceLine 
             y={300} 
             stroke="#f59e0b" 
             strokeDasharray="3 3"
-            label={{ value: 'Ngưỡng tối ưu', position: 'right', fontSize: 10 }}
+            label={{ value: t('sensors.optimalThreshold'), position: 'right', fontSize: 10, fill: colors.axisLabelColor }}
           />
           <Line
             type="monotone"
@@ -109,7 +122,7 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
             strokeWidth={2}
             dot={{ fill: '#eab308', r: 4 }}
             activeDot={{ r: 6 }}
-            name="Cường độ sáng"
+            name={t('sensors.lightIntensity')}
           />
         </LineChart>
       </ResponsiveContainer>

@@ -2,9 +2,18 @@
 
 import React from 'react';
 import { useAiContext } from '@/contexts/AiContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useSocket } from '@/hooks/useSocket';
+import { Language } from '@/i18n';
+import { localizeAiText } from '@/lib/aiTextLocalization';
 import type { AiAdvicePayload } from '@/hooks/useSocket';
 import { Activity, Bell, Bot, Lightbulb } from 'lucide-react';
+
+const dateLocaleMap = {
+  vi: 'vi-VN',
+  en: 'en-US',
+  zh: 'zh-CN',
+} as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────────────
 
@@ -37,22 +46,22 @@ function parseMwFromText(text: string): number | null {
 
 // Mỗi hàm trả về class string TĨNH để Tailwind JIT quét được
 function barClass(level: ReturnType<typeof powerLevel>) {
-  if (level === 'idle')   return 'bg-gray-300';
+  if (level === 'idle')   return 'bg-muted';
   if (level === 'normal') return 'bg-green-400';
   if (level === 'medium') return 'bg-yellow-400';
   return 'bg-red-400';
 }
 function badgeClass(level: ReturnType<typeof powerLevel>) {
-  if (level === 'idle')   return 'bg-gray-100 text-gray-600';
-  if (level === 'normal') return 'bg-green-50 text-green-700';
-  if (level === 'medium') return 'bg-yellow-50 text-yellow-700';
-  return 'bg-red-50 text-red-700';
+  if (level === 'idle')   return 'bg-muted text-muted-foreground';
+  if (level === 'normal') return 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300';
+  if (level === 'medium') return 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300';
+  return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300';
 }
-function levelLabel(level: ReturnType<typeof powerLevel>) {
-  if (level === 'idle')   return 'Không tiêu thụ';
-  if (level === 'normal') return 'Bình thường';
-  if (level === 'medium') return 'Hơi cao';
-  return 'Cao — cảnh báo';
+function levelLabel(level: ReturnType<typeof powerLevel>, t: (key: string) => string) {
+  if (level === 'idle')   return t('ai.idle');
+  if (level === 'normal') return t('ai.normal');
+  if (level === 'medium') return t('ai.medium');
+  return t('ai.high');
 }
 function barPct(powerMw: number) {
   // Tỷ lệ thực tế theo thang 0–6000 mW
@@ -60,22 +69,22 @@ function barPct(powerMw: number) {
 }
 
 function analysisBg(text: string) {
-  if (/cảnh báo|bất thường|nguy cơ|cao/i.test(text)) return 'bg-red-50 text-red-700 border-red-100';
-  if (/ổn định|an toàn|thành công|tốt/i.test(text)) return 'bg-green-50 text-green-700 border-green-100';
-  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100';
-  return 'bg-gray-50 text-gray-500 border-gray-100';
+  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high/i.test(text)) return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
+  if (/ổn định|an toàn|thành công|tốt|stable|safe|success|good/i.test(text)) return 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
+  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu|recommend|saving|monitor|optimi/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
+  return 'bg-muted text-muted-foreground border-border';
 }
 
 function alertBorderClass(text: string): string {
-  if (/cảnh báo|bất thường|nguy cơ|cao/i.test(text))
-    return 'border-red-400 bg-red-50 text-red-800';
-  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu/i.test(text))
-    return 'border-green-400 bg-green-50 text-green-800';
-  return 'border-blue-400 bg-blue-50 text-blue-800';
+  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high/i.test(text))
+    return 'border-red-400 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300';
+  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu|recommend|saving|monitor|optimi/i.test(text))
+    return 'border-green-400 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900/20 dark:text-green-300';
+  return 'border-blue-400 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300';
 }
 
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('vi-VN', {
+function formatTime(iso: string, language: Language) {
+  return new Date(iso).toLocaleTimeString(dateLocaleMap[language], {
     hour: '2-digit', minute: '2-digit', second: '2-digit',
   });
 }
@@ -90,48 +99,48 @@ function formatPower(mw: number): { value: string; unit: string } {
   return { value: parseFloat(w.toFixed(2)).toString(), unit: 'W' };
 }
 
-function PowerGauge({ powerMw, led1, led2 }: { powerMw: number; led1: boolean; led2: boolean }) {
+function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean; led2: boolean; t: (key: string) => string }) {
   const level = powerLevel(powerMw);
   const { value, unit } = formatPower(powerMw);
 
   return (
-    <div className="px-4 py-3 border-b border-gray-100">
+    <div className="px-4 py-3 border-b border-border">
       {/* Top row: value + badge */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-2">
         <div className="flex flex-wrap items-center gap-2">
           <span className={`text-2xl font-bold ${
-            level === 'idle'   ? 'text-gray-400' :
-            level === 'normal' ? 'text-green-600' :
-            level === 'medium' ? 'text-yellow-600' :
-            'text-red-600'
+            level === 'idle'   ? 'text-gray-400 dark:text-gray-500' :
+            level === 'normal' ? 'text-green-600 dark:text-green-400' :
+            level === 'medium' ? 'text-yellow-600 dark:text-yellow-400' :
+            'text-red-600 dark:text-red-400'
           }`}>{value}</span>
-          <span className="text-sm text-gray-500 font-medium">{unit}</span>
+          <span className="text-sm text-muted-foreground font-medium">{unit}</span>
           <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${badgeClass(level)}`}>
-            {levelLabel(level)}
+            {levelLabel(level, t)}
           </span>
         </div>
         {/* LED state indicators */}
         <div className="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs">
           <span className={`px-2 py-0.5 rounded-full font-medium transition-colors ${
-            led1 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-400'
+            led1 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-muted text-muted-foreground'
           }`}>
-            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />Đèn 1</span>
+            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />{t('ai.led1')}</span>
           </span>
           <span className={`px-2 py-0.5 rounded-full font-medium transition-colors ${
-            led2 ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-400'
+            led2 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-muted text-muted-foreground'
           }`}>
-            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />Đèn 2</span>
+            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />{t('ai.led2')}</span>
           </span>
         </div>
       </div>
       {/* Progress bar */}
-      <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+      <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
         <div
           className={`h-3 rounded-full transition-all duration-700 ease-out ${barClass(level)}`}
           style={{ width: `${barPct(powerMw)}%` }}
         />
       </div>
-      <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+      <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
         <span>0</span>
         <span>1000 mW</span>
         <span>3000 mW</span>
@@ -146,32 +155,34 @@ function PowerGauge({ powerMw, led1, led2 }: { powerMw: number; led1: boolean; l
 export default function AIInsights() {
   const { isConnected } = useSocket();
   const { status, alerts, clearAlerts: clear } = useAiContext();
+  const { t, language } = useLanguage();
+  const localizedAnalysis = status ? localizeAiText(status.analysis, language) : '';
 
   return (
-    <div className="section-card border border-gray-200 rounded-xl shadow-sm flex flex-col h-full">
+    <div className="section-card border border-border rounded-xl shadow-sm flex flex-col h-full">
       {/* Header */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-gray-100">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center flex-wrap gap-2">
-          <Bot className="w-5 h-5 text-gray-700" />
-          <span className="text-sm sm:text-base font-semibold text-gray-800">AI Theo dõi Điện</span>
+          <Bot className="w-5 h-5 text-foreground/80" />
+          <span className="text-sm sm:text-base font-semibold text-foreground">{t('ai.title')}</span>
           {isConnected ? (
             <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              Trực tiếp
+              {t('ai.live')}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 text-xs text-gray-400 font-medium">
-              <span className="w-2 h-2 rounded-full bg-gray-300" />
-              Offline
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
+              <span className="w-2 h-2 rounded-full bg-muted-foreground" />
+              {t('ai.offline')}
             </span>
           )}
         </div>
         {alerts.length > 0 && (
           <button
             onClick={clear}
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            Xóa tất cả
+            {t('ai.clearAll')}
           </button>
         )}
       </div>
@@ -187,52 +198,61 @@ export default function AIInsights() {
             powerMw={mw}
             led1={status.led1 ?? false}
             led2={status.led2 ?? false}
+            t={t}
           />
         );
       })() : (
-        <div className="px-4 py-3 border-b border-gray-100 text-sm text-gray-400 inline-flex items-center gap-2">
+        <div className="px-4 py-3 border-b border-border text-sm text-muted-foreground inline-flex items-center gap-2">
           <Activity className="w-4 h-4" />
-          Đang chờ dữ liệu từ cảm biến...
+          {t('ai.waitingData')}
         </div>
       )}
 
       {/* Live analysis text */}
       {status && (
-        <div className={`px-4 py-2 border-b text-sm font-medium transition-colors ${analysisBg(status.analysis)}`}>
-          {status.analysis}
+        <div className={`px-4 py-2 border-b text-sm font-medium transition-colors ${analysisBg(localizedAnalysis)}`}>
+          {localizedAnalysis}
         </div>
       )}
 
       {/* Alert list */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 max-h-56 sm:max-h-64">
         {alerts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
             <Bell className="w-8 h-8 mb-2" />
-            <p className="text-sm font-medium">Chưa có cảnh báo nào</p>
-            <p className="text-xs mt-1 text-center text-gray-400">
-              AI sẽ thông báo khi bật/tắt đèn hoặc phát hiện bất thường
+            <p className="text-sm font-medium">{t('ai.noAlerts')}</p>
+            <p className="text-xs mt-1 text-center text-muted-foreground">
+              {t('ai.alertHint')}
             </p>
           </div>
         ) : (
           alerts.map((msg: AiAdvicePayload, idx: number) => (
             <div key={`${msg.time}-${idx}`} className="space-y-1">
-              <div className="text-[11px] text-gray-400 font-mono">{formatTime(msg.time)}</div>
+              <div className="text-[11px] text-muted-foreground font-mono">{formatTime(msg.time, language)}</div>
 
               {/* Anomaly (cảnh báo ML) */}
-              {msg.anomaly && (
-                <div className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(msg.anomaly)}`}>
-                  <span>{msg.anomaly}</span>
-                </div>
-              )}
+              {msg.anomaly && (() => {
+                const localizedAnomaly = localizeAiText(msg.anomaly, language);
+                return (
+                  <div className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(localizedAnomaly)}`}>
+                    <span>{localizedAnomaly}</span>
+                  </div>
+                );
+              })()}
 
               {/* Advice items */}
               {msg.advice.map((a, i) => (
+                (() => {
+                  const localizedAdvice = localizeAiText(a, language);
+                  return (
                 <div
                   key={i}
-                  className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(a)}`}
+                  className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(localizedAdvice)}`}
                 >
-                  <span>{a}</span>
+                  <span>{localizedAdvice}</span>
                 </div>
+                  );
+                })()
               ))}
             </div>
           ))
@@ -240,8 +260,8 @@ export default function AIInsights() {
       </div>
 
       {/* Footer hint */}
-      <div className="px-4 py-2 border-t border-gray-100 text-[11px] text-gray-400 text-center">
-        AI tự học theo thói quen sử dụng của bạn • Càng dùng lâu càng chính xác hơn
+      <div className="px-4 py-2 border-t border-border text-[11px] text-muted-foreground text-center">
+        {t('ai.footer')}
       </div>
     </div>
   );

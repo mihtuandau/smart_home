@@ -1,6 +1,7 @@
 import React, { useState, FormEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { LoginCredentials } from '@/types';
 import { House, Loader2 } from 'lucide-react';
 
@@ -8,6 +9,7 @@ export const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { t } = useLanguage();
 
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
@@ -27,7 +29,7 @@ export const LoginForm: React.FC = () => {
       await login(credentials);
       navigate(from, { replace: true });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      setError(err.response?.data?.message || t('auth.loginError'));
     } finally {
       setIsLoading(false);
     }
@@ -41,8 +43,8 @@ export const LoginForm: React.FC = () => {
           <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
             <House className="h-10 w-10 text-white" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Smart Home</h2>
-          <p className="mt-2 text-sm text-gray-600">Đăng nhập vào hệ thống quản lý nhà thông minh</p>
+          <h2 className="text-3xl font-bold text-gray-900">{t('auth.loginTitle')}</h2>
+          <p className="mt-2 text-sm text-gray-600">{t('auth.loginSubtitle')}</p>
         </div>
 
         {/* Error Message */}
@@ -76,7 +78,7 @@ export const LoginForm: React.FC = () => {
             {/* Password Input */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Mật khẩu
+                {t('auth.password')}
               </label>
               <input
                 id="password"
@@ -102,13 +104,13 @@ export const LoginForm: React.FC = () => {
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                Ghi nhớ đăng nhập
+                {t('auth.rememberMe')}
               </label>
             </div>
 
             <div className="text-sm">
               <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                Quên mật khẩu?
+                {t('auth.forgotPassword')}
               </a>
             </div>
           </div>
@@ -122,18 +124,18 @@ export const LoginForm: React.FC = () => {
             {isLoading ? (
               <>
                 <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                Đang đăng nhập...
+                {t('auth.loggingIn')}
               </>
             ) : (
-              'Đăng nhập'
+              t('auth.loginButton')
             )}
           </button>
 
           {/* Register Link */}
           <div className="text-center text-sm">
-            <span className="text-gray-600">Chưa có tài khoản? </span>
+            <span className="text-gray-600">{t('auth.noAccount')} </span>
             <a href="/register" className="font-medium text-blue-600 hover:text-blue-500">
-              Đăng ký ngay
+              {t('auth.registerLink')}
             </a>
           </div>
         </form>
