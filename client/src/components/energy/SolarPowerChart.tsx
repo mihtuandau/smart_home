@@ -10,6 +10,7 @@ import { useState, useMemo } from 'react';
 const dateLocaleMap = {
   vi: 'vi-VN',
   en: 'en-US',
+  zh: 'zh-CN',
 } as const;
 
 interface SolarPowerChartProps {
