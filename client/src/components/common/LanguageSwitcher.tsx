@@ -16,7 +16,6 @@ export default function LanguageSwitcher() {
     { code: 'zh' as Language, name: '中文', flagSrc: '/icon/flag-zh.png' },
   ];
 
-  // Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {

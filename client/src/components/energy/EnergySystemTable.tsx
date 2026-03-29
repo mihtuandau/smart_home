@@ -25,9 +25,9 @@ export default function EnergySystemTable() {
   const { t } = useLanguage();
   const { data: energyData, isLoading: energyLoading } = useEnergyStats(24);
   const { data: sourcesData, isLoading: sourcesLoading } = usePowerSources(24);
-  
+
   const latestEnergy = ((energyData as any)?.data || [])[((energyData as any)?.data || []).length - 1] || {};
-  
+
   const totalEnergy = ((energyData as any)?.data || []).reduce((sum: number, item: any) => sum + (item.energy || 0), 0);
 
   const components: SystemComponent[] = [

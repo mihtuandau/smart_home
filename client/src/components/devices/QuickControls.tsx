@@ -66,8 +66,6 @@ export default function QuickControls() {
     }
   };
 
-
-
   return (
     <>
       {toast && (

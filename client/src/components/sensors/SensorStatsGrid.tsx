@@ -58,7 +58,7 @@ function SensorStatCard({ label, value, subtitle, color, icon, trend }: StatCard
 export default function SensorStatsGrid() {
   const { data: response, isLoading } = useSensorData(3000);
   const data = (response as any)?.data as SensorCurrentData | undefined;
-  const { t, language } = useLanguage(); 
+  const { t, language } = useLanguage();
 
   const formatNumber = (value: unknown, digits: number) => {
     const parsed = typeof value === 'number' ? value : Number(value);

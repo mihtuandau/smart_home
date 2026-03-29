@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { dashboardService } from '../services/dashboard.service';
 import { QUERY_CONFIG } from '@/config';
 
-
 export const dashboardKeys = {
   all: ['dashboard'] as const,
   overview: () => [...dashboardKeys.all, 'overview'] as const,

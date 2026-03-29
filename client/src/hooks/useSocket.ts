@@ -6,9 +6,6 @@ interface UseSocketOptions {
   token?: string;
 }
 
-/**
- * Custom hook for Socket.IO connection
- */
 export function useSocket(options: UseSocketOptions = {}) {
   const { autoConnect = true, token } = options;
   const [isConnected, setIsConnected] = useState(false);
@@ -44,7 +41,6 @@ export function useSocket(options: UseSocketOptions = {}) {
       socket.on('disconnect', handleDisconnect);
       socket.on('connect_error', handleError);
 
-      // Set initial state
       setIsConnected(socket.connected);
 
       return () => {
@@ -77,9 +73,6 @@ export function useSocket(options: UseSocketOptions = {}) {
   };
 }
 
-/**
- * Custom hook for listening to IoT data updates
- */
 export function useIoTData() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -92,7 +85,6 @@ export function useIoTData() {
 
     socketService.onIoTData(handleData);
 
-    // Request initial data
     socketService.requestIoTData();
 
     return () => {
@@ -103,29 +95,12 @@ export function useIoTData() {
   return { data, loading };
 }
 
-/**
- * Custom hook for listening to sensor updates
- * Note: Use useSensors() from useSensors.ts instead for REST polling
- * This is kept for real-time socket updates if needed
- */
-// export function useSensorUpdates() { ... } - REMOVED, use useSensors instead
-
-/**
- * Custom hook for listening to device status updates
- * Note: Use useDeviceStatus() from useDevices.ts instead for REST polling
- * This is kept for real-time socket updates if needed
- */
-// export function useDeviceStatus() { ... } - REMOVED, use useDeviceStatus from useDevices instead
-
-/**
- * Custom hook for listening to system alerts
- */
 export function useSystemAlerts() {
   const [alerts, setAlerts] = useState<any[]>([]);
 
   useEffect(() => {
     const handleAlert = (alert: any) => {
-      setAlerts((prev) => [alert, ...prev].slice(0, 50)); // Keep last 50 alerts
+      setAlerts((prev) => [alert, ...prev].slice(0, 50));
     };
 
     socketService.onSystemAlert(handleAlert);
@@ -142,9 +117,6 @@ export function useSystemAlerts() {
   return { alerts, clearAlerts };
 }
 
-/**
- * Custom hook for controlling devices via socket
- */
 export function useDeviceControl() {
   const controlLED = useCallback((data: { led1?: boolean; led2?: boolean }) => {
     socketService.controlLED(data);
@@ -174,19 +146,12 @@ export interface AiAdvicePayload {
   anomaly: string | null;
   analysis: string;
   type: 'status' | 'alert';
-  /** Công suất thực tế (W) */
   powerW: number;
   led1: boolean;
   led2: boolean;
-  /** LED daily consumption stats (server-computed, accurate) */
   dailyLed: LedDayEntry;
 }
 
-/**
- * Custom hook for real-time AI advice and warnings from the server.
- * - `status`: live current analysis (updated every message)
- * - `alerts`: history of alert/advice events (type === 'alert')
- */
 export function useAiAdvice(maxItems = 20) {
   const [status, setStatus] = useState<AiAdvicePayload | null>(null);
   const [alerts, setAlerts] = useState<AiAdvicePayload[]>([]);
@@ -211,9 +176,6 @@ export function useAiAdvice(maxItems = 20) {
   return { status, alerts, clear };
 }
 
-/**
- * Custom hook for automation events
- */
 export function useAutomationEvents() {
   const [events, setEvents] = useState<any[]>([]);
 

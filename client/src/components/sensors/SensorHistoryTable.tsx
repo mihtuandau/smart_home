@@ -35,7 +35,7 @@ export default function SensorHistoryTable() {
 
   const handleHoursChange = (newHours: number) => {
     setHours(newHours);
-    setPage(1); // reset về trang 1 khi đổi khoảng thời gian
+    setPage(1);
   };
 
   return (
@@ -46,12 +46,13 @@ export default function SensorHistoryTable() {
           <select
             value={hours}
             onChange={(e) => handleHoursChange(Number(e.target.value))}
-            className="px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-card text-foreground"
+            className="text-xs sm:text-sm border border-border bg-background rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer max-w-fit shadow-sm"
           >
             <option value={6}>{t('sensors.lastHours').replace('{hours}', '6')}</option>
             <option value={12}>{t('sensors.lastHours').replace('{hours}', '12')}</option>
             <option value={24}>{t('sensors.lastHours').replace('{hours}', '24')}</option>
-            <option value={48}>{t('sensors.lastHours').replace('{hours}', '48')}</option>
+            <option value={48}>{t('sensors.lastDays').replace('{days}', '2')}</option>
+            <option value={72}>{t('sensors.lastDays').replace('{days}', '3')}</option>
             <option value={168}>{t('sensors.lastDays').replace('{days}', '7')}</option>
             <option value={720}>{t('sensors.lastDays').replace('{days}', '30')}</option>
           </select>

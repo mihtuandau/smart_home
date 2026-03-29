@@ -38,7 +38,7 @@ export const LoginForm: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl shadow-xl">
-        {/* Logo & Title */}
+
         <div className="text-center">
           <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
             <House className="h-10 w-10 text-white" />
@@ -47,17 +47,15 @@ export const LoginForm: React.FC = () => {
           <p className="mt-2 text-sm text-gray-600">{t('auth.loginSubtitle')}</p>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
             {error}
           </div>
         )}
 
-        {/* Login Form */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            {/* Email Input */}
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email
@@ -75,7 +73,6 @@ export const LoginForm: React.FC = () => {
               />
             </div>
 
-            {/* Password Input */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                 {t('auth.password')}
@@ -94,7 +91,6 @@ export const LoginForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Remember & Forgot */}
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <input
@@ -115,7 +111,6 @@ export const LoginForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isLoading}
@@ -131,7 +126,6 @@ export const LoginForm: React.FC = () => {
             )}
           </button>
 
-          {/* Register Link */}
           <div className="text-center text-sm">
             <span className="text-gray-600">{t('auth.noAccount')} </span>
             <a href="/register" className="font-medium text-blue-600 hover:text-blue-500">

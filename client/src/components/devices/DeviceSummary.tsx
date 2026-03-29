@@ -25,7 +25,7 @@ export default function DeviceSummary() {
   }
 
   const ledCount = (data?.led1 ? 1 : 0) + (data?.led2 ? 1 : 0);
-  
+
   const stats = [
     { label: t('devices.ledOnCount'), value: `${ledCount}/2` },
     { label: t('devices.touchActive'), value: '0/4' },
@@ -34,7 +34,7 @@ export default function DeviceSummary() {
   return (
     <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <h3 className="text-sm sm:text-base font-semibold text-foreground mb-4 sm:mb-6">{t('devices.summaryTitle')}</h3>
-      
+
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {stats.map((stat, index) => (
           <div key={index} className="text-center">

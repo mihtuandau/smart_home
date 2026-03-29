@@ -67,7 +67,7 @@ export default function ReportGenerator() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Sensor Stats */}
+
           <div className="space-y-3">
             <h3 className="font-medium text-foreground/80 text-xs sm:text-sm uppercase tracking-wide">{t('reports.environment')}</h3>
             {sData ? (
@@ -89,7 +89,6 @@ export default function ReportGenerator() {
             )}
           </div>
 
-          {/* Energy Stats */}
           <div className="space-y-3">
             <h3 className="font-medium text-foreground/80 text-xs sm:text-sm uppercase tracking-wide">{t('energy.title')}</h3>
             {[

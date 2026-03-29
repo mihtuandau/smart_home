@@ -1,9 +1,3 @@
-/**
- * ✅ SECURED - main.ts
- * Thêm bảo mật: Helmet, Rate limiting, CORS chặt, Swagger disabled ở production
- * Global API prefix /api, Swagger Basic Auth protection
- */
-
 import { NestFactory, Reflector } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe, LogLevel } from '@nestjs/common';
@@ -12,19 +6,15 @@ import { Request, Response } from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const logLevels: LogLevel[] = process.env.NODE_ENV === 'production'
-    ? ['error', 'warn']
-    : ['debug', 'log', 'warn', 'error'];
+  const logLevels: LogLevel[] =
+    process.env.NODE_ENV === 'production'
+      ? ['error', 'warn']
+      : ['debug', 'log', 'warn', 'error'];
 
   const app = await NestFactory.create(AppModule, {
     logger: logLevels,
   });
 
-  // ╔══════════════════════════════════════════════════════════════╗
-  // ║              🔐 SECURITY CONFIGURATION                      ║
-  // ╚══════════════════════════════════════════════════════════════╝
-
-  // 1️⃣ ADD HELMET - Security Headers
   app.use(helmet());
   app.use(
     helmet.contentSecurityPolicy({
@@ -39,7 +29,6 @@ async function bootstrap() {
     }),
   );
 
-  // 2️⃣ SECURE CORS - Strictly limited origins
   const corsOrigins =
     process.env.NODE_ENV === 'production'
       ? (process.env.CORS_ORIGIN || '')
@@ -65,7 +54,6 @@ async function bootstrap() {
     optionsSuccessStatus: 200,
   });
 
-  // 3️⃣ GLOBAL VALIDATION PIPE
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -77,7 +65,6 @@ async function bootstrap() {
     }),
   );
 
-  // Basic Auth middleware cho Swagger (bảo vệ bằng mật khẩu)
   const swaggerUser = process.env.SWAGGER_USER || 'admin';
   const swaggerPass = process.env.SWAGGER_PASSWORD || 'smart_home_2024';
 
@@ -106,7 +93,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Smart Home Management System API')
-    .setDescription('🔒 REST API for Smart Home Management System')
+    .setDescription(' REST API for Smart Home Management System')
     .setVersion('1.0')
     .addTag('Authentication')
     .addTag('Devices')
@@ -134,17 +121,17 @@ async function bootstrap() {
     },
   });
 
-  console.log(`📚 Swagger Docs: /api-docs (Protected by Basic Auth)`);
+  console.log(` Swagger Docs: /api-docs (Protected by Basic Auth)`);
 
   const port = process.env.PORT || 3001;
   await app.listen(port);
 
   console.log(`
 ╔════════════════════════════════════════════╗
-║  🚀 Server is running                      ║
-║  📍 http://localhost:${port}                        ║
-║  🔐 Environment: ${process.env.NODE_ENV || 'development'}         ║
-║  🔒 CORS Origins: ${corsOrigins.length} domains            ║
+║   Server is running                      ║
+║   http://localhost:${port}                        ║
+║   Environment: ${process.env.NODE_ENV || 'development'}         ║
+║   CORS Origins: ${corsOrigins.length} domains            ║
 ╚════════════════════════════════════════════╝
   `);
 }

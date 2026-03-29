@@ -7,7 +7,6 @@ import {
 } from 'class-validator';
 
 export class UpdateSystemSettingsDto {
-  // Lighting settings
   @IsOptional()
   @IsBoolean()
   autoLightEnabled?: boolean;
@@ -24,7 +23,6 @@ export class UpdateSystemSettingsDto {
   @IsInt()
   lightThreshold?: number;
 
-  // Rain protection
   @IsOptional()
   @IsBoolean()
   autoRainProtection?: boolean;
@@ -33,7 +31,6 @@ export class UpdateSystemSettingsDto {
   @IsNumber()
   rainHumidityThreshold?: number;
 
-  // Energy saving
   @IsOptional()
   @IsBoolean()
   powerSaveMode?: boolean;
@@ -42,7 +39,6 @@ export class UpdateSystemSettingsDto {
   @IsNumber()
   maxPowerConsumption?: number;
 
-  // AI settings
   @IsOptional()
   @IsBoolean()
   aiLearningEnabled?: boolean;

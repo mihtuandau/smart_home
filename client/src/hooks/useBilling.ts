@@ -13,7 +13,7 @@ export const useBillingForecast = (priceVnd?: number, refetchInterval?: number) 
   return useQuery({
     queryKey: billingKeys.forecast(priceVnd),
     queryFn: () => aiApi.getForecast(priceVnd),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
     enabled: isAuthenticated,
     refetchInterval: refetchInterval || 1000 * 60 * 5,

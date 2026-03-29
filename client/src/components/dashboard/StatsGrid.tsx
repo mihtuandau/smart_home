@@ -7,9 +7,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function StatsGrid() {
   const { t } = useLanguage();
-  const { data: latestResponse, isLoading: latestLoading } = useLatestDeviceData(2000); // Reduced from 3000ms
+  const { data: latestResponse, isLoading: latestLoading } = useLatestDeviceData(2000);
   const { data: statsResponse, isLoading: statsLoading } = useDeviceStats();
-  const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24, 3000); // Reduced from 5000ms
+  const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24, 3000);
 
   const latestData = (latestResponse as any)?.data;
   const statsData = (statsResponse as any)?.data;
@@ -21,8 +21,7 @@ export default function StatsGrid() {
     }
     return true;
   };
-  
-  // Energy response is an array of power data, calculate total
+
   const energyArray = (energyResponse as any)?.data || [];
   const totalSolarEnergy = energyArray.reduce((sum: number, item: any) => sum + (item.energy || 0), 0);
 
@@ -40,34 +39,33 @@ export default function StatsGrid() {
     );
   }
 
-  // Get device stats from the response
   const devicesOn = Math.max(0, statsData?.online ?? 0);
   const customCountFromLatest = [latestData?.device1, latestData?.device2].filter(isCustomDevicePresent).length;
   const totalFromLatest = 2 + customCountFromLatest;
-  const totalDevices = Math.max(2, statsData?.total ?? 2, totalFromLatest); // keep total correct on initial load
+  const totalDevices = Math.max(2, statsData?.total ?? 2, totalFromLatest);
 
   const stats = [
-    { 
-      label: t('dashboard.activeDevices'), 
-      value: `${devicesOn}/${totalDevices}`, 
+    {
+      label: t('dashboard.activeDevices'),
+      value: `${devicesOn}/${totalDevices}`,
       color: '#10b981',
       subtitle: t('dashboard.onState')
     },
-    { 
-      label: t('dashboard.todayEnergy'), 
+    {
+      label: t('dashboard.todayEnergy'),
       value: `${(totalSolarEnergy / 1000).toFixed(2)} kWh`,
       color: '#f59e0b',
       subtitle: t('energy.solarPower')
     },
-    { 
-      label: t('sensors.temperature'), 
-      value: latestData?.temperature !== undefined ? `${latestData.temperature.toFixed(1)}°C` : '--', 
+    {
+      label: t('sensors.temperature'),
+      value: latestData?.temperature !== undefined ? `${latestData.temperature.toFixed(1)}°C` : '--',
       color: '#ef4444',
       subtitle: `${t('dashboard.humidityLabel')}: ${latestData?.humidity !== undefined ? latestData.humidity.toFixed(1) : '--'}%`
     },
-    { 
-      label: t('dashboard.systemVoltage'), 
-      value: latestData?.voltage !== undefined ? `${latestData.voltage.toFixed(2)}V` : '--', 
+    {
+      label: t('dashboard.systemVoltage'),
+      value: latestData?.voltage !== undefined ? `${latestData.voltage.toFixed(2)}V` : '--',
       color: '#3b82f6',
       subtitle: `${latestData?.current_mA !== undefined ? (latestData.current_mA / 1000).toFixed(2) : '--'}A`
     },

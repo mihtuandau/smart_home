@@ -45,7 +45,7 @@ export default function AutomationPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header */}
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="page-title">{t('automation.title')}</h1>
@@ -59,7 +59,6 @@ export default function AutomationPage() {
         </button>
       </div>
 
-      {/* Loading State */}
       {isLoading && (
         <div className="grid grid-cols-1 gap-4">
           {[1, 2, 3].map((i) => (
@@ -71,7 +70,6 @@ export default function AutomationPage() {
         </div>
       )}
 
-      {/* Empty State */}
       {!isLoading && rules.length === 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
           <Rocket className="w-12 h-12 text-blue-500 mx-auto mb-4" />
@@ -86,7 +84,6 @@ export default function AutomationPage() {
         </div>
       )}
 
-      {/* Rules List */}
       {!isLoading && rules.length > 0 && (
         <AutomationRuleList
           rules={rules}
@@ -97,7 +94,6 @@ export default function AutomationPage() {
         />
       )}
 
-      {/* Create/Edit Modal */}
       {(isCreateModalOpen || editingRule) && (
         <CreateAutomationModal
           rule={editingRule}

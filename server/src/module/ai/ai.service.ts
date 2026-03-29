@@ -1,9 +1,3 @@
-/**
- * ai.service.ts
- *
- * Orchestrator — tương đương on_message() trong ai_mqtt.py.
- * Được gọi bởi MqttService sau mỗi tin nhắn IoT nhận được.
- */
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 import { AiAnalyzerService } from './ai-analyzer.service';
@@ -15,7 +9,6 @@ import { AiResultDto } from './dto/ai-result.dto';
 import { SensorPayload } from '../mqtt/mqtt.service';
 import { AiEventsGateway } from '../mqtt/ai-events.gateway';
 
-/** Billing chỉ tính mỗi N tin nhắn để không query DB quá nhiều */
 const BILLING_EVERY_N = 100;
 
 @Injectable()
@@ -34,37 +27,40 @@ export class AiService {
     private aiEventsGateway: AiEventsGateway,
   ) {}
 
-  /**
-   * Điểm vào chính — gọi sau mỗi MQTT message.
-   * Tương đương toàn bộ thân hàm on_message() trong ai_mqtt.py.
-   */
   async analyze(data: SensorPayload): Promise<AiResultDto> {
     this.messageCount++;
     const now = new Date();
     const powerMw = data.power_mW;
 
-    // 0. Tích lũy LED stats — tính delta time chính xác
     const dailyLed = this.ledStats.tick(data.led1, data.led2, now);
 
-    // 1. Cập nhật baseline với LED state — học riêng từng ngữ cảnh
-    this.baseline.updateWithReading(data.power_mW / 1000, now, data.led1, data.led2);
+    this.baseline.updateWithReading(
+      data.power_mW / 1000,
+      now,
+      data.led1,
+      data.led2,
+    );
 
-    // 2. Cập nhật rolling window TRƯỚC KHI phân tích (tránh lag 1 message)
     this.analyzer.feedReading(powerMw, data.led1, data.led2);
 
-    // 3. Phân tích realtime (tương đương analyze_realtime)
-    const analysis = this.analyzer.analyzeRealtime(powerMw, data.led1, data.led2, now);
+    const analysis = this.analyzer.analyzeRealtime(
+      powerMw,
+      data.led1,
+      data.led2,
+      now,
+    );
 
-    // 4. Phát hiện bất thường (tương đương detect_anomaly)
     const anomaly = this.analyzer.detectAnomaly(powerMw, data.led1, data.led2);
 
-    // 5. Tổng hợp ngày (tương đương daily_summary)
     const summary = await this.analyzer.getDailySummary();
 
-    // 6. Lời khuyên tiết kiệm điện (tương đương energy_advice)
-    const advice = this.advisor.getAdvice({ powerMw, led1: data.led1, led2: data.led2, ts: now });
+    const advice = this.advisor.getAdvice({
+      powerMw,
+      led1: data.led1,
+      led2: data.led2,
+      ts: now,
+    });
 
-    // 7. Dự báo hóa đơn (tương đương project_monthly_energy_and_cost — chạy định kỳ)
     let billingDto = this.latestResult?.billing ?? null;
     if (this.messageCount % BILLING_EVERY_N === 1) {
       try {
@@ -74,7 +70,6 @@ export class AiService {
       }
     }
 
-    // 8. Lưu kết quả AI vào DB (tương đương save_ai_result)
     if (anomaly || advice.length > 0) {
       this.saveToDb(data, analysis, anomaly, summary, advice).catch(() => {});
     }
@@ -91,12 +86,10 @@ export class AiService {
 
     this.latestResult = result;
 
-    // Log kết quả (tương đương logger.info/logger.warning trong ai_mqtt.py)
     this.logger.log(analysis);
     if (anomaly) this.logger.warn(anomaly);
     if (advice.length) advice.forEach((a) => this.logger.log(a));
 
-    // Phát sự kiện WebSocket tới frontend — LUÔN emit để hiển thị trạng thái thực
     const isAlert = advice.length > 0 || !!anomaly;
     this.aiEventsGateway.emitAiAdvice({
       time: now.toISOString(),

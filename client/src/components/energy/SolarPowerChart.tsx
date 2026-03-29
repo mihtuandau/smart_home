@@ -5,34 +5,61 @@ import { useSolarStats } from '@/hooks/useEnergy';
 import { useChartColors } from '@/lib/chartDarkModeUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BarChart3 } from 'lucide-react';
+import { useState, useMemo } from 'react';
 
 const dateLocaleMap = {
   vi: 'vi-VN',
   en: 'en-US',
-  zh: 'zh-CN',
 } as const;
 
-export default function SolarPowerChart() {
+interface SolarPowerChartProps {
+  timeRange?: number;
+}
+
+export default function SolarPowerChart({ timeRange = 24 }: SolarPowerChartProps) {
   const { t, language } = useLanguage();
-  const { data, isLoading } = useSolarStats(24);
+  const { data, isLoading } = useSolarStats(timeRange);
   const colors = useChartColors();
-  
-  // Server returns { success, period, data: { totalGenerated, peakPower, averagePower, data: [...] } }
-  const solarDataFromAPI = Array.isArray((data as any)?.data?.data) ? (data as any).data.data : [];
-  
-  const chartData = solarDataFromAPI.map((item: any) => {
-    const timestamp = typeof item.timestamp === 'string' 
-      ? new Date(item.timestamp) 
-      : item.timestamp;
+
+  const chartData = useMemo(() => {
+    const solarDataFromAPI = Array.isArray((data as any)?.data?.data) ? (data as any).data.data : [];
+    if (!solarDataFromAPI.length) return [];
+
+    const slotsMap = new Map<string, { timestamp: string; data: any[] }>();
+    const now = new Date();
     
-    return {
-      time: timestamp.toLocaleTimeString(dateLocaleMap[language], {
-        hour: '2-digit', 
-        minute: '2-digit' 
-      }),
-      power: item.power || 0,
-    };
-  });
+    for (let i = timeRange - 1; i >= 0; i--) {
+      const slotTime = new Date(now.getTime() - i * 60 * 60 * 1000);
+      slotTime.setMinutes(0, 0, 0);
+      const key = slotTime.getTime().toString();
+      slotsMap.set(key, { timestamp: slotTime.toISOString(), data: [] });
+    }
+
+    solarDataFromAPI.forEach((item: any) => {
+      const itemDate = typeof item.timestamp === 'string' ? new Date(item.timestamp) : item.timestamp;
+      if (isNaN(itemDate.getTime())) return;
+      
+      itemDate.setMinutes(0, 0, 0);
+      const key = itemDate.getTime().toString();
+      const slot = slotsMap.get(key);
+      if (slot) slot.data.push(item);
+    });
+
+    return Array.from(slotsMap.values()).map((slot) => {
+      const avgPower = slot.data.length > 0
+        ? slot.data.reduce((sum, item) => sum + (item.power || 0), 0) / slot.data.length
+        : 0;
+
+      const formatOpts: Intl.DateTimeFormatOptions = timeRange > 24 
+        ? { day: '2-digit', month: '2-digit', hour: '2-digit' } 
+        : { hour: '2-digit', minute: '2-digit' };
+
+      return {
+        time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], formatOpts),
+        power: parseFloat(avgPower.toFixed(2)),
+      };
+    });
+  }, [data, timeRange, language]);
 
   if (isLoading) {
     return (
@@ -64,9 +91,11 @@ export default function SolarPowerChart() {
     <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <div className="mb-4">
         <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('energy.solarPanelPowerChart')}</h2>
-        <p className="text-xs sm:text-sm text-muted-foreground">{t('energy.powerOverTime')}</p>
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+          {t('energy.powerOverTime')}
+        </p>
       </div>
-      
+
       <div className="h-52 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -77,19 +106,19 @@ export default function SolarPowerChart() {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} />
-            <XAxis 
-              dataKey="time" 
+            <XAxis
+              dataKey="time"
               tick={{ fontSize: 12, fill: colors.axisLabelColor }}
               axisLine={{ stroke: colors.axisColor }}
             />
-            <YAxis 
+            <YAxis
               tick={{ fontSize: 12, fill: colors.axisLabelColor }}
               axisLine={{ stroke: colors.axisColor }}
               unit="W"
             />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: colors.backgroundColor, 
+            <Tooltip
+              contentStyle={{
+                backgroundColor: colors.backgroundColor,
                 border: `1px solid ${colors.borderColor}`,
                 borderRadius: '8px',
                 fontSize: '12px',
@@ -97,12 +126,12 @@ export default function SolarPowerChart() {
               }}
               labelStyle={{ color: colors.textColor, fontWeight: 600 }}
             />
-            <Area 
-              type="monotone" 
-              dataKey="power" 
-              stroke="#f59e0b" 
+            <Area
+              type="monotone"
+              dataKey="power"
+              stroke="#f59e0b"
               strokeWidth={2}
-              fill="url(#colorPower)" 
+              fill="url(#colorPower)"
             />
           </AreaChart>
         </ResponsiveContainer>

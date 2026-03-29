@@ -19,11 +19,10 @@ export default function DevicesPage() {
       <QuickControls />
 
       <LEDControl />
-      
+
       <IoTDeviceManager />
 
       <DeviceSummary />
     </div>
   );
 }
-

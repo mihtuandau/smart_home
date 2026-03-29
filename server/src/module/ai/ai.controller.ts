@@ -15,7 +15,6 @@ export class AiController {
     private ledStats: AiLedStatsService,
   ) {}
 
-  /** Kết quả AI mới nhất (analysis, anomaly, advice, billing) */
   @Get('status')
   @ApiOperation({ summary: 'Kết quả AI phân tích mới nhất' })
   getStatus() {
@@ -24,7 +23,6 @@ export class AiController {
     );
   }
 
-  /** Dự báo hóa đơn điện tháng hiện tại */
   @Get('forecast')
   @ApiOperation({ summary: 'Dự báo kWh và chi phí tháng hiện tại' })
   async getForecast(@Query('price') price?: string) {
@@ -36,14 +34,12 @@ export class AiController {
     };
   }
 
-  /** Profile baseline theo (weekday × hour) */
   @Get('baseline')
   @ApiOperation({ summary: 'Profile tiêu thụ điện trung bình theo giờ/ngày' })
   getBaseline() {
     return this.baseline.getProfile();
   }
 
-  /** Lịch sử tiêu thụ LED theo ngày (N ngày gần nhất, bao gồm hôm nay) */
   @Get('led-daily')
   @ApiOperation({ summary: 'Lịch sử tiêu thụ Wh và số phút bật của từng LED' })
   async getLedDaily(@Query('days') days?: string) {

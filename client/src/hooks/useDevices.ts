@@ -5,8 +5,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { socketService } from '@/lib/socket';
 import { QUERY_CONFIG } from '@/config';
 
-
-// Query keys
 export const deviceKeys = {
   all: ['devices'] as const,
   lists: () => [...deviceKeys.all, 'list'] as const,
@@ -25,7 +23,7 @@ const syncStatsFromLatestCache = (queryClient: QueryClient) => {
 
   queryClient.setQueryData(deviceKeys.stats(), (oldStats: any) => {
     const base = oldStats ? { ...oldStats } : { data: {} };
-    const dataObj = base.data || base;
+    const dataObj = { ...(base.data || {}) };
 
     const ledsOn = (latest.led1 ? 1 : 0) + (latest.led2 ? 1 : 0);
     const customEntries = [latest.device1, latest.device2];
@@ -52,11 +50,11 @@ const syncStatsFromLatestCache = (queryClient: QueryClient) => {
     dataObj.online = online;
     dataObj.offline = total - online;
 
+    base.data = dataObj;
     return base;
   });
 };
 
-// Get all devices
 export const useDevices = () => {
   return useQuery({
     queryKey: deviceKeys.lists(),
@@ -65,7 +63,6 @@ export const useDevices = () => {
   });
 };
 
-// Get device stats with real-time socket updates
 export const useDeviceStats = () => {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
@@ -76,12 +73,10 @@ export const useDeviceStats = () => {
     queryKey: deviceKeys.stats(),
     queryFn: deviceService.getDeviceStats,
     enabled: true,
-    // Avoid periodic API overwrite (causes 0/2 flicker); rely on realtime sockets + explicit invalidation
     refetchInterval: false,
     refetchOnWindowFocus: false,
   });
 
-  // Add real-time socket listeners for device status updates
   useEffect(() => {
     if (!isAuthenticated) {
       return;
@@ -96,9 +91,8 @@ export const useDeviceStats = () => {
         }
 
         const merged = { ...oldData };
-        const dataObj = merged.data || merged;
+        const dataObj = { ...(merged.data || {}) };
 
-        // Prevent transient drops to 0 when previous online > 0 and totals unchanged
         if (statusData.online !== undefined) {
           const incomingOnline = statusData.online;
           const incomingTotal = statusData.total ?? dataObj.total;
@@ -120,25 +114,22 @@ export const useDeviceStats = () => {
           dataObj.offline = statusData.offline;
         }
 
-        // Ensure minimum total is 2 (built-in LEDs)
         if (dataObj.total === undefined || dataObj.total < 2) {
           dataObj.total = 2;
         }
-        // Clamp online between 0 and total
         if (dataObj.online !== undefined && dataObj.total !== undefined) {
           dataObj.online = Math.max(0, Math.min(dataObj.online, dataObj.total));
           dataObj.offline = dataObj.total - dataObj.online;
         }
 
+        merged.data = dataObj;
         return merged;
       });
     };
 
-    // Handle IoT data socket to update counts including custom devices
     const handleIoTData = (iotData: any) => {
       if (!iotData) return;
 
-      // Ignore payloads that contain only sensor readings (no device states) to avoid flicker
       const hasLedState = iotData.led1 !== undefined || iotData.led2 !== undefined;
       const hasCustomState = iotData.device1 !== undefined || iotData.device2 !== undefined;
       if (!hasLedState && !hasCustomState) return;
@@ -167,7 +158,6 @@ export const useDeviceStats = () => {
       mergeStats({ online, total, offline: total - online });
     };
 
-    // Fallback realtime from AI event (backend emits this consistently)
     const handleAiAdvice = (aiData: any) => {
       if (!aiData) return;
       if (aiData.led1 === undefined && aiData.led2 === undefined) return;
@@ -176,16 +166,16 @@ export const useDeviceStats = () => {
 
       queryClient.setQueryData(deviceKeys.stats(), (oldData: any) => {
         const base = oldData ? { ...oldData } : { data: {} };
-        const dataObj = base.data || base;
+        const dataObj = { ...(base.data || {}) };
         const total = Math.max(2, dataObj.total ?? 2);
 
-        // For LED-only setup (2 devices), AI event is authoritative and instant.
         if (total === 2) {
           dataObj.online = ledsOn;
           dataObj.total = 2;
           dataObj.offline = 2 - ledsOn;
         }
 
+        base.data = dataObj;
         return base;
       });
     };
@@ -196,7 +186,6 @@ export const useDeviceStats = () => {
     socketService.onIoTData(handleIoTData);
     socketService.onAiAdvice(handleAiAdvice);
 
-    // Cleanup listeners on unmount
     return () => {
       if (iotListenerRef.current) {
         socketService.offIoTData(iotListenerRef.current);
@@ -212,7 +201,6 @@ export const useDeviceStats = () => {
   return query;
 };
 
-// Get latest IoT data with real-time socket updates
 export const useLatestDeviceData = (refetchInterval?: number) => {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
@@ -226,24 +214,20 @@ export const useLatestDeviceData = (refetchInterval?: number) => {
     refetchInterval: refetchInterval ?? QUERY_CONFIG.REFETCH_INTERVAL.DEVICES,
   });
 
-  // Add real-time socket listeners for data updates
   useEffect(() => {
     if (!isAuthenticated) {
       return;
     }
 
-    // Handle IoT data socket events
     const handleIoTData = (socketData: any) => {
       queryClient.setQueryData(deviceKeys.latestData(), (oldData: any) => {
         if (!oldData) {
           return { data: socketData };
         }
 
-        // Merge socket data with existing cache
         const merged = { ...oldData };
-        const dataObj = merged.data || merged;
-        
-        // Update fields from socket (LED status, sensor data, etc.)
+        const dataObj = { ...(merged.data || {}) };
+
         if (socketData.led1 !== undefined) {
           dataObj.led1 = socketData.led1;
         }
@@ -265,41 +249,39 @@ export const useLatestDeviceData = (refetchInterval?: number) => {
         if (socketData.power !== undefined) {
           dataObj.power = socketData.power;
         }
-        
+
+        merged.data = dataObj;
         return merged;
       });
     };
 
-    // Handle AI advice socket events (which include LED status)
     const handleAiAdvice = (aiData: any) => {
       queryClient.setQueryData(deviceKeys.latestData(), (oldData: any) => {
         if (!oldData) {
           return { data: { led1: aiData.led1, led2: aiData.led2 } };
         }
 
-        // Merge AI data with existing cache
         const merged = { ...oldData };
-        const dataObj = merged.data || merged;
-        
-        // Update LED status from AI advice
+        const dataObj = { ...(merged.data || {}) };
+
         if (aiData.led1 !== undefined) {
           dataObj.led1 = aiData.led1;
         }
         if (aiData.led2 !== undefined) {
           dataObj.led2 = aiData.led2;
         }
-        
+
+        merged.data = dataObj;
         return merged;
       });
     };
 
     iotListenerRef.current = handleIoTData;
     aiListenerRef.current = handleAiAdvice;
-    
+
     socketService.onIoTData(handleIoTData);
     socketService.onAiAdvice(handleAiAdvice);
 
-    // Cleanup listeners on unmount
     return () => {
       if (iotListenerRef.current) {
         socketService.offIoTData(iotListenerRef.current);
@@ -315,7 +297,6 @@ export const useLatestDeviceData = (refetchInterval?: number) => {
   return query;
 };
 
-// Get IoT status
 export const useDeviceStatus = (refetchInterval?: number) => {
   return useQuery({
     queryKey: deviceKeys.status(),
@@ -325,7 +306,6 @@ export const useDeviceStatus = (refetchInterval?: number) => {
   });
 };
 
-// Control LED mutation
 export const useControlLED = () => {
   const queryClient = useQueryClient();
 
@@ -341,9 +321,10 @@ export const useControlLED = () => {
       queryClient.setQueryData(deviceKeys.latestData(), (old: any) => {
         if (!old) return old;
         const updated = { ...old };
-        const dataObj = updated.data || updated;
+        const dataObj = { ...(updated.data || {}) };
         if (data.led1 !== undefined) dataObj.led1 = data.led1;
         if (data.led2 !== undefined) dataObj.led2 = data.led2;
+        updated.data = dataObj;
         return updated;
       });
 
@@ -351,10 +332,8 @@ export const useControlLED = () => {
       return { previousLatest, previousStats };
     },
     onSuccess: async () => {
-      // Invalidate and refetch immediately
       await queryClient.invalidateQueries({ queryKey: deviceKeys.latestData(), refetchType: 'all' });
       await queryClient.invalidateQueries({ queryKey: deviceKeys.lists(), refetchType: 'all' });
-      // Do not refetch stats immediately; backend may still be stale for a few seconds.
       syncStatsFromLatestCache(queryClient);
     },
     onError: (_error, _variables, context: any) => {
@@ -368,73 +347,62 @@ export const useControlLED = () => {
   });
 };
 
-// Control single LED mutation with optimistic update
 export const useControlSingleLED = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({ ledNumber, state }: { ledNumber: number; state: boolean }) =>
       deviceService.controlSingleLED(ledNumber, state),
-    
-    // Optimistic update - update UI immediately before server response
+
     onMutate: async ({ ledNumber, state }) => {
-      // Cancel pending queries
       await queryClient.cancelQueries({ queryKey: deviceKeys.latestData() });
 
-      // Get previous data
       const previousData = queryClient.getQueryData(deviceKeys.latestData());
 
-      // Update UI immediately
       queryClient.setQueryData(deviceKeys.latestData(), (old: any) => {
         if (!old) return old;
         const updatedData = { ...old };
-        const dataObj = updatedData.data || updatedData;
-        
+        const dataObj = { ...(updatedData.data || {}) };
+
         if (ledNumber === 1) {
           dataObj.led1 = state;
         } else if (ledNumber === 2) {
           dataObj.led2 = state;
         }
-        
+
+        updatedData.data = dataObj;
         return updatedData;
       });
 
-      // Update device stats immediately from optimistic latestData
       syncStatsFromLatestCache(queryClient);
 
-      // Return context for rollback if error
       const previousStats = queryClient.getQueryData(deviceKeys.stats());
       return { previousData, previousStats };
     },
 
-    // Update cache with server response instead of refetching
     onSuccess: (response: any) => {
-      // Merge response with existing cache instead of replacing
       if (response?.data) {
         queryClient.setQueryData(deviceKeys.latestData(), (oldData: any) => {
           if (!oldData) return response;
-          
-          // Merge: keep old data structure, update only the returned fields
+
           const merged = { ...oldData };
-          const dataObj = merged.data || merged;
+          const dataObj = { ...(merged.data || {}) };
           const responseData = response.data;
-          
-          // Only update fields that are in the response
+
           if (responseData.led1 !== undefined) {
             dataObj.led1 = responseData.led1;
           }
           if (responseData.led2 !== undefined) {
             dataObj.led2 = responseData.led2;
           }
-          
+
+          merged.data = dataObj;
           return merged;
         });
       }
-      // Keep stats aligned with latestData cache, avoid stale API overwrite
       syncStatsFromLatestCache(queryClient);
     },
 
-    // Rollback on error
     onError: (_error, _variables, context: any) => {
       if (context?.previousData) {
         queryClient.setQueryData(deviceKeys.latestData(), context.previousData);
@@ -446,7 +414,6 @@ export const useControlSingleLED = () => {
   });
 };
 
-// Control servo mutation
 export const useControlServo = () => {
   const queryClient = useQueryClient();
 
@@ -460,7 +427,6 @@ export const useControlServo = () => {
   });
 };
 
-// Toggle device mutation
 export const useToggleDevice = () => {
   const queryClient = useQueryClient();
 
@@ -474,7 +440,6 @@ export const useToggleDevice = () => {
   });
 };
 
-// Update device mutation
 export const useUpdateDevice = () => {
   const queryClient = useQueryClient();
 

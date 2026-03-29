@@ -28,7 +28,6 @@ export class DashboardService {
   }
 
   async getDeviceStats() {
-    // DB devices
     const dbTotal = await this.prisma.device.count();
     const byStatus = await this.prisma.device.groupBy({
       by: ['status'],
@@ -39,7 +38,6 @@ export class DashboardService {
       _count: true,
     });
 
-    // Built-in LEDs (always 2 devices)
     const ledsTotal = 2;
     let ledsOnCount = 0;
 
@@ -49,7 +47,6 @@ export class DashboardService {
       if (latestMqttData.led2 === true) ledsOnCount++;
     }
 
-    // Custom IoT devices from MQTT snapshot
     let customDevicesTotal = 0;
     let customDevicesOnCount = 0;
     if (latestMqttData) {
@@ -72,14 +69,20 @@ export class DashboardService {
       total,
       online,
       offline,
-      byStatus: byStatus.reduce((acc, item) => {
-        acc[item.status] = item._count;
-        return acc;
-      }, {} as Record<string, number>),
-      byType: byType.reduce((acc, item) => {
-        acc[item.type] = item._count;
-        return acc;
-      }, {} as Record<string, number>),
+      byStatus: byStatus.reduce(
+        (acc, item) => {
+          acc[item.status] = item._count;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
+      byType: byType.reduce(
+        (acc, item) => {
+          acc[item.type] = item._count;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
     };
   }
 
@@ -158,8 +161,7 @@ export class DashboardService {
     }
 
     const totalEnergy = data.reduce((sum, d) => sum + (d.energy || 0), 0);
-    const avgPower =
-      data.reduce((sum, d) => sum + d.power, 0) / data.length;
+    const avgPower = data.reduce((sum, d) => sum + d.power, 0) / data.length;
     const avgVoltage =
       data.reduce((sum, d) => sum + d.voltage, 0) / data.length;
     const avgCurrent =
@@ -176,20 +178,25 @@ export class DashboardService {
   }
 
   async getSystemHealth() {
-    const [deviceCount, sensorCount, powerCount, lastSensorUpdate, lastPowerUpdate] =
-      await Promise.all([
-        this.prisma.device.count(),
-        this.prisma.sensorData.count(),
-        this.prisma.powerData.count(),
-        this.prisma.sensorData.findFirst({
-          orderBy: { timestamp: 'desc' },
-          select: { timestamp: true },
-        }),
-        this.prisma.powerData.findFirst({
-          orderBy: { timestamp: 'desc' },
-          select: { timestamp: true },
-        }),
-      ]);
+    const [
+      deviceCount,
+      sensorCount,
+      powerCount,
+      lastSensorUpdate,
+      lastPowerUpdate,
+    ] = await Promise.all([
+      this.prisma.device.count(),
+      this.prisma.sensorData.count(),
+      this.prisma.powerData.count(),
+      this.prisma.sensorData.findFirst({
+        orderBy: { timestamp: 'desc' },
+        select: { timestamp: true },
+      }),
+      this.prisma.powerData.findFirst({
+        orderBy: { timestamp: 'desc' },
+        select: { timestamp: true },
+      }),
+    ]);
 
     const now = Date.now();
     const sensorAge = lastSensorUpdate
@@ -207,12 +214,12 @@ export class DashboardService {
       sensors: {
         totalReadings: sensorCount,
         lastUpdate: lastSensorUpdate?.timestamp,
-        healthy: sensorAge ? sensorAge < 60000 : false, // < 1 minute
+        healthy: sensorAge ? sensorAge < 60000 : false,
       },
       power: {
         totalReadings: powerCount,
         lastUpdate: lastPowerUpdate?.timestamp,
-        healthy: powerAge ? powerAge < 60000 : false, // < 1 minute
+        healthy: powerAge ? powerAge < 60000 : false,
       },
       overall: {
         status:

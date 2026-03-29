@@ -18,11 +18,11 @@ export default function QuickLEDControl() {
   const { t } = useLanguage();
   const [toast, setToast] = useState<ToastState | null>(null);
   const [localLEDs, setLocalLEDs] = useState({ led1: false, led2: false });
-  
+
   const lastToggleRef = useRef<number>(0);
   const initializedRef = useRef<boolean>(false);
 
-  const { data: response, isLoading } = useLatestDeviceData(2000); // Reduced from 5000ms to 2000ms
+  const { data: response, isLoading } = useLatestDeviceData(2000);
   const data = (response as any)?.data || response || {};
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function QuickLEDControl() {
 
   const toggleLed = async (ledNumber: 1 | 2) => {
     if (controlLEDMutation.isPending) return;
-    
+
     const newState = ledNumber === 1 ? !localLEDs.led1 : !localLEDs.led2;
     setLocalLEDs(prev => ({ ...prev, [ledNumber === 1 ? 'led1' : 'led2']: newState }));
     lastToggleRef.current = Date.now();
@@ -67,10 +67,10 @@ export default function QuickLEDControl() {
   return (
     <>
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      
+
       <div className="section-card shadow-sm border border-border p-4 sm:p-5">
         <h3 className="text-sm sm:text-base font-semibold text-foreground mb-3 inline-flex items-center gap-2"><Sun className="w-4 h-4" />{t('dashboard.quickLedControl')}</h3>
-        
+
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => toggleLed(1)}
@@ -85,7 +85,7 @@ export default function QuickLEDControl() {
             <div>{t('devices.led1')}</div>
             <div className="text-[11px] sm:text-xs mt-1">{localLEDs.led1 ? t('devices.on').toUpperCase() : t('devices.off').toUpperCase()}</div>
           </button>
-          
+
           <button
             onClick={() => toggleLed(2)}
             disabled={controlLEDMutation.isPending}
@@ -100,7 +100,7 @@ export default function QuickLEDControl() {
             <div className="text-[11px] sm:text-xs mt-1">{localLEDs.led2 ? t('devices.on').toUpperCase() : t('devices.off').toUpperCase()}</div>
           </button>
         </div>
-        
+
         <p className="text-[11px] sm:text-xs text-muted-foreground mt-3 text-center">{t('devices.status')}: {localLEDs.led1 || localLEDs.led2 ? `${localLEDs.led1 ? '1' : ''}${localLEDs.led1 && localLEDs.led2 ? ',' : ''}${localLEDs.led2 ? '2' : ''}` : t('devices.allOff')}</p>
       </div>
     </>

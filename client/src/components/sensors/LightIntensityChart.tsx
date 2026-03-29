@@ -15,6 +15,7 @@ import {
 import { useSensorHistory, useSensorData } from '@/hooks/useSensors';
 import { useChartColors } from '@/lib/chartDarkModeUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useState } from 'react';
 
 const dateLocaleMap = {
   vi: 'vi-VN',
@@ -27,7 +28,8 @@ interface LightIntensityChartProps {
 }
 
 const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 }) => {
-  const { data: historyResponse, isLoading, error } = useSensorHistory(hours);
+  const [timeRange, setTimeRange] = useState(hours);
+  const { data: historyResponse, isLoading, error } = useSensorHistory(timeRange, 1, 10000);
   const { data: currentResponse } = useSensorData();
   const colors = useChartColors();
   const { t, language } = useLanguage();
@@ -51,7 +53,6 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
     );
   }
 
-  // Transform API data to chart format
   const historyData = ((historyResponse as any)?.data || []) as any[];
   const chartData = historyData
     .slice()
@@ -62,7 +63,6 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
       timestamp: item.timestamp,
     }));
 
-  // If no history data, show placeholder message
   if (chartData.length === 0) {
     return (
       <div className="bg-card rounded-lg p-6 border border-border">
@@ -76,31 +76,44 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
   const avgLight = chartData.reduce((sum, item) => sum + item.light, 0) / chartData.length;
 
   return (
-    <div className="bg-card rounded-lg p-6 border border-border">
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold text-foreground">{t('sensors.lightIntensity')}</h2>
-        <p className="text-sm text-muted-foreground mt-1">{t('sensors.lastHours').replace('{hours}', String(hours))}</p>
+    <div className="bg-card rounded-lg p-6 border border-border min-w-0">
+      <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('sensors.lightIntensity')}</h2>
+        </div>
+        <div className="flex sm:justify-end items-center">
+          <select
+            value={timeRange}
+            onChange={(e) => setTimeRange(Number(e.target.value))}
+            className="text-xs sm:text-sm border border-border bg-background rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer max-w-fit shadow-sm"
+          >
+            <option value={6}>{t('sensors.lastHours').replace('{hours}', '6')}</option>
+            <option value={12}>{t('sensors.lastHours').replace('{hours}', '12')}</option>
+            <option value={24}>{t('sensors.lastHours').replace('{hours}', '24')}</option>
+            <option value={72}>{t('sensors.lastDays').replace('{days}', '3')}</option>
+            <option value={168}>{t('sensors.lastDays').replace('{days}', '7')}</option>
+          </select>
+        </div>
       </div>
 
-      {/* Chart */}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} />
-          <XAxis 
-            dataKey="time" 
+          <XAxis
+            dataKey="time"
             stroke={colors.axisColor}
             style={{ fontSize: '12px' }}
             tick={{ fill: colors.axisLabelColor }}
           />
-          <YAxis 
+          <YAxis
             stroke={colors.axisColor}
             style={{ fontSize: '12px' }}
             tick={{ fill: colors.axisLabelColor }}
             label={{ value: 'lux', angle: -90, position: 'insideLeft' }}
           />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: colors.backgroundColor, 
+          <Tooltip
+            contentStyle={{
+              backgroundColor: colors.backgroundColor,
               border: `1px solid ${colors.borderColor}`,
               borderRadius: '0.5rem',
               fontSize: '12px',
@@ -109,9 +122,9 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
             formatter={(value: number | undefined) => [`${value || 0} lux`, t('sensors.lightIntensity')]}
           />
           <Legend wrapperStyle={{ color: colors.axisLabelColor }} />
-          <ReferenceLine 
-            y={300} 
-            stroke="#f59e0b" 
+          <ReferenceLine
+            y={300}
+            stroke="#f59e0b"
             strokeDasharray="3 3"
             label={{ value: t('sensors.optimalThreshold'), position: 'right', fontSize: 10, fill: colors.axisLabelColor }}
           />

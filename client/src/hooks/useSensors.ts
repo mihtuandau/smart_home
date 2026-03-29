@@ -6,8 +6,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { socketService } from '@/lib/socket';
 import { QUERY_CONFIG } from '@/config';
 
-
-// Query keys
 export const sensorKeys = {
   all: ['sensors'] as const,
   lists: () => [...sensorKeys.all, 'list'] as const,
@@ -19,7 +17,6 @@ export const sensorKeys = {
   iot: () => [...sensorKeys.all, 'iot'] as const,
 };
 
-// Get latest sensors with real-time socket updates
 export const useSensors = (limit: number = 10, refetchInterval?: number) => {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
@@ -33,7 +30,6 @@ export const useSensors = (limit: number = 10, refetchInterval?: number) => {
     refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SENSORS,
   });
 
-  // Add real-time socket listeners for sensor updates
   useEffect(() => {
     if (!isAuthenticated) {
       return;
@@ -45,33 +41,27 @@ export const useSensors = (limit: number = 10, refetchInterval?: number) => {
           return { data: [sensorData] };
         }
 
-        // Merge socket data with existing cache
         const merged = { ...oldData };
         const dataArray = merged.data || merged;
-        
-        // Update or insert sensor data (assuming array format)
+
         if (Array.isArray(dataArray) && dataArray.length > 0) {
-          // Update the first sensor entry with latest socket data
           dataArray[0] = { ...dataArray[0], ...sensorData };
         }
-        
+
         return merged;
       });
     };
 
-    // Handle AI advice which includes power data
     const handleAiAdvice = (aiData: any) => {
       queryClient.setQueryData(sensorKeys.list(limit), (oldData: any) => {
         if (!oldData) {
           return oldData;
         }
 
-        // Merge AI power data with existing cache
         const merged = { ...oldData };
         const dataArray = merged.data || merged;
-        
+
         if (Array.isArray(dataArray) && dataArray.length > 0) {
-          // Update power/LED related fields
           if (aiData.powerW !== undefined) {
             dataArray[0].power_mW = aiData.powerW * 1000;
           }
@@ -82,19 +72,18 @@ export const useSensors = (limit: number = 10, refetchInterval?: number) => {
             dataArray[0].led2 = aiData.led2;
           }
         }
-        
+
         return merged;
       });
     };
 
     sensorListenerRef.current = handleSensorUpdate;
     aiListenerRef.current = handleAiAdvice;
-    
+
     socketService.onSensorUpdate(handleSensorUpdate);
     socketService.onIoTData(handleSensorUpdate);
     socketService.onAiAdvice(handleAiAdvice);
 
-    // Cleanup listeners on unmount
     return () => {
       if (sensorListenerRef.current) {
         socketService.offSensorUpdate(sensorListenerRef.current);
@@ -111,7 +100,6 @@ export const useSensors = (limit: number = 10, refetchInterval?: number) => {
   return query;
 };
 
-// Get current sensor data with real-time socket updates
 export const useCurrentSensors = (refetchInterval?: number) => {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
@@ -125,7 +113,6 @@ export const useCurrentSensors = (refetchInterval?: number) => {
     refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SENSORS,
   });
 
-  // Add real-time socket listeners for current sensor updates
   useEffect(() => {
     if (!isAuthenticated) {
       return;
@@ -137,31 +124,26 @@ export const useCurrentSensors = (refetchInterval?: number) => {
           return { data: sensorData };
         }
 
-        // Merge socket data with existing cache
         const merged = { ...oldData };
         const dataObj = merged.data || merged;
-        
-        // Update fields from socket
+
         Object.keys(sensorData).forEach((key) => {
           dataObj[key] = sensorData[key];
         });
-        
+
         return merged;
       });
     };
 
-    // Handle AI advice which includes power and LED data
     const handleAiAdvice = (aiData: any) => {
       queryClient.setQueryData(sensorKeys.current(), (oldData: any) => {
         if (!oldData) {
           return oldData;
         }
 
-        // Merge AI data with existing cache
         const merged = { ...oldData };
         const dataObj = merged.data || merged;
-        
-        // Update power/LED related fields from AI advice
+
         if (aiData.powerW !== undefined) {
           dataObj.power_mW = aiData.powerW * 1000;
         }
@@ -171,19 +153,18 @@ export const useCurrentSensors = (refetchInterval?: number) => {
         if (aiData.led2 !== undefined) {
           dataObj.led2 = aiData.led2;
         }
-        
+
         return merged;
       });
     };
 
     sensorListenerRef.current = handleSensorUpdate;
     aiListenerRef.current = handleAiAdvice;
-    
+
     socketService.onSensorUpdate(handleSensorUpdate);
     socketService.onIoTData(handleSensorUpdate);
     socketService.onAiAdvice(handleAiAdvice);
 
-    // Cleanup listeners on unmount
     return () => {
       if (sensorListenerRef.current) {
         socketService.offSensorUpdate(sensorListenerRef.current);
@@ -200,7 +181,6 @@ export const useCurrentSensors = (refetchInterval?: number) => {
   return query;
 };
 
-// Get sensor history
 export const useSensorHistory = (hours: number = 24, page: number = 1, pageSize: number = 20) => {
   return useQuery({
     queryKey: sensorKeys.history(hours, page, pageSize),
@@ -210,7 +190,6 @@ export const useSensorHistory = (hours: number = 24, page: number = 1, pageSize:
   });
 };
 
-// Get sensor stats
 export const useSensorStats = () => {
   return useQuery({
     queryKey: sensorKeys.stats(),
@@ -220,7 +199,6 @@ export const useSensorStats = () => {
   });
 };
 
-// Get sensor chart data
 export const useSensorChart = (type: string) => {
   return useQuery({
     queryKey: sensorKeys.chart(type),
@@ -230,7 +208,6 @@ export const useSensorChart = (type: string) => {
   });
 };
 
-// Get IoT sensors
 export const useIoTSensors = (refetchInterval?: number) => {
   return useQuery({
     queryKey: sensorKeys.iot(),
@@ -240,5 +217,4 @@ export const useIoTSensors = (refetchInterval?: number) => {
   });
 };
 
-// Alias for current sensor data
 export const useSensorData = useCurrentSensors;

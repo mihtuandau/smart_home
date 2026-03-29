@@ -9,7 +9,6 @@ export { energyApi } from './energy';
 export { aiApi } from './ai';
 export { settingsApi } from './settings';
 
-// Re-export all APIs as default for convenience
 import { authApi } from './auth';
 import { dashboardApi } from './dashboard';
 import { sensorsApi } from './sensors';

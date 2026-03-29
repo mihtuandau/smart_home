@@ -27,7 +27,6 @@ export default function LoginPage() {
     setError('');
     setFieldErrors({});
 
-    // Validate bằng Zod schema
     const result = loginSchema.safeParse(credentials);
     if (!result.success) {
       const errors: { email?: string; password?: string } = {};
@@ -53,21 +52,19 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
-      {/* Background image */}
-      <div 
+
+      <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
           backgroundImage: 'url(/images/images_login.jpg)',
         }}
       />
-      
-      {/* Subtle overlay */}
+
       <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/4" />
 
-      {/* Content */}
       <div className="relative w-full max-w-md z-10">
         <div className="bg-white/18 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden border border-white/35">
-          {/* Header */}
+
           <div className="bg-gradient-to-r from-cyan-500/36 via-blue-500/36 to-blue-600/36 backdrop-blur-md px-8 pb-6 border-b border-white/18">
             <div className="flex justify-center">
               <div className="">
@@ -85,9 +82,8 @@ export default function LoginPage() {
             <p className="text-white/80 text-center text-sm mt-1">Hệ thống quản lý nhà thông minh</p>
           </div>
 
-          {/* Form */}
           <div className="p-8 backdrop-blur-md">
-            {/* Error */}
+
             {error && (
               <div className="mb-6 p-4 bg-red-500/14 border border-red-300/35 rounded-xl flex items-start gap-3 backdrop-blur-sm">
                 <CircleAlert className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
@@ -96,7 +92,7 @@ export default function LoginPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Email */}
+
               <div>
                 <label htmlFor="email" className="block text-sm font-semibold text-gray-950 mb-2">
                   Email
@@ -123,7 +119,6 @@ export default function LoginPage() {
                 )}
               </div>
 
-              {/* Password */}
               <div>
                 <label htmlFor="password" className="block text-sm font-semibold text-gray-950 mb-2">
                   Mật khẩu
@@ -162,7 +157,6 @@ export default function LoginPage() {
                 )}
               </div>
 
-              {/* Remember & Forgot */}
               <div className="flex items-center justify-between pt-1">
                 <label className="flex items-center cursor-pointer">
                   <input
@@ -178,7 +172,6 @@ export default function LoginPage() {
                 </a>
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={isLoading}
@@ -194,7 +187,6 @@ export default function LoginPage() {
                 )}
               </button>
 
-              {/* Sign up */}
               <p className="text-center text-sm text-gray-900 pt-3">
                 Chưa có tài khoản?{' '}
                 <Link href="/register" className="font-semibold text-cyan-600 hover:text-cyan-700 transition">

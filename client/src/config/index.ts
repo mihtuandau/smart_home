@@ -1,17 +1,11 @@
-/**
- * Application Configuration
- * Centralized configuration for environment variables and constants
- */
 
-// API Configuration
 export const API_CONFIG = {
   BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'https://dautuan.com',
   WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'wss://dautuan.com/socket.io',
   MQTT_URL: process.env.NEXT_PUBLIC_MQTT_URL || 'ws://localhost:1883',
-  TIMEOUT: 30000, // 30 seconds
+  TIMEOUT: 30000,
 } as const;
 
-// Auth Configuration
 export const AUTH_CONFIG = {
   TOKEN_KEY: 'auth_token',
   USER_KEY: 'user',
@@ -19,32 +13,29 @@ export const AUTH_CONFIG = {
   TOKEN_EXPIRES_IN: '7d',
 } as const;
 
-// WebSocket Configuration
 export const WS_CONFIG = {
-  RECONNECT_INTERVAL: 5000, // 5 seconds
+  RECONNECT_INTERVAL: 5000,
   MAX_RECONNECT_ATTEMPTS: 10,
-  PING_INTERVAL: 30000, // 30 seconds
+  PING_INTERVAL: 30000,
 } as const;
 
-// Query Configuration
 export const QUERY_CONFIG = {
   STALE_TIME: {
-    DEFAULT: 1000 * 60 * 5, // 5 minutes
-    SENSORS: 1000 * 30, // 30 seconds
-    DEVICES: 1000 * 30, // 30 seconds
-    DASHBOARD: 1000 * 60 * 2, // 2 minutes
-    ENERGY: 1000 * 60 * 5, // 5 minutes
+    DEFAULT: 1000 * 60 * 5,
+    SENSORS: 1000 * 30,
+    DEVICES: 1000 * 30,
+    DASHBOARD: 1000 * 60 * 2,
+    ENERGY: 1000 * 60 * 5,
   },
   REFETCH_INTERVAL: {
-    SENSORS: 5000, // 5 seconds
-    DEVICES: 3000, // 3 seconds
-    SYSTEM_HEALTH: 30000, // 30 seconds
+    SENSORS: 5000,
+    DEVICES: 3000,
+    SYSTEM_HEALTH: 30000,
   },
-  CACHE_TIME: 1000 * 60 * 30, // 30 minutes
+  CACHE_TIME: 1000 * 60 * 30,
   RETRY: 1,
 } as const;
 
-// App Configuration
 export const APP_CONFIG = {
   NAME: 'Smart Home Management System',
   DESCRIPTION: 'Hệ thống quản lý nhà thông minh với IoT',
@@ -52,7 +43,6 @@ export const APP_CONFIG = {
   DEFAULT_LOCALE: 'vi',
 } as const;
 
-// Device Configuration
 export const DEVICE_CONFIG = {
   LED: {
     COUNT: 2,
@@ -73,7 +63,6 @@ export const DEVICE_CONFIG = {
   },
 } as const;
 
-// Sensor Thresholds
 export const SENSOR_THRESHOLDS = {
   TEMPERATURE: {
     MIN: 20,
@@ -91,7 +80,7 @@ export const SENSOR_THRESHOLDS = {
     UNIT: 'hPa',
   },
   LIGHT: {
-    DARK_THRESHOLD: 500, // lux
+    DARK_THRESHOLD: 500,
     UNIT: 'lx',
   },
   VOLTAGE: {
@@ -106,7 +95,6 @@ export const SENSOR_THRESHOLDS = {
   },
 } as const;
 
-// Chart Configuration
 export const CHART_CONFIG = {
   COLORS: {
     TEMPERATURE: '#ef4444',
@@ -122,7 +110,6 @@ export const CHART_CONFIG = {
   AXIS_COLOR: '#e5e7eb',
 } as const;
 
-// Routes Configuration
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
@@ -136,36 +123,30 @@ export const ROUTES = {
   SETTINGS: '/setting',
 } as const;
 
-// API Endpoints
 export const API_ENDPOINTS = {
-  // Auth
   LOGIN: '/auth/login',
   REGISTER: '/auth/register',
   LOGOUT: '/auth/logout',
   PROFILE: '/auth/profile',
   REFRESH_TOKEN: '/auth/refresh',
 
-  // Dashboard
   DASHBOARD_OVERVIEW: '/dashboard/overview',
   DASHBOARD_ENERGY: '/dashboard/energy',
   DASHBOARD_HEALTH: '/dashboard/health',
   DASHBOARD_ACTIVITIES: '/dashboard/activities',
 
-  // Sensors
   SENSORS_LATEST: '/sensors/latest',
   SENSORS_CURRENT: '/sensors/current',
   SENSORS_HISTORY: '/sensors/history',
   SENSORS_STATS: '/sensors/stats',
   SENSORS_CHART: '/sensors/chart',
 
-  // Devices
   DEVICES: '/devices',
   DEVICES_STATS: '/devices/stats',
   DEVICE_BY_ID: (id: string) => `/devices/${id}`,
   DEVICE_TOGGLE: (id: string) => `/devices/${id}/toggle`,
   DEVICE_HISTORY: (id: string) => `/devices/${id}/history`,
 
-  // IoT Control
   IOT_CONTROL_LED: '/iot/control/led',
   IOT_CONTROL_SERVO: '/iot/control/servo',
   IOT_STATUS: '/iot/status',
@@ -175,14 +156,12 @@ export const API_ENDPOINTS = {
   IOT_DEVICES: '/iot/devices',
   IOT_LOGS: '/iot/logs',
 
-  // Automation
   AUTOMATION: '/automation',
   AUTOMATION_ACTIVE: '/automation/active',
   AUTOMATION_BY_ID: (id: string) => `/automation/${id}`,
   AUTOMATION_TOGGLE: (id: string) => `/automation/${id}/toggle`,
 } as const;
 
-// Toast/Notification Configuration
 export const TOAST_CONFIG = {
   DURATION: {
     SHORT: 2000,
@@ -192,13 +171,11 @@ export const TOAST_CONFIG = {
   POSITION: 'top-right',
 } as const;
 
-// Pagination Configuration
 export const PAGINATION_CONFIG = {
   DEFAULT_PAGE_SIZE: 10,
   PAGE_SIZE_OPTIONS: [5, 10, 20, 50, 100],
 } as const;
 
-// Date/Time Format
 export const DATE_FORMAT = {
   FULL: 'DD/MM/YYYY HH:mm:ss',
   DATE: 'DD/MM/YYYY',

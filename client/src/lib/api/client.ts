@@ -6,7 +6,6 @@ export class ApiClient {
 
   constructor() {
     this.baseURL = API_CONFIG.BASE_URL;
-    // Load token from localStorage if available
     if (typeof window !== 'undefined') {
       this.token = localStorage.getItem(AUTH_CONFIG.TOKEN_KEY);
     }

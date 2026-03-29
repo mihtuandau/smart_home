@@ -65,7 +65,7 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
             >
               <Menu className="h-6 w-6" />
             </button>
-            
+
             <div>
               <h2 className="text-base sm:text-lg font-bold text-foreground">{getPageTitle()}</h2>
               {getPageSubtitle() && (
@@ -77,7 +77,7 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Time */}
+
             <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
               <Clock3 className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm text-foreground font-medium">
@@ -85,7 +85,6 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
               </span>
             </div>
 
-            {/* Theme Toggle */}
             {mounted && (
               <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -101,10 +100,8 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
               </button>
             )}
 
-            {/* Language Switcher */}
             <LanguageSwitcher />
 
-            {/* Notifications */}
             <button className="relative p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all group">
               <Bell className="h-6 w-6" />
               <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>

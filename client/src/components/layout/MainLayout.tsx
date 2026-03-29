@@ -14,11 +14,10 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const { user, isLoading, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
 
-  // Pages that require authentication
   const protectedPages = ['/automation', '/settings'];
   const isProtectedPage = protectedPages.some(page => pathname?.startsWith(page));
 
@@ -61,9 +60,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="flex h-[100dvh] bg-background flex-col">
       <div className="flex flex-1 h-[100dvh] overflow-hidden">
-        <DashboardSidebar 
-          isOpen={isSidebarOpen} 
-          user={user} 
+        <DashboardSidebar
+          isOpen={isSidebarOpen}
+          user={user}
           onLogout={handleLogout}
           onClose={handleCloseSidebar}
         />

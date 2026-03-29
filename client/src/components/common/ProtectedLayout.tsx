@@ -9,7 +9,7 @@ export default function DashboardLayoutWrapper({ children }: { children: React.R
   const router = useRouter();
 
   useEffect(() => {
-    
+
   }, [ isLoading, router]);
 
   if (isLoading) {

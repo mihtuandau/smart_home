@@ -1,7 +1,3 @@
-/**
- * Utility functions for rain probability prediction
- * Used by both Dashboard and Sensors page
- */
 
 export interface RainAnalysis {
   probability: number;
@@ -24,18 +20,18 @@ function getLocalizedConclusion(
   if (isRaining) {
     if (language === 'en') {
       return {
-        title: '🌧️ It is raining now',
+        title: '️ It is raining now',
         description: 'The sensor has detected rain at the moment.',
       };
     }
     if (language === 'zh') {
       return {
-        title: '🌧️ 当前正在下雨',
+        title: '️ 当前正在下雨',
         description: '传感器已检测到当前正在降雨。',
       };
     }
     return {
-      title: '🌧️ Đang có mưa',
+      title: '️ Đang có mưa',
       description: 'Cảm biến đã phát hiện mưa hiện tại.',
     };
   }
@@ -43,18 +39,18 @@ function getLocalizedConclusion(
   if (probability >= 80) {
     if (language === 'en') {
       return {
-        title: '⚠️ High probability',
+        title: '️ High probability',
         description: 'Rain is likely in 1-2 hours. Prepare cover or find shelter.',
       };
     }
     if (language === 'zh') {
       return {
-        title: '⚠️ 高概率',
+        title: '️ 高概率',
         description: '预计 1-2 小时内可能下雨。请提前准备遮挡或避雨。',
       };
     }
     return {
-      title: '⚠️ Xác suất cao',
+      title: '️ Xác suất cao',
       description: 'Mưa sắp tới trong 1-2 giờ. Chuẩn bị che chắn hoặc tìm nơi tránh.',
     };
   }
@@ -62,18 +58,18 @@ function getLocalizedConclusion(
   if (probability >= 60) {
     if (language === 'en') {
       return {
-        title: '⚡ Medium probability',
+        title: ' Medium probability',
         description: 'Rain may occur in 2-4 hours. Watch for weather changes.',
       };
     }
     if (language === 'zh') {
       return {
-        title: '⚡ 中等概率',
+        title: ' 中等概率',
         description: '未来 2-4 小时可能下雨。请留意天气变化迹象。',
       };
     }
     return {
-      title: '⚡ Xác suất trung',
+      title: ' Xác suất trung',
       description: 'Có khả năng mưa trong 2-4 giờ. Để ý dấu hiệu thay đổi thời tiết.',
     };
   }
@@ -81,46 +77,40 @@ function getLocalizedConclusion(
   if (probability >= 40) {
     if (language === 'en') {
       return {
-        title: '☁️ Low-medium probability',
+        title: '️ Low-medium probability',
         description: 'There may be rain in the late afternoon or evening. Keep monitoring updates.',
       };
     }
     if (language === 'zh') {
       return {
-        title: '☁️ 低至中等概率',
+        title: '️ 低至中等概率',
         description: '下午或傍晚可能有雨，请持续关注天气更新。',
       };
     }
     return {
-      title: '☁️ Xác suất thấp-trung',
+      title: '️ Xác suất thấp-trung',
       description: 'Có thể có mưa vào chiều tối. Theo dõi cập nhật thời tiết.',
     };
   }
 
   if (language === 'en') {
     return {
-      title: '☀️ Low probability',
+      title: '️ Low probability',
       description: 'Weather is stable, rain is unlikely today.',
     };
   }
   if (language === 'zh') {
     return {
-      title: '☀️ 低概率',
+      title: '️ 低概率',
       description: '天气稳定，今天降雨可能性较低。',
     };
   }
   return {
-    title: '☀️ Xác suất thấp',
+    title: '️ Xác suất thấp',
     description: 'Thời tiết ổn định, ít khả năng mưa hôm nay.',
   };
 }
 
-/**
- * Calculate rain probability using weighted formula
- * - Pressure: 50% weight
- * - Humidity: 35% weight
- * - Temperature: 15% weight
- */
 export function calculateRainProbability(
   temperature: number,
   humidity: number,
@@ -128,7 +118,6 @@ export function calculateRainProbability(
   isRaining: boolean,
   language: RainLanguage = 'vi'
 ): RainAnalysis {
-  // Chuyển từ Pa sang hPa
   const pressure = pressurePa / 100;
 
   if (isRaining) {
@@ -141,7 +130,6 @@ export function calculateRainProbability(
     };
   }
 
-  // 1️⃣ Yếu tố áp suất (50% trọng số)
   let pressureFactor = 0;
 
   if (pressure < 1000) {
@@ -158,7 +146,6 @@ export function calculateRainProbability(
     pressureFactor = 5;
   }
 
-  // 2️⃣ Yếu tố độ ẩm (35% trọng số)
   let humidityFactor = 0;
 
   if (humidity < 30) {
@@ -173,7 +160,6 @@ export function calculateRainProbability(
     humidityFactor = 90;
   }
 
-  // 3️⃣ Yếu tố nhiệt độ (15% trọng số)
   let temperatureFactor = 25;
 
   if (temperature < 10) {
@@ -186,7 +172,6 @@ export function calculateRainProbability(
     temperatureFactor = 35;
   }
 
-  // ⚖️ Tính trung bình có trọng số (0-100%)
   const probability = Math.min(
     100,
     Math.max(
@@ -207,9 +192,6 @@ export function calculateRainProbability(
   };
 }
 
-/**
- * Determine color scheme based on probability
- */
 export function getColorScheme(probability: number) {
   if (probability >= 80) {
     return { bg: 'bg-red-50 dark:bg-red-950/30', border: '#dc2626', text: 'text-red-700 dark:text-red-400', badge: 'bg-red-600 text-white' };

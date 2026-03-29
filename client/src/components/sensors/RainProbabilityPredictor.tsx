@@ -10,7 +10,7 @@ interface FactorAnalysis {
   value: number;
   percentage: number;
   color: string;
-  bgColor: string;  // Hex color cho progress bar
+  bgColor: string;
   interpretation: string;
 }
 
@@ -24,7 +24,6 @@ export default function RainProbabilityPredictor() {
     return Number.isFinite(parsed) ? parsed : fallback;
   };
 
-  // Helper function để tạo factor analysis array
   const getFactorAnalysis = (): FactorAnalysis[] => {
     if (!data) return [];
 
@@ -39,7 +38,6 @@ export default function RainProbabilityPredictor() {
       language
     );
 
-    // Pressure
     let pressureColor = 'text-red-600';
     let pressureBgColor = '#dc2626';
     let pressureInterpretation = t('sensors.pressureVeryLow');
@@ -61,7 +59,6 @@ export default function RainProbabilityPredictor() {
       pressureInterpretation = t('sensors.pressureHigh');
     }
 
-    // Humidity
     let humidityColor = 'text-red-600';
     let humidityBgColor = '#dc2626';
     let humidityInterpretation = t('sensors.humidityVeryDry');
@@ -87,7 +84,6 @@ export default function RainProbabilityPredictor() {
       humidityInterpretation = t('sensors.humidityVeryHumid');
     }
 
-    // Temperature
     let tempColor = 'text-green-600';
     let tempBgColor = '#16a34a';
     let tempInterpretation = t('sensors.temperatureNormal');

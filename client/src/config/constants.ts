@@ -47,8 +47,8 @@ export const TIME_RANGES = {
   HOURS_6: 6,
   HOURS_12: 12,
   HOURS_24: 24,
-  DAYS_7: 168, 
-  DAYS_30: 720, 
+  DAYS_7: 168,
+  DAYS_30: 720,
 } as const;
 
 export const HARDWARE = {
@@ -96,7 +96,6 @@ export const SUCCESS_MESSAGES = {
   SAVE_SUCCESS: 'Lưu thành công',
 } as const;
 
-// LocalStorage Keys
 export const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
   USER: 'user',
@@ -106,7 +105,6 @@ export const STORAGE_KEYS = {
   SELECTED_DEVICES: 'selected_devices',
 } as const;
 
-// Validation Rules
 export const VALIDATION_RULES = {
   PASSWORD_MIN_LENGTH: 6,
   PASSWORD_MAX_LENGTH: 32,
@@ -115,7 +113,6 @@ export const VALIDATION_RULES = {
   EMAIL_REGEX: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 } as const;
 
-// Export Types
 export type StatusType = typeof STATUS[keyof typeof STATUS];
 export type DeviceType = typeof DEVICE_TYPES[keyof typeof DEVICE_TYPES];
 export type SensorType = typeof SENSOR_TYPES[keyof typeof SENSOR_TYPES];

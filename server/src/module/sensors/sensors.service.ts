@@ -12,7 +12,11 @@ export class SensorsService {
     });
   }
 
-  async getHistory(hours: number = 24, page: number = 1, pageSize: number = 20) {
+  async getHistory(
+    hours: number = 24,
+    page: number = 1,
+    pageSize: number = 20,
+  ) {
     const since = new Date(Date.now() - hours * 60 * 60 * 1000);
     const where = { timestamp: { gte: since } };
 
@@ -89,7 +93,10 @@ export class SensorsService {
     };
   }
 
-  async getChartData(type: 'temperature' | 'humidity' | 'pressure' | 'light', hours: number = 24) {
+  async getChartData(
+    type: 'temperature' | 'humidity' | 'pressure' | 'light',
+    hours: number = 24,
+  ) {
     const since = new Date(Date.now() - hours * 60 * 60 * 1000);
 
     const data = await this.prisma.sensorData.findMany({
@@ -136,11 +143,13 @@ export class SensorsService {
   }
 
   private average(values: number[]): number {
-    return Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 100) / 100;
+    return (
+      Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 100) /
+      100
+    );
   }
 
   private calculateComfortIndex(temp: number, humidity: number): string {
-    // Simple comfort index calculation
     const heatIndex = temp + 0.5555 * (0.06 * humidity * (temp - 14.5));
 
     if (heatIndex < 21) return 'cool';

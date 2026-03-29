@@ -13,6 +13,7 @@ import {
 import { useEnergyStats } from "@/hooks/useEnergy";
 import { useChartColors } from "@/lib/chartDarkModeUtils";
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useMemo } from 'react';
 
 const dateLocaleMap = {
   vi: 'vi-VN',
@@ -20,52 +21,49 @@ const dateLocaleMap = {
   zh: 'zh-CN',
 } as const;
 
-export default function CurrentVoltageChart() {
+interface CurrentVoltageChartProps {
+  timeRange?: number;
+}
+
+export default function CurrentVoltageChart({ timeRange = 24 }: CurrentVoltageChartProps) {
   const { t, language } = useLanguage();
-  const { data, isLoading } = useEnergyStats(24);
+  const { data, isLoading } = useEnergyStats(timeRange);
   const colors = useChartColors();
 
-  const energyData = (data as any)?.data || [];
+  const chartData = useMemo(() => {
+    const energyData = (data as any)?.data || [];
+    if (!energyData.length) return [];
 
-  const createHourlySlots = () => {
-    const slots: Array<{ timestamp: string; hour: number; data: any[] }> = [];
+    const slotsMap = new Map<string, { timestamp: string; data: any[] }>();
     const now = new Date();
-
-    for (let i = 23; i >= 0; i--) {
+    
+    for (let i = timeRange - 1; i >= 0; i--) {
       const slotTime = new Date(now.getTime() - i * 60 * 60 * 1000);
       slotTime.setMinutes(0, 0, 0);
-      slots.push({
-        timestamp: slotTime.toISOString(),
-        hour: slotTime.getHours(),
-        data: [] as any[],
-      });
+      const key = slotTime.getTime().toString();
+      slotsMap.set(key, { timestamp: slotTime.toISOString(), data: [] });
     }
-    return slots;
-  };
 
-  const hourlySlots = createHourlySlots();
+    energyData.forEach((item: any) => {
+      const itemDate = new Date(item.timestamp);
+      if (isNaN(itemDate.getTime())) return;
+      itemDate.setMinutes(0, 0, 0);
+      const key = itemDate.getTime().toString();
+      const slot = slotsMap.get(key);
+      if (slot) slot.data.push(item);
+    });
 
-  energyData.forEach((item: any) => {
-    const itemDate = new Date(item.timestamp);
-    const itemHour = itemDate.getHours();
-
-    const slot = hourlySlots.find((s) => s.hour === itemHour);
-    if (slot) {
-      slot.data.push(item);
-    }
-  });
-
-  const chartData = hourlySlots.map((slot) => {
-    if (slot.data.length === 0) {
-      return {
-        time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        current: 0,
-        voltage: 0,
-      };
-    }
+    return Array.from(slotsMap.values()).map((slot) => {
+      if (slot.data.length === 0) {
+        const formatOpts: Intl.DateTimeFormatOptions = timeRange > 24 
+          ? { day: '2-digit', month: '2-digit', hour: '2-digit' } 
+          : { hour: '2-digit', minute: '2-digit' };
+        return {
+          time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], formatOpts),
+          current: 0,
+          voltage: 0,
+        };
+      }
 
     const avgCurrent =
       slot.data.reduce(
@@ -78,15 +76,17 @@ export default function CurrentVoltageChart() {
         0,
       ) / slot.data.length;
 
+    const formatOpts: Intl.DateTimeFormatOptions = timeRange > 24 
+      ? { day: '2-digit', month: '2-digit', hour: '2-digit' } 
+      : { hour: '2-digit', minute: '2-digit' };
+
     return {
-      time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      current: avgCurrent,
-      voltage: avgVoltage,
+      time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], formatOpts),
+      current: parseFloat(avgCurrent.toFixed(2)),
+      voltage: parseFloat(avgVoltage.toFixed(2)),
     };
   });
+  }, [data, timeRange, language]);
 
   if (isLoading) {
     return (

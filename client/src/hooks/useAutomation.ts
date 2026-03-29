@@ -7,7 +7,6 @@ export function useAutomation() {
   const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
 
-  // Lấy tất cả automation rules
   const {
     data: rules = [],
     isLoading,
@@ -19,7 +18,6 @@ export function useAutomation() {
     enabled: isAuthenticated,
   });
 
-  // Lấy automation rules đang hoạt động
   const {
     data: activeRules = [],
     isLoading: isLoadingActive,
@@ -29,7 +27,6 @@ export function useAutomation() {
     enabled: isAuthenticated,
   });
 
-  // Tạo automation rule mới
   const createRuleMutation = useMutation({
     mutationFn: (data: CreateAutomationData) => automationService.createRule(data),
     onSuccess: async () => {
@@ -41,7 +38,6 @@ export function useAutomation() {
     },
   });
 
-  // Cập nhật automation rule
   const updateRuleMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateAutomationData }) =>
       automationService.updateRule(id, data),
@@ -54,7 +50,6 @@ export function useAutomation() {
     },
   });
 
-  // Xóa automation rule
   const deleteRuleMutation = useMutation({
     mutationFn: (id: string) => automationService.deleteRule(id),
     onSuccess: async () => {
@@ -66,7 +61,6 @@ export function useAutomation() {
     },
   });
 
-  // Bật/tắt automation rule
   const toggleRuleMutation = useMutation({
     mutationFn: (id: string) => automationService.toggleRule(id),
     onSuccess: async (data) => {
@@ -80,7 +74,6 @@ export function useAutomation() {
     },
   });
 
-  // Helper functions
   const createRule = async (data: CreateAutomationData) => {
     return createRuleMutation.mutateAsync(data);
   };
@@ -100,21 +93,18 @@ export function useAutomation() {
   };
 
   return {
-    // Data
     rules,
     activeRules,
     isLoading,
     isLoadingActive,
     error,
 
-    // Actions
     createRule,
     updateRule,
     deleteRule,
     toggleRule,
     refetch,
 
-    // Mutation states
     isCreating: createRuleMutation.isPending,
     isUpdating: updateRuleMutation.isPending,
     isDeleting: deleteRuleMutation.isPending,
@@ -122,9 +112,6 @@ export function useAutomation() {
   };
 }
 
-/**
- * Hook để lấy chi tiết một automation rule
- */
 export function useAutomationRule(id: string | null) {
   return useQuery<AutomationRule>({
     queryKey: ['automation', 'rule', id],

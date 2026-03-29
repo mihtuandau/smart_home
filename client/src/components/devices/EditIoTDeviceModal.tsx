@@ -34,16 +34,15 @@ export function EditIoTDeviceModal({
 
   return (
     <>
-      {/* Backdrop */}
+
       <div
         className="fixed inset-0 bg-black/40 z-40 transition-opacity"
         onClick={onClose}
       />
 
-      {/* Modal Dialog */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div className="bg-card rounded-xl shadow-2xl max-w-md w-full transform transition-all">
-          {/* Header */}
+
           <div className="flex items-center justify-between p-6 border-b border-border">
             <div>
               <h3 className="text-lg font-semibold text-foreground">{t('devices.editDevice')}</h3>
@@ -57,7 +56,6 @@ export function EditIoTDeviceModal({
             </button>
           </div>
 
-          {/* Content */}
           <div className="p-6 space-y-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
@@ -98,7 +96,6 @@ export function EditIoTDeviceModal({
             )}
           </div>
 
-          {/* Footer */}
           <div className="flex gap-3 p-6 border-t border-border bg-muted/50 rounded-b-xl">
             <button
               onClick={onClose}

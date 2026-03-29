@@ -5,7 +5,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { calculateRainProbability, getColorScheme } from '@/lib/rainProbabilityUtils';
 import { CloudRain, Gauge, Sparkles } from 'lucide-react';
 
-
 interface SensorCardProps {
   title: string;
   value: string;
@@ -18,7 +17,7 @@ interface SensorCardProps {
 
 function SensorCard({ title, value, badge, badgeColor, borderColor, bgColor, icon }: SensorCardProps) {
   return (
-    <div 
+    <div
       className={`rounded-lg p-4 sm:p-5 border transition-shadow hover:shadow-sm ${bgColor}`}
       style={{ borderColor: borderColor }}
     >
@@ -49,7 +48,7 @@ interface PressureCardProps {
 
 function PressureCard({ title, subtitle, value, statusLabel, status, borderColor, bgColor, icon }: PressureCardProps) {
   return (
-    <div 
+    <div
       className={`rounded-lg p-4 sm:p-5 border ${bgColor} dark:bg-card`}
       style={{ borderColor: borderColor }}
     >
@@ -74,7 +73,7 @@ function PressureCard({ title, subtitle, value, statusLabel, status, borderColor
 }
 
 export default function EnvironmentStatus() {
-  const { data: response, isLoading } = useSensors(1, 2000); // Reduced from 3000ms 
+  const { data: response, isLoading } = useSensors(1, 2000);
   const data = (response as any)?.data?.[0] || null;
   const { t, language } = useLanguage();
 
@@ -86,7 +85,6 @@ export default function EnvironmentStatus() {
     );
   }
 
-  // Tính xác suất mưa dùng weighted formula (3 yếu tố)
   const analysis = calculateRainProbability(data.temperature, data.humidity, data.pressure, data.isRaining, language);
   const rainProbability = analysis.probability;
   const colorScheme = getColorScheme(rainProbability);
@@ -97,10 +95,10 @@ export default function EnvironmentStatus() {
         <h2 className="text-base sm:text-lg font-semibold text-foreground">{t('dashboard.environmentStatus')}</h2>
         <p className="text-xs sm:text-sm text-muted-foreground mt-1">{t('dashboard.environmentInfo')}</p>
       </div>
-      
+
       <div className="space-y-4">
         <div className="grid grid-cols-1 gap-4">
-          <SensorCard 
+          <SensorCard
             title={t('dashboard.rainProbability')}
             value={`${rainProbability}%`}
             badge={data.isRaining ? t('dashboard.rainingNow') : rainProbability >= 80 ? t('sensors.highChance') : rainProbability >= 60 ? t('sensors.mediumChance') : rainProbability >= 40 ? t('dashboard.lowMedium') : t('sensors.lowChance')}
@@ -110,8 +108,8 @@ export default function EnvironmentStatus() {
             icon={<Sparkles className="w-5 h-5" />}
           />
         </div>
-        
-        <PressureCard 
+
+        <PressureCard
           title={t('dashboard.pressureAtmospheric')}
           subtitle={t('dashboard.pressureCurrent')}
           value={`${data.pressure.toFixed(1)} hPa`}

@@ -6,7 +6,6 @@ class SocketService {
   private reconnectAttempts = 0;
 
   connect(token?: string): Socket {
-    // Re-use existing socket (even while reconnecting) to preserve all listeners
     if (this.socket) {
       return this.socket;
     }
@@ -34,43 +33,29 @@ class SocketService {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
-      console.log(' Socket connected:', this.socket?.id);
       this.reconnectAttempts = 0;
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.log('Socket ngắt kết nối', reason);
       if (reason === 'io server disconnect') {
         this.socket?.connect();
       }
     });
 
-    this.socket.on('connect_error', (error) => {
-      console.error('Socket kết nối thất bại:', error.message);
+    this.socket.on('connect_error', () => {
       this.reconnectAttempts++;
-      
+
       if (this.reconnectAttempts >= WS_CONFIG.MAX_RECONNECT_ATTEMPTS) {
-        console.error('Đã đạt số lần kết nối lại tối đa.');
         this.disconnect();
       }
     });
 
-    this.socket.on('reconnect', (attemptNumber) => {
-      console.log(`socket kêt nối lại sau ${attemptNumber} lần thử`);
+    this.socket.on('reconnect', () => {
       this.reconnectAttempts = 0;
     });
 
-    this.socket.on('reconnect_error', (error) => {
-      console.error('socket kết nối lại thất bại sau nhiều lần thử', error.message);
-    });
-
     this.socket.on('reconnect_failed', () => {
-      console.error('socket kết nối lại thất bại sau nhiều lần thử:');
       this.disconnect();
-    });
-
-    this.socket.on('error', (error) => {
-      console.error('Socket error:', error);
     });
   }
 
@@ -96,7 +81,6 @@ class SocketService {
   }
 
   onAiAdvice(callback: (data: any) => void): void {
-    // Ensure socket exists before attaching listener
     const socket = this.socket ?? this.connect();
     socket.on('ai:advice', callback);
   }
@@ -164,7 +148,6 @@ class SocketService {
 
   disconnect(): void {
     if (this.socket) {
-      console.log('Disconnecting socket...');
       this.offAll();
       this.socket.disconnect();
       this.socket = null;

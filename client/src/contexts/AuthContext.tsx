@@ -30,22 +30,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is already logged in
     const initAuth = async () => {
       try {
         const storedUser = authService.getStoredUser();
         const token = authService.getStoredToken();
 
         if (storedUser && token) {
-          // Set token on API client before making requests
           authService.setTokenOnClient(token);
-          
-          // Verify token by fetching profile
+
           const profile = await authService.getProfile();
           setUser(profile);
         }
-      } catch (error) {
-        console.error('Failed to restore auth session:', error);
+      } catch {
         authService.logout();
       } finally {
         setIsLoading(false);
@@ -61,7 +57,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       authService.saveAuthData(response);
       setUser(response.user);
     } catch (error) {
-      console.error('Login failed:', error);
       throw error;
     }
   };

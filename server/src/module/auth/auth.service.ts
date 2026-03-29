@@ -30,7 +30,6 @@ export class AuthService {
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
     const { email, username, password } = registerDto;
 
-    // Check if user already exists
     const existingUser = await this.prismaService.user.findFirst({
       where: {
         OR: [{ email }, { username }],
@@ -46,10 +45,8 @@ export class AuthService {
       }
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const user = await this.prismaService.user.create({
       data: {
         email,
@@ -66,7 +63,6 @@ export class AuthService {
       },
     });
 
-    // Generate JWT token
     const accessToken = this.generateToken(user);
 
     return {
@@ -84,7 +80,6 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Update last login
     await this.prismaService.user.update({
       where: { id: user.id },
       data: { lastLogin: new Date() },
@@ -179,10 +174,13 @@ export class AuthService {
     if (!user) throw new BadRequestException('User not found');
 
     const isValid = await bcrypt.compare(dto.currentPassword, user.password);
-    if (!isValid) throw new UnauthorizedException('Current password is incorrect');
+    if (!isValid)
+      throw new UnauthorizedException('Current password is incorrect');
 
     if (dto.newPassword.length < 6) {
-      throw new BadRequestException('New password must be at least 6 characters');
+      throw new BadRequestException(
+        'New password must be at least 6 characters',
+      );
     }
 
     const hashed = await bcrypt.hash(dto.newPassword, 10);

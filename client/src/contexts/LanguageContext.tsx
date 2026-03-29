@@ -22,7 +22,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>('vi');
   const [mounted, setMounted] = useState(false);
 
-  // Initialize language from localStorage on mount
   useEffect(() => {
     const savedLanguage = normalizeLanguage(localStorage.getItem('language'));
     const browserLanguage = navigator.language.split('-')[0];

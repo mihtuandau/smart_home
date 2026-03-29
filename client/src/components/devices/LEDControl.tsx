@@ -11,7 +11,6 @@ interface ToastState {
   type: 'success' | 'error' | 'info';
 }
 
-// How long (ms) to ignore polling updates after a toggle to avoid UI flash
 const TOGGLE_COOLDOWN = 10000;
 
 export default function LEDControl() {
@@ -20,21 +19,17 @@ export default function LEDControl() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const [localLEDs, setLocalLEDs] = useState({ led1: false, led2: false });
 
-  // Tracks the timestamp of the last user toggle action
   const lastToggleRef = useRef<number>(0);
-  // Whether localLEDs has been initialized from server data at least once
   const initializedRef = useRef<boolean>(false);
 
   const { data: response, isLoading } = useLatestDeviceData(5000);
   const data = (response as any)?.data || response;
 
-  // Sync server data → localLEDs only on first load OR after cooldown expires
   useEffect(() => {
     if (!data) return;
 
     const msSinceToggle = Date.now() - lastToggleRef.current;
 
-    // Always sync on initial load; afterwards only sync if cooldown has passed
     if (!initializedRef.current || msSinceToggle >= TOGGLE_COOLDOWN) {
       initializedRef.current = true;
       setLocalLEDs(prev => {
@@ -54,10 +49,8 @@ export default function LEDControl() {
     const currentState = ledNumber === 1 ? localLEDs.led1 : localLEDs.led2;
     const newState = !currentState;
 
-    // Record toggle time BEFORE any state changes so the effect guard works immediately
     lastToggleRef.current = Date.now();
 
-    // Optimistic local update
     setLocalLEDs(prev => ({
       ...prev,
       [ledNumber === 1 ? 'led1' : 'led2']: newState,
@@ -69,9 +62,7 @@ export default function LEDControl() {
         message: `${t(`devices.led${ledNumber}`)} ${newState ? t('devices.on').toLowerCase() : t('devices.off').toLowerCase()}`,
         type: 'success',
       });
-    } catch (error: any) {
-      console.error(`[LED${ledNumber}] Error:`, error);
-      // Rollback and let polling take over immediately
+    } catch {
       lastToggleRef.current = 0;
       setLocalLEDs(prev => ({
         ...prev,
@@ -82,14 +73,14 @@ export default function LEDControl() {
   };
 
   const leds = [
-    { 
-      id: 1, 
+    {
+      id: 1,
       name: t('devices.led1'),
       description: t('devices.led1Description'),
       enabled: localLEDs.led1
     },
-    { 
-      id: 2, 
+    {
+      id: 2,
       name: t('devices.led2'),
       description: t('devices.led2Description'),
       enabled: localLEDs.led2
@@ -118,14 +109,14 @@ export default function LEDControl() {
           onClose={() => setToast(null)}
         />
       )}
-      
+
       <div className="section-card shadow-sm border border-border p-4 sm:p-5 md:p-6">
       <div className="mb-4 sm:mb-6">
         <h3 className="text-sm sm:text-base font-semibold text-foreground">{t('devices.ledControl')} (x2)</h3>
       </div>
-      
+
       <p className="text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6">{t('devices.lightingSystem')}</p>
-      
+
       <div className="space-y-4">
         {leds.map((led) => (
           <div key={led.id} className="flex items-center justify-between p-3 bg-muted rounded-md hover:bg-accent transition-colors">
@@ -145,7 +136,6 @@ export default function LEDControl() {
               </div>
             </div>
 
-            {/* Round power button – Apple Home style */}
             <button
               onClick={() => toggleLed(led.id as 1 | 2)}
               disabled={controlLEDMutation.isPending}
@@ -157,7 +147,7 @@ export default function LEDControl() {
                   : 'bg-muted shadow-inner'}
                 ${controlLEDMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-90 hover:brightness-105'}`}
             >
-              {/* Power icon */}
+
               <Power className={`w-5 h-5 transition-colors duration-200 ${led.enabled ? 'text-yellow-900' : 'text-gray-400'}`} />
             </button>
           </div>
