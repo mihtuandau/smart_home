@@ -1,4 +1,4 @@
-import type { QueryClient } from '@tanstack/react-query';
+import type { QueryClient } from "@tanstack/react-query";
 
 export type LooseRecord = Record<string, unknown>;
 
@@ -23,9 +23,10 @@ export interface MutationContext {
 }
 
 export const isRecord = (value: unknown): value is LooseRecord =>
-  typeof value === 'object' && value !== null;
+  typeof value === "object" && value !== null;
 
-export const toRecord = (value: unknown): LooseRecord => (isRecord(value) ? value : {});
+export const toRecord = (value: unknown): LooseRecord =>
+  isRecord(value) ? value : {};
 
 export const toStatsCache = (value: unknown): StatsCache => {
   const base = toRecord(value);
@@ -60,15 +61,19 @@ export function syncStatsFromLatestCache(
     const customEntries = [latest.device1, latest.device2];
     const customPresent = customEntries.filter((v) => {
       if (v === undefined || v === null) return false;
-      if (typeof v === 'object') {
+      if (typeof v === "object") {
         const obj = toRecord(v);
-        return Boolean(obj.name) || obj.state !== undefined || obj.power !== undefined;
+        return (
+          Boolean(obj.name) ||
+          obj.state !== undefined ||
+          obj.power !== undefined
+        );
       }
       return true;
     }).length;
     const customOn = customEntries.filter((v) => {
       if (v === true) return true;
-      if (v && typeof v === 'object') {
+      if (v && typeof v === "object") {
         return toRecord(v).state === true;
       }
       return false;
@@ -88,7 +93,8 @@ export function syncStatsFromLatestCache(
 
 function toOnOffStats(payload: LooseRecord): StatsData | null {
   const hasLedState = payload.led1 !== undefined || payload.led2 !== undefined;
-  const hasCustomState = payload.device1 !== undefined || payload.device2 !== undefined;
+  const hasCustomState =
+    payload.device1 !== undefined || payload.device2 !== undefined;
   if (!hasLedState && !hasCustomState) return null;
 
   const ledsOn = (payload.led1 ? 1 : 0) + (payload.led2 ? 1 : 0);
@@ -96,16 +102,18 @@ function toOnOffStats(payload: LooseRecord): StatsData | null {
 
   const customPresent = customDevices.filter((value) => {
     if (value === undefined || value === null) return false;
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       const obj = toRecord(value);
-      return Boolean(obj.name) || obj.state !== undefined || obj.power !== undefined;
+      return (
+        Boolean(obj.name) || obj.state !== undefined || obj.power !== undefined
+      );
     }
     return true;
   }).length;
 
   const customOn = customDevices.filter((value) => {
     if (value === true) return true;
-    if (value && typeof value === 'object') {
+    if (value && typeof value === "object") {
       return toRecord(value).state === true;
     }
     return false;
@@ -121,7 +129,10 @@ function toOnOffStats(payload: LooseRecord): StatsData | null {
   };
 }
 
-export function mergeStatsCache(oldData: unknown, statusData: unknown): unknown {
+export function mergeStatsCache(
+  oldData: unknown,
+  statusData: unknown,
+): unknown {
   const normalizedStatus = toRecord(statusData);
   if (!Object.keys(normalizedStatus).length) {
     return oldData;
@@ -136,9 +147,13 @@ export function mergeStatsCache(oldData: unknown, statusData: unknown): unknown 
 
   if (normalizedStatus.online !== undefined) {
     const incomingOnline =
-      typeof normalizedStatus.online === 'number' ? normalizedStatus.online : undefined;
+      typeof normalizedStatus.online === "number"
+        ? normalizedStatus.online
+        : undefined;
     const incomingTotal =
-      typeof normalizedStatus.total === 'number' ? normalizedStatus.total : dataObj.total;
+      typeof normalizedStatus.total === "number"
+        ? normalizedStatus.total
+        : dataObj.total;
     const shouldIgnoreDrop =
       dataObj.online !== undefined &&
       dataObj.online > 0 &&
@@ -151,11 +166,11 @@ export function mergeStatsCache(oldData: unknown, statusData: unknown): unknown 
     }
   }
 
-  if (typeof normalizedStatus.total === 'number') {
+  if (typeof normalizedStatus.total === "number") {
     dataObj.total = normalizedStatus.total;
   }
 
-  if (typeof normalizedStatus.offline === 'number') {
+  if (typeof normalizedStatus.offline === "number") {
     dataObj.offline = normalizedStatus.offline;
   }
 
@@ -178,7 +193,10 @@ export function getStatsPatchFromIoT(iotData: unknown): StatsData | null {
   return toOnOffStats(normalized);
 }
 
-export function applyAiAdviceToStats(oldData: unknown, aiData: unknown): unknown {
+export function applyAiAdviceToStats(
+  oldData: unknown,
+  aiData: unknown,
+): unknown {
   const normalized = toRecord(aiData);
   if (!Object.keys(normalized).length) {
     return oldData;
@@ -204,7 +222,10 @@ export function applyAiAdviceToStats(oldData: unknown, aiData: unknown): unknown
   return base;
 }
 
-export function mergeLatestCacheFromIoT(oldData: unknown, socketData: unknown): unknown {
+export function mergeLatestCacheFromIoT(
+  oldData: unknown,
+  socketData: unknown,
+): unknown {
   const normalized = toRecord(socketData);
 
   if (!oldData) {
@@ -240,7 +261,10 @@ export function mergeLatestCacheFromIoT(oldData: unknown, socketData: unknown): 
   return merged;
 }
 
-export function mergeLatestCacheFromAi(oldData: unknown, aiData: unknown): unknown {
+export function mergeLatestCacheFromAi(
+  oldData: unknown,
+  aiData: unknown,
+): unknown {
   const normalized = toRecord(aiData);
 
   if (!oldData) {

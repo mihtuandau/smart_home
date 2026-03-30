@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { deviceService } from '../../services/device.service';
-import { QUERY_CONFIG } from '@/config';
-import { deviceKeys } from './deviceKeys';
+import { useQuery } from "@tanstack/react-query";
+import { deviceService } from "../../services/device.service";
+import { QUERY_CONFIG } from "@/config";
+import { deviceKeys } from "./deviceKeys";
 
 export const useDevices = () => {
   return useQuery({

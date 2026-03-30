@@ -1,17 +1,17 @@
-import { useEffect, useRef } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { deviceService } from '../../services/device.service';
-import { useAuth } from '../../contexts/AuthContext';
-import { socketService } from '@/lib/socket';
-import { QUERY_CONFIG } from '@/config';
-import { deviceKeys } from './deviceKeys';
+import { useEffect, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { deviceService } from "../../services/device.service";
+import { useAuth } from "../../contexts/AuthContext";
+import { socketService } from "@/lib/socket";
+import { QUERY_CONFIG } from "@/config";
+import { deviceKeys } from "./deviceKeys";
 import {
   applyAiAdviceToStats,
   getStatsPatchFromIoT,
   mergeLatestCacheFromAi,
   mergeLatestCacheFromIoT,
   mergeStatsCache,
-} from './deviceMapper';
+} from "./deviceMapper";
 
 export const useDeviceStats = () => {
   const { isAuthenticated } = useAuth();

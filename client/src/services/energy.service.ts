@@ -1,4 +1,4 @@
-import { energyApi } from '../lib/api';
+import { energyApi } from "../lib/api";
 
 export const energyService = {
   getEnergyStats: async (hours: number = 24) => {

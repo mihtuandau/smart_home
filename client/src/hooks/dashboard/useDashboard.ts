@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { dashboardService } from '../../services/dashboard.service';
-import { QUERY_CONFIG } from '@/config';
-import { dashboardKeys } from './dashboardKeys';
+import { useQuery } from "@tanstack/react-query";
+import { dashboardService } from "../../services/dashboard.service";
+import { QUERY_CONFIG } from "@/config";
+import { dashboardKeys } from "./dashboardKeys";
 
 export const useDashboardOverview = () => {
   return useQuery({
@@ -29,7 +29,8 @@ export const useSystemHealth = (refetchInterval?: number) => {
   return useQuery({
     queryKey: dashboardKeys.health(),
     queryFn: dashboardService.getSystemHealth,
-    refetchInterval: refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SYSTEM_HEALTH,
+    refetchInterval:
+      refetchInterval || QUERY_CONFIG.REFETCH_INTERVAL.SYSTEM_HEALTH,
     enabled: true,
     gcTime: QUERY_CONFIG.CACHE_TIME,
     retry: QUERY_CONFIG.RETRY,

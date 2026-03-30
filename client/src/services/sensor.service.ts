@@ -1,4 +1,4 @@
-import { sensorsApi, iotApi } from '../lib/api';
+import { sensorsApi, iotApi } from "../lib/api";
 
 export const sensorService = {
   getSensors: async (limit: number = 10) => {
@@ -9,7 +9,11 @@ export const sensorService = {
     return sensorsApi.getCurrentSensors();
   },
 
-  getSensorHistory: async (hours: number = 24, page: number = 1, pageSize: number = 20) => {
+  getSensorHistory: async (
+    hours: number = 24,
+    page: number = 1,
+    pageSize: number = 20,
+  ) => {
     return sensorsApi.getSensorHistory(hours, page, pageSize);
   },
 
