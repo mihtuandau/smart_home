@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import StatsGrid from '@/components/dashboard/StatsGrid';
 import EnvironmentStatus from '@/components/dashboard/EnvironmentStatus';
@@ -10,7 +9,6 @@ import LedConsumptionChart from '@/components/dashboard/LedConsumptionChart';
 import AIInsights from '@/components/ai/AIInsights';
 
 export default function DashboardPage() {
-  const { user } = useAuth();
   const { t } = useLanguage();
 
   return (
@@ -42,4 +40,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

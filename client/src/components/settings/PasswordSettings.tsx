@@ -6,6 +6,10 @@ import { apiClient } from '@/lib/api/client';
 import { TriangleAlert } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+interface ErrorWithMessage {
+  message?: string;
+}
+
 export default function PasswordSettings() {
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
@@ -45,8 +49,8 @@ export default function PasswordSettings() {
         newPassword: '',
         confirmPassword: '',
       });
-    } catch (error: any) {
-      toast.error(error.message || t('settings.password.updateError'));
+    } catch (error: unknown) {
+      toast.error((error as ErrorWithMessage)?.message || t('settings.password.updateError'));
     } finally {
       setIsLoading(false);
     }

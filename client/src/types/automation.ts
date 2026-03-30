@@ -26,7 +26,7 @@ export interface Trigger {
   id?: string;
   type: TriggerType;
   condition: string;
-  value?: any;
+  value?: unknown;
   compareOperator?: '>' | '<' | '==' | '>=' | '<=';
 }
 
@@ -34,7 +34,7 @@ export interface Action {
   id?: string;
   type: ActionType;
   deviceId?: string;
-  value?: any;
+  value?: unknown;
   description?: string;
 }
 

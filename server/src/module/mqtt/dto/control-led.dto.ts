@@ -9,7 +9,7 @@ export class ControlLedDto {
   @IsBoolean()
   led2?: boolean;
 
-  @ValidateIf(o => o.led1 === undefined && o.led2 === undefined)
+  @ValidateIf((o) => o.led1 === undefined && o.led2 === undefined)
   @IsBoolean({ message: 'At least one LED must be specified' })
   _atLeastOne?: boolean;
 }

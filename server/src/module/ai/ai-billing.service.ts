@@ -1,12 +1,3 @@
-/**
- * ai-billing.service.ts
- *
- * Tương đương billing_predictor.py trong AI_SmartHome.
- *
- * - Tính tổng kWh tháng hiện tại từ bảng power_data (piecewise-constant integration)
- * - Dự báo kWh và chi phí đến cuối tháng
- * - Khoảng tin cậy 95% theo phân phối chuẩn
- */
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 import { BillingForecastDto } from './dto/ai-result.dto';
@@ -21,12 +12,6 @@ export class AiBillingService {
 
   constructor(private prisma: PrismaService) {}
 
-  // ── Monthly energy computation ───────────────────────────────────────────────
-
-  /**
-   * Tương đương compute_monthly_energy_kwh().
-   * Tích phân piecewise-constant: Σ (power_i * Δt_i).
-   */
   async computeMonthlyEnergyKwh(year: number, month: number): Promise<number> {
     const start = new Date(Date.UTC(year, month - 1, 1));
     const end =
@@ -46,18 +31,13 @@ export class AiBillingService {
     for (let i = 0; i < rows.length - 1; i++) {
       const dt =
         (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) /
-        3_600_000; // hours
-      totalWh += rows[i].power * dt; // power in W * hours = Wh
+        3_600_000;
+      totalWh += rows[i].power * dt;
     }
 
-    return totalWh / 1000; // kWh
+    return totalWh / 1000;
   }
 
-  // ── Projection ───────────────────────────────────────────────────────────────
-
-  /**
-   * Tương đương project_monthly_energy_and_cost().
-   */
   async projectMonthly(
     asOf: Date = new Date(),
     priceVnd: number = DEFAULT_PRICE_VND_PER_KWH,
@@ -79,7 +59,6 @@ export class AiBillingService {
 
     const kwhSoFar = await this.computeMonthlyEnergyKwh(year, month);
 
-    // Daily consumption series
     const dailySeries = await this.computeDailySeriesKwh(year, month, asOf);
 
     let meanDaily: number;
@@ -102,7 +81,6 @@ export class AiBillingService {
     const remainingDays = Math.max(daysInMonth - elapsedDays, 0);
     const projectedKwh = kwhSoFar + meanDaily * remainingDays;
 
-    // 95% CI
     let ciLow: number;
     let ciHigh: number;
 

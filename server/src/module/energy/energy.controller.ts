@@ -5,9 +5,6 @@ import { EnergyService } from './energy.service';
 export class EnergyController {
   constructor(private energyService: EnergyService) {}
 
-  /**
-   * Get energy consumption data
-   */
   @Get('stats')
   async getEnergyStats(
     @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
@@ -21,9 +18,6 @@ export class EnergyController {
     };
   }
 
-  /**
-   * Get battery status
-   */
   @Get('battery')
   async getBatteryStatus() {
     const data = await this.energyService.getBatteryStatus();
@@ -33,9 +27,6 @@ export class EnergyController {
     };
   }
 
-  /**
-   * Get solar power generation stats
-   */
   @Get('solar')
   async getSolarStats(
     @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
@@ -48,9 +39,6 @@ export class EnergyController {
     };
   }
 
-  /**
-   * Get power source breakdown
-   */
   @Get('sources')
   async getPowerSources(
     @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
@@ -63,9 +51,6 @@ export class EnergyController {
     };
   }
 
-  /**
-   * Get efficiency metrics
-   */
   @Get('efficiency')
   async getEfficiency(
     @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,

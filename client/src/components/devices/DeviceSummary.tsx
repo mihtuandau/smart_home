@@ -1,12 +1,23 @@
 'use client';
 
-import { useLatestDeviceData } from '@/hooks/useDevices';
+import { useLatestDeviceData } from '@/hooks/devices';
 import { useLanguage } from '@/contexts/LanguageContext';
+
+interface DeviceSummaryData {
+  led1?: boolean;
+  led2?: boolean;
+}
+
+interface DeviceSummaryResponse {
+  data?: DeviceSummaryData;
+}
 
 export default function DeviceSummary() {
   const { data: response, isLoading } = useLatestDeviceData(3000);
   const { t } = useLanguage();
-  const data = (response as any)?.data || response;
+  const data =
+    (response as DeviceSummaryResponse | undefined)?.data ||
+    (response as DeviceSummaryData | undefined);
 
   if (isLoading) {
     return (
@@ -25,7 +36,7 @@ export default function DeviceSummary() {
   }
 
   const ledCount = (data?.led1 ? 1 : 0) + (data?.led2 ? 1 : 0);
-  
+
   const stats = [
     { label: t('devices.ledOnCount'), value: `${ledCount}/2` },
     { label: t('devices.touchActive'), value: '0/4' },
@@ -34,7 +45,7 @@ export default function DeviceSummary() {
   return (
     <div className="section-card shadow-sm border border-border p-4 sm:p-6">
       <h3 className="text-sm sm:text-base font-semibold text-foreground mb-4 sm:mb-6">{t('devices.summaryTitle')}</h3>
-      
+
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {stats.map((stat, index) => (
           <div key={index} className="text-center">

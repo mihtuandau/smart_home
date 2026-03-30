@@ -1,8 +1,3 @@
-/**
- * ✅ SECURED - app.module.ts
- * Thêm: Rate limiting, Global guards
- */
-
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
@@ -28,31 +23,27 @@ import { SecurityLoggingInterceptor } from './common/interceptors/security-loggi
       isGlobal: true,
       envFilePath: '.env',
       validate: (config) => {
-        // Validate critical env vars
         if (config.NODE_ENV === 'production') {
           if (!config.JWT_SECRET || config.JWT_SECRET === 'your-secret-key') {
-            throw new Error('❌ JWT_SECRET must be set in production!');
+            throw new Error(' JWT_SECRET must be set in production!');
           }
           if (!config.DATABASE_URL) {
-            throw new Error('❌ DATABASE_URL must be set in production!');
+            throw new Error(' DATABASE_URL must be set in production!');
           }
         }
         return config;
       },
     }),
 
-    // ╔══════════════════════════════════════════════════════════════╗
-    // ║       🔐 RATE LIMITING - DoS Protection                     ║
-    // ╚══════════════════════════════════════════════════════════════╝
     ThrottlerModule.forRoot([
       {
-        name: 'short', // 1 minute limit
-        ttl: 60000, // 60 seconds
+        name: 'short',
+        ttl: 60000,
         limit: process.env.NODE_ENV === 'production' ? 100 : 1000,
       },
       {
-        name: 'long', // 15 minute limit
-        ttl: 900000, // 15 minutes
+        name: 'long',
+        ttl: 900000,
         limit: process.env.NODE_ENV === 'production' ? 1000 : 5000,
       },
     ]),
@@ -73,17 +64,11 @@ import { SecurityLoggingInterceptor } from './common/interceptors/security-loggi
   providers: [
     AppService,
 
-    // ╔══════════════════════════════════════════════════════════════╗
-    // ║          🔐 GLOBAL GUARDS & INTERCEPTORS                    ║
-    // ╚══════════════════════════════════════════════════════════════╝
-
-    // Global Rate Limiting Guard
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
 
-    // Security Logging Interceptor
     {
       provide: APP_INTERCEPTOR,
       useClass: SecurityLoggingInterceptor,

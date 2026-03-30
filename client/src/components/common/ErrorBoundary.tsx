@@ -25,9 +25,9 @@ function getLangForErrorBoundary(): Language {
 function tr(key: string, fallback: string): string {
   const lang = getLangForErrorBoundary();
   const keys = key.split('.');
-  let value: any = translations[lang];
+  let value: unknown = translations[lang];
   for (const k of keys) {
-    if (value && typeof value === 'object' && k in value) value = value[k];
+    if (value && typeof value === 'object' && k in value) value = (value as Record<string, unknown>)[k];
     else return fallback;
   }
   return typeof value === 'string' ? value : fallback;
@@ -52,9 +52,6 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error caught by boundary:', error);
-    console.error('Error info:', errorInfo);
-
     this.setState({
       error,
       errorInfo,
@@ -118,7 +115,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
             <p className="text-xs text-gray-500 text-center mt-4 inline-flex items-center justify-center gap-1.5 w-full">
               <Mail className="w-3.5 h-3.5" />
-              {tr('errors.ifIssuePersists', 'Nếu lỗi tiếp tục xảy ra, vui lòng')} 
+              {tr('errors.ifIssuePersists', 'Nếu lỗi tiếp tục xảy ra, vui lòng')}
               <a href="mailto:support@smart-home.local" className="text-blue-600 hover:underline">
                 {tr('errors.contactSupport', 'liên hệ hỗ trợ')}
               </a>

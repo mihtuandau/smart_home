@@ -3,10 +3,10 @@
 import React from 'react';
 import { useAiContext } from '@/contexts/AiContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useSocket } from '@/hooks/useSocket';
+import { useSocket } from '@/hooks/socket';
 import { Language } from '@/i18n';
 import { localizeAiText } from '@/lib/aiTextLocalization';
-import type { AiAdvicePayload } from '@/hooks/useSocket';
+import type { AiAdvicePayload } from '@/hooks/socket';
 import { Activity, Bell, Bot, Lightbulb } from 'lucide-react';
 
 const dateLocaleMap = {
@@ -15,27 +15,14 @@ const dateLocaleMap = {
   zh: 'zh-CN',
 } as const;
 
-// ── Helpers ───────────────────────────────────────────────────────────────────────────
-
-/**
- * Radar mức tiêu thụ:
- *   < 0.8 W  → 'idle'    : Không tiêu thụ gì
- *   0.8–2 W  → 'normal'  : Bình thường
- *   2–3.5 W  → 'medium'  : Hơi cao
- *   > 3.5 W  → 'high'    : Cao — cảnh báo
- */
 function powerLevel(mw: number): 'idle' | 'normal' | 'medium' | 'high' {
-  if (mw < 300)  return 'idle';    // không tiêu thụ
-  if (mw < 1500) return 'normal';  // chỉ tải nền ~600 mW
-  if (mw < 2800) return 'normal';  // 1 đèn bật ~2000 mW → bình thường
-  if (mw < 4000) return 'medium';  // 2 đèn bật hoặc hơi cao
+  if (mw < 300)  return 'idle';
+  if (mw < 1500) return 'normal';
+  if (mw < 2800) return 'normal';
+  if (mw < 4000) return 'medium';
   return 'high';
 }
 
-/**
- * Parse mậy mW từ chuỗi text khi server chưa restart (chưa có trường powerW).
- * Hiểu cả 2 định dạng: "2.2 W" và "2034 mW"
- */
 function parseMwFromText(text: string): number | null {
   const mwMatch = text.match(/(\d+(?:\.\d+)?)\s*mW/i);
   if (mwMatch) return parseFloat(mwMatch[1]);
@@ -44,7 +31,6 @@ function parseMwFromText(text: string): number | null {
   return null;
 }
 
-// Mỗi hàm trả về class string TĨNH để Tailwind JIT quét được
 function barClass(level: ReturnType<typeof powerLevel>) {
   if (level === 'idle')   return 'bg-muted';
   if (level === 'normal') return 'bg-green-400';
@@ -64,23 +50,24 @@ function levelLabel(level: ReturnType<typeof powerLevel>, t: (key: string) => st
   return t('ai.high');
 }
 function barPct(powerMw: number) {
-  // Tỷ lệ thực tế theo thang 0–6000 mW
   return Math.min(Math.round((powerMw / 6000) * 100), 100);
 }
 
 function analysisBg(text: string) {
-  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high/i.test(text)) return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
-  if (/ổn định|an toàn|thành công|tốt|stable|safe|success|good/i.test(text)) return 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
-  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu|recommend|saving|monitor|optimi/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
+  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high|higher|警告|异常|风险|危险/i.test(text)) return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
+  if (/ổn định|an toàn|thành công|tốt|bình thường|thấp|vừa tắt|đã tắt|giảm|stable|safe|success|good|normal|low|turned off|are off|decreased|稳定|安全|成功|好|正常|关闭|下降/i.test(text)) return 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
+  if (/khuyến nghị|gợi ý|tiết kiệm|theo dõi|tối ưu|đang làm quen|nhắc nhở|vừa bật|đang bật|đang dùng|hiện tiêu thụ|thay đổi|tăng|recommend|suggestion|saving|save|monitor|optimi|learning|turned on|is on|using|changed|increased|建议|节能|监控|优化|提示|开启|变化|增加/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
   return 'bg-muted text-muted-foreground border-border';
 }
 
 function alertBorderClass(text: string): string {
-  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high/i.test(text))
+  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high|higher|警告|异常|风险|危险/i.test(text))
     return 'border-red-400 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300';
-  if (/khuyến nghị|tiết kiệm|theo dõi|tối ưu|recommend|saving|monitor|optimi/i.test(text))
+  if (/ổn định|an toàn|thành công|tốt|bình thường|thấp|vừa tắt|đã tắt|giảm|stable|safe|success|good|normal|low|turned off|are off|decreased|稳定|安全|成功|好|正常|关闭|下降/i.test(text))
     return 'border-green-400 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900/20 dark:text-green-300';
-  return 'border-blue-400 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300';
+  if (/khuyến nghị|gợi ý|tiết kiệm|theo dõi|tối ưu|đang làm quen|nhắc nhở|vừa bật|đang bật|đang dùng|hiện tiêu thụ|thay đổi|tăng|recommend|suggestion|saving|save|monitor|optimi|learning|turned on|is on|using|changed|increased|建议|节能|监控|优化|提示|开启|变化|增加/i.test(text))
+    return 'border-blue-400 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300';
+  return 'border-muted-foreground bg-muted/50 text-muted-foreground dark:bg-muted/10';
 }
 
 function formatTime(iso: string, language: Language) {
@@ -89,13 +76,9 @@ function formatTime(iso: string, language: Language) {
   });
 }
 
-// ── Power Gauge ────────────────────────────────────────────────────────────────────────
-
-/** < 1000 mW → hiển thị mW (số nguyên); ≥ 1000 mW → hiển thị W tối đa 2 chữ số thập phân */
 function formatPower(mw: number): { value: string; unit: string } {
   if (mw < 1000) return { value: Math.round(mw).toString(), unit: 'mW' };
   const w = mw / 1000;
-  // Bỏ số 0 thừa: 2.00 → "2", 2.10 → "2.1", 2.03 → "2.03"
   return { value: parseFloat(w.toFixed(2)).toString(), unit: 'W' };
 }
 
@@ -105,7 +88,7 @@ function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean
 
   return (
     <div className="px-4 py-3 border-b border-border">
-      {/* Top row: value + badge */}
+
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-2">
         <div className="flex flex-wrap items-center gap-2">
           <span className={`text-2xl font-bold ${
@@ -119,7 +102,7 @@ function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean
             {levelLabel(level, t)}
           </span>
         </div>
-        {/* LED state indicators */}
+
         <div className="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs">
           <span className={`px-2 py-0.5 rounded-full font-medium transition-colors ${
             led1 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-muted text-muted-foreground'
@@ -133,7 +116,7 @@ function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean
           </span>
         </div>
       </div>
-      {/* Progress bar */}
+
       <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
         <div
           className={`h-3 rounded-full transition-all duration-700 ease-out ${barClass(level)}`}
@@ -150,8 +133,6 @@ function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean
   );
 }
 
-// ── Main Component ───────────────────────────────────────────────────────────────────────
-
 export default function AIInsights() {
   const { isConnected } = useSocket();
   const { status, alerts, clearAlerts: clear } = useAiContext();
@@ -160,7 +141,7 @@ export default function AIInsights() {
 
   return (
     <div className="section-card border border-border rounded-xl shadow-sm flex flex-col h-full">
-      {/* Header */}
+
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center flex-wrap gap-2">
           <Bot className="w-5 h-5 text-foreground/80" />
@@ -187,7 +168,6 @@ export default function AIInsights() {
         )}
       </div>
 
-      {/* Power Gauge — dùng powerW từ payload (tính ra mW), fallback parse từ analysis text */}
       {status ? (() => {
         const mw = (status.powerW && status.powerW > 0)
           ? status.powerW * 1000
@@ -208,14 +188,12 @@ export default function AIInsights() {
         </div>
       )}
 
-      {/* Live analysis text */}
       {status && (
         <div className={`px-4 py-2 border-b text-sm font-medium transition-colors ${analysisBg(localizedAnalysis)}`}>
           {localizedAnalysis}
         </div>
       )}
 
-      {/* Alert list */}
       <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 max-h-56 sm:max-h-64">
         {alerts.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
@@ -230,7 +208,6 @@ export default function AIInsights() {
             <div key={`${msg.time}-${idx}`} className="space-y-1">
               <div className="text-[11px] text-muted-foreground font-mono">{formatTime(msg.time, language)}</div>
 
-              {/* Anomaly (cảnh báo ML) */}
               {msg.anomaly && (() => {
                 const localizedAnomaly = localizeAiText(msg.anomaly, language);
                 return (
@@ -240,7 +217,6 @@ export default function AIInsights() {
                 );
               })()}
 
-              {/* Advice items */}
               {msg.advice.map((a, i) => (
                 (() => {
                   const localizedAdvice = localizeAiText(a, language);
@@ -259,7 +235,6 @@ export default function AIInsights() {
         )}
       </div>
 
-      {/* Footer hint */}
       <div className="px-4 py-2 border-t border-border text-[11px] text-muted-foreground text-center">
         {t('ai.footer')}
       </div>

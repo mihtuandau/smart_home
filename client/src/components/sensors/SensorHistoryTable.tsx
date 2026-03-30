@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSensorHistory } from '@/hooks/useSensors';
+import { useSensorHistory } from '@/hooks/sensors';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const dateLocaleMap = {
@@ -9,6 +9,19 @@ const dateLocaleMap = {
   en: 'en-US',
   zh: 'zh-CN',
 } as const;
+
+interface SensorHistoryItem {
+  timestamp: string;
+  temperature?: number;
+  humidity?: number;
+  pressure?: number;
+}
+
+interface SensorHistoryResponse {
+  data?: SensorHistoryItem[];
+  totalPages?: number;
+  total?: number;
+}
 
 export default function SensorHistoryTable() {
   const [hours, setHours] = useState(24);
@@ -22,9 +35,10 @@ export default function SensorHistoryTable() {
     return Number.isFinite(parsed) ? parsed.toFixed(digits) : '--';
   };
 
-  const historyData = ((response as any)?.data || []) as any[];
-  const totalPages: number = (response as any)?.totalPages || 1;
-  const total: number = (response as any)?.total || 0;
+  const historyResponse = (response as SensorHistoryResponse | undefined);
+  const historyData = (historyResponse?.data || []) as SensorHistoryItem[];
+  const totalPages: number = historyResponse?.totalPages || 1;
+  const total: number = historyResponse?.total || 0;
   const data = historyData.map((item, index) => ({
     id: index,
     timestamp: new Date(item.timestamp).toLocaleString(dateLocaleMap[language]),
@@ -35,7 +49,7 @@ export default function SensorHistoryTable() {
 
   const handleHoursChange = (newHours: number) => {
     setHours(newHours);
-    setPage(1); // reset về trang 1 khi đổi khoảng thời gian
+    setPage(1);
   };
 
   return (
@@ -46,12 +60,13 @@ export default function SensorHistoryTable() {
           <select
             value={hours}
             onChange={(e) => handleHoursChange(Number(e.target.value))}
-            className="px-3 py-2 text-sm border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-card text-foreground"
+            className="text-xs sm:text-sm border border-border bg-background rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer max-w-fit shadow-sm"
           >
             <option value={6}>{t('sensors.lastHours').replace('{hours}', '6')}</option>
             <option value={12}>{t('sensors.lastHours').replace('{hours}', '12')}</option>
             <option value={24}>{t('sensors.lastHours').replace('{hours}', '24')}</option>
-            <option value={48}>{t('sensors.lastHours').replace('{hours}', '48')}</option>
+            <option value={48}>{t('sensors.lastDays').replace('{days}', '2')}</option>
+            <option value={72}>{t('sensors.lastDays').replace('{days}', '3')}</option>
             <option value={168}>{t('sensors.lastDays').replace('{days}', '7')}</option>
             <option value={720}>{t('sensors.lastDays').replace('{days}', '30')}</option>
           </select>

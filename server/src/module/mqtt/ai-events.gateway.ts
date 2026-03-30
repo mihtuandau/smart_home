@@ -16,13 +16,13 @@ export interface AiAdvicePayload {
   advice: string[];
   anomaly: string | null;
   analysis: string;
-  /** 'status' = cập nhật thường xuyên, 'alert' = có cảnh báo/lời khuyên cụ thể */
+
   type: 'status' | 'alert';
-  /** Công suất thực tế (W) để UI hiển thị gauge */
+
   powerW: number;
   led1: boolean;
   led2: boolean;
-  /** LED daily consumption stats (today, server-computed) */
+
   dailyLed: LedDayEntry;
 }
 
@@ -48,23 +48,21 @@ export class AiEventsGateway
   private readonly logger = new Logger(AiEventsGateway.name);
 
   afterInit() {
-    this.logger.log('🤖 AI Events WebSocket Gateway initialized');
+    this.logger.log(' AI Events WebSocket Gateway initialized');
   }
 
   handleConnection(client: Socket) {
     const user = (client as any).user;
-    this.logger.log(`✅ Client connected: ${client.id} (User: ${user?.email})`);
+    this.logger.log(` Client connected: ${client.id} (User: ${user?.email})`);
   }
 
   handleDisconnect(client: Socket) {
     const user = (client as any).user;
-    this.logger.log(`❌ Client disconnected: ${client.id} (User: ${user?.email})`);
+    this.logger.log(
+      ` Client disconnected: ${client.id} (User: ${user?.email})`,
+    );
   }
 
-  /**
-   * Broadcast AI advice/warnings to all connected clients.
-   * Event name: 'ai:advice'
-   */
   emitAiAdvice(payload: AiAdvicePayload): void {
     this.server.emit('ai:advice', payload);
   }

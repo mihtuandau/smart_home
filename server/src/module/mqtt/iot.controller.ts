@@ -71,13 +71,25 @@ export class IotController {
     try {
       if (dto.led1 !== undefined && dto.led2 !== undefined) {
         await this.mqttService.controlBothLeds(dto.led1, dto.led2);
-        return { success: true, message: 'Both LEDs controlled successfully', data: dto };
+        return {
+          success: true,
+          message: 'Both LEDs controlled successfully',
+          data: dto,
+        };
       } else if (dto.led1 !== undefined) {
         await this.mqttService.controlLed('led1', dto.led1);
-        return { success: true, message: 'LED1 controlled successfully', data: { led1: dto.led1 } };
+        return {
+          success: true,
+          message: 'LED1 controlled successfully',
+          data: { led1: dto.led1 },
+        };
       } else if (dto.led2 !== undefined) {
         await this.mqttService.controlLed('led2', dto.led2);
-        return { success: true, message: 'LED2 controlled successfully', data: { led2: dto.led2 } };
+        return {
+          success: true,
+          message: 'LED2 controlled successfully',
+          data: { led2: dto.led2 },
+        };
       } else {
         throw new HttpException(
           'At least one LED control must be specified',
@@ -97,7 +109,10 @@ export class IotController {
   async controlServo(@Body() dto: { angle: number }) {
     try {
       if (![0, 90, 180].includes(dto.angle)) {
-        throw new HttpException('Angle must be 0, 90, or 180', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'Angle must be 0, 90, or 180',
+          HttpStatus.BAD_REQUEST,
+        );
       }
       await this.mqttService.controlServo(dto.angle);
       return {
@@ -113,8 +128,6 @@ export class IotController {
     }
   }
 
-  // ─── IoT Device CRUD qua MQTT ───────────────────────────────────────
-
   @UseGuards(JwtAuthGuard)
   @Post('device/add')
   async addIoTDevice(@Body() dto: { name: string; power_consumption: number }) {
@@ -126,7 +139,10 @@ export class IotController {
     }
     try {
       await this.mqttService.addIoTDevice(dto.name, dto.power_consumption);
-      return { success: true, message: `Đã gửi lệnh thêm thiết bị "${dto.name}"` };
+      return {
+        success: true,
+        message: `Đã gửi lệnh thêm thiết bị "${dto.name}"`,
+      };
     } catch (error) {
       throw new HttpException(
         `Lỗi thêm thiết bị: ${(error as Error).message}`,
@@ -148,7 +164,11 @@ export class IotController {
     }
     try {
       await this.mqttService.controlIoTDevice(dto.device1, dto.device2);
-      return { success: true, message: 'Đã gửi lệnh điều khiển thiết bị', data: dto };
+      return {
+        success: true,
+        message: 'Đã gửi lệnh điều khiển thiết bị',
+        data: dto,
+      };
     } catch (error) {
       throw new HttpException(
         `Lỗi điều khiển: ${(error as Error).message}`,
@@ -168,8 +188,15 @@ export class IotController {
       throw new HttpException('index phải là 0 hoặc 1', HttpStatus.BAD_REQUEST);
     }
     try {
-      await this.mqttService.updateIoTDevice(idx, dto.name, dto.power_consumption);
-      return { success: true, message: `Đã gửi lệnh cập nhật thiết bị index ${idx}` };
+      await this.mqttService.updateIoTDevice(
+        idx,
+        dto.name,
+        dto.power_consumption,
+      );
+      return {
+        success: true,
+        message: `Đã gửi lệnh cập nhật thiết bị index ${idx}`,
+      };
     } catch (error) {
       throw new HttpException(
         `Lỗi cập nhật: ${(error as Error).message}`,
@@ -187,7 +214,10 @@ export class IotController {
     }
     try {
       await this.mqttService.deleteIoTDevice(idx);
-      return { success: true, message: `Đã gửi lệnh xóa thiết bị index ${idx}` };
+      return {
+        success: true,
+        message: `Đã gửi lệnh xóa thiết bị index ${idx}`,
+      };
     } catch (error) {
       throw new HttpException(
         `Lỗi xóa thiết bị: ${(error as Error).message}`,

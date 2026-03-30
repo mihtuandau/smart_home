@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import DashboardSidebar from '@/components/layout/SideBar';
@@ -14,13 +14,18 @@ export default function MainLayout({ children }: MainLayoutProps) {
   const { user, isLoading, isAuthenticated, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
 
-  // Pages that require authentication
   const protectedPages = ['/automation', '/settings'];
   const isProtectedPage = protectedPages.some(page => pathname?.startsWith(page));
+
+  useEffect(() => {
+    if (isProtectedPage && !isAuthenticated && !isLoading) {
+      router.replace('/login');
+    }
+  }, [isProtectedPage, isAuthenticated, isLoading, router]);
 
   const handleLogout = () => {
     logout();
@@ -47,7 +52,6 @@ export default function MainLayout({ children }: MainLayoutProps) {
   }
 
   if (isProtectedPage && !isAuthenticated) {
-    router.push('/login');
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
@@ -61,9 +65,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="flex h-[100dvh] bg-background flex-col">
       <div className="flex flex-1 h-[100dvh] overflow-hidden">
-        <DashboardSidebar 
-          isOpen={isSidebarOpen} 
-          user={user} 
+        <DashboardSidebar
+          isOpen={isSidebarOpen}
+          user={user}
           onLogout={handleLogout}
           onClose={handleCloseSidebar}
         />

@@ -4,6 +4,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Language } from '@/i18n';
 import { ChevronDown } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
@@ -16,7 +17,6 @@ export default function LanguageSwitcher() {
     { code: 'zh' as Language, name: '中文', flagSrc: '/icon/flag-zh.png' },
   ];
 
-  // Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -40,11 +40,12 @@ export default function LanguageSwitcher() {
         title={`Current language: ${currentLanguage?.name}`}
         aria-label="Change language"
       >
-        <img
-          src={currentLanguage?.flagSrc}
+        <Image
+          src={currentLanguage?.flagSrc ?? '/icon/flag-vn.png'}
           alt={currentLanguage?.name ?? 'Language'}
+          width={24}
+          height={16}
           className="w-6 h-4 border border-border object-cover"
-          loading="lazy"
         />
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
@@ -62,11 +63,12 @@ export default function LanguageSwitcher() {
                 language === lang.code ? 'bg-accent font-semibold text-foreground' : 'text-muted-foreground'
               }`}
             >
-              <img
+              <Image
                 src={lang.flagSrc}
                 alt={lang.name}
+                width={24}
+                height={16}
                 className="w-6 h-4 border border-border object-cover"
-                loading="lazy"
               />
               <span>{lang.name}</span>
               {language === lang.code && <span className="ml-auto">✓</span>}

@@ -65,9 +65,7 @@ export class DevicesService {
     const device = await this.findOne(id);
 
     const newStatus =
-      device.status === DeviceStatus.ON
-        ? DeviceStatus.OFF
-        : DeviceStatus.ON;
+      device.status === DeviceStatus.ON ? DeviceStatus.OFF : DeviceStatus.ON;
 
     return this.prisma.device.update({
       where: { id },
@@ -85,7 +83,7 @@ export class DevicesService {
   }
 
   async getHistory(id: string, hours: number = 24) {
-    await this.findOne(id); // Verify device exists
+    await this.findOne(id);
 
     const since = new Date(Date.now() - hours * 60 * 60 * 1000);
 
@@ -112,69 +110,64 @@ export class DevicesService {
   }
 
   async getStats() {
-    // Get database devices count
     const dbTotal = await this.prisma.device.count();
     const dbByStatus = await this.prisma.device.groupBy({
       by: ['status'],
       _count: true,
     });
 
-    // Get LED status from MQTT (built-in devices)
     const latestMqttData = this.mqttService.getLatestData();
     let ledsOnCount = 0;
-    const ledsTotal = 2; // LED1 and LED2 always exist as built-in devices
+    const ledsTotal = 2;
 
     if (latestMqttData) {
       if (latestMqttData.led1 === true) ledsOnCount++;
       if (latestMqttData.led2 === true) ledsOnCount++;
-      
+
       this.logger.log(
-        `📊 MQTT Data: LED1=${latestMqttData.led1}, LED2=${latestMqttData.led2}, ledsOnCount=${ledsOnCount}`
+        ` MQTT Data: LED1=${latestMqttData.led1}, LED2=${latestMqttData.led2}, ledsOnCount=${ledsOnCount}`,
       );
     } else {
-      this.logger.warn(`⚠️ MQTT Data not available yet`);
+      this.logger.warn(` MQTT Data not available yet`);
     }
 
-    // Count custom IoT devices from MQTT
-    // device1 and device2 are custom devices that can be added by user
     let customDevicesTotal = 0;
     let customDevicesOnCount = 0;
-    
+
     if (latestMqttData) {
-      // Check if device1 field exists (means it was added)
       if ((latestMqttData as any).device1 !== undefined) {
         customDevicesTotal++;
         if ((latestMqttData as any).device1 === true) customDevicesOnCount++;
       }
-      // Check if device2 field exists (means it was added)
       if ((latestMqttData as any).device2 !== undefined) {
         customDevicesTotal++;
         if ((latestMqttData as any).device2 === true) customDevicesOnCount++;
       }
-      
+
       if (customDevicesTotal > 0) {
         this.logger.log(
-          `📊 Custom Devices: Total=${customDevicesTotal}, Online=${customDevicesOnCount}`
+          ` Custom Devices: Total=${customDevicesTotal}, Online=${customDevicesOnCount}`,
         );
       }
     }
 
-    // Combine all device counts
     const total = dbTotal + ledsTotal + customDevicesTotal;
-    
-    // Calculate online count
+
     const dbOnCount = dbByStatus.find((s) => s.status === 'ON')?._count || 0;
     const online = dbOnCount + ledsOnCount + customDevicesOnCount;
     const offline = total - online;
 
     this.logger.log(
-      `📈 Device Stats - DB: ${dbTotal}/${dbOnCount}ON, LEDs: ${ledsTotal}/${ledsOnCount}ON, Custom: ${customDevicesTotal}/${customDevicesOnCount}ON, Total: ${total}/${online}ON`
+      ` Device Stats - DB: ${dbTotal}/${dbOnCount}ON, LEDs: ${ledsTotal}/${ledsOnCount}ON, Custom: ${customDevicesTotal}/${customDevicesOnCount}ON, Total: ${total}/${online}ON`,
     );
 
-    const dbStatusMap = dbByStatus.reduce((acc, item) => {
-      acc[item.status] = item._count;
-      return acc;
-    }, {} as Record<string, number>);
+    const dbStatusMap = dbByStatus.reduce(
+      (acc, item) => {
+        acc[item.status] = item._count;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     const dbByType = await this.prisma.device.groupBy({
       by: ['type'],
@@ -190,7 +183,6 @@ export class DevicesService {
         acc[item.type] = item._count;
         return acc;
       }, {}),
-      // Add detailed breakdown for frontend
       breakdown: {
         database: {
           total: dbTotal,

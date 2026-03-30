@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Bell, Clock3, Menu, Moon, Sun } from 'lucide-react';
@@ -19,11 +19,9 @@ interface DashboardHeaderProps {
 
 export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
   const { t, language } = useLanguage();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const activeTheme = theme ?? resolvedTheme ?? 'light';
 
   const getPageTitle = () => {
     switch (pathname) {
@@ -65,7 +63,7 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
             >
               <Menu className="h-6 w-6" />
             </button>
-            
+
             <div>
               <h2 className="text-base sm:text-lg font-bold text-foreground">{getPageTitle()}</h2>
               {getPageSubtitle() && (
@@ -77,7 +75,7 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Time */}
+
             <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
               <Clock3 className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm text-foreground font-medium">
@@ -85,26 +83,21 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
               </span>
             </div>
 
-            {/* Theme Toggle */}
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
-                aria-label={t('theme.switchLight')}
-                title={theme === 'dark' ? t('theme.switchLight') : t('theme.switchDark')}
-              >
-                {theme === 'dark' ? (
-                  <Sun className="h-5 w-5 text-yellow-400" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
-              </button>
-            )}
+            <button
+              onClick={() => setTheme(activeTheme === 'dark' ? 'light' : 'dark')}
+              className="p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
+              aria-label={activeTheme === 'dark' ? t('theme.switchLight') : t('theme.switchDark')}
+              title={activeTheme === 'dark' ? t('theme.switchLight') : t('theme.switchDark')}
+            >
+              {activeTheme === 'dark' ? (
+                <Sun className="h-5 w-5 text-yellow-400" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
 
-            {/* Language Switcher */}
             <LanguageSwitcher />
 
-            {/* Notifications */}
             <button className="relative p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all group">
               <Bell className="h-6 w-6" />
               <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>

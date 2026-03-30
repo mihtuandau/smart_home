@@ -42,34 +42,34 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
   })();
 
   const menuItems: MenuItem[] = [
-    { 
-      path: '/dashboard', 
+    {
+      path: '/dashboard',
       icon: <House className="w-5 h-5" />,
       label: t('dashboard.title')
     },
-    { 
-      path: '/devices', 
+    {
+      path: '/devices',
       icon: <Cpu className="w-5 h-5" />,
       label: t('devices.title')
     },
-    { 
-      path: '/sensors', 
+    {
+      path: '/sensors',
       icon: <Activity className="w-5 h-5" />,
       label: t('sensors.title')
     },
-    { 
-      path: '/energy', 
+    {
+      path: '/energy',
       icon: <Sun className="w-5 h-5" />,
       label: t('energy.title')
     },
-    
+
     {
       path: '/reports',
       icon: <FileText className="w-5 h-5" />,
       label: t('reports.title')
     },
-    { 
-      path: '/settings', 
+    {
+      path: '/settings',
       icon: <Settings className="w-5 h-5" />,
       label: t('settings.title')
     },
@@ -93,9 +93,9 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
         <div className="flex items-center justify-between mb-8 px-2">
           <div className="flex items-center flex-1">
             <div className="h-11 w-11 rounded-xl flex items-center justify-center shadow-md flex-shrink-0">
-              <Image 
-                src="/images/logo_smart.png" 
-                alt="Smart Home Logo" 
+              <Image
+                src="/images/logo_smart.png"
+                alt="Smart Home Logo"
                 width={44}
                 height={44}
                 className="rounded-lg"
@@ -124,7 +124,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
               <Link
                 key={item.path}
                 href={item.path}
-                onClick={onClose} 
+                onClick={onClose}
                 className={`flex items-center gap-3 px-3 py-3 md:py-2.5 rounded-lg transition-all ${
                   isActive
                     ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-semibold shadow-sm'
@@ -149,7 +149,7 @@ export default function DashboardSidebar({ isOpen, user, onLogout, onClose }: Da
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">{user.username|| 'User'}</p>
-                  <p className="text-xs text-muted-foreground">{roleLabel}</p>  
+                  <p className="text-xs text-muted-foreground">{roleLabel}</p>
                 </div>
               </div>
               <button

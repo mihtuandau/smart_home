@@ -4,9 +4,14 @@ import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { apiClient } from '@/lib/api/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { User } from '@/types';
 
 interface ProfileSettingsProps {
-  user: any;
+  user: User | null;
+}
+
+interface ErrorWithMessage {
+  message?: string;
 }
 
 export default function ProfileSettings({ user }: ProfileSettingsProps) {
@@ -42,8 +47,8 @@ export default function ProfileSettings({ user }: ProfileSettingsProps) {
 
       toast.success(t('settings.profile.updateSuccess'));
       setIsEditing(false);
-    } catch (error: any) {
-      toast.error(error.message || t('settings.profile.updateError'));
+    } catch (error: unknown) {
+      toast.error((error as ErrorWithMessage)?.message || t('settings.profile.updateError'));
     } finally {
       setIsLoading(false);
     }

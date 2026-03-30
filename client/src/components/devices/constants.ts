@@ -1,8 +1,5 @@
-/**
- * IoT Device Manager Constants & Types
- */
 
-import type { CustomIoTDevice } from '@/hooks/useIoTForms';
+import type { CustomIoTDevice } from '@/hooks/iot';
 
 export interface LatestDeviceData {
   device1?: CustomIoTDevice;
@@ -15,16 +12,12 @@ export interface ToastMessage {
   type: 'success' | 'error' | 'info';
 }
 
-// Constants
 export const IOT_DEVICE_MANAGER = {
-  // Device slots (max 2 custom devices)
   MAX_DEVICES: 2,
   DEVICE_SLOTS: [0, 1] as const,
-  
-  // Validation
+
   MIN_POWER: 0.1,
-  
-  // Messages
+
   MESSAGES: {
     ADD_SUCCESS: (name: string) => `Đã thêm "${name}"`,
     ADD_ERROR: 'Thêm thất bại',
@@ -36,9 +29,8 @@ export const IOT_DEVICE_MANAGER = {
     VALIDATION_ERROR: 'Tên & công suất hợp lệ',
     EDIT_NO_CHANGE: 'Thay đổi ít nhất 1 thông tin',
   },
-  
-  // UI
-  AUTO_SYNC_INTERVAL: 2000, // 2 seconds
+
+  AUTO_SYNC_INTERVAL: 2000,
 } as const;
 
 export type { CustomIoTDevice };

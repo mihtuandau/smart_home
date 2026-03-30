@@ -128,7 +128,7 @@ import {
   useSolarStats,
   usePowerSources,
   useEfficiencyMetrics 
-} from '@/hooks/useEnergy';
+} from '@/hooks/energy';
 
 // Usage
 const { data, isLoading, error } = useEnergyStats(24);

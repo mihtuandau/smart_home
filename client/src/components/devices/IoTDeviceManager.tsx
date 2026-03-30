@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useLatestDeviceData } from '@/hooks/useDevices';
+import { useLatestDeviceData } from '@/hooks/devices';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useIoTDeviceState } from '@/hooks/useIoTDeviceState';
+import { useIoTDeviceState } from '@/hooks/iot';
 import Toast from '@/components/ui/Toast';
 import { AddIoTDeviceModal } from './AddIoTDeviceModal';
 import { EditIoTDeviceModal } from './EditIoTDeviceModal';
-import type { IoTDevice } from '@/hooks/useIoTDeviceState';
+import type { IoTDevice } from '@/hooks/iot';
 import { Power } from 'lucide-react';
 
 interface LatestData {
@@ -20,9 +20,6 @@ export default function IoTDeviceManager() {
   const { t } = useLanguage();
   const { data: latestRaw } = useLatestDeviceData(2000);
   const latest = (latestRaw as { data?: LatestData })?.data as LatestData | undefined;
-
-  console.log('Latest RAW from useLatestDeviceData:', latestRaw);
-  console.log('Latest PARSED for sync:', latest);
 
   const {
     localDevices,
@@ -55,18 +52,14 @@ export default function IoTDeviceManager() {
     handleControl,
   } = useIoTDeviceState();
 
-  // Calculate displayed devices
   const devices: (IoTDevice & { index: number })[] = [];
   if (localDevices[0]) {
-    console.log('localDevices[0]:', localDevices[0]);
     devices.push({ ...localDevices[0], index: 0 });
   }
   if (localDevices[1]) {
-    console.log('localDevices[1]:', localDevices[1]);
     devices.push({ ...localDevices[1], index: 1 });
   }
 
-  // Sync with server data
   useEffect(() => {
     syncDevicesFromServer(latest);
   }, [latest, syncDevicesFromServer]);
@@ -81,7 +74,6 @@ export default function IoTDeviceManager() {
         />
       )}
 
-      {/* Add Modal */}
       <AddIoTDeviceModal
         open={showAddForm}
         onClose={resetAdd}
@@ -94,7 +86,6 @@ export default function IoTDeviceManager() {
         onSubmit={() => handleAdd(addName, addPower)}
       />
 
-      {/* Edit Modal */}
       <EditIoTDeviceModal
         open={editIndex !== null}
         onClose={resetEdit}
@@ -111,7 +102,7 @@ export default function IoTDeviceManager() {
       />
 
       <div className="section-card shadow-sm border border-border p-4 sm:p-5 md:p-6">
-        {/* Header */}
+
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
           <div>
             <h3 className="text-sm sm:text-base font-semibold text-foreground">{t('devices.iotDevices')}</h3>
@@ -127,7 +118,6 @@ export default function IoTDeviceManager() {
           )}
         </div>
 
-        {/* Device List */}
         {devices.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <p className="text-sm">{t('devices.noDevice')}</p>
@@ -155,9 +145,8 @@ export default function IoTDeviceManager() {
                   </div>
                 </div>
 
-                {/* Controls */}
                 <div className="flex flex-wrap items-center gap-2 shrink-0 sm:ml-4">
-                  {/* Power button - Apple Home style */}
+
                   <button
                     onClick={() => handleControl(device.index, !device.state)}
                     disabled={controlLoading === device.index}
@@ -169,11 +158,10 @@ export default function IoTDeviceManager() {
                         : 'bg-muted shadow-inner'}
                       ${controlLoading === device.index ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:scale-90 hover:brightness-105'}`}
                   >
-                    {/* Power icon */}
+
                     <Power className={`w-5 h-5 transition-colors duration-200 ${device.state ? 'text-white' : 'text-gray-400'}`} />
                   </button>
 
-                  {/* Edit */}
                   <button
                     onClick={() => {
                       setEditIndex(device.index);
@@ -185,16 +173,8 @@ export default function IoTDeviceManager() {
                     {t('devices.edit')}
                   </button>
 
-                  {/* Delete */}
                   <button
                     onClick={() => {
-                      const deviceInfo = {
-                        name: device.name,
-                        index: device.index,
-                        pin: device.pin,
-                        allDevices: localDevices
-                      };
-                      console.log('DELETING:', deviceInfo);
                       handleDelete(device.index, device.name);
                     }}
                     disabled={deleteLoading === device.index}

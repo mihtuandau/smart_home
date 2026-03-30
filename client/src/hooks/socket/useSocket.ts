@@ -1,17 +1,26 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { socketService } from '@/lib/socket';
+import type { AiAdvicePayload } from './socketTypes';
 
 interface UseSocketOptions {
   autoConnect?: boolean;
   token?: string;
 }
 
-/**
- * Custom hook for Socket.IO connection
- */
+function isAiAdvicePayload(value: unknown): value is AiAdvicePayload {
+  if (!value || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+  return (
+    typeof obj.time === 'string' &&
+    Array.isArray(obj.advice) &&
+    typeof obj.analysis === 'string' &&
+    (obj.type === 'status' || obj.type === 'alert')
+  );
+}
+
 export function useSocket(options: UseSocketOptions = {}) {
   const { autoConnect = true, token } = options;
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(() => socketService.getSocket()?.connected ?? false);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
 
@@ -34,18 +43,15 @@ export function useSocket(options: UseSocketOptions = {}) {
         }
       };
 
-      const handleError = (err: any) => {
+      const handleError = (err: unknown) => {
         if (mountedRef.current) {
-          setError(err?.message || 'Socket error');
+          setError(err instanceof Error ? err.message : 'Socket error');
         }
       };
 
       socket.on('connect', handleConnect);
       socket.on('disconnect', handleDisconnect);
       socket.on('connect_error', handleError);
-
-      // Set initial state
-      setIsConnected(socket.connected);
 
       return () => {
         mountedRef.current = false;
@@ -77,22 +83,18 @@ export function useSocket(options: UseSocketOptions = {}) {
   };
 }
 
-/**
- * Custom hook for listening to IoT data updates
- */
 export function useIoTData() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const handleData = (newData: any) => {
+    const handleData = (newData: unknown) => {
       setData(newData);
       setLoading(false);
     };
 
     socketService.onIoTData(handleData);
 
-    // Request initial data
     socketService.requestIoTData();
 
     return () => {
@@ -103,29 +105,12 @@ export function useIoTData() {
   return { data, loading };
 }
 
-/**
- * Custom hook for listening to sensor updates
- * Note: Use useSensors() from useSensors.ts instead for REST polling
- * This is kept for real-time socket updates if needed
- */
-// export function useSensorUpdates() { ... } - REMOVED, use useSensors instead
-
-/**
- * Custom hook for listening to device status updates
- * Note: Use useDeviceStatus() from useDevices.ts instead for REST polling
- * This is kept for real-time socket updates if needed
- */
-// export function useDeviceStatus() { ... } - REMOVED, use useDeviceStatus from useDevices instead
-
-/**
- * Custom hook for listening to system alerts
- */
 export function useSystemAlerts() {
-  const [alerts, setAlerts] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<unknown[]>([]);
 
   useEffect(() => {
-    const handleAlert = (alert: any) => {
-      setAlerts((prev) => [alert, ...prev].slice(0, 50)); // Keep last 50 alerts
+    const handleAlert = (alert: unknown) => {
+      setAlerts((prev) => [alert, ...prev].slice(0, 50));
     };
 
     socketService.onSystemAlert(handleAlert);
@@ -142,9 +127,6 @@ export function useSystemAlerts() {
   return { alerts, clearAlerts };
 }
 
-/**
- * Custom hook for controlling devices via socket
- */
 export function useDeviceControl() {
   const controlLED = useCallback((data: { led1?: boolean; led2?: boolean }) => {
     socketService.controlLED(data);
@@ -160,39 +142,13 @@ export function useDeviceControl() {
   };
 }
 
-export interface LedDayEntry {
-  date: string;
-  led1_wh: number;
-  led2_wh: number;
-  led1_on_minutes: number;
-  led2_on_minutes: number;
-}
-
-export interface AiAdvicePayload {
-  time: string;
-  advice: string[];
-  anomaly: string | null;
-  analysis: string;
-  type: 'status' | 'alert';
-  /** Công suất thực tế (W) */
-  powerW: number;
-  led1: boolean;
-  led2: boolean;
-  /** LED daily consumption stats (server-computed, accurate) */
-  dailyLed: LedDayEntry;
-}
-
-/**
- * Custom hook for real-time AI advice and warnings from the server.
- * - `status`: live current analysis (updated every message)
- * - `alerts`: history of alert/advice events (type === 'alert')
- */
 export function useAiAdvice(maxItems = 20) {
   const [status, setStatus] = useState<AiAdvicePayload | null>(null);
   const [alerts, setAlerts] = useState<AiAdvicePayload[]>([]);
 
   useEffect(() => {
-    const handleAdvice = (payload: AiAdvicePayload) => {
+    const handleAdvice = (payload: unknown) => {
+      if (!isAiAdvicePayload(payload)) return;
       setStatus(payload);
       if (payload.type === 'alert') {
         setAlerts((prev) => [payload, ...prev].slice(0, maxItems));
@@ -211,14 +167,11 @@ export function useAiAdvice(maxItems = 20) {
   return { status, alerts, clear };
 }
 
-/**
- * Custom hook for automation events
- */
 export function useAutomationEvents() {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<unknown[]>([]);
 
   useEffect(() => {
-    const handleTriggered = (event: any) => {
+    const handleTriggered = (event: unknown) => {
       setEvents((prev) => [event, ...prev].slice(0, 100));
     };
 

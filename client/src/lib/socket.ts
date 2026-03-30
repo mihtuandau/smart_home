@@ -6,7 +6,6 @@ class SocketService {
   private reconnectAttempts = 0;
 
   connect(token?: string): Socket {
-    // Re-use existing socket (even while reconnecting) to preserve all listeners
     if (this.socket) {
       return this.socket;
     }
@@ -34,43 +33,29 @@ class SocketService {
     if (!this.socket) return;
 
     this.socket.on('connect', () => {
-      console.log(' Socket connected:', this.socket?.id);
       this.reconnectAttempts = 0;
     });
 
     this.socket.on('disconnect', (reason) => {
-      console.log('Socket ngắt kết nối', reason);
       if (reason === 'io server disconnect') {
         this.socket?.connect();
       }
     });
 
-    this.socket.on('connect_error', (error) => {
-      console.error('Socket kết nối thất bại:', error.message);
+    this.socket.on('connect_error', () => {
       this.reconnectAttempts++;
-      
+
       if (this.reconnectAttempts >= WS_CONFIG.MAX_RECONNECT_ATTEMPTS) {
-        console.error('Đã đạt số lần kết nối lại tối đa.');
         this.disconnect();
       }
     });
 
-    this.socket.on('reconnect', (attemptNumber) => {
-      console.log(`socket kêt nối lại sau ${attemptNumber} lần thử`);
+    this.socket.on('reconnect', () => {
       this.reconnectAttempts = 0;
     });
 
-    this.socket.on('reconnect_error', (error) => {
-      console.error('socket kết nối lại thất bại sau nhiều lần thử', error.message);
-    });
-
     this.socket.on('reconnect_failed', () => {
-      console.error('socket kết nối lại thất bại sau nhiều lần thử:');
       this.disconnect();
-    });
-
-    this.socket.on('error', (error) => {
-      console.error('Socket error:', error);
     });
   }
 
@@ -79,29 +64,28 @@ class SocketService {
     return localStorage.getItem('auth_token');
   }
 
-  onIoTData(callback: (data: any) => void): void {
+  onIoTData(callback: (data: unknown) => void): void {
     this.socket?.on('iot:data', callback);
   }
 
-  onSensorUpdate(callback: (data: any) => void): void {
+  onSensorUpdate(callback: (data: unknown) => void): void {
     this.socket?.on('sensor:update', callback);
   }
 
-  onDeviceStatus(callback: (data: any) => void): void {
+  onDeviceStatus(callback: (data: unknown) => void): void {
     this.socket?.on('device:status', callback);
   }
 
-  onSystemAlert(callback: (data: any) => void): void {
+  onSystemAlert(callback: (data: unknown) => void): void {
     this.socket?.on('system:alert', callback);
   }
 
-  onAiAdvice(callback: (data: any) => void): void {
-    // Ensure socket exists before attaching listener
+  onAiAdvice(callback: (data: unknown) => void): void {
     const socket = this.socket ?? this.connect();
     socket.on('ai:advice', callback);
   }
 
-  offAiAdvice(callback?: (data: any) => void): void {
+  offAiAdvice(callback?: (data: unknown) => void): void {
     if (callback) {
       this.socket?.off('ai:advice', callback);
     } else {
@@ -109,7 +93,7 @@ class SocketService {
     }
   }
 
-  onAutomationTriggered(callback: (data: any) => void): void {
+  onAutomationTriggered(callback: (data: unknown) => void): void {
     this.socket?.on('automation:triggered', callback);
   }
 
@@ -129,7 +113,7 @@ class SocketService {
     this.socket?.emit('request:sensor-data');
   }
 
-  offIoTData(callback?: (data: any) => void): void {
+  offIoTData(callback?: (data: unknown) => void): void {
     if (callback) {
       this.socket?.off('iot:data', callback);
     } else {
@@ -137,7 +121,7 @@ class SocketService {
     }
   }
 
-  offSensorUpdate(callback?: (data: any) => void): void {
+  offSensorUpdate(callback?: (data: unknown) => void): void {
     if (callback) {
       this.socket?.off('sensor:update', callback);
     } else {
@@ -145,7 +129,7 @@ class SocketService {
     }
   }
 
-  offDeviceStatus(callback?: (data: any) => void): void {
+  offDeviceStatus(callback?: (data: unknown) => void): void {
     if (callback) {
       this.socket?.off('device:status', callback);
     } else {
@@ -164,7 +148,6 @@ class SocketService {
 
   disconnect(): void {
     if (this.socket) {
-      console.log('Disconnecting socket...');
       this.offAll();
       this.socket.disconnect();
       this.socket = null;
@@ -181,7 +164,7 @@ class SocketService {
 
   updateToken(token: string): void {
     if (this.socket?.auth) {
-      (this.socket.auth as any).token = token;
+      (this.socket.auth as Record<string, unknown>).token = token;
     }
   }
 }

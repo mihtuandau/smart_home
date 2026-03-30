@@ -19,20 +19,22 @@ function normalizeLanguage(value: string | null): Language | null {
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('vi');
-  const [mounted, setMounted] = useState(false);
+  const [language, setLanguageState] = useState<Language>(() => {
+    if (typeof window === 'undefined') return 'vi';
 
-  // Initialize language from localStorage on mount
-  useEffect(() => {
     const savedLanguage = normalizeLanguage(localStorage.getItem('language'));
     const browserLanguage = navigator.language.split('-')[0];
-    const browserDefault: Language = normalizeLanguage(browserLanguage) ?? (browserLanguage === 'en' ? 'en' : browserLanguage === 'zh' ? 'zh' : 'vi');
-    const initialLanguage = savedLanguage || browserDefault;
-    setLanguageState(initialLanguage);
-    document.documentElement.lang = initialLanguage;
-    localStorage.setItem('language', initialLanguage);
-    setMounted(true);
-  }, []);
+    const browserDefault: Language =
+      normalizeLanguage(browserLanguage) ??
+      (browserLanguage === 'en' ? 'en' : browserLanguage === 'zh' ? 'zh' : 'vi');
+
+    return savedLanguage || browserDefault;
+  });
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+    localStorage.setItem('language', language);
+  }, [language]);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
@@ -43,11 +45,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const t = useMemo(() => {
     return (key: string, defaultValue?: string): string => {
       const keys = key.split('.');
-      let value: any = translations[language];
+      let value: unknown = translations[language];
 
       for (const k of keys) {
         if (value && typeof value === 'object' && k in value) {
-          value = value[k];
+          value = (value as Record<string, unknown>)[k];
         } else {
           return defaultValue || key;
         }
@@ -56,10 +58,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       return typeof value === 'string' ? value : defaultValue || key;
     };
   }, [language]);
-
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   const contextValue: LanguageContextType = useMemo(
     () => ({

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Language } from '@/i18n';
 import { Globe, Moon, Sun } from 'lucide-react';
@@ -8,13 +8,8 @@ import { useTheme } from 'next-themes';
 
 export default function SystemSettings() {
   const { t, language, setLanguage } = useLanguage();
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const currentTheme = theme === 'dark' ? 'dark' : 'light';
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const { theme, resolvedTheme, setTheme } = useTheme();
+  const currentTheme = (theme ?? resolvedTheme) === 'dark' ? 'dark' : 'light';
 
   return (
     <div className="section-card shadow-sm p-4 sm:p-6 md:p-8 space-y-6 bg-card/95">
@@ -42,7 +37,7 @@ export default function SystemSettings() {
               <label
                 key={themeOption}
                 className={`flex items-center gap-1.5 cursor-pointer rounded-md px-2.5 py-1.5 transition-colors ${
-                  mounted && currentTheme === themeOption
+                  currentTheme === themeOption
                     ? 'bg-background text-foreground shadow-sm border border-border'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
@@ -51,10 +46,9 @@ export default function SystemSettings() {
                   type="radio"
                   name="theme"
                   value={themeOption}
-                  checked={mounted ? currentTheme === themeOption : false}
+                  checked={currentTheme === themeOption}
                   onChange={() => setTheme(themeOption)}
                   className="w-3.5 h-3.5 accent-primary"
-                  disabled={!mounted}
                 />
                 <span className="text-sm leading-none">
                   <span className="inline-flex items-center gap-1">

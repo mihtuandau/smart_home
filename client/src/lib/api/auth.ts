@@ -1,16 +1,16 @@
 import { apiClient } from './client';
 import { API_ENDPOINTS } from '@/config';
+import type { User } from '@/types';
 
 export const authApi = {
   async login(email: string, password: string) {
-    const data = await apiClient.request<{ accessToken: string; user: any }>(
+    const data = await apiClient.request<{ accessToken: string; user: User }>(
       API_ENDPOINTS.LOGIN,
       {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }
     );
-    apiClient.setToken(data.accessToken);
     return data;
   },
 
@@ -25,8 +25,12 @@ export const authApi = {
     return apiClient.request(API_ENDPOINTS.PROFILE);
   },
 
-  clearToken() {
-    apiClient.clearToken();
+  async logout() {
+    try {
+      await apiClient.request(API_ENDPOINTS.LOGOUT, { method: 'POST' });
+    } finally {
+      apiClient.clearToken();
+    }
   },
 };
 

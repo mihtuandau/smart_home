@@ -1,22 +1,15 @@
-// Device hooks
-export * from './useDevices';
+export * from './devices';
 
-// Sensor hooks
-export * from './useSensors';
+export * from './sensors';
 
-// Dashboard hooks
-export * from './useDashboard';
+export * from './dashboard';
 
-// Automation hooks
-export * from './useAutomation';
+export { energyKeys, useBatteryStatus, useSolarStats, usePowerSources, useEfficiencyMetrics } from './energy';
 
-// Energy hooks
-export { energyKeys, useBatteryStatus, useSolarStats, usePowerSources, useEfficiencyMetrics } from './useEnergy';
+// export * from './billing';
 
-// Billing hooks
-export * from './useBilling';
+export * from './iot';
 
-// Socket hooks - explicit exports to avoid naming conflicts
 export {
   useSocket,
   useIoTData,
@@ -24,7 +17,6 @@ export {
   useDeviceControl,
   useAutomationEvents,
   useAiAdvice,
-} from './useSocket';
+} from './socket';
 
-// Auth hooks
 export { useAuth } from '../contexts/AuthContext';

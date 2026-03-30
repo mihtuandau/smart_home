@@ -1,60 +1,47 @@
 import { AuthResponse, LoginCredentials, User } from '../types';
 import { authApi } from '../lib/api';
-import { apiClient } from '@/lib/api/client';
 
 class AuthService {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     const response = await authApi.login(credentials.email, credentials.password);
-    this.saveAuthData({
-      accessToken: response.accessToken,
-      user: response.user
-    });
-    return {
-      accessToken: response.accessToken,
-      user: response.user
-    };
+    this.saveAuthData();
+    return response;
   }
 
   async getProfile(): Promise<User> {
     return authApi.getProfile() as Promise<User>;
   }
 
-  logout() {
-    authApi.clearToken();
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('user');
+  async logout() {
+    try {
+      await authApi.logout();
+    } finally {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('user');
+        localStorage.removeItem('auth_token');
+      }
     }
   }
 
-  saveAuthData(authResponse: AuthResponse) {
+  saveAuthData() {
     if (typeof window !== 'undefined') {
-      if (authResponse.user) {
-        localStorage.setItem('user', JSON.stringify(authResponse.user));
-      }
-      if (authResponse.accessToken) {
-        localStorage.setItem('auth_token', authResponse.accessToken);
-      }
+      // We no longer save any auth data to localStorage for security and privacy
+      localStorage.removeItem('user');
+      localStorage.removeItem('auth_token');
     }
   }
 
   getStoredUser(): User | null {
-    if (typeof window !== 'undefined') {
-      const userStr = localStorage.getItem('user');
-      return userStr ? JSON.parse(userStr) : null;
-    }
     return null;
   }
 
-  getStoredToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('auth_token');
-    }
-    return null;
-  }
+  // These methods are kept for backward compatibility with existing code calling them
+  // but they no longer do anything since we use HttpOnly cookies.
+  setToken() {}
+  clearToken() {}
 
-  setTokenOnClient(token: string): void {
-    apiClient.setToken(token);
-  }
+  // No-op for HttpOnly cookies
+  setTokenOnClient(): void {}
 }
 
 export const authService = new AuthService();

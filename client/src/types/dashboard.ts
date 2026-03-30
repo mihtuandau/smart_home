@@ -1,5 +1,4 @@
 
-
 export interface DashboardOverview {
   totalDevices: number;
   activeDevices: number;

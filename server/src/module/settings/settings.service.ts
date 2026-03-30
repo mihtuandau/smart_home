@@ -13,7 +13,6 @@ export class SettingsService {
       where: { id: this.DEFAULT_SETTINGS_ID },
     });
 
-    // Create default settings if not exist
     if (!settings) {
       settings = await this.prisma.systemSettings.create({
         data: {
@@ -26,7 +25,6 @@ export class SettingsService {
   }
 
   async updateSettings(dto: UpdateSystemSettingsDto) {
-    // Ensure settings exist
     await this.getSettings();
 
     return this.prisma.systemSettings.update({

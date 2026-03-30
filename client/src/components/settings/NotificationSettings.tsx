@@ -100,7 +100,6 @@ export default function NotificationSettings() {
         ))}
       </div>
 
-      {/* Quiet Hours */}
       <div className="border-t border-border pt-6">
         <h3 className="text-sm sm:text-base font-semibold text-foreground mb-4 inline-flex items-center gap-2"><Moon className="w-4 h-4" />{t('settings.notifications.quietHours')}</h3>
         <p className="text-xs sm:text-sm text-muted-foreground mb-4">
@@ -123,7 +122,6 @@ export default function NotificationSettings() {
         </div>
       </div>
 
-      {/* Email Frequency */}
       <div className="border-t border-border pt-6">
         <h3 className="text-sm sm:text-base font-semibold text-foreground mb-4 inline-flex items-center gap-2"><Mail className="w-4 h-4" />{t('settings.notifications.emailFrequency')}</h3>
 

@@ -1,4 +1,10 @@
-import { IsOptional, IsEnum, IsBoolean, IsNumber, IsString } from 'class-validator';
+import {
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import { DeviceStatus } from '@prisma/client';
 
 export class UpdateDeviceDto {

@@ -17,7 +17,7 @@ export const devicesApi = {
     return apiClient.request(`/devices/${id}`);
   },
 
-  async updateDevice(id: string, data: any) {
+  async updateDevice(id: string, data: unknown) {
     return apiClient.request(`/devices/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),

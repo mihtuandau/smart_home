@@ -14,6 +14,12 @@ const presetHours: Record<Exclude<Preset, 'custom'>, number> = {
   '30d': 720,
 };
 
+type CsvRow = Record<string, unknown>;
+
+interface ApiDataResponse<T> {
+  data?: T;
+}
+
 export default function ExportTools() {
   const { t } = useLanguage();
   const [isExporting, setIsExporting] = useState<string | null>(null);
@@ -21,7 +27,6 @@ export default function ExportTools() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
 
-  // today as max value for date inputs
   const today = new Date().toISOString().slice(0, 10);
 
   const getHours = (): number | null => {
@@ -48,28 +53,35 @@ export default function ExportTools() {
 
     setIsExporting(type);
     try {
-      let rows: any[] = [];
+      let rows: CsvRow[] = [];
       let filename = '';
       const periodLabel = getPeriodLabel().replace(/[→ ]/g, '_').replace(/\//g, '-');
 
       if (type === 'sensors') {
-        // Fetch all pages
         let page = 1;
         const pageSize = 500;
         while (true) {
-          const res = await apiClient.request<any>(
+          const res = await apiClient.request<ApiDataResponse<CsvRow[]> | CsvRow[]>(
             `/sensors/history/${hours}?page=${page}&pageSize=${pageSize}`
           );
-          const pageData = (res.data ?? res) as any[];
+          const pageData = Array.isArray(res)
+            ? res
+            : Array.isArray(res.data)
+              ? res.data
+              : [];
           rows = rows.concat(pageData);
           if (pageData.length < pageSize) break;
           page++;
-          if (rows.length >= 5000) break; // safety cap
+          if (rows.length >= 5000) break;
         }
         filename = `sensors_${periodLabel}_${today}.csv`;
       } else {
-        const res = await apiClient.request<any>(`/energy/stats?hours=${hours}`);
-        rows = (res.data ?? res) as any[];
+        const res = await apiClient.request<ApiDataResponse<CsvRow[]> | CsvRow[]>(`/energy/stats?hours=${hours}`);
+        rows = Array.isArray(res)
+          ? res
+          : Array.isArray(res.data)
+            ? res.data
+            : [];
         filename = `energy_${periodLabel}_${today}.csv`;
       }
 
@@ -103,7 +115,6 @@ export default function ExportTools() {
         {t('reports.exportCsvTitle')}
       </h2>
 
-      {/* Period selector */}
       <div className="space-y-3">
         <p className="text-sm font-medium text-foreground/80">{t('reports.dateRange')}</p>
         <div className="flex flex-wrap gap-2">
@@ -128,7 +139,6 @@ export default function ExportTools() {
           ))}
         </div>
 
-        {/* Custom date range */}
         {preset === 'custom' && (
           <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start sm:items-end pt-1">
             <div className="flex flex-col gap-1">
@@ -160,7 +170,6 @@ export default function ExportTools() {
         )}
       </div>
 
-      {/* Export buttons */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {[
           {
@@ -198,5 +207,3 @@ export default function ExportTools() {
     </div>
   );
 }
-
-

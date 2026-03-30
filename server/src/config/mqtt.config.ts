@@ -12,10 +12,15 @@ export const MQTT_CONFIG = {
 };
 
 export const MQTT_TOPICS = {
-  DATA_TOPIC:         process.env.MQTT_DATA_TOPIC          || 'TN/IOT/smarthome/tt',
-  CMD_TOPIC:          process.env.MQTT_CMD_TOPIC            || 'TN/IOT/smarthome/cmd/led',
-  CMD_DEVICE_ADD:     process.env.MQTT_CMD_DEVICE_ADD       || 'TN/IOT/smarthome/cmd/device/add',
-  CMD_DEVICE_CONTROL: process.env.MQTT_CMD_DEVICE_CONTROL   || 'TN/IOT/smarthome/cmd/device/control',
-  CMD_DEVICE_UPDATE:  process.env.MQTT_CMD_DEVICE_UPDATE    || 'TN/IOT/smarthome/cmd/device/update',
-  CMD_DEVICE_DELETE:  process.env.MQTT_CMD_DEVICE_DELETE    || 'TN/IOT/smarthome/cmd/device/delete',
+  DATA_TOPIC: process.env.MQTT_DATA_TOPIC || 'TN/IOT/smarthome/tt',
+  CMD_TOPIC: process.env.MQTT_CMD_TOPIC || 'TN/IOT/smarthome/cmd/led',
+  CMD_DEVICE_ADD:
+    process.env.MQTT_CMD_DEVICE_ADD || 'TN/IOT/smarthome/cmd/device/add',
+  CMD_DEVICE_CONTROL:
+    process.env.MQTT_CMD_DEVICE_CONTROL ||
+    'TN/IOT/smarthome/cmd/device/control',
+  CMD_DEVICE_UPDATE:
+    process.env.MQTT_CMD_DEVICE_UPDATE || 'TN/IOT/smarthome/cmd/device/update',
+  CMD_DEVICE_DELETE:
+    process.env.MQTT_CMD_DEVICE_DELETE || 'TN/IOT/smarthome/cmd/device/delete',
 };

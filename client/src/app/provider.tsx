@@ -25,7 +25,6 @@ export function Providers({ children }: { children: ReactNode }) {
       })
   );
 
-  // Validate env vars sau khi app mount trên client (tránh crash server-side)
   useEffect(() => {
     validateEnv();
   }, []);

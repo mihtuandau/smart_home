@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   BarChart,
   Bar,
@@ -14,16 +14,11 @@ import {
 import { useAiContext } from '@/contexts/AiContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Language } from '@/i18n';
-import type { LedDayEntry } from '@/hooks/useSocket';
+import type { LedDayEntry } from '@/hooks/socket';
 import { Lightbulb, Zap } from 'lucide-react';
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-/** Công suất từng LED (W) — khớp với server và Python led_analyzer.py */
-export const LED1_POWER_W = 0.5;  // 500 mW
-export const LED2_POWER_W = 0.8;  // 800 mW
-
-// ── Simulated seed data (fallback khi server chưa có lịch sử) ─────────────────
+export const LED1_POWER_W = 0.5;
+export const LED2_POWER_W = 0.8;
 
 const SEED_DAYS = [
   { led1_min: 268, led2_min: 0   },
@@ -49,8 +44,6 @@ function buildSeedHistory(): LedDayEntry[] {
     };
   });
 }
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function shortDate(iso: string): string {
   if (!iso) return '';
@@ -81,15 +74,27 @@ function formatMin(min: number, language: Language): string {
   return `${h}g ${m}p`;
 }
 
-// ── Custom Tooltip ────────────────────────────────────────────────────────────
+interface TooltipEntry {
+  dataKey: string;
+  color: string;
+  name: string;
+  value: number;
+}
 
-function CustomTooltip({ active, payload, label, mode }: any) {
-  const { t, language } = useLanguage();
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipEntry[];
+  label?: string;
+  mode: 'wh' | 'minutes';
+}
+
+function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
+  const { language } = useLanguage();
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-card border border-border rounded-lg shadow-lg px-3 py-2 text-xs">
       <p className="font-semibold text-foreground/80 mb-1">{label}</p>
-      {payload.map((p: any) => (
+      {payload.map((p) => (
         <p key={p.dataKey} style={{ color: p.color }} className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full inline-block" style={{ background: p.color }} />
           {p.name}: {mode === 'wh' ? formatWh(p.value) : formatMin(p.value, language)}
@@ -98,8 +103,6 @@ function CustomTooltip({ active, payload, label, mode }: any) {
     </div>
   );
 }
-
-// ── Stat Mini Card ─────────────────────────────────────────────────────────────
 
 function MiniStat({
   label,
@@ -140,7 +143,7 @@ function MiniStat({
           </span>
           <p className="text-[11px] text-gray-400 mt-0.5">{formatMin(minutes, language)} {t('energy.today')}</p>
         </div>
-        {/* Mini bar — based on 0–4 Wh range */}
+
         <div className="w-16 h-2 bg-muted rounded-full overflow-hidden self-center">
           <div
             className="h-2 rounded-full transition-all duration-700"
@@ -152,55 +155,57 @@ function MiniStat({
   );
 }
 
-// ── Main Component ─────────────────────────────────────────────────────────────
-
 export default function LedConsumptionChart() {
   const { todayLed, ledHistory, ledHistoryLoading, status } = useAiContext();
   const { t, language } = useLanguage();
   const [mode, setMode] = useState<'wh' | 'minutes'>('wh');
 
-  const todayKey = new Date().toISOString().slice(0, 10);
+  const { chartData, totalLed1Wh, totalLed2Wh, totalLed1Min, totalLed2Min } = useMemo(() => {
+    const todayKey = new Date().toISOString().slice(0, 10);
+    const baseHistory: LedDayEntry[] =
+      ledHistory.length > 0 ? ledHistory : buildSeedHistory();
 
-  // --- Build chart rows ---
-  // 1. Base: server history or seed fallback
-  const baseHistory: LedDayEntry[] =
-    ledHistory.length > 0 ? ledHistory : buildSeedHistory();
+    const byDate = new Map<string, LedDayEntry>();
+    for (const row of baseHistory) byDate.set(row.date, row);
 
-  // 2. De-dup by date, keep latest, keep last 7 days
-  const byDate = new Map<string, LedDayEntry>();
-  for (const row of baseHistory) byDate.set(row.date, row);
+    byDate.set(todayKey, {
+      date:             todayKey,
+      led1_wh:          todayLed.led1_wh,
+      led2_wh:          todayLed.led2_wh,
+      led1_on_minutes:  todayLed.led1_on_minutes,
+      led2_on_minutes:  todayLed.led2_on_minutes,
+    });
 
-  // 3. Always show today — override with live socket data (more accurate)
-  byDate.set(todayKey, {
-    date:             todayKey,
-    led1_wh:          todayLed.led1_wh,
-    led2_wh:          todayLed.led2_wh,
-    led1_on_minutes:  todayLed.led1_on_minutes,
-    led2_on_minutes:  todayLed.led2_on_minutes,
-  });
+    const chartRows = Array.from(byDate.values())
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(-7);
 
-  const chartRows = Array.from(byDate.values())
-    .sort((a, b) => a.date.localeCompare(b.date))
-    .slice(-7);
+    const data = chartRows.map((entry) => ({
+      date:         shortDate(entry.date),
+      fullDate:     entry.date,
+      led1_wh:      parseFloat(entry.led1_wh.toFixed(4)),
+      led2_wh:      parseFloat(entry.led2_wh.toFixed(4)),
+      led1_minutes: parseFloat(entry.led1_on_minutes.toFixed(1)),
+      led2_minutes: parseFloat(entry.led2_on_minutes.toFixed(1)),
+    }));
 
-  const chartData = chartRows.map((entry) => ({
-    date:         shortDate(entry.date),
-    fullDate:     entry.date,
-    led1_wh:      parseFloat(entry.led1_wh.toFixed(4)),
-    led2_wh:      parseFloat(entry.led2_wh.toFixed(4)),
-    led1_minutes: parseFloat(entry.led1_on_minutes.toFixed(1)),
-    led2_minutes: parseFloat(entry.led2_on_minutes.toFixed(1)),
-  }));
+    const total1Wh = data.reduce((s, d) => s + d.led1_wh, 0);
+    const total2Wh = data.reduce((s, d) => s + d.led2_wh, 0);
+    const total1Min = data.reduce((s, d) => s + d.led1_minutes, 0);
+    const total2Min = data.reduce((s, d) => s + d.led2_minutes, 0);
 
-  // Totals computed from chartData — same values the chart bars display
-  const totalLed1Wh = chartData.reduce((s, d) => s + d.led1_wh, 0);
-  const totalLed2Wh = chartData.reduce((s, d) => s + d.led2_wh, 0);
-  const totalLed1Min = chartData.reduce((s, d) => s + d.led1_minutes, 0);
-  const totalLed2Min = chartData.reduce((s, d) => s + d.led2_minutes, 0);
+    return {
+      chartData: data,
+      totalLed1Wh: total1Wh,
+      totalLed2Wh: total2Wh,
+      totalLed1Min: total1Min,
+      totalLed2Min: total2Min,
+    };
+  }, [ledHistory, todayLed]);
 
   return (
     <div className="section-card border border-border rounded-xl shadow-sm flex flex-col h-full">
-      {/* Header */}
+
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-border">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-yellow-100 flex items-center justify-center">
@@ -208,12 +213,11 @@ export default function LedConsumptionChart() {
           </div>
           <div>
             <h2 className="text-sm font-semibold text-foreground">{t('dashboard.ledConsumptionDaily')}</h2>
-          
-         
+
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {/* Badge: real data vs seed */}
+
           {ledHistoryLoading ? (
             <span className="text-[10px] text-gray-400 animate-pulse">{t('common.loading')}</span>
           ) : ledHistory.length > 0 ? (
@@ -242,7 +246,6 @@ export default function LedConsumptionChart() {
         </div>
       </div>
 
-      {/* Today's live stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 pt-3 pb-2">
         <MiniStat
           label={t('ai.led1')}
@@ -264,7 +267,6 @@ export default function LedConsumptionChart() {
         />
       </div>
 
-      {/* Weekly bar chart */}
       <div className="px-2 pb-2 flex-1 min-h-[160px] sm:min-h-[200px]">
         <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -306,7 +308,6 @@ export default function LedConsumptionChart() {
           </ResponsiveContainer>
       </div>
 
-      {/* Weekly summary footer — mirrors exactly what the chart shows */}
       <div className="px-4 py-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
         {mode === 'wh' ? (
           <>

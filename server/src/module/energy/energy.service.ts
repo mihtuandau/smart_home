@@ -6,9 +6,6 @@ import { PowerSource } from '@prisma/client';
 export class EnergyService {
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * Get energy consumption stats for a time period
-   */
   async getEnergyStats(hours: number = 24) {
     const now = new Date();
     const startTime = new Date(now.getTime() - hours * 60 * 60 * 1000);
@@ -19,7 +16,7 @@ export class EnergyService {
           gte: startTime,
           lte: now,
         },
-        source: 'SOLAR', // Only get SOLAR data for dashboard stats
+        source: 'SOLAR',
       },
       orderBy: { timestamp: 'asc' },
     });
@@ -28,7 +25,6 @@ export class EnergyService {
       return [];
     }
 
-    // Calculate energy consumption (Wh) from power (W)
     const energyData = powerData.map((data, index) => {
       let energy = 0;
       if (index > 0) {
@@ -51,9 +47,6 @@ export class EnergyService {
     return energyData;
   }
 
-  /**
-   * Get battery status and health
-   */
   async getBatteryStatus() {
     const latest = await this.prisma.powerData.findFirst({
       orderBy: { timestamp: 'desc' },
@@ -69,7 +62,6 @@ export class EnergyService {
       };
     }
 
-    // Determine battery status based on voltage and current
     let status = 'UNKNOWN';
     if (latest.current > 0) {
       status = 'CHARGING';
@@ -88,9 +80,6 @@ export class EnergyService {
     };
   }
 
-  /**
-   * Get solar power generation stats
-   */
   async getSolarStats(hours: number = 24) {
     const now = new Date();
     const startTime = new Date(now.getTime() - hours * 60 * 60 * 1000);
@@ -120,7 +109,6 @@ export class EnergyService {
     const avgPower = totalPower / powers.length;
     const peakPower = Math.max(...powers);
 
-    // Approximate energy (Wh) from average power
     const totalEnergy = avgPower * hours;
 
     return {
@@ -134,9 +122,6 @@ export class EnergyService {
     };
   }
 
-  /**
-   * Get power source stats (Solar, Battery, Grid)
-   */
   async getPowerSourceStats(hours: number = 24) {
     const now = new Date();
     const startTime = new Date(now.getTime() - hours * 60 * 60 * 1000);
@@ -188,9 +173,6 @@ export class EnergyService {
     return stats;
   }
 
-  /**
-   * Get energy efficiency metrics
-   */
   async getEfficiencyMetrics(hours: number = 24) {
     const now = new Date();
     const startTime = new Date(now.getTime() - hours * 60 * 60 * 1000);
@@ -215,8 +197,7 @@ export class EnergyService {
     ]);
 
     const totalPower = powerData.reduce((sum, d) => sum + (d.power || 0), 0);
-    const avgPower =
-      powerData.length > 0 ? totalPower / powerData.length : 0;
+    const avgPower = powerData.length > 0 ? totalPower / powerData.length : 0;
     const avgTemperature =
       sensorData.length > 0
         ? sensorData.reduce((sum, d) => sum + (d.temperature || 0), 0) /
@@ -234,9 +215,6 @@ export class EnergyService {
     };
   }
 
-  /**
-   * Seed test power data for 24 hours
-   */
   async seedTestPowerData() {
     const now = new Date();
     const testData: any[] = [];
@@ -245,7 +223,6 @@ export class EnergyService {
       const timestamp = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
       const hour = timestamp.getHours();
 
-      // Simulate solar power curve (peak at noon)
       let power = 0;
       if (hour >= 6 && hour <= 18) {
         const peakHour = 12;
@@ -257,14 +234,13 @@ export class EnergyService {
         voltage: 18 + Math.random() * 2,
         current: power / 20,
         power: power,
-        energy: (power * 1) / 60, // 1-hour interval
+        energy: (power * 1) / 60,
         source: PowerSource.SOLAR,
         batteryLevel: null,
         timestamp,
       });
     }
 
-    // Delete existing test data
     await this.prisma.powerData.deleteMany({
       where: {
         timestamp: {
@@ -273,7 +249,6 @@ export class EnergyService {
       },
     });
 
-    // Insert test data
     for (const data of testData) {
       await (this.prisma.powerData.create as any)({ data });
     }
@@ -285,9 +260,6 @@ export class EnergyService {
     };
   }
 
-  /**
-   * Clean up old power data with energy = 0
-   */
   async cleanupZeroEnergyData() {
     const deleted = await this.prisma.powerData.deleteMany({
       where: {
@@ -299,13 +271,9 @@ export class EnergyService {
     return `Deleted ${deleted.count} old SOLAR records with energy = 0`;
   }
 
-  /**
-   * Delete all old SOLAR data before a timestamp (keep only recent data with proper energy values)
-   */
   async deleteOldSolarData() {
-    // Delete all SOLAR data before 2026-02-04 16:55:00 (before the fix)
     const cutoffTime = new Date('2026-02-04T16:55:00Z');
-    
+
     const deleted = await this.prisma.powerData.deleteMany({
       where: {
         source: PowerSource.SOLAR,

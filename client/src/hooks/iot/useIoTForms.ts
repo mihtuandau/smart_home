@@ -1,7 +1,3 @@
-/**
- * IoT Device Manager Form Hooks
- */
-
 import { useState } from 'react';
 
 export interface CustomIoTDevice {
