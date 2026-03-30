@@ -4,6 +4,7 @@ import { ValidationPipe, LogLevel } from '@nestjs/common';
 import helmet from 'helmet';
 import { Request, Response } from 'express';
 import { AppModule } from './app.module';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const logLevels: LogLevel[] =
@@ -15,6 +16,7 @@ async function bootstrap() {
     logger: logLevels,
   });
 
+  app.use(cookieParser());
   app.use(helmet());
   app.use(
     helmet.contentSecurityPolicy({
@@ -65,8 +67,8 @@ async function bootstrap() {
     }),
   );
 
-  const swaggerUser = process.env.SWAGGER_USER || 'admin';
-  const swaggerPass = process.env.SWAGGER_PASSWORD || 'smart_home_2024';
+  const swaggerUser = process.env.SWAGGER_USER;
+  const swaggerPass = process.env.SWAGGER_PASSWORD;
 
   app.use('/api-docs', (req: Request, res: Response, next: () => void) => {
     const authHeader = req.headers.authorization;

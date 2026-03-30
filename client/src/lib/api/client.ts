@@ -1,29 +1,16 @@
-import { API_CONFIG, AUTH_CONFIG } from '@/config';
+import { API_CONFIG } from '@/config';
 
 export class ApiClient {
   private baseURL: string;
-  private token: string | null = null;
 
   constructor() {
     this.baseURL = API_CONFIG.BASE_URL;
-    if (typeof window !== 'undefined') {
-      this.token = localStorage.getItem(AUTH_CONFIG.TOKEN_KEY);
-    }
   }
 
-  setToken(token: string) {
-    this.token = token;
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(AUTH_CONFIG.TOKEN_KEY, token);
-    }
-  }
-
-  clearToken() {
-    this.token = null;
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(AUTH_CONFIG.TOKEN_KEY);
-    }
-  }
+  // These methods are kept for backward compatibility with existing code calling them
+  // but they no longer do anything since we use HttpOnly cookies.
+  setToken(token: string) {}
+  clearToken() {}
 
   async request<T>(
     endpoint: string,
@@ -34,13 +21,10 @@ export class ApiClient {
       ...(options.headers as Record<string, string>),
     };
 
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
-    }
-
     const response = await fetch(`${this.baseURL}${endpoint}`, {
       ...options,
       headers,
+      credentials: 'include',
     });
 
     if (!response.ok) {

@@ -11,7 +11,6 @@ export const authApi = {
         body: JSON.stringify({ email, password }),
       }
     );
-    apiClient.setToken(data.accessToken);
     return data;
   },
 
@@ -26,8 +25,12 @@ export const authApi = {
     return apiClient.request(API_ENDPOINTS.PROFILE);
   },
 
-  clearToken() {
-    apiClient.clearToken();
+  async logout() {
+    try {
+      await apiClient.request(API_ENDPOINTS.LOGOUT, { method: 'POST' });
+    } finally {
+      apiClient.clearToken();
+    }
   },
 };
 
