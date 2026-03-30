@@ -14,6 +14,27 @@ const periodHours: Record<Period, number> = {
   '30d': 720,
 };
 
+interface SensorMetric {
+  avg?: number;
+  min?: number;
+  max?: number;
+}
+
+interface SensorStatsShape {
+  temperature?: SensorMetric;
+  humidity?: SensorMetric;
+  pressure?: SensorMetric;
+}
+
+interface EnergyPoint {
+  energy?: number;
+  power?: number;
+}
+
+interface ApiDataResponse<T> {
+  data?: T;
+}
+
 export default function ReportGenerator() {
   const [period, setPeriod] = useState<Period>('24h');
   const { t } = useLanguage();
@@ -30,12 +51,16 @@ export default function ReportGenerator() {
   });
 
   const loading = sensorLoading || energyLoading;
-  const sData = (sensorStats as any)?.data ?? sensorStats;
-  const eData = Array.isArray(energyStats) ? energyStats : (energyStats as any)?.data ?? [];
+  const sData =
+    ((sensorStats as ApiDataResponse<SensorStatsShape> | undefined)?.data as SensorStatsShape | undefined) ??
+    (sensorStats as SensorStatsShape | undefined);
+  const eData: EnergyPoint[] = Array.isArray(energyStats)
+    ? (energyStats as EnergyPoint[])
+    : ((energyStats as ApiDataResponse<EnergyPoint[]> | undefined)?.data ?? []);
 
-  const totalEnergy = eData.reduce((sum: number, item: any) => sum + (item.energy ?? 0), 0);
+  const totalEnergy = eData.reduce((sum: number, item) => sum + (item.energy ?? 0), 0);
   const avgPower = eData.length > 0
-    ? eData.reduce((sum: number, item: any) => sum + (item.power ?? 0), 0) / eData.length
+    ? eData.reduce((sum: number, item) => sum + (item.power ?? 0), 0) / eData.length
     : 0;
 
   return (

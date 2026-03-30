@@ -1,9 +1,36 @@
 'use client';
 
 import StatCard from './StatCard';
-import { useLatestDeviceData, useDeviceStats } from '@/hooks/useDevices';
-import { useEnergyStats } from '@/hooks/useEnergy';
+import { useLatestDeviceData, useDeviceStats } from '@/hooks/devices';
+import { useEnergyStats } from '@/hooks/energy';
 import { useLanguage } from '@/contexts/LanguageContext';
+
+interface DeviceSnapshot {
+  led1?: boolean;
+  led2?: boolean;
+  device1?: unknown;
+  device2?: unknown;
+  temperature?: number;
+  humidity?: number;
+  voltage?: number;
+  current_mA?: number;
+}
+
+interface StatsSnapshot {
+  online?: number;
+  total?: number;
+}
+
+interface ApiDataResponse<T> {
+  data?: T;
+}
+
+interface EnergyPoint {
+  energy?: number;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null;
 
 export default function StatsGrid() {
   const { t } = useLanguage();
@@ -11,19 +38,19 @@ export default function StatsGrid() {
   const { data: statsResponse, isLoading: statsLoading } = useDeviceStats();
   const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24, 3000);
 
-  const latestData = (latestResponse as any)?.data;
-  const statsData = (statsResponse as any)?.data;
+  const latestData = (latestResponse as ApiDataResponse<DeviceSnapshot> | undefined)?.data;
+  const statsData = (statsResponse as ApiDataResponse<StatsSnapshot> | undefined)?.data;
 
-  const isCustomDevicePresent = (value: any) => {
+  const isCustomDevicePresent = (value: unknown) => {
     if (value === undefined || value === null) return false;
-    if (typeof value === 'object') {
+    if (isRecord(value)) {
       return Boolean(value.name) || value.state !== undefined || value.power !== undefined;
     }
     return true;
   };
 
-  const energyArray = (energyResponse as any)?.data || [];
-  const totalSolarEnergy = energyArray.reduce((sum: number, item: any) => sum + (item.energy || 0), 0);
+  const energyArray = (energyResponse as ApiDataResponse<EnergyPoint[]> | undefined)?.data || [];
+  const totalSolarEnergy = energyArray.reduce((sum: number, item) => sum + (item.energy || 0), 0);
 
   const isLoading = latestLoading || statsLoading || energyLoading;
 
@@ -74,7 +101,7 @@ export default function StatsGrid() {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {stats.map((stat, index) => (
-        <StatCard key={index} {...stat} index={index} />
+        <StatCard key={index} {...stat} />
       ))}
     </div>
   );

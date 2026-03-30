@@ -12,7 +12,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
-import { useSensorHistory, useSensorData } from '@/hooks/useSensors';
+import { useSensorHistory } from '@/hooks/sensors';
 import { useChartColors } from '@/lib/chartDarkModeUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
@@ -27,10 +27,18 @@ interface LightIntensityChartProps {
   hours?: number;
 }
 
+interface LightHistoryPoint {
+  timestamp: string;
+  lightLevel: number;
+}
+
+interface ApiDataResponse<T> {
+  data?: T;
+}
+
 const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 }) => {
   const [timeRange, setTimeRange] = useState(hours);
   const { data: historyResponse, isLoading, error } = useSensorHistory(timeRange, 1, 10000);
-  const { data: currentResponse } = useSensorData();
   const colors = useChartColors();
   const { t, language } = useLanguage();
 
@@ -53,7 +61,7 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
     );
   }
 
-  const historyData = ((historyResponse as any)?.data || []) as any[];
+  const historyData = ((historyResponse as ApiDataResponse<LightHistoryPoint[]> | undefined)?.data || []) as LightHistoryPoint[];
   const chartData = historyData
     .slice()
     .reverse()
@@ -71,9 +79,6 @@ const LightIntensityChart: React.FC<LightIntensityChartProps> = ({ hours = 24 })
       </div>
     );
   }
-
-  const currentLight = ((currentResponse as any)?.data?.lightLevel || 0);
-  const avgLight = chartData.reduce((sum, item) => sum + item.light, 0) / chartData.length;
 
   return (
     <div className="bg-card rounded-lg p-6 border border-border min-w-0">

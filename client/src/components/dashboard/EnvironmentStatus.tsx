@@ -1,9 +1,20 @@
 'use client';
 
-import { useSensors } from '@/hooks/useSensors';
+import { useSensors } from '@/hooks/sensors';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { calculateRainProbability, getColorScheme } from '@/lib/rainProbabilityUtils';
-import { CloudRain, Gauge, Sparkles } from 'lucide-react';
+import { Gauge, Sparkles } from 'lucide-react';
+
+interface EnvironmentSensorData {
+  temperature: number;
+  humidity: number;
+  pressure: number;
+  isRaining?: boolean;
+}
+
+interface SensorsResponseShape {
+  data?: EnvironmentSensorData[];
+}
 
 interface SensorCardProps {
   title: string;
@@ -74,7 +85,7 @@ function PressureCard({ title, subtitle, value, statusLabel, status, borderColor
 
 export default function EnvironmentStatus() {
   const { data: response, isLoading } = useSensors(1, 2000);
-  const data = (response as any)?.data?.[0] || null;
+  const data = (response as SensorsResponseShape | undefined)?.data?.[0] || null;
   const { t, language } = useLanguage();
 
   if (isLoading || !data) {
@@ -85,7 +96,13 @@ export default function EnvironmentStatus() {
     );
   }
 
-  const analysis = calculateRainProbability(data.temperature, data.humidity, data.pressure, data.isRaining, language);
+  const analysis = calculateRainProbability(
+    data.temperature,
+    data.humidity,
+    data.pressure,
+    data.isRaining ?? false,
+    language
+  );
   const rainProbability = analysis.probability;
   const colorScheme = getColorScheme(rainProbability);
 

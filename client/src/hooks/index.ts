@@ -1,14 +1,14 @@
-export * from './useDevices';
+export * from './devices';
 
-export * from './useSensors';
+export * from './sensors';
 
-export * from './useDashboard';
+export * from './dashboard';
 
-export * from './useAutomation';
+export { energyKeys, useBatteryStatus, useSolarStats, usePowerSources, useEfficiencyMetrics } from './energy';
 
-export { energyKeys, useBatteryStatus, useSolarStats, usePowerSources, useEfficiencyMetrics } from './useEnergy';
+export * from './billing';
 
-export * from './useBilling';
+export * from './iot';
 
 export {
   useSocket,
@@ -17,6 +17,6 @@ export {
   useDeviceControl,
   useAutomationEvents,
   useAiAdvice,
-} from './useSocket';
+} from './socket';
 
 export { useAuth } from '../contexts/AuthContext';

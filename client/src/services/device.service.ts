@@ -33,7 +33,7 @@ export const deviceService = {
     return devicesApi.toggleDevice(id);
   },
 
-  updateDevice: async (id: string, data: any) => {
+  updateDevice: async (id: string, data: unknown) => {
     return devicesApi.updateDevice(id, data);
   },
 };

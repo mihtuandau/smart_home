@@ -8,11 +8,17 @@ export interface EnvConfig {
   NEXT_PUBLIC_DEBUG?: string;
 }
 
+declare global {
+  interface Window {
+    __ENV?: Partial<Record<keyof EnvConfig, string>>;
+  }
+}
+
 export function getEnvVar(key: keyof EnvConfig, fallback: string = ''): string {
   if (typeof window === 'undefined') {
     return process.env[key] || fallback;
   }
-  return (window as any).__ENV?.[key] || process.env[key] || fallback;
+  return window.__ENV?.[key] || process.env[key] || fallback;
 }
 
 export function isDevelopment(): boolean {

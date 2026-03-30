@@ -14,7 +14,7 @@ import {
 import { useAiContext } from '@/contexts/AiContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Language } from '@/i18n';
-import type { LedDayEntry } from '@/hooks/useSocket';
+import type { LedDayEntry } from '@/hooks/socket';
 import { Lightbulb, Zap } from 'lucide-react';
 
 export const LED1_POWER_W = 0.5;
@@ -74,13 +74,27 @@ function formatMin(min: number, language: Language): string {
   return `${h}g ${m}p`;
 }
 
-function CustomTooltip({ active, payload, label, mode }: any) {
-  const { t, language } = useLanguage();
+interface TooltipEntry {
+  dataKey: string;
+  color: string;
+  name: string;
+  value: number;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipEntry[];
+  label?: string;
+  mode: 'wh' | 'minutes';
+}
+
+function CustomTooltip({ active, payload, label, mode }: CustomTooltipProps) {
+  const { language } = useLanguage();
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-card border border-border rounded-lg shadow-lg px-3 py-2 text-xs">
       <p className="font-semibold text-foreground/80 mb-1">{label}</p>
-      {payload.map((p: any) => (
+      {payload.map((p) => (
         <p key={p.dataKey} style={{ color: p.color }} className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full inline-block" style={{ background: p.color }} />
           {p.name}: {mode === 'wh' ? formatWh(p.value) : formatMin(p.value, language)}

@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useLatestDeviceData } from '@/hooks/useDevices';
+import { useLatestDeviceData } from '@/hooks/devices';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useIoTDeviceState } from '@/hooks/useIoTDeviceState';
+import { useIoTDeviceState } from '@/hooks/iot';
 import Toast from '@/components/ui/Toast';
 import { AddIoTDeviceModal } from './AddIoTDeviceModal';
 import { EditIoTDeviceModal } from './EditIoTDeviceModal';
-import type { IoTDevice } from '@/hooks/useIoTDeviceState';
+import type { IoTDevice } from '@/hooks/iot';
 import { Power } from 'lucide-react';
 
 interface LatestData {

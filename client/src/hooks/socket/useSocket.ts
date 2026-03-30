@@ -1,14 +1,26 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { socketService } from '@/lib/socket';
+import type { AiAdvicePayload } from './socketTypes';
 
 interface UseSocketOptions {
   autoConnect?: boolean;
   token?: string;
 }
 
+function isAiAdvicePayload(value: unknown): value is AiAdvicePayload {
+  if (!value || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+  return (
+    typeof obj.time === 'string' &&
+    Array.isArray(obj.advice) &&
+    typeof obj.analysis === 'string' &&
+    (obj.type === 'status' || obj.type === 'alert')
+  );
+}
+
 export function useSocket(options: UseSocketOptions = {}) {
   const { autoConnect = true, token } = options;
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(() => socketService.getSocket()?.connected ?? false);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
 
@@ -31,17 +43,15 @@ export function useSocket(options: UseSocketOptions = {}) {
         }
       };
 
-      const handleError = (err: any) => {
+      const handleError = (err: unknown) => {
         if (mountedRef.current) {
-          setError(err?.message || 'Socket error');
+          setError(err instanceof Error ? err.message : 'Socket error');
         }
       };
 
       socket.on('connect', handleConnect);
       socket.on('disconnect', handleDisconnect);
       socket.on('connect_error', handleError);
-
-      setIsConnected(socket.connected);
 
       return () => {
         mountedRef.current = false;
@@ -74,11 +84,11 @@ export function useSocket(options: UseSocketOptions = {}) {
 }
 
 export function useIoTData() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const handleData = (newData: any) => {
+    const handleData = (newData: unknown) => {
       setData(newData);
       setLoading(false);
     };
@@ -96,10 +106,10 @@ export function useIoTData() {
 }
 
 export function useSystemAlerts() {
-  const [alerts, setAlerts] = useState<any[]>([]);
+  const [alerts, setAlerts] = useState<unknown[]>([]);
 
   useEffect(() => {
-    const handleAlert = (alert: any) => {
+    const handleAlert = (alert: unknown) => {
       setAlerts((prev) => [alert, ...prev].slice(0, 50));
     };
 
@@ -132,32 +142,13 @@ export function useDeviceControl() {
   };
 }
 
-export interface LedDayEntry {
-  date: string;
-  led1_wh: number;
-  led2_wh: number;
-  led1_on_minutes: number;
-  led2_on_minutes: number;
-}
-
-export interface AiAdvicePayload {
-  time: string;
-  advice: string[];
-  anomaly: string | null;
-  analysis: string;
-  type: 'status' | 'alert';
-  powerW: number;
-  led1: boolean;
-  led2: boolean;
-  dailyLed: LedDayEntry;
-}
-
 export function useAiAdvice(maxItems = 20) {
   const [status, setStatus] = useState<AiAdvicePayload | null>(null);
   const [alerts, setAlerts] = useState<AiAdvicePayload[]>([]);
 
   useEffect(() => {
-    const handleAdvice = (payload: AiAdvicePayload) => {
+    const handleAdvice = (payload: unknown) => {
+      if (!isAiAdvicePayload(payload)) return;
       setStatus(payload);
       if (payload.type === 'alert') {
         setAlerts((prev) => [payload, ...prev].slice(0, maxItems));
@@ -177,10 +168,10 @@ export function useAiAdvice(maxItems = 20) {
 }
 
 export function useAutomationEvents() {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<unknown[]>([]);
 
   useEffect(() => {
-    const handleTriggered = (event: any) => {
+    const handleTriggered = (event: unknown) => {
       setEvents((prev) => [event, ...prev].slice(0, 100));
     };
 

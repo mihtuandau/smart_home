@@ -1,6 +1,6 @@
 'use client';
 
-import { useSensorData } from '@/hooks/useSensors';
+import { useSensorData } from '@/hooks/sensors';
 import { CloudRain, Droplets, Gauge, Thermometer, TrendingDown, TrendingUp } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -13,6 +13,10 @@ interface SensorCurrentData {
   isRaining: boolean;
   timestamp: string;
   comfort: string;
+}
+
+interface SensorDataResponse {
+  data?: SensorCurrentData;
 }
 
 interface StatCardProps {
@@ -57,8 +61,8 @@ function SensorStatCard({ label, value, subtitle, color, icon, trend }: StatCard
 
 export default function SensorStatsGrid() {
   const { data: response, isLoading } = useSensorData(3000);
-  const data = (response as any)?.data as SensorCurrentData | undefined;
-  const { t, language } = useLanguage();
+  const data = (response as SensorDataResponse | undefined)?.data;
+  const { t } = useLanguage();
 
   const formatNumber = (value: unknown, digits: number) => {
     const parsed = typeof value === 'number' ? value : Number(value);

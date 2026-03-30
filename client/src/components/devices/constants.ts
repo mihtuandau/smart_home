@@ -1,5 +1,5 @@
 
-import type { CustomIoTDevice } from '@/hooks/useIoTForms';
+import type { CustomIoTDevice } from '@/hooks/iot';
 
 export interface LatestDeviceData {
   device1?: CustomIoTDevice;

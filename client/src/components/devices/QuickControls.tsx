@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useControlSingleLED } from "@/hooks/useDevices";
+import { useControlSingleLED } from "@/hooks/devices";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from '@/contexts/LanguageContext';
 import Toast from "@/components/ui/Toast";
@@ -12,6 +12,25 @@ interface ToastState {
   type: "success" | "error" | "info";
 }
 
+type LooseRecord = Record<string, unknown>;
+
+const isRecord = (value: unknown): value is LooseRecord =>
+  typeof value === 'object' && value !== null;
+
+const patchLedState = (oldData: unknown, led1: boolean, led2: boolean) => {
+  if (!isRecord(oldData)) return oldData;
+
+  const updated = { ...oldData };
+  const dataObj = isRecord(updated.data) ? { ...updated.data } : { ...updated };
+  dataObj.led1 = led1;
+  dataObj.led2 = led2;
+
+  return {
+    ...updated,
+    data: dataObj,
+  };
+};
+
 export default function QuickControls() {
   const { t } = useLanguage();
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -20,48 +39,38 @@ export default function QuickControls() {
 
   const handleAllLedsOn = async () => {
     try {
-      queryClient.setQueryData(["devices", "latestData"], (oldData: any) => {
-        if (!oldData) return oldData;
-        const updated = { ...oldData };
-        const dataObj = updated.data || updated;
-        dataObj.led1 = true;
-        dataObj.led2 = true;
-        return updated;
-      });
+      queryClient.setQueryData(["devices", "latestData"], (oldData: unknown) =>
+        patchLedState(oldData, true, true)
+      );
 
       setToast({ message: t('devices.allOnSuccess'), type: "success" });
 
       Promise.all([
         controlLED.mutateAsync({ ledNumber: 1, state: true }),
         controlLED.mutateAsync({ ledNumber: 2, state: true }),
-      ]).catch((error) => {
+      ]).catch(() => {
         setToast({ message: t('devices.allOnError'), type: "error" });
       });
-    } catch (error) {
+    } catch {
       setToast({ message: t('devices.allOnError'), type: "error" });
     }
   };
 
   const handleAllLedsOff = async () => {
     try {
-      queryClient.setQueryData(["devices", "latestData"], (oldData: any) => {
-        if (!oldData) return oldData;
-        const updated = { ...oldData };
-        const dataObj = updated.data || updated;
-        dataObj.led1 = false;
-        dataObj.led2 = false;
-        return updated;
-      });
+      queryClient.setQueryData(["devices", "latestData"], (oldData: unknown) =>
+        patchLedState(oldData, false, false)
+      );
 
       setToast({ message: t('devices.allOffSuccess'), type: "success" });
 
       Promise.all([
         controlLED.mutateAsync({ ledNumber: 1, state: false }),
         controlLED.mutateAsync({ ledNumber: 2, state: false }),
-      ]).catch((error) => {
+      ]).catch(() => {
         setToast({ message: t('devices.allOffError'), type: "error" });
       });
-    } catch (error) {
+    } catch {
       setToast({ message: t('devices.allOffError'), type: "error" });
     }
   };

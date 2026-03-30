@@ -1,6 +1,6 @@
 'use client';
 
-import { useEnergyStats, usePowerSources } from '@/hooks/useEnergy';
+import { useEnergyStats, usePowerSources } from '@/hooks/energy';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface SystemComponent {
@@ -11,6 +11,18 @@ interface SystemComponent {
   metric: string;
   value: string;
   valueColor?: string;
+}
+
+interface EnergyPoint {
+  voltage?: number;
+  current?: number;
+  power?: number;
+  energy?: number;
+  source?: string;
+}
+
+interface EnergyResponse {
+  data?: EnergyPoint[];
 }
 
 function localizePowerSource(source: string | undefined, t: (key: string) => string): string {
@@ -24,11 +36,12 @@ function localizePowerSource(source: string | undefined, t: (key: string) => str
 export default function EnergySystemTable() {
   const { t } = useLanguage();
   const { data: energyData, isLoading: energyLoading } = useEnergyStats(24);
-  const { data: sourcesData, isLoading: sourcesLoading } = usePowerSources(24);
+  const { isLoading: sourcesLoading } = usePowerSources(24);
 
-  const latestEnergy = ((energyData as any)?.data || [])[((energyData as any)?.data || []).length - 1] || {};
+  const energyRows = ((energyData as EnergyResponse | undefined)?.data || []) as EnergyPoint[];
+  const latestEnergy = energyRows[energyRows.length - 1] || {};
 
-  const totalEnergy = ((energyData as any)?.data || []).reduce((sum: number, item: any) => sum + (item.energy || 0), 0);
+  const totalEnergy = energyRows.reduce((sum: number, item) => sum + (item.energy || 0), 0);
 
   const components: SystemComponent[] = [
     {

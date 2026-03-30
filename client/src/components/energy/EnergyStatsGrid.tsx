@@ -1,6 +1,6 @@
 "use client";
 
-import { useEnergyStats } from "@/hooks/useEnergy";
+import { useEnergyStats } from "@/hooks/energy";
 import { ChartNoAxesColumn, Plug, Sun, TrendingUp, Zap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -13,6 +13,17 @@ interface StatCardProps {
   iconColor: string;
   trend?: "up" | "down";
   isLoading?: boolean;
+}
+
+interface EnergyPoint {
+  power?: number;
+  current?: number;
+  voltage?: number;
+  energy?: number;
+}
+
+interface EnergyResponse {
+  data?: EnergyPoint[];
 }
 
 function EnergyStatCard({
@@ -59,20 +70,13 @@ export default function EnergyStatsGrid() {
   const { t } = useLanguage();
   const { data, isLoading } = useEnergyStats(24);
 
-  const energyData = (data as any)?.data || [];
+  const energyData = ((data as EnergyResponse | undefined)?.data || []) as EnergyPoint[];
   const latestData = energyData[energyData.length - 1] || {};
 
   const totalEnergy = energyData.reduce(
-    (sum: number, item: any) => sum + (item.energy || 0),
+    (sum: number, item) => sum + (item.energy || 0),
     0,
   );
-  const avgPower =
-    energyData.length > 0
-      ? energyData.reduce(
-          (sum: number, item: any) => sum + (item.power || 0),
-          0,
-        ) / energyData.length
-      : 0;
 
   const stats = [
     {

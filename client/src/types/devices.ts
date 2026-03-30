@@ -43,7 +43,7 @@ export interface DeviceStats {
 export interface DeviceControlRequest {
   id: string;
   action: 'ON' | 'OFF' | 'TOGGLE';
-  value?: any;
+  value?: unknown;
 }
 
 export interface DeviceHistory {

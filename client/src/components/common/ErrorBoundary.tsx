@@ -25,9 +25,9 @@ function getLangForErrorBoundary(): Language {
 function tr(key: string, fallback: string): string {
   const lang = getLangForErrorBoundary();
   const keys = key.split('.');
-  let value: any = translations[lang];
+  let value: unknown = translations[lang];
   for (const k of keys) {
-    if (value && typeof value === 'object' && k in value) value = value[k];
+    if (value && typeof value === 'object' && k in value) value = (value as Record<string, unknown>)[k];
     else return fallback;
   }
   return typeof value === 'string' ? value : fallback;

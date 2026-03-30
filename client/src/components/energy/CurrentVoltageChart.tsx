@@ -10,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { useEnergyStats } from "@/hooks/useEnergy";
+import { useEnergyStats } from "@/hooks/energy";
 import { useChartColors } from "@/lib/chartDarkModeUtils";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMemo } from 'react';
@@ -25,16 +25,26 @@ interface CurrentVoltageChartProps {
   timeRange?: number;
 }
 
+interface EnergyPoint {
+  timestamp?: string;
+  current?: number;
+  voltage?: number;
+}
+
+interface EnergyResponse {
+  data?: EnergyPoint[];
+}
+
 export default function CurrentVoltageChart({ timeRange = 24 }: CurrentVoltageChartProps) {
   const { t, language } = useLanguage();
   const { data, isLoading } = useEnergyStats(timeRange);
   const colors = useChartColors();
 
   const chartData = useMemo(() => {
-    const energyData = (data as any)?.data || [];
+    const energyData = ((data as EnergyResponse | undefined)?.data || []) as EnergyPoint[];
     if (!energyData.length) return [];
 
-    const slotsMap = new Map<string, { timestamp: string; data: any[] }>();
+    const slotsMap = new Map<string, { timestamp: string; data: EnergyPoint[] }>();
     const now = new Date();
     
     for (let i = timeRange - 1; i >= 0; i--) {
@@ -44,7 +54,8 @@ export default function CurrentVoltageChart({ timeRange = 24 }: CurrentVoltageCh
       slotsMap.set(key, { timestamp: slotTime.toISOString(), data: [] });
     }
 
-    energyData.forEach((item: any) => {
+    energyData.forEach((item) => {
+      if (!item.timestamp) return;
       const itemDate = new Date(item.timestamp);
       if (isNaN(itemDate.getTime())) return;
       itemDate.setMinutes(0, 0, 0);
@@ -67,12 +78,12 @@ export default function CurrentVoltageChart({ timeRange = 24 }: CurrentVoltageCh
 
     const avgCurrent =
       slot.data.reduce(
-        (sum: number, item: any) => sum + (item.current || 0),
+        (sum: number, item) => sum + (item.current || 0),
         0,
       ) / slot.data.length;
     const avgVoltage =
       slot.data.reduce(
-        (sum: number, item: any) => sum + (item.voltage || 0),
+        (sum: number, item) => sum + (item.voltage || 0),
         0,
       ) / slot.data.length;
 

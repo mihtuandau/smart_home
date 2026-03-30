@@ -6,10 +6,9 @@ interface StatCardProps {
   color: string;
   subtitle?: string;
   progress?: number;
-  index: number;
 }
 
-export default function StatCard({ label, value, color, subtitle, progress, index }: StatCardProps) {
+export default function StatCard({ label, value, color, subtitle, progress }: StatCardProps) {
   return (
     <div
       className="relative section-card shadow-sm border border-border border-l-4 p-3 sm:p-4 md:p-5 transition-shadow hover:shadow-md"

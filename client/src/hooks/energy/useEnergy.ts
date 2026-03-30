@@ -1,14 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { energyService } from '@/services/energy.service';
-
-export const energyKeys = {
-  all: ['energy'] as const,
-  stats: (hours: number) => [...energyKeys.all, 'stats', hours] as const,
-  battery: () => [...energyKeys.all, 'battery'] as const,
-  solar: (hours: number) => [...energyKeys.all, 'solar', hours] as const,
-  sources: (hours: number) => [...energyKeys.all, 'sources', hours] as const,
-  efficiency: (hours: number) => [...energyKeys.all, 'efficiency', hours] as const,
-};
+import { energyKeys } from './energyKeys';
 
 export const useEnergyStats = (hours: number = 24, refetchInterval?: number) => {
   return useQuery({

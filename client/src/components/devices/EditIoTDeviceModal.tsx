@@ -1,6 +1,6 @@
 'use client';
 
-import type { IoTDevice } from '@/hooks/useIoTDeviceState';
+import type { IoTDevice } from '@/hooks/iot';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { TriangleAlert, X } from 'lucide-react';
 

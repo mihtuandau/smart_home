@@ -14,6 +14,12 @@ const presetHours: Record<Exclude<Preset, 'custom'>, number> = {
   '30d': 720,
 };
 
+type CsvRow = Record<string, unknown>;
+
+interface ApiDataResponse<T> {
+  data?: T;
+}
+
 export default function ExportTools() {
   const { t } = useLanguage();
   const [isExporting, setIsExporting] = useState<string | null>(null);
@@ -47,7 +53,7 @@ export default function ExportTools() {
 
     setIsExporting(type);
     try {
-      let rows: any[] = [];
+      let rows: CsvRow[] = [];
       let filename = '';
       const periodLabel = getPeriodLabel().replace(/[→ ]/g, '_').replace(/\//g, '-');
 
@@ -55,10 +61,14 @@ export default function ExportTools() {
         let page = 1;
         const pageSize = 500;
         while (true) {
-          const res = await apiClient.request<any>(
+          const res = await apiClient.request<ApiDataResponse<CsvRow[]> | CsvRow[]>(
             `/sensors/history/${hours}?page=${page}&pageSize=${pageSize}`
           );
-          const pageData = (res.data ?? res) as any[];
+          const pageData = Array.isArray(res)
+            ? res
+            : Array.isArray(res.data)
+              ? res.data
+              : [];
           rows = rows.concat(pageData);
           if (pageData.length < pageSize) break;
           page++;
@@ -66,8 +76,12 @@ export default function ExportTools() {
         }
         filename = `sensors_${periodLabel}_${today}.csv`;
       } else {
-        const res = await apiClient.request<any>(`/energy/stats?hours=${hours}`);
-        rows = (res.data ?? res) as any[];
+        const res = await apiClient.request<ApiDataResponse<CsvRow[]> | CsvRow[]>(`/energy/stats?hours=${hours}`);
+        rows = Array.isArray(res)
+          ? res
+          : Array.isArray(res.data)
+            ? res.data
+            : [];
         filename = `energy_${periodLabel}_${today}.csv`;
       }
 

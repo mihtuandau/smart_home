@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 import { socketService } from '@/lib/socket';
 import { apiClient } from '@/lib/api';
-import type { AiAdvicePayload, LedDayEntry } from '@/hooks/useSocket';
+import type { AiAdvicePayload, LedDayEntry } from '@/hooks/socket';
 
 const MAX_ALERTS = 50;
 const storageKey = () => `ai_alerts_${new Date().toISOString().slice(0, 10)}`;
@@ -43,6 +43,17 @@ const EMPTY_LED_DAY: LedDayEntry = {
 };
 
 const HISTORY_REFRESH_MS = 5 * 60 * 1000;
+
+function isAiAdvicePayload(value: unknown): value is AiAdvicePayload {
+  if (!value || typeof value !== 'object') return false;
+  const obj = value as Record<string, unknown>;
+  return (
+    typeof obj.time === 'string' &&
+    Array.isArray(obj.advice) &&
+    typeof obj.analysis === 'string' &&
+    (obj.type === 'status' || obj.type === 'alert')
+  );
+}
 
 interface AiContextValue {
   status: AiAdvicePayload | null;
@@ -106,7 +117,11 @@ export function AiProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const handler = (payload: AiAdvicePayload) => handleRef.current?.(payload);
+    const handler = (payload: unknown) => {
+      if (isAiAdvicePayload(payload)) {
+        handleRef.current?.(payload);
+      }
+    };
     socketService.onAiAdvice(handler);
     return () => socketService.offAiAdvice(handler);
   }, []);

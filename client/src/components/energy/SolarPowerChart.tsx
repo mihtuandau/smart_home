@@ -1,11 +1,11 @@
 'use client';
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useSolarStats } from '@/hooks/useEnergy';
+import { useSolarStats } from '@/hooks/energy';
 import { useChartColors } from '@/lib/chartDarkModeUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { BarChart3 } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 
 const dateLocaleMap = {
   vi: 'vi-VN',
@@ -17,16 +17,29 @@ interface SolarPowerChartProps {
   timeRange?: number;
 }
 
+interface SolarPoint {
+  timestamp?: string | Date;
+  power?: number;
+}
+
+interface SolarResponse {
+  data?: {
+    data?: SolarPoint[];
+  };
+}
+
 export default function SolarPowerChart({ timeRange = 24 }: SolarPowerChartProps) {
   const { t, language } = useLanguage();
   const { data, isLoading } = useSolarStats(timeRange);
   const colors = useChartColors();
 
   const chartData = useMemo(() => {
-    const solarDataFromAPI = Array.isArray((data as any)?.data?.data) ? (data as any).data.data : [];
+    const solarDataFromAPI = Array.isArray((data as SolarResponse | undefined)?.data?.data)
+      ? ((data as SolarResponse).data?.data as SolarPoint[])
+      : [];
     if (!solarDataFromAPI.length) return [];
 
-    const slotsMap = new Map<string, { timestamp: string; data: any[] }>();
+    const slotsMap = new Map<string, { timestamp: string; data: SolarPoint[] }>();
     const now = new Date();
     
     for (let i = timeRange - 1; i >= 0; i--) {
@@ -36,8 +49,9 @@ export default function SolarPowerChart({ timeRange = 24 }: SolarPowerChartProps
       slotsMap.set(key, { timestamp: slotTime.toISOString(), data: [] });
     }
 
-    solarDataFromAPI.forEach((item: any) => {
-      const itemDate = typeof item.timestamp === 'string' ? new Date(item.timestamp) : item.timestamp;
+    solarDataFromAPI.forEach((item) => {
+      if (!item.timestamp) return;
+      const itemDate = item.timestamp instanceof Date ? item.timestamp : new Date(item.timestamp);
       if (isNaN(itemDate.getTime())) return;
       
       itemDate.setMinutes(0, 0, 0);

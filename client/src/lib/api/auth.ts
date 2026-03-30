@@ -1,9 +1,10 @@
 import { apiClient } from './client';
 import { API_ENDPOINTS } from '@/config';
+import type { User } from '@/types';
 
 export const authApi = {
   async login(email: string, password: string) {
-    const data = await apiClient.request<{ accessToken: string; user: any }>(
+    const data = await apiClient.request<{ accessToken: string; user: User }>(
       API_ENDPOINTS.LOGIN,
       {
         method: 'POST',

@@ -1,14 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import { dashboardService } from '../services/dashboard.service';
+import { dashboardService } from '../../services/dashboard.service';
 import { QUERY_CONFIG } from '@/config';
-
-export const dashboardKeys = {
-  all: ['dashboard'] as const,
-  overview: () => [...dashboardKeys.all, 'overview'] as const,
-  energy: (hours: number) => [...dashboardKeys.all, 'energy', hours] as const,
-  health: () => [...dashboardKeys.all, 'health'] as const,
-  activities: (limit: number) => [...dashboardKeys.all, 'activities', limit] as const,
-};
+import { dashboardKeys } from './dashboardKeys';
 
 export const useDashboardOverview = () => {
   return useQuery({

@@ -12,7 +12,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { useSensorHistory } from '@/hooks/useSensors';
+import { useSensorHistory } from '@/hooks/sensors';
 import { useChartColors } from '@/lib/chartDarkModeUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMemo, useState } from 'react';
@@ -27,6 +27,29 @@ interface TemperatureHumidityChartProps {
   hours?: number;
 }
 
+interface SensorHistoryPoint {
+  timestamp: string;
+  temperature?: number;
+  humidity?: number;
+}
+
+interface SensorHistoryResponse {
+  data?: SensorHistoryPoint[];
+}
+
+interface TooltipEntry {
+  dataKey?: string;
+  value?: number;
+  payload?: {
+    time?: string;
+  };
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: readonly TooltipEntry[];
+}
+
 const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hours = 24 }) => {
   const [timeRange, setTimeRange] = useState<number>(hours);
   const { data: historyResponse, isLoading, error } = useSensorHistory(timeRange, 1, 10000);
@@ -39,7 +62,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   };
 
   const chartData = useMemo(() => {
-    const historyData = ((historyResponse as any)?.data || []) as any[];
+    const historyData = ((historyResponse as SensorHistoryResponse | undefined)?.data || []) as SensorHistoryPoint[];
     if (!historyData || historyData.length === 0) return [];
 
     const slotsMap = new Map<string, { timestamp: string; temps: number[]; hums: number[] }>();
@@ -52,7 +75,7 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
       slotsMap.set(key, { timestamp: d.toISOString(), temps: [], hums: [] });
     }
 
-    historyData.forEach((item: any) => {
+    historyData.forEach((item) => {
       const time = new Date(item.timestamp);
       const temperature = toNumberOrNull(item.temperature);
       const humidity = toNumberOrNull(item.humidity);
@@ -105,10 +128,10 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
     );
   }
 
-  const CustomTooltip = ({ active, payload }: any) => {
+  const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
-      const humidityPayload = payload.find((entry: any) => entry?.dataKey === 'humidity');
-      const temperaturePayload = payload.find((entry: any) => entry?.dataKey === 'temperature');
+      const humidityPayload = payload.find((entry) => entry?.dataKey === 'humidity');
+      const temperaturePayload = payload.find((entry) => entry?.dataKey === 'temperature');
 
       return (
         <div className="bg-card dark:bg-slate-800 p-3 border border-border dark:border-slate-700 rounded-lg shadow-lg">

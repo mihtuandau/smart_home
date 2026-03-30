@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Bell, Clock3, Menu, Moon, Sun } from 'lucide-react';
@@ -19,11 +19,9 @@ interface DashboardHeaderProps {
 
 export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProps) {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
   const { t, language } = useLanguage();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const activeTheme = theme ?? resolvedTheme ?? 'light';
 
   const getPageTitle = () => {
     switch (pathname) {
@@ -85,20 +83,18 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
               </span>
             </div>
 
-            {mounted && (
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
-                aria-label={t('theme.switchLight')}
-                title={theme === 'dark' ? t('theme.switchLight') : t('theme.switchDark')}
-              >
-                {theme === 'dark' ? (
-                  <Sun className="h-5 w-5 text-yellow-400" />
-                ) : (
-                  <Moon className="h-5 w-5" />
-                )}
-              </button>
-            )}
+            <button
+              onClick={() => setTheme(activeTheme === 'dark' ? 'light' : 'dark')}
+              className="p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all"
+              aria-label={activeTheme === 'dark' ? t('theme.switchLight') : t('theme.switchDark')}
+              title={activeTheme === 'dark' ? t('theme.switchLight') : t('theme.switchDark')}
+            >
+              {activeTheme === 'dark' ? (
+                <Sun className="h-5 w-5 text-yellow-400" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+            </button>
 
             <LanguageSwitcher />
 

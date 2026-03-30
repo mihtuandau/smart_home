@@ -10,7 +10,7 @@ import NotificationSettings from '@/components/settings/NotificationSettings';
 import { Bell, Lock, Settings2, UserCircle2 } from 'lucide-react';
 
 export default function SettingsPage() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'profile' | 'password' | 'system' | 'notifications'>('system');
 

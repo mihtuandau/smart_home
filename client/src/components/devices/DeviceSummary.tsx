@@ -1,12 +1,23 @@
 'use client';
 
-import { useLatestDeviceData } from '@/hooks/useDevices';
+import { useLatestDeviceData } from '@/hooks/devices';
 import { useLanguage } from '@/contexts/LanguageContext';
+
+interface DeviceSummaryData {
+  led1?: boolean;
+  led2?: boolean;
+}
+
+interface DeviceSummaryResponse {
+  data?: DeviceSummaryData;
+}
 
 export default function DeviceSummary() {
   const { data: response, isLoading } = useLatestDeviceData(3000);
   const { t } = useLanguage();
-  const data = (response as any)?.data || response;
+  const data =
+    (response as DeviceSummaryResponse | undefined)?.data ||
+    (response as DeviceSummaryData | undefined);
 
   if (isLoading) {
     return (

@@ -64,28 +64,28 @@ class SocketService {
     return localStorage.getItem('auth_token');
   }
 
-  onIoTData(callback: (data: any) => void): void {
+  onIoTData(callback: (data: unknown) => void): void {
     this.socket?.on('iot:data', callback);
   }
 
-  onSensorUpdate(callback: (data: any) => void): void {
+  onSensorUpdate(callback: (data: unknown) => void): void {
     this.socket?.on('sensor:update', callback);
   }
 
-  onDeviceStatus(callback: (data: any) => void): void {
+  onDeviceStatus(callback: (data: unknown) => void): void {
     this.socket?.on('device:status', callback);
   }
 
-  onSystemAlert(callback: (data: any) => void): void {
+  onSystemAlert(callback: (data: unknown) => void): void {
     this.socket?.on('system:alert', callback);
   }
 
-  onAiAdvice(callback: (data: any) => void): void {
+  onAiAdvice(callback: (data: unknown) => void): void {
     const socket = this.socket ?? this.connect();
     socket.on('ai:advice', callback);
   }
 
-  offAiAdvice(callback?: (data: any) => void): void {
+  offAiAdvice(callback?: (data: unknown) => void): void {
     if (callback) {
       this.socket?.off('ai:advice', callback);
     } else {
@@ -93,7 +93,7 @@ class SocketService {
     }
   }
 
-  onAutomationTriggered(callback: (data: any) => void): void {
+  onAutomationTriggered(callback: (data: unknown) => void): void {
     this.socket?.on('automation:triggered', callback);
   }
 
@@ -113,7 +113,7 @@ class SocketService {
     this.socket?.emit('request:sensor-data');
   }
 
-  offIoTData(callback?: (data: any) => void): void {
+  offIoTData(callback?: (data: unknown) => void): void {
     if (callback) {
       this.socket?.off('iot:data', callback);
     } else {
@@ -121,7 +121,7 @@ class SocketService {
     }
   }
 
-  offSensorUpdate(callback?: (data: any) => void): void {
+  offSensorUpdate(callback?: (data: unknown) => void): void {
     if (callback) {
       this.socket?.off('sensor:update', callback);
     } else {
@@ -129,7 +129,7 @@ class SocketService {
     }
   }
 
-  offDeviceStatus(callback?: (data: any) => void): void {
+  offDeviceStatus(callback?: (data: unknown) => void): void {
     if (callback) {
       this.socket?.off('device:status', callback);
     } else {
@@ -164,7 +164,7 @@ class SocketService {
 
   updateToken(token: string): void {
     if (this.socket?.auth) {
-      (this.socket.auth as any).token = token;
+      (this.socket.auth as Record<string, unknown>).token = token;
     }
   }
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useSensors } from '@/hooks/useSensors';
+import { useSensors } from '@/hooks/sensors';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { calculateRainProbability, getColorScheme } from '@/lib/rainProbabilityUtils';
 import { ChartColumn, CircleHelp, Lightbulb, Search, ShieldCheck, Sparkles, TriangleAlert, Zap } from 'lucide-react';
@@ -14,9 +14,20 @@ interface FactorAnalysis {
   interpretation: string;
 }
 
+interface PredictorSensorData {
+  pressure?: number;
+  humidity?: number;
+  temperature?: number;
+  isRaining?: boolean;
+}
+
+interface SensorListResponse {
+  data?: PredictorSensorData[];
+}
+
 export default function RainProbabilityPredictor() {
   const { data: response, isLoading } = useSensors(1, 3000);
-  const data = (response as any)?.data?.[0] || null;
+  const data = (response as SensorListResponse | undefined)?.data?.[0] || null;
   const { t, language } = useLanguage();
 
   const toSafeNumber = (value: unknown, fallback = 0) => {

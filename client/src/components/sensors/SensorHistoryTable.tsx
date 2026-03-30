@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSensorHistory } from '@/hooks/useSensors';
+import { useSensorHistory } from '@/hooks/sensors';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const dateLocaleMap = {
@@ -9,6 +9,19 @@ const dateLocaleMap = {
   en: 'en-US',
   zh: 'zh-CN',
 } as const;
+
+interface SensorHistoryItem {
+  timestamp: string;
+  temperature?: number;
+  humidity?: number;
+  pressure?: number;
+}
+
+interface SensorHistoryResponse {
+  data?: SensorHistoryItem[];
+  totalPages?: number;
+  total?: number;
+}
 
 export default function SensorHistoryTable() {
   const [hours, setHours] = useState(24);
@@ -22,9 +35,10 @@ export default function SensorHistoryTable() {
     return Number.isFinite(parsed) ? parsed.toFixed(digits) : '--';
   };
 
-  const historyData = ((response as any)?.data || []) as any[];
-  const totalPages: number = (response as any)?.totalPages || 1;
-  const total: number = (response as any)?.total || 0;
+  const historyResponse = (response as SensorHistoryResponse | undefined);
+  const historyData = (historyResponse?.data || []) as SensorHistoryItem[];
+  const totalPages: number = historyResponse?.totalPages || 1;
+  const total: number = historyResponse?.total || 0;
   const data = historyData.map((item, index) => ({
     id: index,
     timestamp: new Date(item.timestamp).toLocaleString(dateLocaleMap[language]),

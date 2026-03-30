@@ -3,10 +3,10 @@
 import React from 'react';
 import { useAiContext } from '@/contexts/AiContext';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useSocket } from '@/hooks/useSocket';
+import { useSocket } from '@/hooks/socket';
 import { Language } from '@/i18n';
 import { localizeAiText } from '@/lib/aiTextLocalization';
-import type { AiAdvicePayload } from '@/hooks/useSocket';
+import type { AiAdvicePayload } from '@/hooks/socket';
 import { Activity, Bell, Bot, Lightbulb } from 'lucide-react';
 
 const dateLocaleMap = {
