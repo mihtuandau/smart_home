@@ -2,7 +2,7 @@
 
 import { useSensors } from '@/hooks/sensors';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { calculateRainProbability, getColorScheme } from '@/lib/rainProbabilityUtils';
+import { calculateRainProbability, estimatePressureTrend, getColorScheme } from '@/lib/rainProbabilityUtils';
 import { ChartColumn, CircleHelp, Lightbulb, Search, ShieldCheck, Sparkles, TriangleAlert, Zap } from 'lucide-react';
 
 interface FactorAnalysis {
@@ -19,6 +19,7 @@ interface PredictorSensorData {
   humidity?: number;
   temperature?: number;
   isRaining?: boolean;
+  timestamp?: string;
 }
 
 interface SensorListResponse {
@@ -26,8 +27,9 @@ interface SensorListResponse {
 }
 
 export default function RainProbabilityPredictor() {
-  const { data: response, isLoading } = useSensors(1, 3000);
-  const data = (response as SensorListResponse | undefined)?.data?.[0] || null;
+  const { data: response, isLoading } = useSensors(12, 3000);
+  const records = (response as SensorListResponse | undefined)?.data ?? [];
+  const data = records[0] || null;
   const { t, language } = useLanguage();
 
   const toSafeNumber = (value: unknown, fallback = 0) => {
@@ -41,26 +43,28 @@ export default function RainProbabilityPredictor() {
     const pressure = toSafeNumber(data.pressure);
     const humidity = toSafeNumber(data.humidity);
     const temperature = toSafeNumber(data.temperature);
-    const { pressureFactor, humidityFactor, temperatureFactor } = calculateRainProbability(
+    const pressureTrend = estimatePressureTrend(records);
+    const { pressureFactor, humidityFactor, temperatureFactor, pressureHpa } = calculateRainProbability(
       temperature,
       humidity,
       pressure,
       Boolean(data.isRaining),
+      pressureTrend,
       language
     );
 
     let pressureColor = 'text-red-600';
     let pressureBgColor = '#dc2626';
     let pressureInterpretation = t('sensors.pressureVeryLow');
-    if (pressure < 1000) {
+    if (pressureHpa < 1000) {
       pressureColor = 'text-red-600';
       pressureBgColor = '#dc2626';
       pressureInterpretation = t('sensors.pressureVeryLow');
-    } else if (pressure < 1013) {
+    } else if (pressureHpa < 1013) {
       pressureColor = 'text-yellow-600';
       pressureBgColor = '#ca8a04';
       pressureInterpretation = t('sensors.pressureSlightLow');
-    } else if (pressure < 1030) {
+    } else if (pressureHpa < 1030) {
       pressureColor = 'text-green-600';
       pressureBgColor = '#16a34a';
       pressureInterpretation = t('sensors.pressureNormal');
@@ -118,8 +122,8 @@ export default function RainProbabilityPredictor() {
 
     return [
       {
-        name: `${t('sensors.pressure')}: ${pressure.toFixed(1)} hPa`,
-        value: pressure,
+        name: `${t('sensors.pressure')}: ${pressureHpa.toFixed(1)} hPa`,
+        value: pressureHpa,
         percentage: pressureFactor,
         color: pressureColor,
         bgColor: pressureBgColor,
@@ -157,7 +161,15 @@ export default function RainProbabilityPredictor() {
   const temperature = toSafeNumber(data.temperature);
   const humidity = toSafeNumber(data.humidity);
   const pressure = toSafeNumber(data.pressure);
-  const analysis = calculateRainProbability(temperature, humidity, pressure, Boolean(data.isRaining), language);
+  const pressureTrend = estimatePressureTrend(records);
+  const analysis = calculateRainProbability(
+    temperature,
+    humidity,
+    pressure,
+    Boolean(data.isRaining),
+    pressureTrend,
+    language,
+  );
   const probability = analysis.probability;
   const colorScheme = getColorScheme(probability);
   const factors = getFactorAnalysis();

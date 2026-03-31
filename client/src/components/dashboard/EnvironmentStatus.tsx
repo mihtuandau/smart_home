@@ -2,7 +2,7 @@
 
 import { useSensors } from '@/hooks/sensors';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { calculateRainProbability, getColorScheme } from '@/lib/rainProbabilityUtils';
+import { calculateRainProbability, estimatePressureTrend, getColorScheme } from '@/lib/rainProbabilityUtils';
 import { Gauge, Sparkles } from 'lucide-react';
 
 interface EnvironmentSensorData {
@@ -10,6 +10,7 @@ interface EnvironmentSensorData {
   humidity: number;
   pressure: number;
   isRaining?: boolean;
+  timestamp?: string | number | Date;
 }
 
 interface SensorsResponseShape {
@@ -84,8 +85,9 @@ function PressureCard({ title, subtitle, value, statusLabel, status, borderColor
 }
 
 export default function EnvironmentStatus() {
-  const { data: response, isLoading } = useSensors(1, 2000);
-  const data = (response as SensorsResponseShape | undefined)?.data?.[0] || null;
+  const { data: response, isLoading } = useSensors(6, 2000);
+  const records = (response as SensorsResponseShape | undefined)?.data ?? [];
+  const data = records[0] || null;
   const { t, language } = useLanguage();
 
   if (isLoading || !data) {
@@ -96,12 +98,14 @@ export default function EnvironmentStatus() {
     );
   }
 
+  const pressureTrend = estimatePressureTrend(records);
   const analysis = calculateRainProbability(
     data.temperature,
     data.humidity,
     data.pressure,
     data.isRaining ?? false,
-    language
+    pressureTrend,
+    language,
   );
   const rainProbability = analysis.probability;
   const colorScheme = getColorScheme(rainProbability);

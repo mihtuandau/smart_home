@@ -82,6 +82,7 @@ function formatPower(mw: number): { value: string; unit: string } {
   return { value: parseFloat(w.toFixed(2)).toString(), unit: 'W' };
 }
 
+
 function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean; led2: boolean; t: (key: string) => string }) {
   const level = powerLevel(powerMw);
   const { value, unit } = formatPower(powerMw);
@@ -135,7 +136,11 @@ function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean
 
 export default function AIInsights() {
   const { isConnected } = useSocket();
-  const { status, alerts, clearAlerts: clear } = useAiContext();
+  const {
+    status,
+    alerts,
+    clearAlerts: clear,
+  } = useAiContext();
   const { t, language } = useLanguage();
   const localizedAnalysis = status ? localizeAiText(status.analysis, language) : '';
 

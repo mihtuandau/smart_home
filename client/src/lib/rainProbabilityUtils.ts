@@ -4,6 +4,9 @@ export interface RainAnalysis {
   pressureFactor: number;
   humidityFactor: number;
   temperatureFactor: number;
+  trendFactor: number;
+  dewPointC: number;
+  pressureHpa: number;
   conclusion: {
     title: string;
     description: string;
@@ -11,6 +14,69 @@ export interface RainAnalysis {
 }
 
 type RainLanguage = 'vi' | 'en' | 'zh';
+
+const normalizePressureHpa = (value: number) => {
+  if (!Number.isFinite(value) || value <= 0) return 1013.25;
+  // Support both Pa (~100000) and hPa (~1000) payloads.
+  return value > 2000 ? value / 100 : value;
+};
+
+export function estimatePressureTrend(
+  entries: { pressure?: number | null; timestamp?: string | number | Date | null }[],
+  maxPoints: number = 6,
+): number | undefined {
+  if (!entries || entries.length < 2) return undefined;
+
+  const window = entries.slice(0, Math.min(maxPoints, entries.length));
+
+  const dataPoints = window
+    .map((entry, index) => {
+      const pressure = entry.pressure != null ? normalizePressureHpa(entry.pressure) : null;
+      const tsRaw = entry.timestamp;
+      const timestamp = tsRaw instanceof Date
+        ? tsRaw.getTime()
+        : typeof tsRaw === 'number'
+          ? tsRaw
+          : tsRaw
+            ? new Date(tsRaw).getTime()
+            : null;
+
+      return { index, pressure, timestamp };
+    })
+    .filter((p): p is { index: number; pressure: number; timestamp: number } => p.pressure != null && p.timestamp != null);
+
+  if (dataPoints.length < 2) return undefined;
+
+  const n = dataPoints.length;
+  let sumT = 0, sumP = 0, sumT2 = 0, sumTP = 0;
+
+  const newestTs = dataPoints[0].timestamp;
+  const oldestTs = dataPoints[n - 1].timestamp;
+  const deltaMs = newestTs - oldestTs;
+  if (deltaMs <= 0) return undefined;
+
+  const deltaHours = deltaMs / (1000 * 60 * 60);
+  if (deltaHours <= 0) return undefined;
+
+  // Normalize time to hours from the newest point for numerical stability
+  dataPoints.forEach((point) => {
+    const t = (newestTs - point.timestamp) / (1000 * 60 * 60);
+    const p = point.pressure;
+    sumT += t;
+    sumP += p;
+    sumT2 += t * t;
+    sumTP += t * p;
+  });
+
+  const denom = n * sumT2 - sumT * sumT;
+  if (Math.abs(denom) < 1e-6) return undefined;
+
+  // slope is in hPa per hour (negative = falling, positive = rising)
+  const slope = (n * sumTP - sumT * sumP) / denom;
+
+  // Convert to hPa per 3 hours for consistency with downstream code
+  return slope * 3;
+}
 
 function getLocalizedConclusion(
   probability: number,
@@ -114,11 +180,26 @@ function getLocalizedConclusion(
 export function calculateRainProbability(
   temperature: number,
   humidity: number,
-  pressurePa: number,
+  pressureInput: number,
   isRaining: boolean,
+  pressureTrendHpaPer3h?: number,
   language: RainLanguage = 'vi'
 ): RainAnalysis {
-  const pressure = pressurePa / 100;
+  const clamp = (value: number, min: number, max: number) =>
+    Math.max(min, Math.min(max, value));
+
+  const pressure = normalizePressureHpa(pressureInput);
+  const safeHumidity = clamp(humidity, 0, 100);
+
+  const dewPoint = (() => {
+    const a = 17.62;
+    const b = 243.12;
+    const rh = clamp(safeHumidity, 1, 100) / 100;
+    const gamma = Math.log(rh) + (a * temperature) / (b + temperature);
+    return (b * gamma) / (a - gamma);
+  })();
+
+  const dewSpread = temperature - dewPoint;
 
   if (isRaining) {
     return {
@@ -126,57 +207,55 @@ export function calculateRainProbability(
       pressureFactor: 100,
       humidityFactor: 100,
       temperatureFactor: 100,
+      trendFactor: 100,
+      dewPointC: Math.round(dewPoint * 10) / 10,
+      pressureHpa: Math.round(pressure * 10) / 10,
       conclusion: getLocalizedConclusion(100, true, language),
     };
   }
 
-  let pressureFactor = 0;
+  // Use a monotonic humidity response: rain chance rises as RH increases,
+  // while moderate humidity still contributes a meaningful signal.
+  // RH baseline threshold lowered from 35% to 30% for better 40-70% range contribution.
+  // Exponent reduced from 1.15 to 1.0 (linear) for more consistent response.
+  // Result: RH=50% → ~28%, RH=60% → ~43%, RH=70% → ~57% (instead of 18%, 34%, 47%)
+  const humidityNormalized = clamp((safeHumidity - 30) / 70, 0, 1);
+  const humidityFactor = clamp(Math.pow(humidityNormalized, 1.0) * 100, 0, 100);
 
-  if (pressure < 1000) {
-    pressureFactor = Math.min(100, 80 + (1000 - pressure) * 2);
-  } else if (pressure < 1013) {
-    const range = 1013 - 1000;
-    const current = pressure - 1000;
-    pressureFactor = 40 + (current / range) * 40;
-  } else if (pressure < 1030) {
-    const range = 1030 - 1013;
-    const current = pressure - 1013;
-    pressureFactor = Math.max(5, 40 - (current / range) * 35);
-  } else {
-    pressureFactor = 5;
-  }
+  const pressureBase = clamp(((1018 - pressure) / 18) * 100, 0, 100);
+  const pressureBonus = pressure < 1005 ? clamp((1005 - pressure) * 3, 0, 20) : 0;
+  const pressureFactor = clamp(pressureBase + pressureBonus, 0, 100);
 
-  let humidityFactor = 0;
+  const dewPointFactor = clamp(((4 - dewSpread) / 6) * 100, 0, 100);
 
-  if (humidity < 30) {
-    humidityFactor = 5;
-  } else if (humidity < 50) {
-    humidityFactor = 20;
-  } else if (humidity < 70) {
-    humidityFactor = 35;
-  } else if (humidity < 85) {
-    humidityFactor = 65;
-  } else {
-    humidityFactor = 90;
-  }
+  const tempIdealCenter = 22;
+  const tempIdealHalfRange = 11;
+  const temperatureFactor = clamp(
+    (1 - Math.abs(temperature - tempIdealCenter) / tempIdealHalfRange) * 100,
+    0,
+    100,
+  );
 
-  let temperatureFactor = 25;
+  const trendFactor = pressureTrendHpaPer3h == null
+    ? 50
+    : pressureTrendHpaPer3h < 0
+      ? clamp((-pressureTrendHpaPer3h / 6) * 100, 0, 100)
+      : clamp(50 - (pressureTrendHpaPer3h / 8) * 50, 0, 50);
 
-  if (temperature < 10) {
-    temperatureFactor = 15;
-  } else if (temperature < 20) {
-    temperatureFactor = 20;
-  } else if (temperature < 28) {
-    temperatureFactor = 25;
-  } else {
-    temperatureFactor = 35;
-  }
-
+  // WEIGHT ADJUSTMENTS (March 31, 2026):
+  // Reduced humidity from 0.32 → 0.20 (avoid double-counting with dew point)
+  // Increased trend from 0.08 → 0.20 (supports smoothing via linear regression)
+  // Rationale: humidity already factored into dew point via Magnus formula;
+  // improved trend calculation deserves higher weight
   const probability = Math.min(
     100,
     Math.max(
       0,
-      pressureFactor * 0.5 + humidityFactor * 0.35 + temperatureFactor * 0.15
+      pressureFactor * 0.28 +
+        humidityFactor * 0.20 +      // was 0.32
+        dewPointFactor * 0.22 +
+        temperatureFactor * 0.10 +
+        trendFactor * 0.20            // was 0.08
     )
   );
 
@@ -188,6 +267,9 @@ export function calculateRainProbability(
     pressureFactor: Math.round(pressureFactor),
     humidityFactor: Math.round(humidityFactor),
     temperatureFactor: Math.round(temperatureFactor),
+    trendFactor: Math.round(trendFactor),
+    dewPointC: Math.round(dewPoint * 10) / 10,
+    pressureHpa: Math.round(pressure * 10) / 10,
     conclusion,
   };
 }
