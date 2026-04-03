@@ -130,7 +130,7 @@ export default function LoginPage() {
                   <input
                     id="password"
                     name="password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? 'text' : 'password'  }
                     autoComplete="current-password"
                     value={credentials.password}
                     onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
