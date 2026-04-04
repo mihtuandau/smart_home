@@ -6,8 +6,6 @@ export * from './dashboard';
 
 export { energyKeys, useBatteryStatus, useSolarStats, usePowerSources, useEfficiencyMetrics } from './energy';
 
-// export * from './billing';
-
 export * from './iot';
 
 export {
