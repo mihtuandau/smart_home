@@ -110,6 +110,13 @@ export default function EnvironmentStatus() {
   const rainProbability = analysis.probability;
   const colorScheme = getColorScheme(rainProbability);
 
+  const getPressureStatus = (pressure: number) => {
+    if (pressure < 1000) return t('sensors.pressureVeryLow');
+    if (pressure < 1013) return t('sensors.pressureSlightLow');
+    if (pressure < 1030) return t('sensors.pressureNormal');
+    return t('sensors.pressureHigh');
+  };
+
   return (
     <div className="section-card shadow-sm border border-border p-4 sm:p-5 md:p-6">
       <div className="mb-4">
@@ -135,7 +142,7 @@ export default function EnvironmentStatus() {
           subtitle={t('dashboard.pressureCurrent')}
           value={`${data.pressure.toFixed(1)} hPa`}
           statusLabel={t('devices.status')}
-          status={t('dashboard.stable')}
+          status={getPressureStatus(data.pressure)}
           borderColor="#a855f7"
           bgColor="bg-purple-50"
           icon={<Gauge className="w-5 h-5" />}

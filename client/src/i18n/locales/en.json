@@ -2,6 +2,7 @@
   "common": {
     "appName": "Smart Home Management System",
     "loading": "Loading...",
+    "redirecting": "Redirecting...",
     "error": "Error",
     "success": "Success",
     "save": "Save",

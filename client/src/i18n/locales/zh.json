@@ -2,6 +2,7 @@
   "common": {
     "appName": "智能家居管理系统",
     "loading": "加载中...",
+    "redirecting": "跳转中...",
     "error": "错误",
     "success": "成功",
     "save": "保存",

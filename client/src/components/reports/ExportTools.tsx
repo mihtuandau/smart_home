@@ -21,7 +21,7 @@ interface ApiDataResponse<T> {
 }
 
 export default function ExportTools() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [isExporting, setIsExporting] = useState<string | null>(null);
   const [preset, setPreset] = useState<Preset>('7d');
   const [fromDate, setFromDate] = useState('');
@@ -44,6 +44,102 @@ export default function ExportTools() {
     if (fromDate && toDate) return `${fromDate} → ${toDate}`;
     if (fromDate) return `${t('reports.fromDatePrefix')} ${fromDate}`;
     return t('reports.custom');
+  };
+
+  const getLocale = () => {
+    if (language === 'en') return 'en-US';
+    if (language === 'zh') return 'zh-CN';
+    return 'vi-VN';
+  };
+
+  const yesNoLabel = (value: boolean) => {
+    if (language === 'en') return value ? 'Yes' : 'No';
+    if (language === 'zh') return value ? '是' : '否';
+    return value ? 'Có' : 'Không';
+  };
+
+  const getLocalLabel = (
+    vi: string,
+    en: string,
+    zh: string,
+  ) => {
+    if (language === 'en') return en;
+    if (language === 'zh') return zh;
+    return vi;
+  };
+
+  const toDateTime = (value: unknown): string => {
+    if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) {
+      return '';
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '';
+    return date.toLocaleString(getLocale());
+  };
+
+  const toNumber = (value: unknown): number | null => {
+    const parsed = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
+  const formatDecimal = (value: unknown, digits: number): string => {
+    const parsed = toNumber(value);
+    return parsed === null ? '' : parsed.toFixed(digits);
+  };
+
+  const escapeCsvValue = (value: unknown): string => {
+    if (value === null || value === undefined) return '';
+    const text = String(value);
+    const escaped = text.replace(/"/g, '""');
+    if (/[",\n\r]/.test(escaped)) {
+      return `"${escaped}"`;
+    }
+    return escaped;
+  };
+
+  const toFriendlySensorRow = (raw: CsvRow) => {
+    const timestamp = raw.timestamp ?? raw.bucketStart ?? raw.createdAt;
+    const temperature = raw.temperature ?? raw.temperatureAvg ?? raw.temp;
+    const humidity = raw.humidity ?? raw.humidityAvg ?? raw.humi;
+    const pressure = raw.pressure ?? raw.pressureAvg ?? raw.pres;
+    const lightLevel = raw.lightLevel ?? raw.lightLevelAvg;
+    const samples = raw.samples;
+    const isDark = raw.isDark;
+    const isRaining = raw.isRaining ?? raw.rain;
+
+    return {
+      [t('sensors.time')]: toDateTime(timestamp),
+      [`${t('sensors.temperature')} (°C)`]: formatDecimal(temperature, 1),
+      [`${t('sensors.humidity')} (%)`]: formatDecimal(humidity, 1),
+      [`${t('sensors.pressure')} (hPa)`]: formatDecimal(pressure, 1),
+      [getLocalLabel('Cường độ ánh sáng', 'Light Intensity', '光照强度')]: formatDecimal(lightLevel, 0),
+      [getLocalLabel('Trời tối', 'Is Dark', '是否为暗环境')]:
+        typeof isDark === 'boolean' ? yesNoLabel(isDark) : '',
+      [getLocalLabel('Có mưa', 'Raining', '是否下雨')]:
+        typeof isRaining === 'boolean' ? yesNoLabel(isRaining) : '',
+      [getLocalLabel('Số mẫu tổng hợp', 'Sample Count', '聚合样本数')]: formatDecimal(samples, 0),
+    };
+  };
+
+  const toFriendlyEnergyRow = (raw: CsvRow) => {
+    const timestamp = raw.timestamp ?? raw.bucketStart ?? raw.createdAt;
+    const voltage = raw.voltage ?? raw.voltageAvg;
+    const current = raw.current ?? raw.currentAvg;
+    const power = raw.power ?? raw.powerAvg;
+    const energy = raw.energy ?? raw.energyWh ?? raw.energyAvg;
+    const source = raw.source;
+    const battery = raw.batteryLevel ?? raw.batteryLevelAvg;
+
+    return {
+      [t('sensors.time')]: toDateTime(timestamp),
+      [`${t('energy.voltage')} (V)`]: formatDecimal(voltage, 2),
+      [`${t('energy.current')} (A)`]: formatDecimal(current, 3),
+      [`${t('energy.power')} (W)`]: formatDecimal(power, 2),
+      [getLocalLabel('Năng lượng (Wh)', 'Energy (Wh)', '能量 (Wh)')]: formatDecimal(energy, 3),
+      [getLocalLabel('Nguồn điện', 'Power Source', '电源来源')]: source ? String(source) : '',
+      [getLocalLabel('Mức pin (%)', 'Battery Level (%)', '电池电量 (%)')]: formatDecimal(battery, 1),
+    };
   };
 
   const exportToCSV = async (type: 'sensors' | 'energy') => {
@@ -87,15 +183,19 @@ export default function ExportTools() {
 
       if (!rows.length) { toast.error(t('reports.noDataRange')); return; }
 
-      const headers = Object.keys(rows[0]).join(',');
-      const body = rows
-        .map((r) =>
-          Object.values(r)
-            .map((v) => (String(v).includes(',') ? `"${v}"` : v))
-            .join(',')
-        )
-        .join('\n');
-      const blob = new Blob([`\uFEFF${headers}\n${body}`], { type: 'text/csv;charset=utf-8;' });
+      const normalizedRows = (type === 'sensors'
+        ? rows.map((row) => toFriendlySensorRow(row))
+        : rows.map((row) => toFriendlyEnergyRow(row))) as Array<Record<string, string>>;
+
+      const headers = Object.keys(normalizedRows[0]);
+      const csvLines = [
+        headers.map((h) => escapeCsvValue(h)).join(','),
+        ...normalizedRows.map((row) =>
+          headers.map((header) => escapeCsvValue(row[header] ?? '')).join(','),
+        ),
+      ];
+
+      const blob = new Blob([`\uFEFF${csvLines.join('\n')}`], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; a.download = filename; a.click();

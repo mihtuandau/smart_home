@@ -22,6 +22,49 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
   const { theme, resolvedTheme, setTheme } = useTheme();
   const { t, language } = useLanguage();
   const activeTheme = theme ?? resolvedTheme ?? 'light';
+  const [isNotificationOpen, setIsNotificationOpen] = React.useState(false);
+  const notificationRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!notificationRef.current) {
+        return;
+      }
+      if (notificationRef.current.contains(event.target as Node)) {
+        return;
+      }
+      setIsNotificationOpen(false);
+    };
+
+    if (isNotificationOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isNotificationOpen]);
+
+  const notificationTitle =
+    language === 'en'
+      ? 'Notifications'
+      : language === 'zh'
+        ? '通知'
+        : 'Thông báo';
+
+  const notificationSubtitle =
+    language === 'en'
+      ? 'System / email notifications'
+      : language === 'zh'
+        ? '系统 / 邮件通知'
+        : 'Thông báo hệ thống / email';
+
+  const emptyNotificationText =
+    language === 'en'
+      ? 'No system or email notifications yet.'
+      : language === 'zh'
+        ? '暂无系统或邮件通知。'
+        : 'Chưa có thông báo hệ thống hoặc email nào.';
 
   const getPageTitle = () => {
     switch (pathname) {
@@ -98,11 +141,31 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
 
             <LanguageSwitcher />
 
-            <button className="relative p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all group">
-              <Bell className="h-6 w-6" />
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full opacity-75 group-hover:animate-ping"></span>
-            </button>
+            <div className="relative" ref={notificationRef}>
+              <button
+                onClick={() => {
+                  setIsNotificationOpen((open) => !open);
+                }}
+                className="relative p-2.5 text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-all group"
+              >
+                <Bell className="h-6 w-6" />
+              </button>
+
+              {isNotificationOpen && (
+                <div className="absolute right-0 mt-2 w-[min(90vw,360px)] rounded-xl border border-border bg-card shadow-xl z-50 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-border">
+                    <p className="text-sm font-semibold text-foreground">{notificationTitle}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{notificationSubtitle}</p>
+                  </div>
+
+                  <div className="max-h-80 overflow-y-auto">
+                    <div className="px-4 py-6 text-sm text-muted-foreground text-center">
+                      {emptyNotificationText}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
