@@ -5,3 +5,4 @@ export * from './sensors';
 export * from './automation';
 export * from './energy';
 export * from './iot';
+export * from './settings';

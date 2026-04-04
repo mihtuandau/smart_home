@@ -1,4 +1,14 @@
 import { apiClient } from './client';
+import {
+  NotificationSettings,
+  UpdateNotificationSettingsDto,
+} from '@/types/settings';
+
+type ApiResponse<T> = {
+  success: boolean;
+  message?: string;
+  data: T;
+};
 
 export const settingsApi = {
   async getSettings() {
@@ -30,6 +40,22 @@ export const settingsApi = {
 
   async toggleAiLearning() {
     return apiClient.request('/settings/toggle/ai-learning', { method: 'POST' });
+  },
+
+  async getNotificationSettings() {
+    return apiClient.request<ApiResponse<NotificationSettings>>(
+      '/settings/notifications'
+    );
+  },
+
+  async updateNotificationSettings(data: UpdateNotificationSettingsDto) {
+    return apiClient.request<ApiResponse<NotificationSettings>>(
+      '/settings/notifications',
+      {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }
+    );
   },
 };
 export default settingsApi;

@@ -42,12 +42,12 @@ export default function ReportGenerator() {
 
   const { data: sensorStats, isLoading: sensorLoading } = useQuery({
     queryKey: ['report-sensor-stats', hours],
-    queryFn: () => sensorsApi.getSensorStats(hours),
+    queryFn: () => sensorsApi.getSensorStats(hours, 'avg'),
   });
 
   const { data: energyStats, isLoading: energyLoading } = useQuery({
     queryKey: ['report-energy-stats', hours],
-    queryFn: () => energyApi.getEnergyStats(hours),
+    queryFn: () => energyApi.getEnergyStats(hours, 'avg'),
   });
 
   const loading = sensorLoading || energyLoading;

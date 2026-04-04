@@ -13,8 +13,8 @@ export const sensorsApi = {
     return apiClient.request(`/sensors/history/${hours}?page=${page}&pageSize=${pageSize}`);
   },
 
-  async getSensorStats(hours: number = 24) {
-    return apiClient.request(`/sensors/stats?hours=${hours}`);
+  async getSensorStats(hours: number = 24, mode: 'auto' | 'raw' | 'avg' = 'auto') {
+    return apiClient.request(`/sensors/stats?hours=${hours}&mode=${mode}`);
   },
 
   async getSensorChart(type: string) {

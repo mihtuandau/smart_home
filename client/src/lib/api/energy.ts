@@ -1,8 +1,8 @@
 import { apiClient } from './client';
 
 export const energyApi = {
-  async getEnergyStats(hours: number = 24) {
-    return apiClient.request(`/energy/stats?hours=${hours}`);
+  async getEnergyStats(hours: number = 24, mode: 'auto' | 'raw' | 'avg' = 'auto') {
+    return apiClient.request(`/energy/stats?hours=${hours}&mode=${mode}`);
   },
 
   async getBatteryStatus() {

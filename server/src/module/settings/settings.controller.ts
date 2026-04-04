@@ -1,6 +1,17 @@
-import { Controller, Get, Patch, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Body,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { SettingsService } from './settings.service';
-import { UpdateSystemSettingsDto } from './dto/settings.dto';
+import {
+  UpdateNotificationSettingsDto,
+  UpdateSystemSettingsDto,
+} from './dto/settings.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
@@ -23,6 +34,35 @@ export class SettingsController {
     return {
       success: true,
       message: 'Settings updated successfully',
+      data: settings,
+    };
+  }
+
+  @Get('notifications')
+  async getNotificationSettings(@Request() req) {
+    const settings = await this.settingsService.getNotificationSettings(
+      req.user.id,
+    );
+
+    return {
+      success: true,
+      data: settings,
+    };
+  }
+
+  @Patch('notifications')
+  async updateNotificationSettings(
+    @Request() req,
+    @Body() dto: UpdateNotificationSettingsDto,
+  ) {
+    const settings = await this.settingsService.updateNotificationSettings(
+      req.user.id,
+      dto,
+    );
+
+    return {
+      success: true,
+      message: 'Notification settings updated successfully',
       data: settings,
     };
   }
