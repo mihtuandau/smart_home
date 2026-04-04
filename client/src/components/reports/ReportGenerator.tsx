@@ -29,6 +29,7 @@ interface SensorStatsShape {
 interface EnergyPoint {
   energy?: number;
   power?: number;
+  samples?: number;
 }
 
 interface ApiDataResponse<T> {
@@ -43,11 +44,13 @@ export default function ReportGenerator() {
   const { data: sensorStats, isLoading: sensorLoading } = useQuery({
     queryKey: ['report-sensor-stats', hours],
     queryFn: () => sensorsApi.getSensorStats(hours, 'avg'),
+    refetchInterval: 30000,
   });
 
   const { data: energyStats, isLoading: energyLoading } = useQuery({
     queryKey: ['report-energy-stats', hours],
     queryFn: () => energyApi.getEnergyStats(hours, 'avg'),
+    refetchInterval: 30000,
   });
 
   const loading = sensorLoading || energyLoading;
@@ -62,6 +65,8 @@ export default function ReportGenerator() {
   const avgPower = eData.length > 0
     ? eData.reduce((sum: number, item) => sum + (item.power ?? 0), 0) / eData.length
     : 0;
+  // In avg mode, one row is one 5-minute averaged sample stored in DB.
+  const sampleCount = eData.length;
 
   return (
     <div className="section-card border border-border rounded-xl p-4 sm:p-6 shadow-sm space-y-6">
@@ -119,7 +124,7 @@ export default function ReportGenerator() {
             {[
               { label: t('reports.totalConsumedEnergy'), value: `${totalEnergy.toFixed(3)} Wh` },
               { label: t('reports.averagePower'), value: `${avgPower.toFixed(2)} W` },
-              { label: t('reports.sampleCount'), value: `${eData.length}` },
+              { label: t('reports.sampleCount'), value: `${sampleCount.toLocaleString()}` },
             ].map((item) => (
               <div key={item.label} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                 <span className="text-xs sm:text-sm text-foreground/70">{item.label}</span>

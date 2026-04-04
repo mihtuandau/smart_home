@@ -380,7 +380,7 @@
     "noData": "No data",
     "totalConsumedEnergy": "Total energy consumed",
     "averagePower": "Average power",
-    "sampleCount": "Sample count",
+    "sampleCount": "5-minute average sample count",
     "exportCsvTitle": "Export CSV data",
     "custom": "Custom",
     "selectStartDate": "Please select a start date",

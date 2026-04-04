@@ -379,7 +379,7 @@
     "noData": "Không có dữ liệu",
     "totalConsumedEnergy": "Tổng điện tiêu thụ",
     "averagePower": "Công suất trung bình",
-    "sampleCount": "Số mẫu đo",
+    "sampleCount": "Số mẫu trung bình 5 phút",
     "exportCsvTitle": "Xuất dữ liệu CSV",
     "custom": "Tùy chỉnh",
     "selectStartDate": "Vui lòng chọn ngày bắt đầu",

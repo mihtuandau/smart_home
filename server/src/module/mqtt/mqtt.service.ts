@@ -10,7 +10,6 @@ import { AiService } from '../ai/ai.service';
 import { MqttPersistenceService } from './mqtt-persistence.service';
 import { MqttDeviceStateService } from './mqtt-device-state.service';
 import { MqttCommandService } from './mqtt-command.service';
-import { MqttPersistenceDecisionService } from './mqtt-persistence-decision.service';
 import { NotificationEmailService } from '../settings/notification-email.service';
 import { SettingsService } from '../settings/settings.service';
 
@@ -48,7 +47,6 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   constructor(
     private persistenceService: MqttPersistenceService,
     private deviceStateService: MqttDeviceStateService,
-    private persistenceDecision: MqttPersistenceDecisionService,
     private aiService: AiService,
     private notificationEmailService: NotificationEmailService,
     private settingsService: SettingsService,
@@ -331,14 +329,12 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async processSensorData(data: SensorPayload) {
-    if (this.persistenceDecision.shouldPersist(data)) {
-      try {
-        await this.persistenceService.saveSensorData(data);
-        await this.persistenceService.savePowerData(data);
-        this.logger.log(' Data saved to database successfully');
-      } catch (error) {
-        this.logger.error(`Failed to persist data: ${error.message}`);
-      }
+    try {
+      await this.persistenceService.saveSensorData(data);
+      await this.persistenceService.savePowerData(data);
+      this.logger.log(' Data saved to database successfully');
+    } catch (error) {
+      this.logger.error(`Failed to persist data: ${error.message}`);
     }
 
     await this.deviceStateService.updateDeviceStatesIfChanged(data);

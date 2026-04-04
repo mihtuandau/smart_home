@@ -380,7 +380,7 @@
     "noData": "无数据",
     "totalConsumedEnergy": "总耗电量",
     "averagePower": "平均功率",
-    "sampleCount": "采样数量",
+    "sampleCount": "5 分钟平均采样数",
     "exportCsvTitle": "导出 CSV 数据",
     "custom": "自定义",
     "selectStartDate": "请选择开始日期",
