@@ -54,8 +54,33 @@ model User {
   devices      Device[]
   automations  AutomationRule[]
   activityLogs ActivityLog[]
+  notificationSettings UserNotificationSettings?
 
   @@map("users")
+}
+
+model UserNotificationSettings {
+  id String @id @default(cuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  emailAlerts       Boolean @default(true)
+  pushNotifications Boolean @default(true)
+  deviceAlerts      Boolean @default(true)
+  automationAlerts  Boolean @default(true)
+  systemAlerts      Boolean @default(true)
+  energyAlerts      Boolean @default(true)
+  dailyReport       Boolean @default(true)
+
+  quietHoursFrom String @default("22:00")
+  quietHoursTo   String @default("06:00")
+  emailFrequency String @default("real-time")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("user_notification_settings")
 }
 
 // Device management

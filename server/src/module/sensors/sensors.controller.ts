@@ -29,8 +29,14 @@ export class SensorsController {
     @Param('hours', ParseIntPipe) hours: number,
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('pageSize', ParseIntPipe) pageSize: number = 20,
+    @Query('mode') mode?: 'auto' | 'raw' | 'avg',
   ) {
-    const result = await this.sensorsService.getHistory(hours, page, pageSize);
+    const result = await this.sensorsService.getHistory(
+      hours,
+      page,
+      pageSize,
+      mode,
+    );
     return {
       success: true,
       period: `${hours}h`,
@@ -39,8 +45,11 @@ export class SensorsController {
   }
 
   @Get('stats')
-  async getStats(@Query('hours', ParseIntPipe) hours: number = 24) {
-    const stats = await this.sensorsService.getStats(hours);
+  async getStats(
+    @Query('hours', ParseIntPipe) hours: number = 24,
+    @Query('mode') mode?: 'auto' | 'raw' | 'avg',
+  ) {
+    const stats = await this.sensorsService.getStats(hours, mode);
     return {
       success: true,
       data: stats,

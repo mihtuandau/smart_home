@@ -8,8 +8,9 @@ export class EnergyController {
   @Get('stats')
   async getEnergyStats(
     @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
+    @Query('mode') mode?: 'auto' | 'raw' | 'avg',
   ) {
-    const data = await this.energyService.getEnergyStats(hours);
+    const data = await this.energyService.getEnergyStats(hours, mode);
     return {
       success: true,
       period: `${hours}h`,

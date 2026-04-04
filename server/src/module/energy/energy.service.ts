@@ -2,13 +2,40 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 import { PowerSource } from '@prisma/client';
 
+const RAW_RETENTION_DAYS = Number(process.env.RAW_RETENTION_DAYS || 7);
+const RAW_RETENTION_HOURS = RAW_RETENTION_DAYS * 24;
+type EnergyMode = 'auto' | 'raw' | 'avg';
+
 @Injectable()
 export class EnergyService {
   constructor(private prisma: PrismaService) {}
 
-  async getEnergyStats(hours: number = 24) {
+  async getEnergyStats(hours: number = 24, mode: EnergyMode = 'auto') {
     const now = new Date();
     const startTime = new Date(now.getTime() - hours * 60 * 60 * 1000);
+    const shouldUseAverage = mode === 'avg' || (mode === 'auto' && hours > RAW_RETENTION_HOURS);
+
+    if (shouldUseAverage) {
+      const aggRows = await this.prisma.powerAgg.findMany({
+        where: {
+          bucketStart: {
+            gte: startTime,
+            lte: now,
+          },
+        },
+        orderBy: { bucketStart: 'asc' },
+      });
+
+      return aggRows.map((row) => ({
+        timestamp: row.bucketStart,
+        power: row.powerAvg,
+        energy: row.energySum,
+        voltage: row.voltageAvg,
+        current: row.currentAvg,
+        source: 'AGGREGATED',
+        samples: row.samples,
+      }));
+    }
 
     const powerData = await this.prisma.powerData.findMany({
       where: {

@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 
+const RAW_RETENTION_DAYS = Number(process.env.RAW_RETENTION_DAYS || 7);
+const RAW_RETENTION_HOURS = RAW_RETENTION_DAYS * 24;
+type HistoryMode = 'auto' | 'raw' | 'avg';
+type StatsMode = 'auto' | 'raw' | 'avg';
+
 @Injectable()
 export class SensorsService {
   constructor(private prisma: PrismaService) {}
@@ -16,8 +21,43 @@ export class SensorsService {
     hours: number = 24,
     page: number = 1,
     pageSize: number = 20,
+    mode: HistoryMode = 'auto',
   ) {
     const since = new Date(Date.now() - hours * 60 * 60 * 1000);
+    const shouldUseAverage = mode === 'avg' || (mode === 'auto' && hours > RAW_RETENTION_HOURS);
+
+    if (shouldUseAverage) {
+      const where = { bucketStart: { gte: since } };
+      const [aggData, total] = await Promise.all([
+        this.prisma.sensorAgg.findMany({
+          where,
+          orderBy: { bucketStart: 'desc' },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+        }),
+        this.prisma.sensorAgg.count({ where }),
+      ]);
+
+      const data = aggData.map((row) => ({
+        timestamp: row.bucketStart,
+        temperature: row.temperatureAvg,
+        humidity: row.humidityAvg,
+        pressure: row.pressureAvg,
+        lightLevel: Math.round(row.lightLevelAvg),
+        isDark: row.darkCount > row.samples / 2,
+        isRaining: row.rainCount > 0,
+        samples: row.samples,
+      }));
+
+      return {
+        data,
+        total,
+        page,
+        pageSize,
+        totalPages: Math.ceil(total / pageSize),
+      };
+    }
+
     const where = { timestamp: { gte: since } };
 
     const [data, total] = await Promise.all([
@@ -39,8 +79,72 @@ export class SensorsService {
     };
   }
 
-  async getStats(hours: number = 24) {
+  async getStats(hours: number = 24, mode: StatsMode = 'auto') {
     const since = new Date(Date.now() - hours * 60 * 60 * 1000);
+
+    const shouldUseAverage =
+      mode === 'avg' || (mode === 'auto' && hours > RAW_RETENTION_HOURS);
+
+    if (shouldUseAverage) {
+      const aggData = await this.prisma.sensorAgg.findMany({
+        where: {
+          bucketStart: {
+            gte: since,
+          },
+        },
+        orderBy: { bucketStart: 'asc' },
+      });
+
+      if (aggData.length === 0) {
+        return {
+          temperature: { avg: 0, min: 0, max: 0 },
+          humidity: { avg: 0, min: 0, max: 0 },
+          pressure: { avg: 0, min: 0, max: 0 },
+          lightLevel: { avg: 0, min: 0, max: 0 },
+          count: 0,
+          period: `${hours}h`,
+        };
+      }
+
+      const temperatureAvg = this.weightedAverage(
+        aggData.map((d) => ({ value: d.temperatureAvg, weight: d.samples })),
+      );
+      const humidityAvg = this.weightedAverage(
+        aggData.map((d) => ({ value: d.humidityAvg, weight: d.samples })),
+      );
+      const pressureAvg = this.weightedAverage(
+        aggData.map((d) => ({ value: d.pressureAvg, weight: d.samples })),
+      );
+      const lightAvg = this.weightedAverage(
+        aggData.map((d) => ({ value: d.lightLevelAvg, weight: d.samples })),
+      );
+      const totalSamples = aggData.reduce((sum, row) => sum + row.samples, 0);
+
+      return {
+        temperature: {
+          avg: temperatureAvg,
+          min: Math.min(...aggData.map((d) => d.temperatureMin)),
+          max: Math.max(...aggData.map((d) => d.temperatureMax)),
+        },
+        humidity: {
+          avg: humidityAvg,
+          min: Math.min(...aggData.map((d) => d.humidityMin)),
+          max: Math.max(...aggData.map((d) => d.humidityMax)),
+        },
+        pressure: {
+          avg: pressureAvg,
+          min: Math.min(...aggData.map((d) => d.pressureMin)),
+          max: Math.max(...aggData.map((d) => d.pressureMax)),
+        },
+        lightLevel: {
+          avg: lightAvg,
+          min: Math.min(...aggData.map((d) => d.lightLevelMin)),
+          max: Math.max(...aggData.map((d) => d.lightLevelMax)),
+        },
+        count: totalSamples,
+        period: `${hours}h`,
+      };
+    }
 
     const data = await this.prisma.sensorData.findMany({
       where: {
@@ -147,6 +251,20 @@ export class SensorsService {
       Math.round((values.reduce((a, b) => a + b, 0) / values.length) * 100) /
       100
     );
+  }
+
+  private weightedAverage(items: { value: number; weight: number }[]): number {
+    const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+    if (totalWeight === 0) {
+      return 0;
+    }
+
+    const weightedSum = items.reduce(
+      (sum, item) => sum + item.value * item.weight,
+      0,
+    );
+
+    return Math.round((weightedSum / totalWeight) * 100) / 100;
   }
 
   private calculateComfortIndex(temp: number, humidity: number): string {

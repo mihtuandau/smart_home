@@ -10,10 +10,12 @@ import { AiEventsGateway } from './ai-events.gateway';
 import { PrismaModule } from '../../common/prisma.module';
 import { AiModule } from '../ai/ai.module';
 import { WsJwtGuard } from '../../common/guards/ws-jwt.guard';
+import { SettingsModule } from '../settings/settings.module';
 
 @Module({
   imports: [
     PrismaModule,
+    SettingsModule,
     forwardRef(() => AiModule),
     JwtModule.registerAsync({
       imports: [ConfigModule],

@@ -62,7 +62,7 @@ export default function ExportTools() {
         const pageSize = 500;
         while (true) {
           const res = await apiClient.request<ApiDataResponse<CsvRow[]> | CsvRow[]>(
-            `/sensors/history/${hours}?page=${page}&pageSize=${pageSize}`
+            `/sensors/history/${hours}?page=${page}&pageSize=${pageSize}&mode=avg`
           );
           const pageData = Array.isArray(res)
             ? res
@@ -76,7 +76,7 @@ export default function ExportTools() {
         }
         filename = `sensors_${periodLabel}_${today}.csv`;
       } else {
-        const res = await apiClient.request<ApiDataResponse<CsvRow[]> | CsvRow[]>(`/energy/stats?hours=${hours}`);
+        const res = await apiClient.request<ApiDataResponse<CsvRow[]> | CsvRow[]>(`/energy/stats?hours=${hours}&mode=avg`);
         rows = Array.isArray(res)
           ? res
           : Array.isArray(res.data)

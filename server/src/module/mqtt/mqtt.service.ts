@@ -11,6 +11,8 @@ import { MqttPersistenceService } from './mqtt-persistence.service';
 import { MqttDeviceStateService } from './mqtt-device-state.service';
 import { MqttCommandService } from './mqtt-command.service';
 import { MqttPersistenceDecisionService } from './mqtt-persistence-decision.service';
+import { NotificationEmailService } from '../settings/notification-email.service';
+import { SettingsService } from '../settings/settings.service';
 
 export interface SensorPayload {
   temperature: number;
@@ -26,29 +28,158 @@ export interface SensorPayload {
   device2?: boolean;
 }
 
+type DeviceStateKey = 'led1' | 'led2' | 'device1' | 'device2';
+
 @Injectable()
 export class MqttService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(MqttService.name);
   private mqttClient: mqtt.MqttClient;
   private latestData: SensorPayload | null = null;
   private commandService: MqttCommandService;
+  private mqttDisconnectedNotified = false;
+  private lastRealtimeMessageAt: number = Date.now();
+  private healthCheckTimer: NodeJS.Timeout | null = null;
+  private readonly staleDataAlertMs =
+    Number(process.env.MQTT_STALE_ALERT_SECONDS || 90) * 1000;
+  private readonly energyAlertDeltaW = Number(process.env.ENERGY_ALERT_DELTA_W || 0);
+  private readonly deviceStateChangeEmailEnabled =
+    process.env.DEVICE_STATE_CHANGE_EMAIL_ENABLED === 'true';
 
   constructor(
     private persistenceService: MqttPersistenceService,
     private deviceStateService: MqttDeviceStateService,
     private persistenceDecision: MqttPersistenceDecisionService,
     private aiService: AiService,
+    private notificationEmailService: NotificationEmailService,
+    private settingsService: SettingsService,
   ) {}
+
+  private async checkRealtimeEnergyAlert(data: SensorPayload) {
+    const currentPowerW = Number((data.power_mW || 0) / 1000);
+    if (currentPowerW <= 0) {
+      return;
+    }
+
+    const systemSettings = await this.settingsService.getSettings();
+    const triggerThreshold =
+      Number(systemSettings.maxPowerConsumption) + this.energyAlertDeltaW;
+
+    if (currentPowerW <= triggerThreshold) {
+      return;
+    }
+
+    const result = await this.notificationEmailService.sendEnergyThresholdAlert({
+      currentPower: currentPowerW,
+      thresholdPower: triggerThreshold,
+      measuredAt: new Date(),
+    });
+
+    if (result.sent > 0) {
+      this.logger.warn(
+        `Realtime energy threshold exceeded (${currentPowerW.toFixed(2)}W > ${triggerThreshold.toFixed(2)}W). Sent ${result.sent} alert email(s).`,
+      );
+    }
+  }
+
+  private normalizeIncomingPayload(raw: Record<string, unknown>): SensorPayload {
+    const powerMilliWatt =
+      typeof raw.power_mW === 'number'
+        ? raw.power_mW
+        : typeof raw.power === 'number'
+          ? raw.power * 1000
+          : 0;
+
+    const currentMilliAmp =
+      typeof raw.current_mA === 'number'
+        ? raw.current_mA
+        : typeof raw.current === 'number'
+          ? raw.current * 1000
+          : 0;
+
+    return {
+      temperature: Number(raw.temperature ?? 0),
+      humidity: Number(raw.humidity ?? 0),
+      pressure: Number(raw.pressure ?? 0),
+      voltage: Number(raw.voltage ?? 0),
+      current_mA: Number(currentMilliAmp),
+      power_mW: Number(powerMilliWatt),
+      rain: Boolean(raw.rain),
+      led1: Boolean(raw.led1),
+      led2: Boolean(raw.led2),
+      device1: typeof raw.device1 === 'boolean' ? raw.device1 : undefined,
+      device2: typeof raw.device2 === 'boolean' ? raw.device2 : undefined,
+    };
+  }
+
+  private async sendImmediateMqttDisconnectAlert(reason: string) {
+    if (this.mqttDisconnectedNotified) {
+      return;
+    }
+
+    this.mqttDisconnectedNotified = true;
+
+    try {
+      const systemResult = await this.notificationEmailService.sendSystemAnomalyAlert({
+        issues: [`MQTT broker disconnected (${reason}). Realtime data stream is interrupted.`],
+        detectedAt: new Date(),
+      });
+
+      const deviceResult = await this.notificationEmailService.sendDeviceOfflineAlert({
+        deviceNames: ['MQTT-controlled devices'],
+        offlineMinutes: 0,
+        detectedAt: new Date(),
+      });
+
+      if (systemResult.sent > 0 || deviceResult.sent > 0) {
+        this.logger.warn(
+          `Sent immediate MQTT disconnect alerts: system=${systemResult.sent}, device=${deviceResult.sent}.`,
+        );
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to send MQTT disconnect alert email: ${error.message}`,
+      );
+    }
+  }
 
   async onModuleInit() {
     this.connectMqtt();
+    this.startRealtimeHealthCheck();
   }
 
   async onModuleDestroy() {
+    if (this.healthCheckTimer) {
+      clearInterval(this.healthCheckTimer);
+      this.healthCheckTimer = null;
+    }
+
     if (this.mqttClient) {
       this.mqttClient.end();
       this.logger.log('MQTT client disconnected');
     }
+  }
+
+  private startRealtimeHealthCheck() {
+    if (this.healthCheckTimer) {
+      clearInterval(this.healthCheckTimer);
+    }
+
+    this.healthCheckTimer = setInterval(() => {
+      const now = Date.now();
+      const staleMs = now - this.lastRealtimeMessageAt;
+
+      if (!this.isConnected()) {
+        return;
+      }
+
+      if (staleMs < this.staleDataAlertMs) {
+        return;
+      }
+
+      void this.sendImmediateMqttDisconnectAlert(
+        `no realtime data for ${(staleMs / 1000).toFixed(0)}s`,
+      );
+    }, 15 * 1000);
   }
 
   private connectMqtt() {
@@ -76,6 +207,29 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       this.logger.log(
         ` Connection status: ${this.mqttClient.connected ? 'CONNECTED' : 'DISCONNECTED'}`,
       );
+
+      if (this.mqttDisconnectedNotified) {
+        void this.notificationEmailService
+          .sendSystemRecoveryAlert({
+            message: 'Broker MQTT đã hoạt động trở lại sau khi gián đoạn.',
+            recoveredAt: new Date(),
+          })
+          .then((result) => {
+            if (result.sent > 0) {
+              this.logger.warn(
+                `Sent ${result.sent} MQTT recovery alert email(s).`,
+              );
+            }
+          })
+          .catch((error) => {
+            this.logger.error(
+              `Failed to send MQTT recovery alert email: ${error.message}`,
+            );
+          });
+      }
+
+      this.mqttDisconnectedNotified = false;
+      this.lastRealtimeMessageAt = Date.now();
       this.subscribeToTopics();
     });
 
@@ -85,6 +239,7 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
     this.mqttClient.on('error', (error) => {
       this.logger.error(`MQTT Error: ${error.message}`);
+      void this.sendImmediateMqttDisconnectAlert(`error: ${error.message}`);
     });
 
     this.mqttClient.on('reconnect', () => {
@@ -93,6 +248,12 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
     this.mqttClient.on('offline', () => {
       this.logger.warn('MQTT client offline');
+      void this.sendImmediateMqttDisconnectAlert('offline event');
+    });
+
+    this.mqttClient.on('close', () => {
+      this.logger.warn('MQTT connection closed');
+      void this.sendImmediateMqttDisconnectAlert('connection closed');
     });
   }
 
@@ -113,15 +274,47 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       this.logger.debug(`Data: ${message}`);
 
       if (topic === MQTT_TOPICS.DATA_TOPIC) {
-        const data: SensorPayload = JSON.parse(message);
+        const rawData = JSON.parse(message) as Record<string, unknown>;
+        const data = this.normalizeIncomingPayload(rawData);
         const prev = this.latestData ?? ({} as SensorPayload);
         const mergedData: SensorPayload = {
           ...prev,
           ...data,
         };
-        if (!('device1' in data)) delete (mergedData as any).device1;
-        if (!('device2' in data)) delete (mergedData as any).device2;
+        if (!('device1' in rawData)) delete (mergedData as any).device1;
+        if (!('device2' in rawData)) delete (mergedData as any).device2;
         this.latestData = mergedData;
+        this.lastRealtimeMessageAt = Date.now();
+        this.mqttDisconnectedNotified = false;
+
+        const changedStates: string[] = [];
+        const stateKeys: DeviceStateKey[] = ['led1', 'led2', 'device1', 'device2'];
+        for (const key of stateKeys) {
+          const prevValue = prev[key];
+          const nextValue = mergedData[key];
+
+          if (
+            typeof prevValue === 'boolean' &&
+            typeof nextValue === 'boolean' &&
+            prevValue !== nextValue
+          ) {
+            changedStates.push(`${key.toUpperCase()}: ${prevValue ? 'ON' : 'OFF'} -> ${nextValue ? 'ON' : 'OFF'}`);
+          }
+        }
+
+        if (this.deviceStateChangeEmailEnabled && changedStates.length > 0) {
+          const result =
+            await this.notificationEmailService.sendDeviceStateChangeAlert({
+              changes: changedStates,
+              detectedAt: new Date(),
+            });
+
+          if (result.sent > 0) {
+            this.logger.warn(
+              `Sent ${result.sent} device state-change alert email(s).`,
+            );
+          }
+        }
 
         this.logger.log(
           `️  Temp: ${mergedData.temperature}°C |  Humidity: ${mergedData.humidity}% |  Voltage: ${mergedData.voltage}V`,
@@ -149,6 +342,8 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     }
 
     await this.deviceStateService.updateDeviceStatesIfChanged(data);
+
+    await this.checkRealtimeEnergyAlert(data);
 
     try {
       await this.aiService.analyze(data);

@@ -1,15 +1,30 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../../common/prisma.service';
+import { SettingsService } from '../settings/settings.service';
+import { NotificationEmailService } from '../settings/notification-email.service';
 
 const BUCKET_MINUTES = 5;
 const RAW_RETENTION_DAYS = 7;
+const DEVICE_OFFLINE_MINUTES = Number(process.env.DEVICE_OFFLINE_MINUTES || 30);
+const SENSOR_STALE_MINUTES = Number(process.env.SENSOR_STALE_MINUTES || 20);
+const TEMPERATURE_HIGH_C = Number(process.env.TEMPERATURE_HIGH_C || 35);
+const TEMPERATURE_LOW_C = Number(process.env.TEMPERATURE_LOW_C || 15);
+const HUMIDITY_HIGH_PERCENT = Number(process.env.HUMIDITY_HIGH_PERCENT || 85);
+const HUMIDITY_LOW_PERCENT = Number(process.env.HUMIDITY_LOW_PERCENT || 30);
+const PRESSURE_LOW_HPA = Number(process.env.PRESSURE_LOW_HPA || 980);
+const PRESSURE_HIGH_HPA = Number(process.env.PRESSURE_HIGH_HPA || 1035);
+const ENERGY_ALERT_DELTA_W = Number(process.env.ENERGY_ALERT_DELTA_W || 0);
 
 @Injectable()
 export class MaintenanceService implements OnModuleInit {
   private readonly logger = new Logger(MaintenanceService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private settingsService: SettingsService,
+    private notificationEmailService: NotificationEmailService,
+  ) {}
 
   async onModuleInit() {
     this.logger.log('Running startup cleanup...');
@@ -27,6 +42,11 @@ export class MaintenanceService implements OnModuleInit {
     await Promise.all([
       this.aggregateSensorBucket(bucketStart, bucketEnd),
       this.aggregatePowerBucket(bucketStart, bucketEnd),
+    ]);
+
+    await Promise.all([
+      this.checkDeviceOfflineAlerts(now),
+      this.checkSensorHealthAlerts(now),
     ]);
   }
 
@@ -149,6 +169,138 @@ export class MaintenanceService implements OnModuleInit {
       create: payload,
       update: payload,
     });
+
+    const latestPower = rows[rows.length - 1]?.power ?? 0;
+    if (latestPower <= 0) {
+      return;
+    }
+
+    const systemSettings = await this.settingsService.getSettings();
+    const triggerThreshold =
+      Number(systemSettings.maxPowerConsumption) + ENERGY_ALERT_DELTA_W;
+
+    if (latestPower <= triggerThreshold) {
+      return;
+    }
+
+    const result = await this.notificationEmailService.sendEnergyThresholdAlert({
+      currentPower: latestPower,
+      thresholdPower: triggerThreshold,
+      measuredAt: end,
+    });
+
+    if (result.sent > 0) {
+      this.logger.warn(
+        `Energy threshold exceeded (${latestPower.toFixed(2)}W > ${triggerThreshold.toFixed(2)}W). Sent ${result.sent} alert email(s).`,
+      );
+    }
+  }
+
+  private async checkDeviceOfflineAlerts(now: Date) {
+    const cutoff = new Date(now.getTime() - DEVICE_OFFLINE_MINUTES * 60 * 1000);
+
+    const staleDevices = await this.prisma.device.findMany({
+      where: {
+        status: {
+          in: ['ON', 'AUTO'],
+        },
+        OR: [
+          { lastActive: null },
+          {
+            lastActive: {
+              lt: cutoff,
+            },
+          },
+        ],
+      },
+      select: {
+        name: true,
+      },
+      take: 5,
+    });
+
+    if (staleDevices.length === 0) {
+      return;
+    }
+
+    const result = await this.notificationEmailService.sendDeviceOfflineAlert({
+      deviceNames: staleDevices.map((device) => device.name),
+      offlineMinutes: DEVICE_OFFLINE_MINUTES,
+      detectedAt: now,
+    });
+
+    if (result.sent > 0) {
+      this.logger.warn(
+        `Detected ${staleDevices.length} possible offline device(s). Sent ${result.sent} device alert email(s).`,
+      );
+    }
+  }
+
+  private async checkSensorHealthAlerts(now: Date) {
+    const latest = await this.prisma.sensorData.findFirst({
+      orderBy: {
+        timestamp: 'desc',
+      },
+    });
+
+    if (!latest) {
+      return;
+    }
+
+    const issues: string[] = [];
+    const staleCutoff = new Date(now.getTime() - SENSOR_STALE_MINUTES * 60 * 1000);
+
+    if (latest.timestamp < staleCutoff) {
+      issues.push(
+        `Sensor data stream seems stale (last sample at ${latest.timestamp.toISOString()}).`,
+      );
+    }
+
+    if (latest.temperature >= TEMPERATURE_HIGH_C) {
+      issues.push(
+        `Temperature is too high: ${latest.temperature.toFixed(1)} C (>= ${TEMPERATURE_HIGH_C} C).`,
+      );
+    }
+    if (latest.temperature <= TEMPERATURE_LOW_C) {
+      issues.push(
+        `Temperature is too low: ${latest.temperature.toFixed(1)} C (<= ${TEMPERATURE_LOW_C} C).`,
+      );
+    }
+    if (latest.humidity >= HUMIDITY_HIGH_PERCENT) {
+      issues.push(
+        `Humidity is too high: ${latest.humidity.toFixed(1)}% (>= ${HUMIDITY_HIGH_PERCENT}%).`,
+      );
+    }
+    if (latest.humidity <= HUMIDITY_LOW_PERCENT) {
+      issues.push(
+        `Humidity is too low: ${latest.humidity.toFixed(1)}% (<= ${HUMIDITY_LOW_PERCENT}%).`,
+      );
+    }
+    if (latest.pressure <= PRESSURE_LOW_HPA) {
+      issues.push(
+        `Pressure is too low: ${latest.pressure.toFixed(1)} hPa (<= ${PRESSURE_LOW_HPA} hPa).`,
+      );
+    }
+    if (latest.pressure >= PRESSURE_HIGH_HPA) {
+      issues.push(
+        `Pressure is too high: ${latest.pressure.toFixed(1)} hPa (>= ${PRESSURE_HIGH_HPA} hPa).`,
+      );
+    }
+
+    if (issues.length === 0) {
+      return;
+    }
+
+    const result = await this.notificationEmailService.sendSystemAnomalyAlert({
+      issues,
+      detectedAt: now,
+    });
+
+    if (result.sent > 0) {
+      this.logger.warn(
+        `Detected ${issues.length} sensor anomaly issue(s). Sent ${result.sent} system alert email(s).`,
+      );
+    }
   }
 
   private avg(values: number[]): number {
