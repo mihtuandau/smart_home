@@ -256,6 +256,12 @@ export function mergeLatestCacheFromIoT(
   if (normalized.power !== undefined) {
     dataObj.power = normalized.power;
   }
+  if (normalized.device1 !== undefined) {
+    dataObj.device1 = normalized.device1;
+  }
+  if (normalized.device2 !== undefined) {
+    dataObj.device2 = normalized.device2;
+  }
 
   merged.data = dataObj;
   return merged;

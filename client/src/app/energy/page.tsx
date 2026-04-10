@@ -6,6 +6,7 @@ import EnergyStatsGrid from "@/components/energy/EnergyStatsGrid";
 import SolarPowerChart from "@/components/energy/SolarPowerChart";
 import CurrentVoltageChart from "@/components/energy/CurrentVoltageChart";
 import EnergySystemTable from "@/components/energy/EnergySystemTable";
+import BillingForecastWidget from "@/components/energy/BillingForecastWidget";
 
 export default function EnergyPage() {
   const { t } = useLanguage();
@@ -39,6 +40,10 @@ export default function EnergyPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <SolarPowerChart timeRange={timeRange} />
         <CurrentVoltageChart timeRange={timeRange} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:gap-6">
+        <BillingForecastWidget />
       </div>
 
       <EnergySystemTable />

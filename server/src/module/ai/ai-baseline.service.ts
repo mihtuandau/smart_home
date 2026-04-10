@@ -37,9 +37,14 @@ export class AiBaselineService implements OnModuleInit {
     if (!this.profile[wd]) this.profile[wd] = {};
     if (!this.profile[wd][h]) this.profile[wd][h] = {};
     if (!this.profile[wd][h][state]) {
-      this.profile[wd][h][state] = { count: 0, sum: 0, mean: null };
+      this.profile[wd][h][state] = { count: 0, sum: 0, sumSq: 0, mean: null, stdDev: null };
     }
-    return this.profile[wd][h][state]!;
+    const slot = this.profile[wd][h][state]!;
+    if (slot.sumSq === undefined) {
+      slot.sumSq = slot.count * (slot.mean || 0) * (slot.mean || 0); // Approximate existing data
+      slot.stdDev = 0;
+    }
+    return slot;
   }
 
   private async loadFromDb(): Promise<boolean> {
@@ -97,13 +102,19 @@ export class AiBaselineService implements OnModuleInit {
           const slot = this.ensureSlot(wd, h, 'none');
           slot.count += 1;
           slot.sum += powerMw;
+          slot.sumSq = (slot.sumSq || 0) + powerMw * powerMw;
           slot.mean = slot.sum / slot.count;
+          const variance = (slot.sumSq / slot.count) - (slot.mean * slot.mean);
+          slot.stdDev = variance > 0 ? Math.sqrt(variance) : 0;
           idleCount++;
         } else {
           const slot = this.ensureSlot(wd, h, 'led1');
           slot.count += 1;
           slot.sum += powerMw;
+          slot.sumSq = (slot.sumSq || 0) + powerMw * powerMw;
           slot.mean = slot.sum / slot.count;
+          const variance = (slot.sumSq / slot.count) - (slot.mean * slot.mean);
+          slot.stdDev = variance > 0 ? Math.sqrt(variance) : 0;
           activeCount++;
         }
       }
@@ -131,7 +142,10 @@ export class AiBaselineService implements OnModuleInit {
     const slot = this.ensureSlot(wd, h, state);
     slot.count += 1;
     slot.sum += powerMw;
+    slot.sumSq = (slot.sumSq || 0) + powerMw * powerMw;
     slot.mean = slot.sum / slot.count;
+    const variance = (slot.sumSq / slot.count) - (slot.mean * slot.mean);
+    slot.stdDev = variance > 0 ? Math.sqrt(variance) : 0;
 
     this.dirty = true;
   }
@@ -186,6 +200,48 @@ export class AiBaselineService implements OnModuleInit {
     const exp = this.expectedPowerMw(ts, led1, led2);
     if (exp == null) return false;
     return currentPowerMw > exp * factor;
+  }
+
+  getZScoreStats(
+    ts: Date = new Date(),
+    led1 = false,
+    led2 = false,
+  ): { mean: number; stdDev: number } | null {
+    const wd = String(ts.getDay());
+    const h = String(ts.getUTCHours());
+    const state = ledStateKey(led1, led2);
+
+    const exactSlot = this.profile?.[wd]?.[h]?.[state];
+    // Always combine enough data or use fallback
+    if (exactSlot?.mean != null && exactSlot.count >= 3) {
+      return { mean: exactSlot.mean, stdDev: Math.max(exactSlot.stdDev || 0, 100) }; // Minimum default stdDev 100W
+    }
+
+    const hourMap = this.profile?.[wd]?.[h];
+    if (hourMap) {
+      let sum = 0, sumSq = 0, count = 0;
+      for (const s of Object.values(hourMap)) {
+        if (s && s.count > 0) {
+          sum += s.sum;
+          sumSq += s.sumSq ?? (s.count * (s.mean ?? 0) * (s.mean ?? 0));
+          count += s.count;
+        }
+      }
+      if (count >= 5) {
+        const mean = sum / count;
+        const variance = (sumSq / count) - (mean * mean);
+        const stdDev = variance > 0 ? Math.sqrt(variance) : 0;
+        return { mean, stdDev: Math.max(stdDev, 100) };
+      }
+    }
+    
+    // Fallbacks if no exact logic is available
+    const fallbackExpected = this.expectedPowerMw(ts, led1, led2);
+    if (fallbackExpected) {
+      return { mean: fallbackExpected, stdDev: 150 }; // High uncertainty fallback
+    }
+
+    return null;
   }
 
   private async persistIfDirty() {

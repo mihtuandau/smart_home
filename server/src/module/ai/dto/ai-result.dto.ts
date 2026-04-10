@@ -30,7 +30,9 @@ export interface BillingForecastDto {
 export interface BaselineSlot {
   count: number;
   sum: number;
+  sumSq?: number;
   mean: number | null;
+  stdDev?: number | null;
 }
 
 export type LedState = 'none' | 'led1' | 'led2' | 'both';

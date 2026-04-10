@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import DashboardSidebar from '@/components/layout/SideBar';
 import DashboardHeader from '@/components/layout/Header';
+import { FloatingMinaChat } from '@/components/chat/FloatingMinaChat';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -81,6 +82,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </main>
         </div>
       </div>
+      <FloatingMinaChat />
     </div>
   );
 }

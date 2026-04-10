@@ -36,14 +36,74 @@ export function useIoTDeviceActions({
   pendingOpsRef,
   ui,
 }: UseIoTDeviceActionsParams) {
+  const mergeIncomingDevice = (
+    previous: IoTDevice | null,
+    incoming: unknown,
+  ): IoTDevice | null => {
+    if (incoming === undefined) {
+      return previous;
+    }
+
+    if (incoming === null) {
+      return null;
+    }
+
+    if (typeof incoming === 'boolean') {
+      if (!previous) {
+        return null;
+      }
+
+      return {
+        ...previous,
+        state: incoming,
+      };
+    }
+
+    if (typeof incoming === 'object') {
+      const data = incoming as Record<string, unknown>;
+      const nextName =
+        typeof data.name === 'string'
+          ? data.name
+          : previous?.name;
+      const nextPower =
+        typeof data.power === 'number'
+          ? data.power
+          : previous?.power;
+      const nextState =
+        typeof data.state === 'boolean'
+          ? data.state
+          : previous?.state;
+
+      if (!nextName || nextPower === undefined || nextState === undefined) {
+        return previous;
+      }
+
+      const nextPin =
+        typeof data.pin === 'number' ? data.pin : previous?.pin;
+
+      return {
+        name: nextName,
+        power: nextPower,
+        state: nextState,
+        pin: nextPin,
+      };
+    }
+
+    return previous;
+  };
+
   const syncDevicesFromServer = useCallback((latest: LatestData | undefined) => {
     if (!latest) return;
 
     setLocalDevices((prev) => {
       const next: Record<number, IoTDevice | null> = {};
 
-      next[0] = pendingOpsRef.current.has(0) ? (prev[0] || null) : (latest.device1 || null);
-      next[1] = pendingOpsRef.current.has(1) ? (prev[1] || null) : (latest.device2 || null);
+      next[0] = pendingOpsRef.current.has(0)
+        ? (prev[0] || null)
+        : mergeIncomingDevice(prev[0] || null, latest.device1);
+      next[1] = pendingOpsRef.current.has(1)
+        ? (prev[1] || null)
+        : mergeIncomingDevice(prev[1] || null, latest.device2);
 
       return next;
     });
@@ -64,8 +124,7 @@ export function useIoTDeviceActions({
       state: false,
     };
 
-    const emptySlot = Object.entries(localDevices).find(([, d]) => !d)?.[0] as string | undefined;
-    const slotIndex = emptySlot ? parseInt(emptySlot, 10) : -1;
+    const slotIndex = [0, 1].find((index) => !localDevices[index]) ?? -1;
 
     try {
       if (slotIndex >= 0) {

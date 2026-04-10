@@ -9,7 +9,9 @@ import {
   HttpException,
   HttpStatus,
   UseGuards,
+  Request,
 } from '@nestjs/common';
+import { DeviceStatus, DeviceType } from '@prisma/client';
 import { MqttService } from './mqtt.service';
 import { PrismaService } from '../../common/prisma.service';
 import { ControlLedDto } from './dto/control-led.dto';
@@ -17,10 +19,56 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('iot')
 export class IotController {
+  private readonly customDeviceBasePin = 9001;
+
   constructor(
     private mqttService: MqttService,
     private prisma: PrismaService,
   ) {}
+
+  private getSlotPin(index: number): number {
+    return this.customDeviceBasePin + index;
+  }
+
+  private getCustomDevicePins(): number[] {
+    return [this.getSlotPin(0), this.getSlotPin(1)];
+  }
+
+  private async getCustomDevicesBySlot() {
+    const devices = await this.prisma.device.findMany({
+      where: {
+        pin: {
+          in: this.getCustomDevicePins(),
+        },
+      },
+      orderBy: {
+        pin: 'asc',
+      },
+    });
+
+    const bySlot: Array<(typeof devices)[number] | null> = [null, null];
+    for (const device of devices) {
+      const slot = device.pin - this.customDeviceBasePin;
+      if (slot === 0 || slot === 1) {
+        bySlot[slot] = device;
+      }
+    }
+
+    return bySlot;
+  }
+
+  private async getCustomDevicesOrdered() {
+    return this.prisma.device.findMany({
+      where: {
+        pin: {
+          in: this.getCustomDevicePins(),
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+  }
 
   @Get('status')
   getStatus() {
@@ -31,11 +79,41 @@ export class IotController {
   }
 
   @Get('data/latest')
-  getLatestData() {
-    const data = this.mqttService.getLatestData();
-    if (!data) {
-      throw new HttpException('No data available yet', HttpStatus.NOT_FOUND);
-    }
+  async getLatestData() {
+    const latestData = this.mqttService.getLatestData() || ({} as Record<string, unknown>);
+    const orderedDevices = await this.getCustomDevicesOrdered();
+
+    const slot1State =
+      typeof latestData.device1 === 'boolean'
+        ? latestData.device1
+        : orderedDevices[0]?.status === 'ON';
+    const slot2State =
+      typeof latestData.device2 === 'boolean'
+        ? latestData.device2
+        : orderedDevices[1]?.status === 'ON';
+
+    const data = {
+      ...latestData,
+      device1: orderedDevices[0]
+        ? {
+            id: orderedDevices[0].id,
+            name: orderedDevices[0].name,
+            power: Number(orderedDevices[0].powerConsumption || 0),
+            state: Boolean(slot1State),
+            pin: orderedDevices[0].pin,
+          }
+        : undefined,
+      device2: orderedDevices[1]
+        ? {
+            id: orderedDevices[1].id,
+            name: orderedDevices[1].name,
+            power: Number(orderedDevices[1].powerConsumption || 0),
+            state: Boolean(slot2State),
+            pin: orderedDevices[1].pin,
+          }
+        : undefined,
+    };
+
     return { success: true, data, timestamp: new Date().toISOString() };
   }
 
@@ -130,18 +208,72 @@ export class IotController {
 
   @UseGuards(JwtAuthGuard)
   @Post('device/add')
-  async addIoTDevice(@Body() dto: { name: string; power_consumption: number }) {
+  async addIoTDevice(
+    @Request() req,
+    @Body() dto: { name: string; power_consumption: number },
+  ) {
     if (!dto.name || dto.power_consumption <= 0) {
       throw new HttpException(
         'name và power_consumption > 0 là bắt buộc',
         HttpStatus.BAD_REQUEST,
       );
     }
+
+    const slots = await this.getCustomDevicesBySlot();
+    const emptyIndex = slots.findIndex((slot) => !slot);
+    if (emptyIndex === -1) {
+      throw new HttpException(
+        'Đã đủ 2 thiết bị IoT tùy chỉnh. Hãy xóa 1 thiết bị trước khi thêm mới.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     try {
       await this.mqttService.addIoTDevice(dto.name, dto.power_consumption);
+
+      const pin = this.getSlotPin(emptyIndex);
+      const userId = req?.user?.id;
+      const existingByPin = await this.prisma.device.findFirst({
+        where: { pin },
+      });
+
+      if (existingByPin) {
+        await this.prisma.device.update({
+          where: { id: existingByPin.id },
+          data: {
+            name: dto.name,
+            status: DeviceStatus.OFF,
+            powerConsumption: dto.power_consumption,
+            manualMode: true,
+            userId: userId || null,
+            value: 0,
+            lastActive: new Date(),
+          },
+        });
+      } else {
+        await this.prisma.device.create({
+          data: {
+            name: dto.name,
+            type: DeviceType.TOUCH,
+            status: DeviceStatus.OFF,
+            pin,
+            value: 0,
+            manualMode: true,
+            powerConsumption: dto.power_consumption,
+            userId: userId || null,
+            lastActive: new Date(),
+          },
+        });
+      }
+
       return {
         success: true,
         message: `Đã gửi lệnh thêm thiết bị "${dto.name}"`,
+        data: {
+          index: emptyIndex,
+          name: dto.name,
+          power: dto.power_consumption,
+        },
       };
     } catch (error) {
       throw new HttpException(
@@ -164,6 +296,44 @@ export class IotController {
     }
     try {
       await this.mqttService.controlIoTDevice(dto.device1, dto.device2);
+
+      const updates: Promise<unknown>[] = [];
+      const orderedDevices = await this.getCustomDevicesOrdered();
+
+      if (dto.device1 !== undefined) {
+        const first = orderedDevices[0];
+        if (first) {
+          updates.push(
+          this.prisma.device.updateMany({
+            where: { id: first.id },
+            data: {
+              status: dto.device1 ? DeviceStatus.ON : DeviceStatus.OFF,
+              lastActive: new Date(),
+            },
+          }),
+          );
+        }
+      }
+
+      if (dto.device2 !== undefined) {
+        const second = orderedDevices[1];
+        if (second) {
+          updates.push(
+          this.prisma.device.updateMany({
+            where: { id: second.id },
+            data: {
+              status: dto.device2 ? DeviceStatus.ON : DeviceStatus.OFF,
+              lastActive: new Date(),
+            },
+          }),
+          );
+        }
+      }
+
+      if (updates.length > 0) {
+        await Promise.all(updates);
+      }
+
       return {
         success: true,
         message: 'Đã gửi lệnh điều khiển thiết bị',
@@ -188,11 +358,32 @@ export class IotController {
       throw new HttpException('index phải là 0 hoặc 1', HttpStatus.BAD_REQUEST);
     }
     try {
+      const orderedDevices = await this.getCustomDevicesOrdered();
+      const target = orderedDevices[idx];
+      if (!target) {
+        throw new HttpException(
+          `Không tìm thấy thiết bị ở vị trí ${idx}`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       await this.mqttService.updateIoTDevice(
         idx,
         dto.name,
         dto.power_consumption,
       );
+
+      await this.prisma.device.update({
+        where: { id: target.id },
+        data: {
+          ...(dto.name !== undefined ? { name: dto.name } : {}),
+          ...(dto.power_consumption !== undefined
+            ? { powerConsumption: dto.power_consumption }
+            : {}),
+          lastActive: new Date(),
+        },
+      });
+
       return {
         success: true,
         message: `Đã gửi lệnh cập nhật thiết bị index ${idx}`,
@@ -213,7 +404,23 @@ export class IotController {
       throw new HttpException('index phải là 0 hoặc 1', HttpStatus.BAD_REQUEST);
     }
     try {
+      const orderedDevices = await this.getCustomDevicesOrdered();
+      const target = orderedDevices[idx];
+      if (!target) {
+        throw new HttpException(
+          `Không tìm thấy thiết bị ở vị trí ${idx}`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       await this.mqttService.deleteIoTDevice(idx);
+
+      await this.prisma.device.delete({
+        where: {
+          id: target.id,
+        },
+      });
+
       return {
         success: true,
         message: `Đã gửi lệnh xóa thiết bị index ${idx}`,

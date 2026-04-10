@@ -127,16 +127,21 @@ export default function ExportTools() {
     const voltage = raw.voltage ?? raw.voltageAvg;
     const current = raw.current ?? raw.currentAvg;
     const power = raw.power ?? raw.powerAvg;
-    const energy = raw.energy ?? raw.energyWh ?? raw.energyAvg;
     const source = raw.source;
     const battery = raw.batteryLevel ?? raw.batteryLevelAvg;
+    const bucketMinutes = (raw.bucketMinutes as number) ?? 5;
+
+    // Tính điện năng bằng Tích phân Riemann: P(W) × t(h) = Wh
+    // Không dùng raw.energy vì đó là giá trị nội bộ của chip INA219, không chính xác.
+    const powerW = toNumber(power) ?? 0;
+    const computedWh = powerW * (bucketMinutes / 60);
 
     return {
       [t('sensors.time')]: toDateTime(timestamp),
       [`${t('energy.voltage')} (V)`]: formatDecimal(voltage, 2),
       [`${t('energy.current')} (A)`]: formatDecimal(current, 3),
       [`${t('energy.power')} (W)`]: formatDecimal(power, 2),
-      [getLocalLabel('Năng lượng (Wh)', 'Energy (Wh)', '能量 (Wh)')]: formatDecimal(energy, 3),
+      [getLocalLabel('Tiêu thụ (Wh)', 'Consumption (Wh)', '消耗 (Wh)')]: computedWh.toFixed(4),
       [getLocalLabel('Nguồn điện', 'Power Source', '电源来源')]: source ? String(source) : '',
       [getLocalLabel('Mức pin (%)', 'Battery Level (%)', '电池电量 (%)')]: formatDecimal(battery, 1),
     };
