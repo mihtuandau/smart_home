@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Sparkles, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { apiClient } from '@/lib/api/client';
 
 // Helper để render markdown cơ bản (In đậm, In nghiêng, Xuống dòng)
 const formatMarkdown = (text: string) => {
@@ -37,19 +37,13 @@ export function FloatingMinaChat() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3100/ai/chat', {
+      const res = await apiClient.request<{ reply: string }>('/ai/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMsg })
       });
-      if (res.ok) {
-        const json = await res.json();
-        setMessages(prev => [...prev, { role: 'mina', text: json.reply || 'Xin lỗi, Mina đang bận ạ.' }]);
-      } else {
-        setMessages(prev => [...prev, { role: 'mina', text: 'Kết nối mạng với Mina gặp lỗi.' }]);
-      }
+      setMessages(prev => [...prev, { role: 'mina', text: res.reply || 'Xin lỗi, Mina đang bận ạ.' }]);
     } catch (e) {
-      setMessages(prev => [...prev, { role: 'mina', text: 'Không thể kết nối thần giao cách cảm với Mina.' }]);
+      setMessages(prev => [...prev, { role: 'mina', text: 'Kết nối mạng với Mina gặp lỗi.' }]);
     }
     setLoading(false);
   };
@@ -61,19 +55,13 @@ export function FloatingMinaChat() {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3100/ai/chat', {
+      const res = await apiClient.request<{ reply: string }>('/ai/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: promptMsg })
       });
-      if (res.ok) {
-        const json = await res.json();
-        setMessages(prev => [...prev, { role: 'mina', text: json.reply || 'Xin lỗi, Mina đang bận ạ.' }]);
-      } else {
-        setMessages(prev => [...prev, { role: 'mina', text: 'Kết nối mạng với Mina gặp lỗi.' }]);
-      }
+      setMessages(prev => [...prev, { role: 'mina', text: res.reply || 'Xin lỗi, Mina đang bận ạ.' }]);
     } catch (e) {
-      setMessages(prev => [...prev, { role: 'mina', text: 'Không thể kết nối thần giao cách cảm với Mina.' }]);
+      setMessages(prev => [...prev, { role: 'mina', text: 'Kết nối mạng với Mina gặp lỗi.' }]);
     }
     setLoading(false);
   };
