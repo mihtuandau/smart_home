@@ -54,10 +54,34 @@ export function FloatingMinaChat() {
     setLoading(false);
   };
 
+  const handleSendPrompt = async (promptMsg: string) => {
+    if (loading) return;
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: promptMsg }]);
+    setLoading(true);
+
+    try {
+      const res = await fetch('http://localhost:3100/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: promptMsg })
+      });
+      if (res.ok) {
+        const json = await res.json();
+        setMessages(prev => [...prev, { role: 'mina', text: json.reply || 'Xin lỗi, Mina đang bận ạ.' }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'mina', text: 'Kết nối mạng với Mina gặp lỗi.' }]);
+      }
+    } catch (e) {
+      setMessages(prev => [...prev, { role: 'mina', text: 'Không thể kết nối thần giao cách cảm với Mina.' }]);
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {isOpen && (
-        <div className="mb-4 w-[350px] sm:w-[400px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-indigo-100 dark:border-gray-800 overflow-hidden flex flex-col h-[500px] animate-in slide-in-from-bottom-5">
+        <div className="mb-4 w-[350px] sm:w-[400px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-indigo-100 dark:border-gray-800 overflow-hidden flex flex-col h-[550px] max-h-[85vh] animate-in slide-in-from-bottom-5">
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 flex justify-between items-center text-white">
             <div className="flex items-center gap-3">
@@ -108,10 +132,29 @@ export function FloatingMinaChat() {
             <div ref={chatEndRef} />
           </div>
 
+          {/* Quick Prompts */}
+          <div className="px-3 pt-2 pb-1 bg-white dark:bg-gray-900 overflow-x-auto custom-scrollbar flex gap-2 w-full border-t border-gray-100 dark:border-gray-800 shrink-0">
+            {[
+              'Tiền điện tháng này bao nhiêu?',
+              'Thời tiết và Nhiệt độ hiện tại?',
+              'Hệ thống có cảnh báo lỗi gì không?',
+              'Tuần qua tốn bao nhiêu điện năng?',
+            ].map((prompt, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleSendPrompt(prompt)}
+                className="whitespace-nowrap px-3 py-1.5 text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:hover:bg-indigo-900 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/50 rounded-xl transition-all shrink-0 active:scale-95"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+
           {/* Input */}
-          <div className="p-3 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+          <div className="p-3 pt-1 bg-white dark:bg-gray-900">
             <div className="relative">
               <input 
+                id="chat-input-mina"
                 type="text" 
                 value={input}
                 onChange={(e) => setInput(e.target.value)}

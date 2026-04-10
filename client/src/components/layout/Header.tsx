@@ -23,7 +23,13 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
   const { t, language } = useLanguage();
   const activeTheme = theme ?? resolvedTheme ?? 'light';
   const [isNotificationOpen, setIsNotificationOpen] = React.useState(false);
+  const [currentTime, setCurrentTime] = React.useState(new Date());
   const notificationRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -122,7 +128,7 @@ export default function DashboardHeader({ onToggleSidebar }: DashboardHeaderProp
             <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-muted rounded-lg">
               <Clock3 className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm text-foreground font-medium">
-                {new Date().toLocaleTimeString(dateLocaleMap[language], { hour: '2-digit', minute: '2-digit' })}
+                {currentTime.toLocaleTimeString(dateLocaleMap[language], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
               </span>
             </div>
 

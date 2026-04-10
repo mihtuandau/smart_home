@@ -21,8 +21,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
 
   const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
 
-  const protectedPages = ['/automation', '/settings'];
-  const isProtectedPage = protectedPages.some(page => pathname?.startsWith(page));
+  // Tất cả các trang ngoài login/register đều bắt buộc phải đăng nhập
+  const isProtectedPage = !isAuthPage;
 
   useEffect(() => {
     if (isProtectedPage && !isAuthenticated && !isLoading) {
