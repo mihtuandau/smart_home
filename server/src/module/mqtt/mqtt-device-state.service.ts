@@ -1,63 +1,79 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
+import { DeviceStatus } from '@prisma/client';
 
-export interface SensorPayload {
-  temperature: number;
-  humidity: number;
-  pressure: number;
-  voltage: number;
-  current_mA: number;
-  power_mW: number;
-  rain: boolean;
-  led1: boolean;
-  led2: boolean;
-}
+import { SensorPayload } from './mqtt.service';
 
 @Injectable()
 export class MqttDeviceStateService {
   private readonly logger = new Logger(MqttDeviceStateService.name);
-  private lastLedState: { led1?: boolean; led2?: boolean } = {};
+  private lastStates: Record<string, boolean> = {};
 
   constructor(private prisma: PrismaService) {}
 
   async updateDeviceStatesIfChanged(data: SensorPayload): Promise<void> {
     try {
-      if (this.lastLedState.led1 !== data.led1) {
-        await this.updateLedDevice('LED1', data.led1);
-        this.lastLedState.led1 = data.led1;
+      // Check hardcoded LEDs
+      if (this.lastStates.led1 !== data.led1) {
+        await this.updateDeviceInDb('LED1', data.led1);
+        this.lastStates.led1 = data.led1;
+      }
+      if (this.lastStates.led2 !== data.led2) {
+        await this.updateDeviceInDb('LED2', data.led2);
+        this.lastStates.led2 = data.led2;
       }
 
-      if (this.lastLedState.led2 !== data.led2) {
-        await this.updateLedDevice('LED2', data.led2);
-        this.lastLedState.led2 = data.led2;
+      // Check dynamic devices
+      if (data.device1 !== undefined && this.lastStates.device1 !== data.device1) {
+        await this.updateDeviceBySlot(0, data.device1);
+        this.lastStates.device1 = data.device1;
+      }
+      if (data.device2 !== undefined && this.lastStates.device2 !== data.device2) {
+        await this.updateDeviceBySlot(1, data.device2);
+        this.lastStates.device2 = data.device2;
       }
     } catch (error) {
       this.logger.error(`Failed to update device states: ${error.message}`);
     }
   }
 
-  private async updateLedDevice(
-    ledName: string,
-    state: boolean,
-  ): Promise<void> {
-    const led = await this.prisma.device.findFirst({
-      where: { name: ledName },
+  private async updateDeviceInDb(name: string, state: boolean): Promise<void> {
+    const device = await this.prisma.device.findFirst({
+      where: { name },
     });
 
-    if (led) {
+    if (device) {
       await this.prisma.device.update({
-        where: { id: led.id },
+        where: { id: device.id },
         data: {
-          status: state ? 'ON' : 'OFF',
-          value: state ? 100 : 0,
+          status: state ? DeviceStatus.ON : DeviceStatus.OFF,
           lastActive: new Date(),
         },
       });
-      this.logger.debug(`Updated ${ledName} to ${state ? 'ON' : 'OFF'}`);
+      this.logger.debug(`Updated ${name} in DB to ${state ? 'ON' : 'OFF'}`);
     }
   }
 
-  getLastLedState(): { led1?: boolean; led2?: boolean } {
-    return this.lastLedState;
+  private async updateDeviceBySlot(slotIndex: number, state: boolean): Promise<void> {
+    // We assume slot 0 is pin 9001, slot 1 is pin 9002
+    const pin = 9001 + slotIndex;
+    const device = await this.prisma.device.findFirst({
+      where: { pin },
+    });
+
+    if (device) {
+      await this.prisma.device.update({
+        where: { id: device.id },
+        data: {
+          status: state ? DeviceStatus.ON : DeviceStatus.OFF,
+          lastActive: new Date(),
+        },
+      });
+      this.logger.debug(`Updated dynamic device at slot ${slotIndex} (pin ${pin}) to ${state ? 'ON' : 'OFF'}`);
+    }
+  }
+
+  getLastState(): Record<string, boolean> {
+    return this.lastStates;
   }
 }

@@ -2,7 +2,7 @@
 
 import StatCard from './StatCard';
 import { useLatestDeviceData, useDeviceStats } from '@/hooks/devices';
-import { useEnergyStats } from '@/hooks/energy';
+import { useEnergySummary } from '@/hooks/energy';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface DeviceSnapshot {
@@ -25,10 +25,6 @@ interface ApiDataResponse<T> {
   data?: T;
 }
 
-interface EnergyPoint {
-  energy?: number;
-}
-
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
 
@@ -36,10 +32,11 @@ export default function StatsGrid() {
   const { t } = useLanguage();
   const { data: latestResponse, isLoading: latestLoading } = useLatestDeviceData(2000);
   const { data: statsResponse, isLoading: statsLoading } = useDeviceStats();
-  const { data: energyResponse, isLoading: energyLoading } = useEnergyStats(24, 3000);
+  const { data: summaryResponse, isLoading: summaryLoading } = useEnergySummary();
 
   const latestData = (latestResponse as ApiDataResponse<DeviceSnapshot> | undefined)?.data;
   const statsData = (statsResponse as ApiDataResponse<StatsSnapshot> | undefined)?.data;
+  const summary = (summaryResponse as any)?.data || { todayWh: 0 };
 
   const isCustomDevicePresent = (value: unknown) => {
     if (value === undefined || value === null) return false;
@@ -49,10 +46,7 @@ export default function StatsGrid() {
     return true;
   };
 
-  const energyArray = (energyResponse as ApiDataResponse<EnergyPoint[]> | undefined)?.data || [];
-  const totalSolarEnergy = energyArray.reduce((sum: number, item) => sum + (item.energy || 0), 0);
-
-  const isLoading = latestLoading || statsLoading || energyLoading;
+  const isLoading = latestLoading || statsLoading || summaryLoading;
 
   if (isLoading) {
     return (
@@ -80,9 +74,9 @@ export default function StatsGrid() {
     },
     {
       label: t('dashboard.todayEnergy'),
-      value: `${(totalSolarEnergy / 1000).toFixed(2)} kWh`,
+      value: `${(summary.todayWh || 0).toFixed(1)} Wh`,
       color: '#f59e0b',
-      subtitle: t('energy.solarPower')
+      subtitle: "Từ 00h sáng (Hôm nay)"
     },
     {
       label: t('sensors.temperature'),
@@ -94,7 +88,7 @@ export default function StatsGrid() {
       label: t('dashboard.systemVoltage'),
       value: latestData?.voltage !== undefined ? `${latestData.voltage.toFixed(2)}V` : '--',
       color: '#3b82f6',
-      subtitle: `${latestData?.current_mA !== undefined ? (latestData.current_mA / 1000).toFixed(2) : '--'}A`
+      subtitle: `${latestData?.current_mA !== undefined ? (latestData.current_mA).toFixed(0) : '--'} mA`
     },
   ];
 

@@ -88,7 +88,7 @@ export default function BillingForecastWidget() {
                 <p className="text-xs text-muted-foreground font-medium mb-1">Đã dùng tháng này</p>
                 <div className="text-lg font-bold text-foreground">
                   {data.kwhSoFar.toFixed(3)} <span className="text-xs font-normal text-muted-foreground">kWh</span>
-                </div>
+                  </div>
               </div>
             </div>
 

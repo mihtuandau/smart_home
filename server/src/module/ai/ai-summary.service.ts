@@ -91,12 +91,12 @@ Dưới đây là TOÀN BỘ số liệu hệ thống đang thu thập (dùng đ
 3. CẢNH BÁO / LỜI KHUYÊN HIỆN TẠI TỪ HỆ THỐNG:
 ${JSON.stringify(context.advisorAdvice)}
 
-4. TRẠNG THÁI HIỆN TẠI TỪ CẢM BIẾN (Trở về ngay lúc này):
-- Môi trường: ${context.currentStatus?.sensor ? `Nhiệt độ ${context.currentStatus.sensor.temperature}°C, Độ ẩm ${context.currentStatus.sensor.humidity}%, Sáng ${context.currentStatus.sensor.lightLevel}, Áp suất ${context.currentStatus.sensor.pressure}hPa, ${context.currentStatus.sensor.isRaining ? 'Đang mưa' : 'Không mưa'}, ${context.currentStatus.sensor.isDark ? 'Trời tối' : 'Trời sáng'}` : 'Chưa cập nhật'}
-- Điện/Thiết bị: ${context.currentStatus?.power ? `Đang tiêu thụ lưới: ${context.currentStatus.power.power}W (${context.currentStatus.power.voltage}V), Pin dự phòng: ${context.currentStatus.power.batteryLevel}%` : 'Chưa cập nhật'}
+4. TRẠNG THÁI HIỆN TẠI TỪ CẢM BIẾN (Dữ liệu tức thời):
+- Môi trường: ${context.currentStatus?.sensor ? `Nhiệt độ ${context.currentStatus.sensor.temperature}°C, Độ ẩm ${context.currentStatus.sensor.humidity}%, Áp suất khí quyển ${context.currentStatus.sensor.pressure} hPa, ${context.currentStatus.sensor.isRaining ? 'Trời đang có mưa' : 'Trời tạnh ráo'}` : 'Chưa cập nhật'}
+- Điện lực: ${context.currentStatus?.power ? `Đang tiêu thụ ${context.currentStatus.power.power} mW (${context.currentStatus.power.voltage} V), dòng điện ${context.currentStatus.power.current} mA` : 'Chưa cập nhật'}
 
-Người dùng hỏi/giao tiếp: "${question}"
-Hãy trả lời trực tiếp như một người trợ lý đắc lực, xưng là "Mina" và gọi người dùng là "bạn" hoặc "gia đình". Khéo léo lồng ghép thông tin nếu câu hỏi liên quan. Trả lời ngắn gọn, tự nhiên, và hữu ích (từ 1-4 câu). Dùng text thuần túy không được chứa ký tự markdown phức tạp (*, #).`;
+Người dùng hỏi: "${question}"
+Hãy trả lời trực tiếp như một người trợ lý đắc lực, xưng là "Mina" và gọi người dùng là "bạn" hoặc "gia đình". Khéo léo lồng ghép thông tin cảm biến/điện năng nếu câu hỏi liên quan. Trả lời ngắn gọn (1-4 câu), tự nhiên và thuyết phục. Không dùng markdown phức tạp.`;
 
     try {
       const res = await fetch(url, {
@@ -151,9 +151,9 @@ Hãy trả lời trực tiếp như một người trợ lý đắc lực, xưng
     }
 
     // 6. Cảm biến / Môi trường hiện tại
-    if (q.includes('nhiệt độ') || q.includes('cảm biến') || q.includes('độ ẩm') || q.includes('sáng') || q.includes('mưa') || q.includes('thời tiết')) {
+    if (q.includes('nhiệt độ') || q.includes('cảnh báo') || q.includes('độ ẩm') || q.includes('áp suất') || q.includes('mưa') || q.includes('thời tiết')) {
       if (!context.currentStatus?.sensor) return 'Em đang không lấy được tín hiệu từ cảm biến ạ, có thể mạch ESP đang tắt.';
-      return `Dạ, lúc này cảm biến báo nhiệt độ là ${context.currentStatus.sensor.temperature}°C, độ ẩm ${context.currentStatus.sensor.humidity}%. Trời đang ${context.currentStatus.sensor.isRaining ? 'mưa' : 'tạnh'} và ${context.currentStatus.sensor.isDark ? 'tối' : 'sáng'} ạ.`;
+      return `Dạ, lúc này cảm biến báo nhiệt độ là ${context.currentStatus.sensor.temperature}°C, độ ẩm ${context.currentStatus.sensor.humidity}% và áp suất là ${context.currentStatus.sensor.pressure} hPa. Trời đang ${context.currentStatus.sensor.isRaining ? 'có mưa' : 'tạnh ráo'} ạ.`;
     }
 
     // 7. Cảnh báo lỗi

@@ -19,35 +19,11 @@ export class EnergyController {
     };
   }
 
-  @Get('battery')
-  async getBatteryStatus() {
-    const data = await this.energyService.getBatteryStatus();
+  @Get('latest')
+  async getLatestStatus() {
+    const data = await this.energyService.getLatestStatus();
     return {
       success: true,
-      data,
-    };
-  }
-
-  @Get('solar')
-  async getSolarStats(
-    @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
-  ) {
-    const data = await this.energyService.getSolarStats(hours);
-    return {
-      success: true,
-      period: `${hours}h`,
-      data,
-    };
-  }
-
-  @Get('sources')
-  async getPowerSources(
-    @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
-  ) {
-    const data = await this.energyService.getPowerSourceStats(hours);
-    return {
-      success: true,
-      period: `${hours}h`,
       data,
     };
   }
@@ -57,6 +33,15 @@ export class EnergyController {
     @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
   ) {
     const data = await this.energyService.getEfficiencyMetrics(hours);
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  @Get("summary")
+  async getEnergySummary() {
+    const data = await this.energyService.getEnergySummary();
     return {
       success: true,
       data,

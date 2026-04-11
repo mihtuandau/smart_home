@@ -1,18 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
-import { PowerSource } from '@prisma/client';
 
-export interface SensorPayload {
-  temperature: number;
-  humidity: number;
-  pressure: number;
-  voltage: number;
-  current_mA: number;
-  power_mW: number;
-  rain: boolean;
-  led1: boolean;
-  led2: boolean;
-}
+import { SensorPayload } from './mqtt.service';
 
 @Injectable()
 export class MqttPersistenceService {
@@ -28,8 +17,6 @@ export class MqttPersistenceService {
           temperature: data.temperature,
           humidity: data.humidity,
           pressure: data.pressure,
-          lightLevel: 0,
-          isDark: false,
           isRaining: data.rain,
         },
       });
@@ -42,22 +29,11 @@ export class MqttPersistenceService {
 
   async savePowerData(data: SensorPayload): Promise<void> {
     try {
-      const now = Date.now();
-      const elapsedHours = this.lastPowerSavedAt
-        ? Math.min((now - this.lastPowerSavedAt) / 3_600_000, 1)
-        : 10 / 60;
-
-      const energyWh = (data.power_mW / 1000) * elapsedHours;
-      this.lastPowerSavedAt = now;
-
       await this.prisma.powerData.create({
         data: {
           voltage: data.voltage,
-          current: data.current_mA / 1000,
-          power: data.power_mW / 1000,
-          energy: parseFloat(energyWh.toFixed(2)),
-          source: PowerSource.SOLAR,
-          batteryLevel: null,
+          current: data.current_mA,
+          power: data.power_mW,
         },
       });
       this.logger.debug('Power data saved to database');

@@ -17,7 +17,6 @@ export class SettingsService {
       emailAlerts: true,
       pushNotifications: true,
       deviceAlerts: true,
-      automationAlerts: true,
       systemAlerts: true,
       energyAlerts: true,
       dailyReport: true,
@@ -79,25 +78,10 @@ export class SettingsService {
     return this.prisma.systemSettings.update({
       where: { id: this.DEFAULT_SETTINGS_ID },
       data: {
-        autoLightEnabled: true,
-        lightOnTime: '18:00',
-        lightOffTime: '06:00',
-        lightThreshold: 30,
         autoRainProtection: true,
         rainHumidityThreshold: 80,
-        powerSaveMode: false,
-        maxPowerConsumption: 100,
-        aiLearningEnabled: true,
-        predictionHorizon: 24,
         updatedAt: new Date(),
       },
-    });
-  }
-
-  async toggleAutoLight() {
-    const settings = await this.getSettings();
-    return this.updateSettings({
-      autoLightEnabled: !settings.autoLightEnabled,
     });
   }
 
@@ -105,20 +89,6 @@ export class SettingsService {
     const settings = await this.getSettings();
     return this.updateSettings({
       autoRainProtection: !settings.autoRainProtection,
-    });
-  }
-
-  async togglePowerSave() {
-    const settings = await this.getSettings();
-    return this.updateSettings({
-      powerSaveMode: !settings.powerSaveMode,
-    });
-  }
-
-  async toggleAiLearning() {
-    const settings = await this.getSettings();
-    return this.updateSettings({
-      aiLearningEnabled: !settings.aiLearningEnabled,
     });
   }
 }

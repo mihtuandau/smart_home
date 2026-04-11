@@ -24,21 +24,26 @@ export class AiBillingService {
     const RAW_DAYS = 7;
     const rawCutoff = new Date(now.getTime() - RAW_DAYS * 24 * 3_600_000);
 
-    let totalWh = 0;
+    let totalMwh = 0;
 
-    // ── Phần 1: PowerAgg cho data cũ hơn 7 ngày ────────────────────────
+    // ── Part 1: PowerAgg for data older than 7 days ────────────────────────
     if (start < rawCutoff) {
       const aggRows = await this.prisma.powerAgg.findMany({
-        where: { bucketStart: { gte: start, lt: rawCutoff < effectiveEnd ? rawCutoff : effectiveEnd } },
+        where: {
+          bucketStart: {
+            gte: start,
+            lt: rawCutoff < effectiveEnd ? rawCutoff : effectiveEnd,
+          },
+        },
         orderBy: { bucketStart: 'asc' },
         select: { powerAvg: true, bucketMinutes: true },
       });
       for (const row of aggRows) {
-        totalWh += row.powerAvg * (row.bucketMinutes / 60);
+        totalMwh += row.powerAvg * (row.bucketMinutes / 60);
       }
     }
 
-    // ── Phần 2: PowerData raw cho 7 ngày gần nhất (hoặc toàn bộ nếu tháng ngắn hơn) ──
+    // ── Part 2: PowerData raw for last 7 days ────────────────────────────
     const rawStart = start > rawCutoff ? start : rawCutoff;
     const rows = await this.prisma.powerData.findMany({
       where: { timestamp: { gte: rawStart, lt: effectiveEnd } },
@@ -47,13 +52,15 @@ export class AiBillingService {
     });
 
     for (let i = 0; i < rows.length - 1; i++) {
-      const dt =
-        (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) /
-        3_600_000;
-      if (dt <= 2) totalWh += rows[i].power * dt;
+      const dtWeeks = (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) / 3_600_000;
+      if (dtWeeks <= 2) {
+        // Use Trapezoidal rule: (P_curr + P_next) / 2
+        const avgPower = (rows[i].power + rows[i + 1].power) / 2;
+        totalMwh += avgPower * dtWeeks;
+      }
     }
 
-    return totalWh / 1000;
+    return totalMwh / 1_000_000; // mW -> W -> kW
   }
 
   async projectMonthly(
@@ -76,7 +83,6 @@ export class AiBillingService {
     );
 
     const kwhSoFar = await this.computeMonthlyEnergyKwh(year, month);
-
     const dailySeries = await this.computeDailySeriesKwh(year, month, asOf);
 
     let meanDaily: number;
@@ -114,11 +120,11 @@ export class AiBillingService {
 
     return {
       month: `${year}-${String(month).padStart(2, '0')}`,
-      kwhSoFar: Math.round(kwhSoFar * 1000) / 1000,
-      projectedKwh: Math.round(projectedKwh * 1000) / 1000,
+      kwhSoFar: kwhSoFar,
+      projectedKwh: projectedKwh,
       projectedCostVnd: Math.round(projectedKwh * priceVnd),
-      ciLow: Math.round(ciLow * 1000) / 1000,
-      ciHigh: Math.round(ciHigh * 1000) / 1000,
+      ciLow: ciLow,
+      ciHigh: ciHigh,
       priceVndPerKwh: priceVnd,
     };
   }
@@ -134,7 +140,7 @@ export class AiBillingService {
     const rawCutoff = new Date(now.getTime() - RAW_DAYS * 24 * 3_600_000);
     const dayMap = new Map<string, number>();
 
-    // ── Phần 1: PowerAgg cho data cũ hơn 7 ngày ────────────────────────
+    // ── Part 1: PowerAgg ────────────────────────
     if (start < rawCutoff) {
       const aggEnd = rawCutoff < asOf ? rawCutoff : asOf;
       const aggRows = await this.prisma.powerAgg.findMany({
@@ -143,13 +149,13 @@ export class AiBillingService {
         select: { bucketStart: true, powerAvg: true, bucketMinutes: true },
       });
       for (const row of aggRows) {
-        const kwh = row.powerAvg * (row.bucketMinutes / 60) / 1000;
+        const kwh = (row.powerAvg * (row.bucketMinutes / 60)) / 1_000_000;
         const day = row.bucketStart.toISOString().slice(0, 10);
         dayMap.set(day, (dayMap.get(day) ?? 0) + kwh);
       }
     }
 
-    // ── Phần 2: PowerData raw cho 7 ngày gần nhất ─────────────────────────
+    // ── Part 2: PowerData raw ─────────────────────────
     const rawStart = start > rawCutoff ? start : rawCutoff;
     const rows = await this.prisma.powerData.findMany({
       where: { timestamp: { gte: rawStart, lt: asOf } },
@@ -158,11 +164,10 @@ export class AiBillingService {
     });
 
     for (let i = 0; i < rows.length - 1; i++) {
-      const dt =
-        (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) /
-        3_600_000;
+      const dt = (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) / 3_600_000;
       if (dt <= 2) {
-        const kwh = rows[i].power * dt / 1000;
+        const avgPower = (rows[i].power + rows[i + 1].power) / 2;
+        const kwh = (avgPower * dt) / 1_000_000;
         const day = rows[i].timestamp.toISOString().slice(0, 10);
         dayMap.set(day, (dayMap.get(day) ?? 0) + kwh);
       }
@@ -171,9 +176,6 @@ export class AiBillingService {
     return Array.from(dayMap.values());
   }
 
-  /** Tính kWh + công suất TB + số mẫu đo theo khoảng thời gian rolling.
-   *  Hybrid: PowerAgg cho data cũ (> 7 ngày) + PowerData raw cho 7 ngày gần nhất.
-   */
   async computeRollingStats(
     hours: number,
   ): Promise<{ kwh: number; avgPowerW: number; sampleCount: number }> {
@@ -182,11 +184,11 @@ export class AiBillingService {
     const RAW_DAYS = 7;
     const rawCutoff = new Date(now.getTime() - RAW_DAYS * 24 * 3_600_000);
 
-    let totalWh = 0;
-    let powerSum = 0;
+    let totalMwh = 0;
+    let powerSumMw = 0;
     let sampleCount = 0;
 
-    // ── Phần 1: PowerAgg cho dữ liệu cũ hơn 7 ngày ────────────────────────
+    // ── Part 1: PowerAgg ────────────────────────
     if (windowStart < rawCutoff) {
       const aggRows = await this.prisma.powerAgg.findMany({
         where: { bucketStart: { gte: windowStart, lt: rawCutoff } },
@@ -194,14 +196,13 @@ export class AiBillingService {
         select: { powerAvg: true, bucketMinutes: true, samples: true },
       });
       for (const row of aggRows) {
-        const dtH = row.bucketMinutes / 60;
-        totalWh += row.powerAvg * dtH;
-        powerSum += row.powerAvg * row.samples;
+        totalMwh += row.powerAvg * (row.bucketMinutes / 60);
+        powerSumMw += row.powerAvg * row.samples;
         sampleCount += row.samples;
       }
     }
 
-    // ── Phần 2: PowerData raw cho 7 ngày gần nhất ────────────────────────
+    // ── Part 2: PowerData raw ────────────────────────
     const effectiveRawStart = windowStart > rawCutoff ? windowStart : rawCutoff;
     const rawRows = await this.prisma.powerData.findMany({
       where: { timestamp: { gte: effectiveRawStart, lte: now } },
@@ -210,25 +211,28 @@ export class AiBillingService {
     });
     sampleCount += rawRows.length;
     for (const row of rawRows) {
-      powerSum += row.power;
+      powerSumMw += row.power;
     }
     for (let i = 0; i < rawRows.length - 1; i++) {
-      const dt =
-        (rawRows[i + 1].timestamp.getTime() - rawRows[i].timestamp.getTime()) /
-        3_600_000;
-      if (dt <= 2) totalWh += rawRows[i].power * dt;
+      const dt = (rawRows[i + 1].timestamp.getTime() - rawRows[i].timestamp.getTime()) / 3_600_000;
+      if (dt <= 2) {
+        const avgPower = (rawRows[i].power + rawRows[i + 1].power) / 2;
+        totalMwh += avgPower * dt;
+      }
     }
 
-    const kwh = totalWh / 1000;
-    const avgPowerW = sampleCount > 0 ? powerSum / sampleCount : 0;
-    return { kwh, avgPowerW, sampleCount };
+    return {
+      kwh: totalMwh / 1_000_000,
+      avgPowerW: sampleCount > 0 ? (powerSumMw / sampleCount) / 1000 : 0,
+      sampleCount,
+    };
   }
 
   formatReport(dto: BillingForecastDto): string {
     return [
       `[Báo cáo điện] Tháng: ${dto.month}`,
       `  Đã dùng:     ${dto.kwhSoFar.toFixed(3)} kWh`,
-      `  Dự báo:      ${dto.projectedKwh.toFixed(3)} kWh  [CI 95%: ${dto.ciLow.toFixed(2)} – ${dto.ciHigh.toFixed(2)}]`,
+      `  Dự báo:      ${dto.projectedKwh.toFixed(3)} kWh`,
       `  Ước tính:    ${dto.projectedCostVnd.toLocaleString('vi-VN')} VNĐ  (${dto.priceVndPerKwh} VNĐ/kWh)`,
     ].join('\n');
   }

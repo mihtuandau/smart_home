@@ -164,7 +164,8 @@ export class AiAnalyzerService {
         return ' Không có dữ liệu hôm nay để tổng hợp';
       }
 
-      const avgW = rows.reduce((s, r) => s + r.power, 0) / rows.length;
+      const avgMw = rows.reduce((s, r) => s + r.power, 0) / rows.length;
+      const avgW = avgMw / 1000;
       return ` Điện tiêu thụ trung bình hôm nay: ${avgW.toFixed(1)} W`;
     } catch (err) {
       this.logger.error(`Daily summary error: ${err.message}`);

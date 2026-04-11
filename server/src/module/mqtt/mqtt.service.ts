@@ -58,9 +58,8 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       return;
     }
 
-    const systemSettings = await this.settingsService.getSettings();
-    const triggerThreshold =
-      Number(systemSettings.maxPowerConsumption) + this.energyAlertDeltaW;
+    // Default threshold since SystemSettings no longer has maxPowerConsumption
+    const triggerThreshold = 100 + this.energyAlertDeltaW; 
 
     if (currentPowerW <= triggerThreshold) {
       return;
@@ -80,32 +79,33 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   }
 
   private normalizeIncomingPayload(raw: Record<string, unknown>): SensorPayload {
-    const powerMilliWatt =
-      typeof raw.power_mW === 'number'
-        ? raw.power_mW
-        : typeof raw.power === 'number'
-          ? raw.power * 1000
-          : 0;
+    // Maps ESP32 keys (temp, humi, pres, voltage, current, power, rain) to our interface
+    const temp = Number(raw.temp ?? raw.temperature ?? 0);
+    const humi = Number(raw.humi ?? raw.humidity ?? 0);
+    const pres = Number(raw.pres ?? raw.pressure ?? 0);
+    const volt = Number(raw.voltage ?? 0);
+    const current_mA = Number(raw.current ?? raw.current_mA ?? 0);
+    const power_mW = Number(raw.power ?? raw.power_mW ?? 0);
+    const rain = Boolean(raw.rain ?? raw.isRaining ?? false);
 
-    const currentMilliAmp =
-      typeof raw.current_mA === 'number'
-        ? raw.current_mA
-        : typeof raw.current === 'number'
-          ? raw.current * 1000
-          : 0;
+    // Handle device1/device2 if they are objects
+    const device1State = typeof raw.device1 === 'object' && raw.device1 !== null && 'state' in raw.device1 
+      ? (raw.device1 as any).state : raw.device1;
+    const device2State = typeof raw.device2 === 'object' && raw.device2 !== null && 'state' in raw.device2 
+      ? (raw.device2 as any).state : raw.device2;
 
     return {
-      temperature: Number(raw.temperature ?? 0),
-      humidity: Number(raw.humidity ?? 0),
-      pressure: Number(raw.pressure ?? 0),
-      voltage: Number(raw.voltage ?? 0),
-      current_mA: Number(currentMilliAmp),
-      power_mW: Number(powerMilliWatt),
-      rain: Boolean(raw.rain),
+      temperature: temp,
+      humidity: humi,
+      pressure: pres,
+      voltage: volt,
+      current_mA,
+      power_mW,
+      rain,
       led1: Boolean(raw.led1),
       led2: Boolean(raw.led2),
-      device1: typeof raw.device1 === 'boolean' ? raw.device1 : undefined,
-      device2: typeof raw.device2 === 'boolean' ? raw.device2 : undefined,
+      device1: typeof device1State === 'boolean' ? device1State : undefined,
+      device2: typeof device2State === 'boolean' ? device2State : undefined,
     };
   }
 

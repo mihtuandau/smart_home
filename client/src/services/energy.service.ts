@@ -6,18 +6,25 @@ export const energyService = {
   },
 
   getBatteryStatus: async () => {
-    return energyApi.getBatteryStatus();
+    // Battery feature removed, returning latest power status instead
+    return energyApi.getLatestStatus();
   },
 
   getSolarStats: async (hours: number = 24) => {
-    return energyApi.getSolarStats(hours);
+    // Unified energy source - reuse stats
+    return energyApi.getEnergyStats(hours);
   },
 
   getPowerSources: async (hours: number = 24) => {
-    return energyApi.getPowerSources(hours);
+    // Return empty or single source to prevent 404
+    return { success: true, data: [] };
   },
 
   getEfficiency: async (hours: number = 24) => {
     return energyApi.getEfficiency(hours);
+  },
+
+  getEnergySummary: async () => {
+    return energyApi.getEnergySummary();
   },
 };

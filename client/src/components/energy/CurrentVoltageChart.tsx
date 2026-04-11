@@ -93,8 +93,8 @@ export default function CurrentVoltageChart({ timeRange = 24 }: CurrentVoltageCh
 
     return {
       time: new Date(slot.timestamp).toLocaleTimeString(dateLocaleMap[language], formatOpts),
-      current: parseFloat(avgCurrent.toFixed(2)),
-      voltage: parseFloat(avgVoltage.toFixed(2)),
+      current: parseFloat(((avgCurrent || 0) / 1000).toFixed(3)),
+      voltage: parseFloat((avgVoltage || 0).toFixed(2)),
     };
   });
   }, [data, timeRange, language]);
@@ -118,77 +118,81 @@ export default function CurrentVoltageChart({ timeRange = 24 }: CurrentVoltageCh
         </p>
       </div>
 
-      <div className="h-52 sm:h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{ top: 10, right: 30, left: -20, bottom: 0 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} />
-            <XAxis
-              dataKey="time"
-              tick={{ fontSize: 12, fill: colors.axisLabelColor }}
-              axisLine={{ stroke: colors.axisColor }}
-            />
-            <YAxis
-              yAxisId="left"
-              tick={{ fontSize: 12, fill: "#10b981" }}
-              axisLine={{ stroke: "#10b981" }}
-              label={{
-                value: t('energy.currentAxis'),
-                angle: -90,
-                position: "insideLeft",
-                style: { fontSize: 12, fill: "#10b981" },
-              }}
-            />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              tick={{ fontSize: 12, fill: "#3b82f6" }}
-              axisLine={{ stroke: "#3b82f6" }}
-              label={{
-                value: t('energy.voltageAxis'),
-                angle: 90,
-                position: "insideRight",
-                style: { fontSize: 12, fill: "#3b82f6" },
-              }}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: colors.backgroundColor,
-                border: `1px solid ${colors.borderColor}`,
-                borderRadius: "8px",
-                fontSize: "12px",
-                color: colors.textColor
-              }}
-            />
-            <Legend
-              wrapperStyle={{ fontSize: "12px", paddingTop: "10px", color: colors.axisLabelColor }}
-              iconType="line"
-            />
-            <Line
-              yAxisId="left"
-              type="monotone"
-              dataKey="current"
-              stroke="#10b981"
-              strokeWidth={2}
-              name={t('energy.currentAxis')}
-              dot={false}
-              activeDot={{ r: 5 }}
-            />
-            <Line
-              yAxisId="right"
-              type="monotone"
-              dataKey="voltage"
-              stroke="#3b82f6"
-              strokeWidth={2}
-              name={t('energy.voltageAxis')}
-              dot={false}
-              activeDot={{ r: 5 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+    <div className="h-52 sm:h-64">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          data={chartData}
+          margin={{ top: 10, right: 30, left: -20, bottom: 0 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} vertical={false} />
+          <XAxis
+            dataKey="time"
+            tick={{ fontSize: 11, fill: colors.axisLabelColor }}
+            axisLine={{ stroke: colors.axisColor, strokeWidth: 0.5 }}
+            tickLine={false}
+          />
+          <YAxis
+            yAxisId="left"
+            tick={{ fontSize: 11, fill: "#10b981" }}
+            axisLine={false}
+            tickLine={false}
+            label={{
+              value: 'A',
+              angle: -90,
+              position: "insideLeft",
+              style: { fontSize: 11, fill: "#10b981", fontWeight: 600 },
+            }}
+          />
+          <YAxis
+            yAxisId="right"
+            orientation="right"
+            tick={{ fontSize: 11, fill: "#3b82f6" }}
+            axisLine={false}
+            tickLine={false}
+            label={{
+              value: 'V',
+              angle: 90,
+              position: "insideRight",
+              style: { fontSize: 11, fill: "#3b82f6", fontWeight: 600 },
+            }}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: colors.backgroundColor,
+              border: `none`,
+              borderRadius: "12px",
+              fontSize: "12px",
+              boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+              color: colors.textColor
+            }}
+          />
+          <Legend
+            wrapperStyle={{ fontSize: "11px", paddingTop: "15px", color: colors.axisLabelColor }}
+            iconType="circle"
+          />
+          <Line
+            yAxisId="left"
+            type="stepAfter"
+            dataKey="current"
+            stroke="#10b981"
+            strokeWidth={3}
+            name={t('energy.current')}
+            dot={false}
+            activeDot={{ r: 6, strokeWidth: 0 }}
+          />
+          <Line
+            yAxisId="right"
+            type="monotone"
+            dataKey="voltage"
+            stroke="#3b82f6"
+            strokeWidth={3}
+            name={t('energy.voltage')}
+            dot={false}
+            activeDot={{ r: 6, strokeWidth: 0 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
     </div>
   );
 }

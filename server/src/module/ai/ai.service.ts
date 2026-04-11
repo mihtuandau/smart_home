@@ -71,7 +71,7 @@ export class AiService {
     }
 
     if (anomaly || advice.length > 0) {
-      this.saveToDb(data, analysis, anomaly, summary, advice).catch(() => {});
+      this.logger.debug(`AI Advice: ${advice.join('; ')}`);
     }
 
     const result: AiResultDto = {
@@ -108,32 +108,5 @@ export class AiService {
 
   getLatestResult(): AiResultDto | null {
     return this.latestResult;
-  }
-
-  private async saveToDb(
-    data: SensorPayload,
-    analysis: string,
-    anomaly: string | null,
-    summary: string,
-    advice: string[],
-  ) {
-    try {
-      await this.prisma.aiLearningData.create({
-        data: {
-          feature: anomaly ? 'anomaly_detection' : 'energy_monitoring',
-          inputData: {
-            power_mW: data.power_mW,
-            current_mA: data.current_mA,
-            voltage: data.voltage,
-            led1: data.led1,
-            led2: data.led2,
-          },
-          outputData: { analysis, anomaly, summary, advice },
-          accuracy: null,
-        },
-      });
-    } catch (err) {
-      this.logger.debug(`Failed to persist AI result: ${err.message}`);
-    }
   }
 }

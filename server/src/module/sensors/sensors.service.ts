@@ -43,8 +43,6 @@ export class SensorsService {
         temperature: row.temperatureAvg,
         humidity: row.humidityAvg,
         pressure: row.pressureAvg,
-        lightLevel: Math.round(row.lightLevelAvg),
-        isDark: row.darkCount > row.samples / 2,
         isRaining: row.rainCount > 0,
         samples: row.samples,
       }));
@@ -100,7 +98,6 @@ export class SensorsService {
           temperature: { avg: 0, min: 0, max: 0 },
           humidity: { avg: 0, min: 0, max: 0 },
           pressure: { avg: 0, min: 0, max: 0 },
-          lightLevel: { avg: 0, min: 0, max: 0 },
           count: 0,
           period: `${hours}h`,
         };
@@ -114,9 +111,6 @@ export class SensorsService {
       );
       const pressureAvg = this.weightedAverage(
         aggData.map((d) => ({ value: d.pressureAvg, weight: d.samples })),
-      );
-      const lightAvg = this.weightedAverage(
-        aggData.map((d) => ({ value: d.lightLevelAvg, weight: d.samples })),
       );
       const totalSamples = aggData.reduce((sum, row) => sum + row.samples, 0);
 
@@ -135,11 +129,6 @@ export class SensorsService {
           avg: pressureAvg,
           min: Math.min(...aggData.map((d) => d.pressureMin)),
           max: Math.max(...aggData.map((d) => d.pressureMax)),
-        },
-        lightLevel: {
-          avg: lightAvg,
-          min: Math.min(...aggData.map((d) => d.lightLevelMin)),
-          max: Math.max(...aggData.map((d) => d.lightLevelMax)),
         },
         count: totalSamples,
         period: `${hours}h`,
@@ -160,7 +149,6 @@ export class SensorsService {
         temperature: { avg: 0, min: 0, max: 0 },
         humidity: { avg: 0, min: 0, max: 0 },
         pressure: { avg: 0, min: 0, max: 0 },
-        lightLevel: { avg: 0, min: 0, max: 0 },
         count: 0,
         period: `${hours}h`,
       };
@@ -169,7 +157,6 @@ export class SensorsService {
     const temps = data.map((d) => d.temperature);
     const humidities = data.map((d) => d.humidity);
     const pressures = data.map((d) => d.pressure);
-    const lightLevels = data.map((d) => d.lightLevel);
 
     return {
       temperature: {
@@ -187,18 +174,13 @@ export class SensorsService {
         min: Math.min(...pressures),
         max: Math.max(...pressures),
       },
-      lightLevel: {
-        avg: this.average(lightLevels),
-        min: Math.min(...lightLevels),
-        max: Math.max(...lightLevels),
-      },
       count: data.length,
       period: `${hours}h`,
     };
   }
 
   async getChartData(
-    type: 'temperature' | 'humidity' | 'pressure' | 'light',
+    type: 'temperature' | 'humidity' | 'pressure',
     hours: number = 24,
   ) {
     const since = new Date(Date.now() - hours * 60 * 60 * 1000);
@@ -216,7 +198,6 @@ export class SensorsService {
       temperature: 'temperature',
       humidity: 'humidity',
       pressure: 'pressure',
-      light: 'lightLevel',
     };
 
     return data.map((d) => ({
@@ -238,8 +219,6 @@ export class SensorsService {
       temperature: latest.temperature,
       humidity: latest.humidity,
       pressure: latest.pressure,
-      lightLevel: latest.lightLevel,
-      isDark: latest.isDark,
       isRaining: latest.isRaining,
       timestamp: latest.timestamp,
       comfort: this.calculateComfortIndex(latest.temperature, latest.humidity),

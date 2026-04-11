@@ -53,7 +53,7 @@ export class AiAdvisorService {
       const data = await this.prisma.powerData.findMany({
         where: {
           timestamp: { gte: thirtyDaysAgo },
-          power: { gt: 1 }, // Ngưỡng bật đèn LED đồ án thường rất nhỏ
+          power: { gt: 1000 }, // Ngưỡng bật thiết bị đáng kể (1000mW = 1W)
         },
         select: { timestamp: true }
       });
