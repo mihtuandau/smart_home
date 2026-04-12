@@ -8,6 +8,10 @@ export const energyApi = {
     return apiClient.request(`/energy/stats?hours=${hours}&mode=${mode}`);
   },
 
+  async getLatestStatus() {
+    return apiClient.request("/energy/latest");
+  },
+
   async getBatteryStatus() {
     return apiClient.request("/energy/battery");
   },

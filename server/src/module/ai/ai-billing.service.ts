@@ -21,30 +21,31 @@ export class AiBillingService {
     const now = new Date();
     const effectiveEnd = end < now ? end : now;
 
-    const RAW_DAYS = 7;
-    const rawCutoff = new Date(now.getTime() - RAW_DAYS * 24 * 3_600_000);
-
     let totalMwh = 0;
+    let rawCount = 0;
+    let aggCount = 0;
 
-    // ── Part 1: PowerAgg for data older than 7 days ────────────────────────
-    if (start < rawCutoff) {
+    const firstRaw = await this.prisma.powerData.findFirst({
+      where: { timestamp: { gte: start, lt: effectiveEnd } },
+      orderBy: { timestamp: 'asc' },
+      select: { timestamp: true },
+    });
+
+    const rawStart = firstRaw?.timestamp ?? effectiveEnd;
+
+    // Use aggregates for the older segment to avoid being capped by raw retention.
+    if (start < rawStart) {
       const aggRows = await this.prisma.powerAgg.findMany({
-        where: {
-          bucketStart: {
-            gte: start,
-            lt: rawCutoff < effectiveEnd ? rawCutoff : effectiveEnd,
-          },
-        },
+        where: { bucketStart: { gte: start, lt: rawStart } },
         orderBy: { bucketStart: 'asc' },
         select: { powerAvg: true, bucketMinutes: true },
       });
       for (const row of aggRows) {
         totalMwh += row.powerAvg * (row.bucketMinutes / 60);
       }
+      aggCount = aggRows.length;
     }
 
-    // ── Part 2: PowerData raw for last 7 days ────────────────────────────
-    const rawStart = start > rawCutoff ? start : rawCutoff;
     const rows = await this.prisma.powerData.findMany({
       where: { timestamp: { gte: rawStart, lt: effectiveEnd } },
       orderBy: { timestamp: 'asc' },
@@ -52,15 +53,46 @@ export class AiBillingService {
     });
 
     for (let i = 0; i < rows.length - 1; i++) {
-      const dtWeeks = (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) / 3_600_000;
-      if (dtWeeks <= 2) {
-        // Use Trapezoidal rule: (P_curr + P_next) / 2
+      const dtHours =
+        (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) /
+        3_600_000;
+      if (dtHours <= 24) {
         const avgPower = (rows[i].power + rows[i + 1].power) / 2;
-        totalMwh += avgPower * dtWeeks;
+        totalMwh += avgPower * dtHours;
+        rawCount++;
       }
     }
 
-    return totalMwh / 1_000_000; // mW -> W -> kW
+    const kwhSoFar = totalMwh / 1_000_000; // mWh / 1,000,000 => kWh
+    
+    this.logger.debug(
+      `Monthly energy computation: year=${year}, month=${month}, ` +
+      `aggRows=${aggCount}, rawIntervals=${rawCount}, totalMwh=${totalMwh}, kwhSoFar=${kwhSoFar.toFixed(3)}`,
+    );
+
+    return kwhSoFar;
+  }
+
+  private async getMonthDataStart(
+    start: Date,
+    end: Date,
+  ): Promise<Date | null> {
+    const firstRaw = await this.prisma.powerData.findFirst({
+      where: { timestamp: { gte: start, lt: end } },
+      orderBy: { timestamp: 'asc' },
+      select: { timestamp: true },
+    });
+    const firstAgg = await this.prisma.powerAgg.findFirst({
+      where: { bucketStart: { gte: start, lt: end } },
+      orderBy: { bucketStart: 'asc' },
+      select: { bucketStart: true },
+    });
+
+    const candidates = [firstRaw?.timestamp, firstAgg?.bucketStart].filter(
+      (d): d is Date => Boolean(d),
+    );
+    if (candidates.length === 0) return null;
+    return candidates.reduce((min, cur) => (cur < min ? cur : min));
   }
 
   async projectMonthly(
@@ -84,6 +116,8 @@ export class AiBillingService {
 
     const kwhSoFar = await this.computeMonthlyEnergyKwh(year, month);
     const dailySeries = await this.computeDailySeriesKwh(year, month, asOf);
+    const dataStart = await this.getMonthDataStart(start, asOf);
+    const hasFullCoverage = dataStart !== null && dataStart.getTime() <= start.getTime() + 60_000;
 
     let meanDaily: number;
     let stdDaily: number;
@@ -102,8 +136,22 @@ export class AiBillingService {
       nDays = 1;
     }
 
+    const observedDays =
+      dataStart === null
+        ? elapsedDays
+        : Math.max((asOf.getTime() - dataStart.getTime()) / 86_400_000, 1 / 24);
+    const missingDaysAtStart =
+      dataStart === null
+        ? 0
+        : Math.max((dataStart.getTime() - start.getTime()) / 86_400_000, 0);
+    const shouldEstimateMissingStart = missingDaysAtStart > 0.25 && observedDays >= 0.5;
+    const estimatedStartKwh = shouldEstimateMissingStart
+      ? (kwhSoFar / observedDays) * missingDaysAtStart
+      : 0;
+    const kwhFromMonthStart = kwhSoFar + estimatedStartKwh;
+
     const remainingDays = Math.max(daysInMonth - elapsedDays, 0);
-    const projectedKwh = kwhSoFar + meanDaily * remainingDays;
+    const projectedKwh = kwhFromMonthStart + meanDaily * remainingDays;
 
     let ciLow: number;
     let ciHigh: number;
@@ -120,12 +168,16 @@ export class AiBillingService {
 
     return {
       month: `${year}-${String(month).padStart(2, '0')}`,
-      kwhSoFar: kwhSoFar,
+      kwhSoFar: kwhFromMonthStart,
       projectedKwh: projectedKwh,
       projectedCostVnd: Math.round(projectedKwh * priceVnd),
       ciLow: ciLow,
       ciHigh: ciHigh,
       priceVndPerKwh: priceVnd,
+      dataStartIso: dataStart ? dataStart.toISOString() : null,
+      dataCoverageLabel: hasFullCoverage ? 'full-month' : 'partial-month',
+      estimatedFromMonthStart: shouldEstimateMissingStart,
+      estimatedMissingDays: shouldEstimateMissingStart ? missingDaysAtStart : 0,
     };
   }
 
@@ -135,16 +187,18 @@ export class AiBillingService {
     asOf: Date,
   ): Promise<number[]> {
     const start = new Date(Date.UTC(year, month - 1, 1));
-    const now = new Date();
-    const RAW_DAYS = 7;
-    const rawCutoff = new Date(now.getTime() - RAW_DAYS * 24 * 3_600_000);
     const dayMap = new Map<string, number>();
 
-    // ── Part 1: PowerAgg ────────────────────────
-    if (start < rawCutoff) {
-      const aggEnd = rawCutoff < asOf ? rawCutoff : asOf;
+    const firstRaw = await this.prisma.powerData.findFirst({
+      where: { timestamp: { gte: start, lt: asOf } },
+      orderBy: { timestamp: 'asc' },
+      select: { timestamp: true },
+    });
+    const rawStart = firstRaw?.timestamp ?? asOf;
+
+    if (start < rawStart) {
       const aggRows = await this.prisma.powerAgg.findMany({
-        where: { bucketStart: { gte: start, lt: aggEnd } },
+        where: { bucketStart: { gte: start, lt: rawStart } },
         orderBy: { bucketStart: 'asc' },
         select: { bucketStart: true, powerAvg: true, bucketMinutes: true },
       });
@@ -155,8 +209,6 @@ export class AiBillingService {
       }
     }
 
-    // ── Part 2: PowerData raw ─────────────────────────
-    const rawStart = start > rawCutoff ? start : rawCutoff;
     const rows = await this.prisma.powerData.findMany({
       where: { timestamp: { gte: rawStart, lt: asOf } },
       orderBy: { timestamp: 'asc' },
@@ -165,7 +217,7 @@ export class AiBillingService {
 
     for (let i = 0; i < rows.length - 1; i++) {
       const dt = (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) / 3_600_000;
-      if (dt <= 2) {
+      if (dt <= 24) {
         const avgPower = (rows[i].power + rows[i + 1].power) / 2;
         const kwh = (avgPower * dt) / 1_000_000;
         const day = rows[i].timestamp.toISOString().slice(0, 10);
@@ -215,7 +267,7 @@ export class AiBillingService {
     }
     for (let i = 0; i < rawRows.length - 1; i++) {
       const dt = (rawRows[i + 1].timestamp.getTime() - rawRows[i].timestamp.getTime()) / 3_600_000;
-      if (dt <= 2) {
+      if (dt <= 24) {
         const avgPower = (rawRows[i].power + rawRows[i + 1].power) / 2;
         totalMwh += avgPower * dt;
       }

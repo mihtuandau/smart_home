@@ -75,6 +75,9 @@ export default function ExportTools() {
     return vi;
   };
 
+  const stripUnitSuffix = (label: string): string =>
+    label.replace(/\s*\([^)]*\)\s*$/u, "").trim();
+
   const toDateTime = (value: unknown): string => {
     if (
       typeof value !== "string" &&
@@ -134,6 +137,7 @@ export default function ExportTools() {
     const currentMa =
       raw.current ?? raw.currentMa ?? raw.currentAvg ?? raw.current_mA;
     const powerMw = raw.power ?? raw.powerAvg ?? raw.power_mW;
+    const powerLabelBase = stripUnitSuffix(t("energy.power"));
 
     // Use pre-calculated energy from backend if available, otherwise fallback to simple calc
     const energyWh =
@@ -148,7 +152,7 @@ export default function ExportTools() {
         (toNumber(currentMa) ?? 0) / 1000,
         3,
       ),
-      [`${t("energy.power")} (W)`]: formatDecimal(
+      [`${powerLabelBase} (W)`]: formatDecimal(
         (toNumber(powerMw) ?? 0) / 1000,
         2,
       ),
