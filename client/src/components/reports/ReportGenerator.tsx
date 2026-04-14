@@ -51,11 +51,14 @@ export default function ReportGenerator() {
     refetchInterval: 30000,
   });
 
-  // ── 2. kWh từ endpoint chính xác (Riemann trên raw PowerData, rolling) ───
-  const { data: energyKwh, isLoading: energyLoading } = useQuery({
-    queryKey: ["report-energy-kwh", hours],
-    queryFn: () =>
-      apiClient.request<EnergyKwhResult>(`/ai/energy-kwh?hours=${hours}`),
+
+  // ── 2. Lấy tổng năng lượng từ /energy/stats (đồng bộ với trang năng lượng) ──
+  const { data: energyStats, isLoading: energyLoading } = useQuery({
+    queryKey: ["report-energy-stats", hours],
+    queryFn: async () => {
+      const res = await apiClient.request<{ data: { energy?: number, power?: number }[] }>(`/energy/stats?hours=${hours}`);
+      return res?.data || [];
+    },
     refetchInterval: 60000,
   });
 
@@ -66,10 +69,16 @@ export default function ReportGenerator() {
       | SensorStatsShape
       | undefined) ?? (sensorStats as SensorStatsShape | undefined);
 
-  const result = energyKwh as EnergyKwhResult | undefined;
-  const totalKwh: number = result?.kwh ?? 0;
-  const avgPowerW: number = result?.avgPowerW ?? 0;
-  const sampleCount: number = result?.sampleCount ?? 0;
+  // Tính tổng Wh và chuyển sang kWh
+  const totalWh = Array.isArray(energyStats)
+    ? energyStats.reduce((sum, item) => sum + (item.energy || 0), 0)
+    : 0;
+  const totalKwh = totalWh / 1000;
+  // Tính công suất trung bình nếu cần
+  const avgPowerW = Array.isArray(energyStats) && energyStats.length > 0
+    ? energyStats.reduce((sum, item) => sum + (item.power || 0), 0) / energyStats.length / 1000
+    : 0;
+  const sampleCount = Array.isArray(energyStats) ? energyStats.length : 0;
 
   return (
     <div className="section-card border border-border rounded-xl p-4 sm:p-6 shadow-sm space-y-6">
@@ -152,18 +161,19 @@ export default function ReportGenerator() {
             <h3 className="font-medium text-foreground/80 text-xs sm:text-sm uppercase tracking-wide">
               {t("energy.title")}
             </h3>
-            {[
-              {
-                label: t("reports.totalConsumedEnergy"),
-                value: totalKwh >= 1 ? `${totalKwh.toFixed(3)} kWh` : `${(totalKwh * 1000).toFixed(1)} Wh`,
-                sub: `Tích phân Riemann · ${PERIOD_LABELS[period]}`,
-              },
-              {
-                label: t("reports.averagePower"),
-                value: `${avgPowerW.toFixed(2)} W`,
-                sub: "",
-              },
-            ].map((item) => (
+            {[{
+              label: t("reports.totalConsumedEnergy"),
+              value:
+                totalKwh >= 1
+                  ? `${totalKwh.toFixed(3)} kWh`
+                  : `${totalWh.toFixed(1)} Wh`,
+              sub: `Tổng hợp từ /energy/stats · ${PERIOD_LABELS[period]}`,
+            },
+            {
+              label: t("reports.averagePower"),
+              value: `${avgPowerW.toFixed(2)} W`,
+              sub: "",
+            }].map((item) => (
               <div
                 key={item.label}
                 className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"

@@ -64,10 +64,10 @@ export class AiBillingService {
     }
 
     const kwhSoFar = totalMwh / 1_000_000; // mWh / 1,000,000 => kWh
-    
+
     this.logger.debug(
       `Monthly energy computation: year=${year}, month=${month}, ` +
-      `aggRows=${aggCount}, rawIntervals=${rawCount}, totalMwh=${totalMwh}, kwhSoFar=${kwhSoFar.toFixed(3)}`,
+        `aggRows=${aggCount}, rawIntervals=${rawCount}, totalMwh=${totalMwh}, kwhSoFar=${kwhSoFar.toFixed(3)}`,
     );
 
     return kwhSoFar;
@@ -117,7 +117,8 @@ export class AiBillingService {
     const kwhSoFar = await this.computeMonthlyEnergyKwh(year, month);
     const dailySeries = await this.computeDailySeriesKwh(year, month, asOf);
     const dataStart = await this.getMonthDataStart(start, asOf);
-    const hasFullCoverage = dataStart !== null && dataStart.getTime() <= start.getTime() + 60_000;
+    const hasFullCoverage =
+      dataStart !== null && dataStart.getTime() <= start.getTime() + 60_000;
 
     let meanDaily: number;
     let stdDaily: number;
@@ -144,7 +145,8 @@ export class AiBillingService {
       dataStart === null
         ? 0
         : Math.max((dataStart.getTime() - start.getTime()) / 86_400_000, 0);
-    const shouldEstimateMissingStart = missingDaysAtStart > 0.25 && observedDays >= 0.5;
+    const shouldEstimateMissingStart =
+      missingDaysAtStart > 0.25 && observedDays >= 0.5;
     const estimatedStartKwh = shouldEstimateMissingStart
       ? (kwhSoFar / observedDays) * missingDaysAtStart
       : 0;
@@ -216,7 +218,9 @@ export class AiBillingService {
     });
 
     for (let i = 0; i < rows.length - 1; i++) {
-      const dt = (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) / 3_600_000;
+      const dt =
+        (rows[i + 1].timestamp.getTime() - rows[i].timestamp.getTime()) /
+        3_600_000;
       if (dt <= 24) {
         const avgPower = (rows[i].power + rows[i + 1].power) / 2;
         const kwh = (avgPower * dt) / 1_000_000;
@@ -266,7 +270,9 @@ export class AiBillingService {
       powerSumMw += row.power;
     }
     for (let i = 0; i < rawRows.length - 1; i++) {
-      const dt = (rawRows[i + 1].timestamp.getTime() - rawRows[i].timestamp.getTime()) / 3_600_000;
+      const dt =
+        (rawRows[i + 1].timestamp.getTime() - rawRows[i].timestamp.getTime()) /
+        3_600_000;
       if (dt <= 24) {
         const avgPower = (rawRows[i].power + rawRows[i + 1].power) / 2;
         totalMwh += avgPower * dt;
@@ -275,7 +281,7 @@ export class AiBillingService {
 
     return {
       kwh: totalMwh / 1_000_000,
-      avgPowerW: sampleCount > 0 ? (powerSumMw / sampleCount) / 1000 : 0,
+      avgPowerW: sampleCount > 0 ? powerSumMw / sampleCount / 1000 : 0,
       sampleCount,
     };
   }

@@ -37,46 +37,73 @@ export class EnergyService {
       }));
     }
 
+    // Use combined approach: PowerAgg for old data + PowerData for recent data
+    // This matches the calculation in AI billing service for consistency
+    const rawCutoff = new Date(now.getTime() - RAW_RETENTION_DAYS * 24 * 3_600_000);
+    const allDataPoints = [];
+
+    // Part 1: Get aggregated data for records older than 7 days
+    if (startTime < rawCutoff) {
+      const aggRows = await this.prisma.powerAgg.findMany({
+        where: {
+          bucketStart: { gte: startTime, lt: rawCutoff },
+        },
+        orderBy: { bucketStart: 'asc' },
+      });
+
+      const aggDataPoints = aggRows.map((row) => ({
+        timestamp: row.bucketStart,
+        power: row.powerAvg, // mW
+        energy: (row.powerAvg / 1000) * (row.bucketMinutes / 60), // Wh calculated from mW
+        voltage: row.voltageAvg,
+        current: row.currentAvg, // mA
+        source: 'AGGREGATED' as const,
+        samples: row.samples,
+      }));
+
+      allDataPoints.push(...aggDataPoints);
+    }
+
+    // Part 2: Get raw data for recent records (≤ 7 days)
+    const effectiveRawStart = startTime > rawCutoff ? startTime : rawCutoff;
     const powerData = await this.prisma.powerData.findMany({
       where: {
-        timestamp: {
-          gte: startTime,
-          lte: now,
-        },
+        timestamp: { gte: effectiveRawStart, lte: now },
       },
       orderBy: { timestamp: 'asc' },
     });
 
-    if (powerData.length === 0) {
-      return [];
+    if (powerData.length > 0) {
+      const energyData = powerData.map((data, index) => {
+        let energy = 0;
+        if (index > 0) {
+          const prev = powerData[index - 1];
+          const timeDiffHours =
+            (data.timestamp.getTime() - prev.timestamp.getTime()) / 3_600_000;
+
+          // Use Trapezoidal rule: (P_prev + P_curr) / 2 for better accuracy
+          // data.power is mW, energy is Wh -> (mW / 1000) * hours
+          if (timeDiffHours < 2) {
+            const avgPowerMw = (data.power + prev.power) / 2;
+            energy = (avgPowerMw / 1000) * timeDiffHours;
+          }
+        }
+
+        return {
+          timestamp: data.timestamp,
+          power: data.power,
+          energy: energy,
+          voltage: data.voltage,
+          current: data.current,
+          source: 'CORE' as const,
+        };
+      });
+
+      allDataPoints.push(...energyData);
     }
 
-    const energyData = powerData.map((data, index) => {
-      let energy = 0;
-      if (index > 0) {
-        const prev = powerData[index - 1];
-        const timeDiffHours =
-          (data.timestamp.getTime() - prev.timestamp.getTime()) / 3_600_000;
-
-        // Use Trapezoidal rule: (P_prev + P_curr) / 2 for better accuracy
-        // data.power is mW, energy is Wh -> (mW / 1000) * hours
-        if (timeDiffHours < 2) {
-          const avgPowerMw = (data.power + prev.power) / 2;
-          energy = (avgPowerMw / 1000) * timeDiffHours;
-        }
-      }
-
-      return {
-        timestamp: data.timestamp,
-        power: data.power,
-        energy: energy,
-        voltage: data.voltage,
-        current: data.current,
-        source: 'CORE',
-      };
-    });
-
-    return energyData;
+    // Sort by timestamp to ensure correct order
+    return allDataPoints.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   }
 
   async getLatestStatus() {
@@ -210,20 +237,25 @@ export class EnergyService {
   async getEnergySummary() {
     // 1. Calculate Today (from 00:00 today LOCAL time)
     const now = new Date();
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    );
     const startOfTodayUtc = new Date(startOfToday.getTime());
 
     // Get all points since midnight
     const points = await this.prisma.powerData.findMany({
       where: { timestamp: { gte: startOfTodayUtc } },
-      orderBy: { timestamp: "asc" },
+      orderBy: { timestamp: 'asc' },
     });
 
     let todayWh = 0;
     for (let i = 1; i < points.length; i++) {
       const prev = points[i - 1];
       const curr = points[i];
-      const hours = (curr.timestamp.getTime() - prev.timestamp.getTime()) / 3600000;
+      const hours =
+        (curr.timestamp.getTime() - prev.timestamp.getTime()) / 3600000;
       if (hours < 2) {
         const avgPowerW = (curr.power + prev.power) / 2000; // mW to W
         todayWh += avgPowerW * hours;
@@ -232,7 +264,7 @@ export class EnergyService {
 
     // 2. Calculate Month (from 1st of current month)
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    
+
     // Use Aggregated data for days before today
     const monthlyAgg = await this.prisma.powerAgg.aggregate({
       where: {
@@ -244,19 +276,19 @@ export class EnergyService {
       _sum: {
         powerAvg: true,
       },
-      _count: true
+      _count: true,
     });
 
     // Simple estimation for aggregated month energy: (sum of avgPower / count) * hours
     // More accurately: Sum of (avgPowerW * bucketHours)
     const aggRows = await this.prisma.powerAgg.findMany({
       where: {
-        bucketStart: { gte: startOfMonth, lt: startOfTodayUtc }
-      }
+        bucketStart: { gte: startOfMonth, lt: startOfTodayUtc },
+      },
     });
 
     let historicalMonthWh = 0;
-    aggRows.forEach(row => {
+    aggRows.forEach((row) => {
       historicalMonthWh += (row.powerAvg / 1000) * (row.bucketMinutes / 60);
     });
 
