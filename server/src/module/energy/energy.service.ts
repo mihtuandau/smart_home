@@ -40,7 +40,16 @@ export class EnergyService {
     // Use combined approach: PowerAgg for old data + PowerData for recent data
     // This matches the calculation in AI billing service for consistency
     const rawCutoff = new Date(now.getTime() - RAW_RETENTION_DAYS * 24 * 3_600_000);
-    const allDataPoints = [];
+    // Explicitly type the array to avoid TS 'never' errors
+    const allDataPoints: Array<{
+      timestamp: Date;
+      power: number;
+      energy: number;
+      voltage: number;
+      current: number;
+      source: 'AGGREGATED' | 'CORE';
+      samples?: number;
+    }> = [];
 
     // Part 1: Get aggregated data for records older than 7 days
     if (startTime < rawCutoff) {
@@ -60,7 +69,6 @@ export class EnergyService {
         source: 'AGGREGATED' as const,
         samples: row.samples,
       }));
-
       allDataPoints.push(...aggDataPoints);
     }
 
@@ -98,7 +106,6 @@ export class EnergyService {
           source: 'CORE' as const,
         };
       });
-
       allDataPoints.push(...energyData);
     }
 
