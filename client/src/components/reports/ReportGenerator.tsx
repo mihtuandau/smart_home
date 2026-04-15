@@ -119,18 +119,18 @@ export default function ReportGenerator() {
               [
                 {
                   label: t("reports.avgTemperature"),
-                  value: `${sData.temperature?.avg?.toFixed(1) ?? "--"}°C`,
-                  sub: `${sData.temperature?.min?.toFixed(1)}°C – ${sData.temperature?.max?.toFixed(1)}°C`,
+                  value: `${sData.temperature?.avg != null ? sData.temperature.avg.toFixed(1) : "--"}°C`,
+                  sub: `${sData.temperature?.min != null ? sData.temperature.min.toFixed(1) : "--"}°C – ${sData.temperature?.max != null ? sData.temperature.max.toFixed(1) : "--"}°C`,
                 },
                 {
                   label: t("reports.avgHumidity"),
-                  value: `${sData.humidity?.avg?.toFixed(1) ?? "--"}%`,
-                  sub: `${sData.humidity?.min?.toFixed(1)}% – ${sData.humidity?.max?.toFixed(1)}%`,
+                  value: `${sData.humidity?.avg != null ? sData.humidity.avg.toFixed(1) : "--"}%`,
+                  sub: `${sData.humidity?.min != null ? sData.humidity.min.toFixed(1) : "--"}% – ${sData.humidity?.max != null ? sData.humidity.max.toFixed(1) : "--"}%`,
                 },
                 {
                   label: t("reports.avgPressure"),
-                  value: `${sData.pressure?.avg?.toFixed(0) ?? "--"} hPa`,
-                  sub: `${sData.pressure?.min?.toFixed(0)} – ${sData.pressure?.max?.toFixed(0)} hPa`,
+                  value: `${sData.pressure?.avg != null ? sData.pressure.avg.toFixed(0) : "--"} hPa`,
+                  sub: `${sData.pressure?.min != null ? sData.pressure.min.toFixed(0) : "--"} – ${sData.pressure?.max != null ? sData.pressure.max.toFixed(0) : "--"} hPa`,
                 },
               ].map((item) => (
                 <div

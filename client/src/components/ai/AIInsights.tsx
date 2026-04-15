@@ -54,18 +54,18 @@ function barPct(powerMw: number) {
 }
 
 function analysisBg(text: string) {
-  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high|higher|警告|异常|风险|危险/i.test(text)) return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
-  if (/ổn định|an toàn|thành công|tốt|bình thường|thấp|vừa tắt|đã tắt|giảm|stable|safe|success|good|normal|low|turned off|are off|decreased|稳定|安全|成功|好|正常|关闭|下降/i.test(text)) return 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
-  if (/khuyến nghị|gợi ý|tiết kiệm|theo dõi|tối ưu|đang làm quen|nhắc nhở|vừa bật|đang bật|đang dùng|hiện tiêu thụ|thay đổi|tăng|recommend|suggestion|saving|save|monitor|optimi|learning|turned on|is on|using|changed|increased|建议|节能|监控|优化|提示|开启|变化|增加/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
+  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high|higher|警告|异常|风险|危险|burning money|peak load|red alert|prioritize|reducing power/i.test(text)) return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
+  if (/ổn định|an toàn|thành công|tốt|bình thường|thấp|vừa tắt|đã tắt|giảm|stable|safe|success|good|normal|low|turned off|are off|decreased|稳定|安全|成功|好|正常|关闭|下降|savings/i.test(text)) return 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
+  if (/khuyến nghị|gợi ý|tiết kiệm|theo dõi|tối ưu|đang làm quen|nhắc nhở|vừa bật|đang bật|đang dùng|hiện tiêu thụ|thay đổi|tăng|recommend|suggestion|saving|save|monitor|optimi|learning|turned on|is on|using|changed|increased|建议|节能|监控|优化|提示|开启|变化|增加|detected|remember|turn off|lights/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
   return 'bg-muted text-muted-foreground border-border';
 }
 
 function alertBorderClass(text: string): string {
-  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high|higher|警告|异常|风险|危险/i.test(text))
+  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high|higher|警告|异常|风险|危险|burning money|peak load|red alert|prioritize|reducing power/i.test(text))
     return 'border-red-400 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300';
-  if (/ổn định|an toàn|thành công|tốt|bình thường|thấp|vừa tắt|đã tắt|giảm|stable|safe|success|good|normal|low|turned off|are off|decreased|稳定|安全|成功|好|正常|关闭|下降/i.test(text))
+  if (/ổn định|an toàn|thành công|tốt|bình thường|thấp|vừa tắt|đã tắt|giảm|stable|safe|success|good|normal|low|turned off|are off|decreased|稳定|安全|成功|好|正常|关闭|下降|savings/i.test(text))
     return 'border-green-400 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900/20 dark:text-green-300';
-  if (/khuyến nghị|gợi ý|tiết kiệm|theo dõi|tối ưu|đang làm quen|nhắc nhở|vừa bật|đang bật|đang dùng|hiện tiêu thụ|thay đổi|tăng|recommend|suggestion|saving|save|monitor|optimi|learning|turned on|is on|using|changed|increased|建议|节能|监控|优化|提示|开启|变化|增加/i.test(text))
+  if (/khuyến nghị|gợi ý|tiết kiệm|theo dõi|tối ưu|đang làm quen|nhắc nhở|vừa bật|đang bật|đang dùng|hiện tiêu thụ|thay đổi|tăng|recommend|suggestion|saving|save|monitor|optimi|learning|turned on|is on|using|changed|increased|建议|节能|监控|优化|提示|开启|变化|增加|detected|remember|turn off|lights/i.test(text))
     return 'border-blue-400 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300';
   return 'border-muted-foreground bg-muted/50 text-muted-foreground dark:bg-muted/10';
 }

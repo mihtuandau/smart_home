@@ -34,6 +34,7 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(MqttService.name);
   private mqttClient: mqtt.MqttClient;
   private latestData: SensorPayload | null = null;
+  private rawDeviceData: Record<string, any> = {}; // Store raw device objects from MQTT
   private commandService: MqttCommandService;
   private mqttDisconnectedNotified = false;
   private lastRealtimeMessageAt: number = Date.now();
@@ -281,6 +282,19 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
         };
         if (!('device1' in rawData)) delete (mergedData as any).device1;
         if (!('device2' in rawData)) delete (mergedData as any).device2;
+        
+        // Store raw device objects
+        if ('device1' in rawData && typeof rawData.device1 === 'object') {
+          this.rawDeviceData.device1 = rawData.device1;
+        } else {
+          delete this.rawDeviceData.device1;
+        }
+        if ('device2' in rawData && typeof rawData.device2 === 'object') {
+          this.rawDeviceData.device2 = rawData.device2;
+        } else {
+          delete this.rawDeviceData.device2;
+        }
+        
         this.latestData = mergedData;
         this.lastRealtimeMessageAt = Date.now();
         this.mqttDisconnectedNotified = false;
@@ -350,6 +364,10 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
   getLatestData(): SensorPayload | null {
     return this.latestData;
+  }
+
+  getRawDeviceData(): Record<string, any> {
+    return this.rawDeviceData;
   }
 
   async controlLed(led: 'led1' | 'led2', state: boolean): Promise<void> {

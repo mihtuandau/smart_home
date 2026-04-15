@@ -10,6 +10,34 @@ export class EnergyService {
   constructor(private prisma: PrismaService) {}
 
   async getEnergyStats(hours: number = 24, mode: EnergyMode = 'auto') {
+    const allData = await this.fetchAllEnergyData(hours, mode);
+    return allData.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+  }
+
+  async getEnergyStatsPaginated(
+    hours: number = 24,
+    page: number = 1,
+    pageSize: number = 500,
+    mode: EnergyMode = 'auto',
+  ) {
+    const allData = await this.fetchAllEnergyData(hours, mode);
+    const sorted = allData.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+    
+    const total = sorted.length;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const data = sorted.slice(start, end);
+
+    return {
+      data,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
+  }
+
+  private async fetchAllEnergyData(hours: number = 24, mode: EnergyMode = 'auto') {
     const now = new Date();
     const startTime = new Date(now.getTime() - hours * 60 * 60 * 1000);
     const shouldUseAverage =

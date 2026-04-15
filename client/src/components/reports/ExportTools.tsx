@@ -184,7 +184,7 @@ export default function ExportTools() {
           const res = await apiClient.request<
             ApiDataResponse<CsvRow[]> | CsvRow[]
           >(
-            `/sensors/history/${hours}?page=${page}&pageSize=${pageSize}&mode=avg`,
+            `/sensors/history/${hours}?page=${page}&pageSize=${pageSize}&mode=auto`,
           );
           const pageData = Array.isArray(res)
             ? res
@@ -194,7 +194,6 @@ export default function ExportTools() {
           rows = rows.concat(pageData);
           if (pageData.length < pageSize) break;
           page++;
-          if (rows.length >= 5000) break;
         }
         filename = `sensors_${periodLabel}_${today}.csv`;
       } else {

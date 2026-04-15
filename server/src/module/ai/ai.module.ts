@@ -9,6 +9,7 @@ import { AiBillingService } from './ai-billing.service';
 import { AiLedStatsService } from './ai-led-stats.service';
 import { MqttModule } from '../mqtt/mqtt.module';
 import { AiSummaryService } from './ai-summary.service';
+import { RainForecastOptimizerService } from './rain-forecast-optimizer.service';
 
 @Module({
   imports: [PrismaModule, forwardRef(() => MqttModule)],
@@ -21,7 +22,8 @@ import { AiSummaryService } from './ai-summary.service';
     AiBillingService,
     AiLedStatsService,
     AiSummaryService,
+    RainForecastOptimizerService,
   ],
-  exports: [AiService, AiSummaryService],
+  exports: [AiService, AiSummaryService, RainForecastOptimizerService],
 })
 export class AiModule {}

@@ -48,12 +48,17 @@ export class IotController {
   @Get('data/latest')
   async getLatestData() {
     const latestData = this.mqttService.getLatestData() || ({} as any);
+    const rawDevices = this.mqttService.getRawDeviceData() || {};
     const devices = await this.prisma.device.findMany({
       orderBy: { pin: 'asc' },
     });
 
-    const mappedDevices = devices.map((d, index) => {
-      // Map dynamic devices from MQTT payload (device1, device2)
+    // Combine database devices with raw MQTT device data
+    const allDevices = [];
+    
+    // Add database devices
+    for (let index = 0; index < devices.length; index++) {
+      const d = devices[index];
       const mqttState =
         index === 0
           ? latestData.device1
@@ -62,20 +67,40 @@ export class IotController {
             : undefined;
       const state = typeof mqttState === 'boolean' ? mqttState : d.status === 'ON';
 
-      return {
+      allDevices.push({
         id: d.id,
         name: d.name,
         power: d.powerConsumption,
         state,
         pin: d.pin,
-      };
-    });
+      });
+    }
+
+    // Add raw MQTT devices that aren't in database
+    if (rawDevices.device1 && devices.length === 0) {
+      allDevices.push({
+        id: 'mqtt-device1',
+        name: rawDevices.device1.name || 'Device 1',
+        power: rawDevices.device1.power || 0,
+        state: rawDevices.device1.state || false,
+        pin: rawDevices.device1.pin || 9001,
+      });
+    }
+    if (rawDevices.device2 && devices.length < 2) {
+      allDevices.push({
+        id: 'mqtt-device2',
+        name: rawDevices.device2.name || 'Device 2',
+        power: rawDevices.device2.power || 0,
+        state: rawDevices.device2.state || false,
+        pin: rawDevices.device2.pin || 9002,
+      });
+    }
 
     const data = {
       ...latestData,
-      devices: mappedDevices,
-      device1: mappedDevices[0] || undefined,
-      device2: mappedDevices[1] || undefined,
+      devices: allDevices,
+      device1: allDevices[0] || undefined,
+      device2: allDevices[1] || undefined,
     };
 
     return { success: true, data, timestamp: new Date().toISOString() };
@@ -140,8 +165,8 @@ export class IotController {
     @Body() dto: { name: string; power_consumption: number },
   ) {
     const currentDevices = await this.prisma.device.count();
-    if (currentDevices >= 2) {
-      throw new HttpException('Maximum 2 devices supported', HttpStatus.BAD_REQUEST);
+    if (currentDevices >= 1) {
+      throw new HttpException('Maximum 1 device supported', HttpStatus.BAD_REQUEST);
     }
 
     try {
@@ -198,9 +223,22 @@ export class IotController {
     const idx = parseInt(index, 10);
     try {
       const devices = await this.getCustomDevicesOrdered();
+      const rawDevices = this.mqttService.getRawDeviceData() || {};
       const target = devices[idx];
-      if (!target) throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      
+      // Check if device exists in database
+      if (!target) {
+        // Try to find in MQTT raw devices
+        const deviceKey = idx === 0 ? 'device1' : idx === 1 ? 'device2' : null;
+        if (!deviceKey || !rawDevices[deviceKey]) {
+          throw new HttpException('Device not found', HttpStatus.NOT_FOUND);
+        }
+        // Device exists only in MQTT, just send delete command
+        await this.mqttService.deleteIoTDevice(idx);
+        return { success: true, message: 'MQTT device deleted' };
+      }
 
+      // Device exists in database
       await this.mqttService.deleteIoTDevice(idx);
       await this.prisma.device.delete({ where: { id: target.id } });
 

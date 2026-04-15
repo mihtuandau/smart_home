@@ -29,6 +29,11 @@ export class MaintenanceService implements OnModuleInit {
   async onModuleInit() {
     this.logger.log('Running startup cleanup...');
     await this.cleanupRawData();
+    
+    // Run backfill asynchronously to not block other services
+    this.backfillHistoricalAggregations().catch((error) => {
+      this.logger.error('Backfill failed', error);
+    });
   }
 
   @Cron(CronExpression.EVERY_MINUTE)
@@ -38,6 +43,8 @@ export class MaintenanceService implements OnModuleInit {
     const bucketStart = new Date(
       bucketEnd.getTime() - BUCKET_MINUTES * 60 * 1000,
     );
+
+    this.logger.debug(`[Cron] Aggregating bucket: ${bucketStart} - ${bucketEnd}`);
 
     await Promise.all([
       this.aggregateSensorBucket(bucketStart, bucketEnd),
@@ -244,4 +251,122 @@ export class MaintenanceService implements OnModuleInit {
     const total = values.reduce((sum, v) => sum + v, 0);
     return Math.round((total / values.length) * 1000) / 1000;
   }
+
+  async backfillHistoricalAggregations() {
+    try {
+      const now = new Date();
+      const startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Last 30 days
+
+      // Get the earliest sensor aggregation record
+      const earliestSensorAgg = await this.prisma.sensorAgg.findFirst({
+        orderBy: { bucketStart: 'asc' },
+      });
+
+      const earliestSensorAggTime = earliestSensorAgg?.bucketStart || now;
+
+      // Get the earliest sensor raw data record (within last 7 days to avoid deleted data)
+      const rawCutoff = new Date(now.getTime() - RAW_RETENTION_DAYS * 24 * 60 * 60 * 1000);
+      const earliestRawData = await this.prisma.sensorData.findFirst({
+        where: { timestamp: { gte: startTime, lt: now } },
+        orderBy: { timestamp: 'asc' },
+      });
+
+      if (!earliestRawData) {
+        this.logger.debug('No raw sensor data found for backfill');
+        return;
+      }
+
+      // Determine the backfill start time
+      const backfillStart = Math.max(
+        earliestRawData.timestamp.getTime(),
+        startTime.getTime()
+      );
+
+      // Backfill sensor aggregations
+      let bucketTime = this.getBucketEnd(new Date(backfillStart));
+      const bucketMs = BUCKET_MINUTES * 60 * 1000;
+      let aggregatedCount = 0;
+
+      while (bucketTime <= now) {
+        const bucketStart = new Date(bucketTime.getTime() - bucketMs);
+        const exists = await this.prisma.sensorAgg.findUnique({
+          where: {
+            bucketStart_bucketMinutes: {
+              bucketStart,
+              bucketMinutes: BUCKET_MINUTES,
+            },
+          },
+        });
+
+        if (!exists) {
+          await this.aggregateSensorBucket(bucketStart, bucketTime);
+          aggregatedCount++;
+        }
+
+        bucketTime = new Date(bucketTime.getTime() + bucketMs);
+
+        // Log progress every 100 buckets
+        if (aggregatedCount % 100 === 0) {
+          this.logger.log(`Sensor backfill progress: ${aggregatedCount} buckets created`);
+        }
+      }
+
+      if (aggregatedCount > 0) {
+        this.logger.log(`Sensor aggregation backfill completed: ${aggregatedCount} buckets created`);
+      }
+
+      // Similar backfill for power data
+      const earliestPowerAgg = await this.prisma.powerAgg.findFirst({
+        orderBy: { bucketStart: 'asc' },
+      });
+
+      const earliestPowerData = await this.prisma.powerData.findFirst({
+        where: { timestamp: { gte: startTime, lt: now } },
+        orderBy: { timestamp: 'asc' },
+      });
+
+      if (!earliestPowerData) {
+        this.logger.debug('No raw power data found for backfill');
+        return;
+      }
+
+      const powerBackfillStart = Math.max(
+        earliestPowerData.timestamp.getTime(),
+        startTime.getTime()
+      );
+
+      bucketTime = this.getBucketEnd(new Date(powerBackfillStart));
+      let powerAggregatedCount = 0;
+
+      while (bucketTime <= now) {
+        const bucketStart = new Date(bucketTime.getTime() - bucketMs);
+        const exists = await this.prisma.powerAgg.findUnique({
+          where: {
+            bucketStart_bucketMinutes: {
+              bucketStart,
+              bucketMinutes: BUCKET_MINUTES,
+            },
+          },
+        });
+
+        if (!exists) {
+          await this.aggregatePowerBucket(bucketStart, bucketTime);
+          powerAggregatedCount++;
+        }
+
+        bucketTime = new Date(bucketTime.getTime() + bucketMs);
+
+        if (powerAggregatedCount % 100 === 0) {
+          this.logger.log(`Power backfill progress: ${powerAggregatedCount} buckets created`);
+        }
+      }
+
+      if (powerAggregatedCount > 0) {
+        this.logger.log(`Power aggregation backfill completed: ${powerAggregatedCount} buckets created`);
+      }
+    } catch (error) {
+      this.logger.error('Historical aggregation backfill failed', error);
+    }
+  }
+
 }

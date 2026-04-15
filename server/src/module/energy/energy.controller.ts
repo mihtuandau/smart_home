@@ -19,6 +19,21 @@ export class EnergyController {
     };
   }
 
+  @Get('stats-paginated')
+  async getEnergyStatsPaginated(
+    @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
+    @Query('pageSize', new ParseIntPipe({ optional: true })) pageSize: number = 500,
+    @Query('mode') mode?: 'auto' | 'raw' | 'avg',
+  ) {
+    const result = await this.energyService.getEnergyStatsPaginated(hours, page, pageSize, mode);
+    return {
+      success: true,
+      period: `${hours}h`,
+      ...result,
+    };
+  }
+
   @Get('latest')
   async getLatestStatus() {
     const data = await this.energyService.getLatestStatus();

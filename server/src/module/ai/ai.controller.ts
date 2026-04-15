@@ -7,6 +7,7 @@ import { AiBaselineService } from './ai-baseline.service';
 import { AiLedStatsService } from './ai-led-stats.service';
 import { AiSummaryService } from './ai-summary.service';
 import { AiAdvisorService } from './ai-advisor.service';
+import { RainForecastOptimizerService } from './rain-forecast-optimizer.service';
 
 @ApiTags('AI')
 @Controller('ai')
@@ -19,6 +20,7 @@ export class AiController {
     private ledStats: AiLedStatsService,
     private aiSummary: AiSummaryService,
     private aiAdvisor: AiAdvisorService,
+    private rainForecast: RainForecastOptimizerService,
   ) {}
 
   @Get('status')
@@ -142,5 +144,69 @@ export class AiController {
     
     const reply = await this.aiSummary.chatWithMina(body.message, unifiedContext);
     return { reply };
+  }
+
+  @Get('rain-forecast')
+  @ApiOperation({ summary: 'Dự báo mưa tối ưu hóa 48 giờ (kết hợp API + cảm biến địa phương)' })
+  async getRainForecast(
+    @Query('lat') lat?: string,
+    @Query('lon') lon?: string,
+    @Query('refresh') refresh?: string,
+  ) {
+    const latitude = lat ? parseFloat(lat) : undefined;
+    const longitude = lon ? parseFloat(lon) : undefined;
+    const forceRefresh = refresh === 'true';
+    
+    try {
+      const report = await this.rainForecast.getCurrentForecast(latitude, longitude, forceRefresh);
+      return report;
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : 'Failed to fetch rain forecast',
+        status: 500,
+      };
+    }
+  }
+
+  @Get('rain-forecast/latest-prob')
+  @ApiOperation({ summary: 'Lấy xác suất mưa hiệu chỉnh gần nhất (0-100%)' })
+  async getLatestRainProb(
+    @Query('lat') lat?: string,
+    @Query('lon') lon?: string,
+    @Query('refresh') refresh?: string,
+  ) {
+    const latitude = lat ? parseFloat(lat) : undefined;
+    const longitude = lon ? parseFloat(lon) : undefined;
+    const forceRefresh = refresh === 'true';
+
+    try {
+      const prob = await this.rainForecast.getLatestAdjustedPop(latitude, longitude, forceRefresh);
+      return {
+        adjusted_probability: prob !== null ? Math.round(prob * 100) : null,
+        unit: 'percent',
+      };
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : 'Failed to fetch rain probability',
+        status: 500,
+      };
+    }
+  }
+
+  @Post('rain-forecast/clear-cache')
+  @ApiOperation({ summary: 'Xóa cache dự báo mưa để refetch dữ liệu mới từ API' })
+  async clearRainForecastCache() {
+    try {
+      await this.rainForecast.clearCache();
+      return {
+        success: true,
+        message: 'Rain forecast cache cleared. API will fetch fresh data on next request.',
+      };
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : 'Failed to clear cache',
+        status: 500,
+      };
+    }
   }
 }

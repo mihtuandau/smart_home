@@ -108,7 +108,7 @@ export default function IoTDeviceManager() {
             <h3 className="text-sm sm:text-base font-semibold text-foreground">{t('devices.iotDevices')}</h3>
             <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">{t('devices.iotSubtitle')}</p>
           </div>
-          {devices.length < 2 && !showAddForm && (
+          {devices.length < 1 && !showAddForm && (
             <button
               onClick={() => setShowAddForm(true)}
               className="w-full sm:w-auto px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
