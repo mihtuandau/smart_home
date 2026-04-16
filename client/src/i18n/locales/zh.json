@@ -270,7 +270,6 @@
     "forecast_pressure": "预报气压",
     "forecast_pop": "降雨概率预报",
     "current_rain_probability": "当前降雨概率",
-    "optimized_by_local_sensors": "优化了本地传感器",
     "sensor_vs_forecast": "传感器 vs 预报",
     "adjusted_pop": "已调整",
     "temperature": "温度",

@@ -270,7 +270,6 @@
     "forecast_pressure": "Forecast Pressure",
     "forecast_pop": "Forecast Probability",
     "current_rain_probability": "Current rain probability",
-    "optimized_by_local_sensors": "Optimized by local sensors",
     "sensor_vs_forecast": "Sensors vs Forecast",
     "adjusted_pop": "Adjusted",
     "temperature": "Temperature",

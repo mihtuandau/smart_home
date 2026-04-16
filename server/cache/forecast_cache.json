@@ -1,37 +1,14 @@
 {
-  "timestamp": 1776325254,
+  "timestamp": 1776327387,
   "forecast": {
     "hourly": [
       {
-        "dt": 1776322800,
-        "temp": 33.97,
-        "feels_like": 37.36,
-        "pressure": 1005,
-        "humidity": 47,
-        "dew_point": 21.07,
-        "uvi": 8.41,
-        "clouds": 39,
-        "visibility": 10000,
-        "wind_speed": 5.52,
-        "wind_deg": 166,
-        "wind_gust": 3.68,
-        "weather": [
-          {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03d"
-          }
-        ],
-        "pop": 0
-      },
-      {
         "dt": 1776326400,
         "temp": 33.92,
-        "feels_like": 36.65,
-        "pressure": 1005,
-        "humidity": 45,
-        "dew_point": 20.32,
+        "feels_like": 39.62,
+        "pressure": 1006,
+        "humidity": 54,
+        "dew_point": 23.3,
         "uvi": 4.94,
         "clouds": 37,
         "visibility": 10000,
@@ -50,11 +27,11 @@
       },
       {
         "dt": 1776330000,
-        "temp": 33.82,
-        "feels_like": 36.18,
-        "pressure": 1005,
-        "humidity": 44,
-        "dew_point": 19.86,
+        "temp": 33.81,
+        "feels_like": 39,
+        "pressure": 1006,
+        "humidity": 53,
+        "dew_point": 22.89,
         "uvi": 2.09,
         "clouds": 34,
         "visibility": 10000,
@@ -73,11 +50,11 @@
       },
       {
         "dt": 1776333600,
-        "temp": 33.48,
-        "feels_like": 35.82,
-        "pressure": 1005,
-        "humidity": 45,
-        "dew_point": 19.92,
+        "temp": 33.46,
+        "feels_like": 37.55,
+        "pressure": 1006,
+        "humidity": 51,
+        "dew_point": 21.94,
         "uvi": 0.5,
         "clouds": 29,
         "visibility": 10000,
@@ -96,11 +73,11 @@
       },
       {
         "dt": 1776337200,
-        "temp": 32.56,
-        "feels_like": 34.65,
-        "pressure": 1006,
-        "humidity": 47,
-        "dew_point": 19.79,
+        "temp": 32.55,
+        "feels_like": 35.67,
+        "pressure": 1007,
+        "humidity": 51,
+        "dew_point": 21.1,
         "uvi": 0,
         "clouds": 32,
         "visibility": 10000,
@@ -119,11 +96,11 @@
       },
       {
         "dt": 1776340800,
-        "temp": 31.25,
-        "feels_like": 33.68,
+        "temp": 31.19,
+        "feels_like": 33.8,
         "pressure": 1008,
-        "humidity": 53,
-        "dew_point": 20.53,
+        "humidity": 54,
+        "dew_point": 20.78,
         "uvi": 0,
         "clouds": 40,
         "visibility": 10000,
@@ -142,10 +119,10 @@
       },
       {
         "dt": 1776344400,
-        "temp": 30.09,
-        "feels_like": 33.64,
+        "temp": 30.39,
+        "feels_like": 34.04,
         "pressure": 1008,
-        "humidity": 63,
+        "humidity": 62,
         "dew_point": 20.68,
         "uvi": 0,
         "clouds": 72,
@@ -1105,6 +1082,29 @@
             "main": "Clear",
             "description": "bầu trời quang đãng",
             "icon": "01d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1776495600,
+        "temp": 37.92,
+        "feels_like": 39.65,
+        "pressure": 1006,
+        "humidity": 31,
+        "dew_point": 17.64,
+        "uvi": 5.27,
+        "clouds": 51,
+        "visibility": 10000,
+        "wind_speed": 3,
+        "wind_deg": 167,
+        "wind_gust": 3.68,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04d"
           }
         ],
         "pop": 0
