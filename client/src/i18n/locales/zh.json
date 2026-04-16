@@ -122,7 +122,6 @@
     "ledOnCount": "开启的 LED",
     "touchActive": "触控激活",
     "iotDevices": "IoT 设备",
-    "iotSubtitle": "最多 2 台设备 · 通过 MQTT 更新",
     "addDevice": "添加设备",
     "noDevice": "暂无设备",
     "edit": "编辑",
@@ -505,7 +504,9 @@
     "weatherAndTemp": "当前天气和温度如何？",
     "systemAlerts": "系统有错误或警告吗？",
     "weeklyConsumption": "上周消耗了多少电量？",
-    "minaPlaceholder": "问 Mina 为什么电力超载..."
+    "minaPlaceholder": "问 Mina 为什么电力超载...",
+    "minaName": "Mina AI 管家",
+    "minaSubtitle": "数据分析助手"
   },
   "weather": {
     "manyCloud": "多云",

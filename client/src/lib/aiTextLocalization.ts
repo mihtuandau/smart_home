@@ -7,32 +7,32 @@ export function localizeAiText(text: string, language: Language) {
   const isZh = language === 'zh';
 
   // Light turned off with thanks message - high priority
-  const lightOffThankYou = source.match(/^Light (\d+) đã tắt\.\s*Hành động nhỏ tiết kiệm lớn, hệ thống cảm ơn bạn!$/i);
+  const lightOffThankYou = source.match(/^(?:Light|Đèn)\s*(\d+)\s*đã tắt\.\s*Hành động nhỏ tiết kiệm lớn, hệ thống cảm ơn bạn!$/i);
   if (lightOffThankYou) {
     return isZh
-      ? `Light ${lightOffThankYou[1]} 已关闭。小举措，大节省，系统感谢你！`
+      ? `灯 ${lightOffThankYou[1]} 已关闭。小举措，大节省，系统感谢你！`
       : `Light ${lightOffThankYou[1]} has been turned off. Small actions, big savings, the system thanks you!`;
   }
 
   // Handle hybrid Vietnamese/English messages by extracting and translating the whole thing
-  const hybridSavingMessage = source.match(/^Thật tuyệt!\s*Light (\d+) vừa tắt, giúp bạn tiết kiệm được khoảng\s*([\d.]+)đ\s*per day\.$/i);
+  const hybridSavingMessage = source.match(/^Thật tuyệt!\s*(?:Light|Đèn)\s*(\d+)\s*vừa tắt, giúp bạn tiết kiệm được khoảng\s*([\d.]+)\s*đ\s*(?:mỗi ngày|per day)\.$/i);
   if (hybridSavingMessage) {
     return isZh
-      ? `很棒！Light ${hybridSavingMessage[1]} 刚关闭，帮你每天省约 ${hybridSavingMessage[2]} 元。`
-      : `Great! Light ${hybridSavingMessage[1]} just turned off, helps you save about ${hybridSavingMessage[2]} yuan per day.`;
+      ? `很棒！灯 ${hybridSavingMessage[1]} 刚关闭，帮你每天省约 ${hybridSavingMessage[2]} VND。`
+      : `Great! Light ${hybridSavingMessage[1]} just turned off, helps you save about ${hybridSavingMessage[2]} VND per day.`;
   }
 
-  const hybridCostMessage = source.match(/^Light (\d+) vừa bật — làm tăng tải thêm\s*([\d.]+) W\.\s*Tương đương equivalent to costs about\s*([\d.]+)đ\s*per day nếu giữ liên tục\.$/i);
+  const hybridCostMessage = source.match(/^(?:Light|Đèn)\s*(\d+)\s*vừa bật\s*[—–-]\s*làm tăng tải thêm\s*([\d.]+)\s*W\.\s*Tương đương\s*(?:equivalent to costs about|tốn khoảng)\s*([\d.]+)\s*đ\s*(?:per day|mỗi ngày)\s*nếu giữ liên tục\.$/i);
   if (hybridCostMessage) {
     return isZh
-      ? `Light ${hybridCostMessage[1]} 刚打开 - 负载增加 ${hybridCostMessage[2]} W。相当于花费约 ${hybridCostMessage[3]} 元/天（如果持续开启）。`
-      : `Light ${hybridCostMessage[1]} just turned on — load increased by ${hybridCostMessage[2]} W. Equivalent to costs about ${hybridCostMessage[3]} yuan per day if kept on.`;
+      ? `灯 ${hybridCostMessage[1]} 刚打开 - 负载增加 ${hybridCostMessage[2]} W。相当于花费约 ${hybridCostMessage[3]} VND/天（如果持续开启）。`
+      : `Light ${hybridCostMessage[1]} just turned on — load increased by ${hybridCostMessage[2]} W. Equivalent to spending about ${hybridCostMessage[3]} VND per day if kept on.`;
   }
 
-  const hybridDetectedMessage = source.match(/^Phát hiện bật Light (\d+)\.\s*Using lights wisely will save electricity, remember to turn off when not in use nhé!$/i);
+  const hybridDetectedMessage = source.match(/^Phát hiện bật\s*(?:Light|Đèn)\s*(\d+)\.\s*(?:Using lights wisely will save electricity, remember to turn off when not in use nhé!|Bật đèn hợp lý sẽ giúp tiết kiệm điện, đừng quên tắt khi không dùng nhé!)$/i);
   if (hybridDetectedMessage) {
     return isZh
-      ? `检测到 Light ${hybridDetectedMessage[1]} 打开。合理使用灯会节省电力，不使用时请记得关闭！`
+      ? `检测到灯 ${hybridDetectedMessage[1]} 打开。合理使用灯会节省电力，不用时请记得关闭！`
       : `Detected Light ${hybridDetectedMessage[1]} turned on. Using lights wisely will save electricity, remember to turn off when not in use!`;
   }
 
@@ -43,11 +43,11 @@ export function localizeAiText(text: string, language: Language) {
       : `Detected Light ${hybridRememberMessage[1]} turned on. Remember to use natural light!`;
   }
 
-  const hybridBudgetMessage = source.match(/^Quá chuẩn!\s*Đêm qua hoặc nãy giờ bạn đã tắt Light (\d+), additionally saved\s*([\d.]+)đ\.$/i);
+  const hybridBudgetMessage = source.match(/^Quá chuẩn!\s*Đêm qua hoặc nãy giờ bạn đã tắt\s*(?:Light|Đèn)\s*(\d+),\s*(?:additionally saved|tiết kiệm thêm được)\s*([\d.]+)\s*đ\.$/i);
   if (hybridBudgetMessage) {
     return isZh
-      ? `完美！你昨晚或刚才关闭了 Light ${hybridBudgetMessage[1]}，又省了 ${hybridBudgetMessage[2]} 元。`
-      : `Perfect! You turned off Light ${hybridBudgetMessage[1]} last night or just now, additionally saved ${hybridBudgetMessage[2]} yuan.`;
+      ? `完美！你昨晚或刚才关闭了灯 ${hybridBudgetMessage[1]}，又省了 ${hybridBudgetMessage[2]} VND。`
+      : `Perfect! You turned off Light ${hybridBudgetMessage[1]} last night or just now, additionally saved ${hybridBudgetMessage[2]} VND.`;
   }
 
   // Fix typo version of saving message
@@ -59,18 +59,18 @@ export function localizeAiText(text: string, language: Language) {
   }
 
   // Light turned on - Vietnamese message
-  const lightTurnedOnVi = source.match(/^Light (\d+) vừa bật — làm tăng tải thêm\s*([\d.]+) W\.\s*Sẽ tốn thêm tầm\s*([\d.]+)đ\/ngày nếu không tắt\.$/i);
+  const lightTurnedOnVi = source.match(/^(?:Light|Đèn)\s*(\d+)\s*vừa bật\s*[—–-]\s*làm tăng tải thêm\s*([\d.]+)\s*W\.\s*Sẽ tốn thêm tầm\s*([\d.]+)\s*đ\/ngày nếu không tắt\.$/i);
   if (lightTurnedOnVi) {
     return isZh
-      ? `Light ${lightTurnedOnVi[1]} 刚打开 - 负载增加 ${lightTurnedOnVi[2]} W。如果不关闭，每天将额外消耗约 ${lightTurnedOnVi[3]} 元。`
-      : `Light ${lightTurnedOnVi[1]} just turned on — load increased by ${lightTurnedOnVi[2]} W. Will cost about ${lightTurnedOnVi[3]} yuan/day if not turned off.`;
+      ? `灯 ${lightTurnedOnVi[1]} 刚打开 - 负载增加 ${lightTurnedOnVi[2]} W。如果不关闭，每天将额外消耗约 ${lightTurnedOnVi[3]} VND。`
+      : `Light ${lightTurnedOnVi[1]} just turned on — load increased by ${lightTurnedOnVi[2]} W. Will cost about ${lightTurnedOnVi[3]} VND/day if not turned off.`;
   }
 
   // Light off - hybrid message
-  const lightOffHybrid = source.match(/^Light (\d+) đã tắt, your monthly budget is a bit fuller$/i);
+  const lightOffHybrid = source.match(/^(?:Light|Đèn)\s*(\d+)\s*đã tắt,\s*(?:your monthly budget is a bit fuller|ngân sách tháng này lại rủng rỉnh thêm một chút rồi!)$/i);
   if (lightOffHybrid) {
     return isZh
-      ? `Light ${lightOffHybrid[1]} 已关闭，你的月度预算又充足了一点！`
+      ? `灯 ${lightOffHybrid[1]} 已关闭，你的月度预算又充足了一点！`
       : `Light ${lightOffHybrid[1]} has been turned off, your monthly budget is a bit fuller!`;
   }
 
@@ -183,6 +183,43 @@ export function localizeAiText(text: string, language: Language) {
       : ` Power is ${batteryHigher[1]}% higher than usual — using ${batteryHigher[2]} W instead of ~${batteryHigher[3]} W as usual`;
   }
 
+  // Routine Predictions
+  const predictiveEvening = source.match(/^Gợi ý thông minh: AI phân tích dữ liệu 30 ngày qua thấy bạn hay dùng điện lúc (\d+)h\. Sắp tối rồi, bạn có muốn tôi bật chiếu sáng sớm giúp không\? 🌙$/i);
+  if (predictiveEvening) {
+    return isZh
+      ? `智能建议：AI分析了过去30天的数据，发现你经常在 ${predictiveEvening[1]}点 用电。天快黑了，需要为你提前开启照明吗？🌙`
+      : `Smart Suggestion: AI analyzed 30 days of data and noticed you usually use electricity around ${predictiveEvening[1]}h. It's getting dark, would you like me to turn on the lights for you? 🌙`;
+  }
+
+  const predictiveEvening2 = source.match(/^AI Tiên Đoán: Ánh sáng ngoài trời sắp giảm\. Bạn có muốn kích hoạt kịch bản "Bình Minh Tối" như thói quen (\d+)h mọi ngày không\?$/i);
+  if (predictiveEvening2) {
+    return isZh
+      ? `AI 预测：室外光线即将变暗。要按照每天 ${predictiveEvening2[1]}点的习惯激活“傍晚照明”场景吗？`
+      : `AI Prediction: Outdoor light is decreasing. Would you like to activate the "Evening Lights" scene as per your daily ${predictiveEvening2[1]}h routine?`;
+  }
+
+  const predictiveMorning = source.match(/^Gợi ý thông minh: AI phân tích thói quen sáng quanh mức (\d+)h của bạn! Bạn có muốn ngắt điện các thiết bị ban đêm không\? ☀️$/i);
+  if (predictiveMorning) {
+    return isZh
+      ? `智能建议：AI分析了你约 ${predictiveMorning[1]}点的早晨习惯！需要关闭夜间设备吗？☀️`
+      : `Smart Suggestion: AI analyzed your morning routine around ${predictiveMorning[1]}h! Would you like to turn off nighttime devices? ☀️`;
+  }
+
+  // Z-Score Standby Alerts
+  const standbyZScore = source.match(/^️?\s*⚠️\s*Z-Score Cảnh báo: Tải nền rò rỉ rất đắt đỏ\. Bạn sẽ lãng phí ([\d.]+)VNĐ vào cuối tháng nếu giữ mức tải này khi đã tắt đèn\.$/i);
+  if (standbyZScore) {
+    return isZh
+      ? `⚠️ Z-Score 警告：待机漏电非常昂贵。如果关灯后保持此负载，月底你将浪费 ${standbyZScore[1]} VND。`
+      : `⚠️ Z-Score Warning: Standby leakage is very costly. You will waste ${standbyZScore[1]} VND by the end of the month if you keep this load when lights are off.`;
+  }
+
+  const standbyAbnormal = source.match(/^️?\s*⚠️\s*Tải nền đang cao bất thường! Ước tính hóa đơn sẽ ĐỘI THÊM ([\d.]+)đ tháng này nếu bạn không kiểm tra ngay các thiết bị chạy ngầm!$/i);
+  if (standbyAbnormal) {
+    return isZh
+      ? `⚠️ 待机负载异常偏高！如果你不立即检查后台设备，本月电费估计将增加 ${standbyAbnormal[1]} VND！`
+      : `⚠️ Standby load is abnormally high! Estimated bill will INCREASE by ${standbyAbnormal[1]} VND this month if you don't check background devices immediately!`;
+  }
+
   const billingWarning = source.match(/^️?\s*⚠️\s*Cảnh báo tiền điện!\s*Thiết bị công suất khủng đang đốt của bạn khoảng\s*([\d.]+)đ\s*MỖI GIỜ\.\s*(.+)$/i);
   if (billingWarning) {
     const advice = billingWarning[2]
@@ -200,7 +237,38 @@ export function localizeAiText(text: string, language: Language) {
       .replace(/Nếu độ sáng đã đủ, bạn có thể tắt bớt một đèn để giảm tiêu thụ/gi, isZh ? '如果光线充足，可以关闭一盏灯以降低消耗' : 'If lighting is sufficient, you can turn off one light to reduce consumption');
     return isZh
       ? `⚠️ 异常告警 级别 ${anomalyAlert[1] || '3'} (Z-Score)：峰值负载红色警报。你正在以极快的速度消耗电费（${anomalyAlert[2]} 元/小时）。${advice}`
-      : `⚠️ Anomaly Alert Level ${anomalyAlert[1] || '3'} (Z-Score): Peak load red alert. You're burning money very fast (${anomalyAlert[2]} yuan/hour). ${advice}`;
+      : `⚠️ Anomaly Alert Level ${anomalyAlert[1] || '3'} (Z-Score): Peak load red alert. You're burning money very fast (${anomalyAlert[2]} VND/hour). ${advice}`;
+  }
+
+  // Power Spikes & High Consumption
+  const powerSpike = source.match(/^️?\s*(?:️\s*)?Công suất vừa (tăng|giảm) nhanh ([\d.]+) W dù trạng thái đèn không đổi\s*[—–-]\s*nên kiểm tra tải tức thời$/i);
+  if (powerSpike) {
+    const trend = powerSpike[1] === 'tăng' ? (isZh ? '增加' : 'increased') : (isZh ? '减少' : 'decreased');
+    return isZh
+      ? ` 功耗刚才快速${trend}了 ${powerSpike[2]} W，尽管灯的状态未改变 - 请检查即时负载`
+      : ` Power just ${trend} rapidly by ${powerSpike[2]} W even though light states haven't changed — please check the instantaneous load`;
+  }
+
+  const loadHigh = source.match(/^Đang có thiết bị tiêu thụ khá mạnh, tốn khoảng ([\d.]+)đ\/giờ\. Chú ý chi phí nhé!$/i);
+  if (loadHigh) {
+    return isZh
+      ? ` 有设备功耗较高，每小时约花费 ${loadHigh[1]} VND。请注意电费开支！`
+      : ` A device is consuming significant power, costing about ${loadHigh[1]} VND/hour. Watch your costs!`;
+  }
+
+  const costWarningNormal = source.match(/^Cảnh báo chi phí: Công suất đang vọt lên, hệ thống ghi nhận bạn đang xài lố so với thói quen hằng ngày\.$/i);
+  if (costWarningNormal) {
+    return isZh
+      ? ` 费用警告：功耗正在飙升，系统记录到你的用电量超过了日常习惯。`
+      : ` Cost Warning: Power usage is surging; the system detects consumption exceeding your daily routine.`;
+  }
+
+  // Weekly Summary Fallbacks
+  const weeklySummary = source.match(/^Tuần qua nhà mình đã dùng ([\d.]+) kWh\. Đã có (\d+) lần quên tắt đèn ban đêm\. Việc để quên này tuy tốn ít điện \(khoảng 0\.5W\/đèn\) nhưng sẽ lãng phí từ từ đó nha!$/i);
+  if (weeklySummary) {
+    return isZh
+      ? `上周你家使用了 ${weeklySummary[1]} kWh 电量。有 ${weeklySummary[2]} 次忘记关闭夜间灯光。虽然忘记关灯耗电不多（每盏约 0.5W），但日积月累也是一种浪费哦！`
+      : `Last week your family used ${weeklySummary[1]} kWh. You forgot to turn off nighttime lights ${weeklySummary[2]} times. Although leaving them on uses little power (~0.5W/light), it adds up over time!`;
   }
 
   const detectedLightOn1 = source.match(/^\s*Phát hiện bật\s*Light\s*(\d+)\.\s*(.+)$/i);
@@ -471,6 +539,11 @@ export function localizeAiText(text: string, language: Language) {
     .replace(/W/gi, isZh ? 'W' : 'W')
     .replace(/nếu được nhé!/gi, isZh ? '！' : '!')
     .replace(/nếu được nhé/gi, isZh ? '' : '')
-    .replace(/rồi!/gi, isZh ? '' : '')
-    .replace(/rồi/gi, isZh ? '' : '');
+    .replace(/rồi!/gi, isZh ? '！' : '!')
+    .replace(/rồi/gi, isZh ? '' : '')
+    .replace(/Khuya rồi, nếu không cần thiết có thể tắt bớt đèn để giảm tiêu thụ nền ban đêm/gi, isZh ? '深夜了，如果不必要可以关掉一盏灯以减少夜间底噪功耗' : 'It is late, if not necessary, you can turn off some lights to reduce nighttime standby consumption')
+    .replace(/Gợi ý ban đêm: ưu tiên dùng ít đèn hơn để tiết kiệm điện và tăng tuổi thọ thiết bị/gi, isZh ? '夜间建议：优先使用较少的灯光以省电并增加设备寿命' : 'Nighttime suggestion: prioritize using fewer lights to save electricity and increase device lifespan')
+    .replace(/Giờ cao điểm: đang bật cả 2 đèn, nên giảm bớt nếu không cần để tiết kiệm chi phí/gi, isZh ? '高峰时段：两盏灯都亮着，如果不必要请减少以节省成本' : 'Peak hours: both lights are on, reduce if not needed to save costs')
+    .replace(/Khung giờ tối thường tải cao, có thể tắt bớt 1 đèn để giảm công suất tức thời/gi, isZh ? '晚上通常负载较高，可以关掉一盏灯以减少即时功率' : 'Evening hours usually have high load, consider turning off one light to reduce instant power')
+    .replace(/Gợi ý:\s*bật đồng thời 2 đèn chỉ khi cần thiết để tối ưu điện năng/gi, isZh ? '建议：仅在必要时同时打开 2 盏灯以优化用电' : 'Suggestion: Turn on both lights only when necessary to optimize power usage');
 }

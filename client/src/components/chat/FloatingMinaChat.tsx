@@ -5,6 +5,9 @@ import { Bot, X, Send, Sparkles, User } from 'lucide-react';
 import { apiClient } from '@/lib/api/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+import { Language } from '@/i18n';
+import { localizeAiText } from '@/lib/aiTextLocalization';
+
 // Helper để render markdown cơ bản (In đậm, In nghiêng, Xuống dòng)
 const formatMarkdown = (text: string) => {
   let html = text
@@ -16,7 +19,7 @@ const formatMarkdown = (text: string) => {
 
 export function FloatingMinaChat() {
   const [isOpen, setIsOpen] = useState(false);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [messages, setMessages] = useState<{role: 'mina'|'user', text: string}[]>([
     { role: 'mina', text: t('ai.minaGreeting') }
   ]);
@@ -43,7 +46,8 @@ export function FloatingMinaChat() {
         method: 'POST',
         body: JSON.stringify({ message: userMsg })
       });
-      setMessages(prev => [...prev, { role: 'mina', text: res.reply || t('ai.minaError') }]);
+      const localizedReply = localizeAiText(res.reply || t('ai.minaError'), language);
+      setMessages(prev => [...prev, { role: 'mina', text: localizedReply }]);
     } catch (e) {
       setMessages(prev => [...prev, { role: 'mina', text: t('ai.minaNetworkError') }]);
     }
@@ -61,7 +65,8 @@ export function FloatingMinaChat() {
         method: 'POST',
         body: JSON.stringify({ message: promptMsg })
       });
-      setMessages(prev => [...prev, { role: 'mina', text: res.reply || t('ai.minaError') }]);
+      const localizedReply = localizeAiText(res.reply || t('ai.minaError'), language);
+      setMessages(prev => [...prev, { role: 'mina', text: localizedReply }]);
     } catch (e) {
       setMessages(prev => [...prev, { role: 'mina', text: t('ai.minaNetworkError') }]);
     }
@@ -79,8 +84,8 @@ export function FloatingMinaChat() {
                 <Sparkles className="w-5 h-5 text-purple-100 animate-pulse" />
               </div>
               <div>
-                <h3 className="font-bold text-sm">Quản gia Mina AI</h3>
-                <p className="text-[10px] text-indigo-200">Trợ lý phân tích số liệu</p>
+                <h3 className="font-bold text-sm tracking-tight">{t('ai.minaName')}</h3>
+                <p className="text-[10px] text-indigo-100/80">{t('ai.minaSubtitle')}</p>
               </div>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white transition-colors">

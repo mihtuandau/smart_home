@@ -205,3 +205,19 @@ model SystemSettings {
 
   @@map("system_settings")
 }
+
+// Persist daily LED consumption and routine patterns
+model AiLearningData {
+  id    String @id @default(cuid())
+  date  String @unique // Format: YYYY-MM-DD
+  
+  led1_wh         Float @default(0)
+  led2_wh         Float @default(0)
+  led1_on_minutes Float @default(0)
+  led2_on_minutes Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ai_learning_data")
+}

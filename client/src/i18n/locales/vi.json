@@ -529,6 +529,8 @@
     "systemAlerts": "Hệ thống có cảnh báo lỗi gì không?",
     "weeklyConsumption": "Tuần qua tốn bao nhiêu điện năng?",
     "minaPlaceholder": "Hỏi Mina lý do vượt tải...",
+    "minaName": "Quản gia Mina AI",
+    "minaSubtitle": "Trợ lý phân tích số liệu",
     "aiReportError": "Không thể tải báo cáo AI từ Mina lúc này.",
     "aiAnalyzing": "Mina đang phân tích biểu đồ điện...",
     "projectedLabel": "Dự kiến",

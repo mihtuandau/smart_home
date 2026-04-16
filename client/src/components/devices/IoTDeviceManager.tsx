@@ -106,7 +106,6 @@ export default function IoTDeviceManager() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 sm:mb-6">
           <div>
             <h3 className="text-sm sm:text-base font-semibold text-foreground">{t('devices.iotDevices')}</h3>
-            <p className="text-[11px] sm:text-xs text-muted-foreground mt-1">{t('devices.iotSubtitle')}</p>
           </div>
           {devices.length < 1 && !showAddForm && (
             <button

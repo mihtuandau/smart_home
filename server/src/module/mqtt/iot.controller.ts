@@ -54,7 +54,7 @@ export class IotController {
     });
 
     // Combine database devices with raw MQTT device data
-    const allDevices = [];
+    const allDevices: any[] = [];
     
     // Add database devices
     for (let index = 0; index < devices.length; index++) {

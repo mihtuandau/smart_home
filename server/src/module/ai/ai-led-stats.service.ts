@@ -26,13 +26,34 @@ export class AiLedStatsService implements OnModuleInit {
   constructor(private readonly prisma: PrismaService) {}
 
   async onModuleInit() {
-    // In-memory stats for now since AiLearningData was removed
+    // Load today's persisted data if exists
+    try {
+      const persisted = await this.prisma.aiLearningData.findUnique({
+        where: { date: this.currentDay },
+      });
+      if (persisted) {
+        this.today = {
+          date: persisted.date,
+          led1_wh: persisted.led1_wh,
+          led2_wh: persisted.led2_wh,
+          led1_on_minutes: persisted.led1_on_minutes,
+          led2_on_minutes: persisted.led2_on_minutes,
+        };
+        this.logger.log(`Restored LED stats for ${this.currentDay}`);
+      }
+    } catch (e) {
+      this.logger.error('Failed to restore LED stats from DB', e);
+    }
   }
 
   tick(led1: boolean, led2: boolean, ts: Date = new Date()): LedDayEntry {
     const dayNow = this.utcDateStr(ts);
 
+    // Day change detection
     if (dayNow !== this.currentDay) {
+      // Sync last day one last time before switching
+      this.syncToDb();
+      
       this.currentDay = dayNow;
       this.today = this.emptyEntry(dayNow);
       this.lastTsMs = null;
@@ -40,6 +61,7 @@ export class AiLedStatsService implements OnModuleInit {
 
     const nowMs = ts.getTime();
     if (this.lastTsMs !== null) {
+      // Delta capped at 2 minutes to prevent huge jumps if server was offline
       const deltaMs = Math.min(nowMs - this.lastTsMs, 120_000);
       if (deltaMs > 0) {
         const deltaH = deltaMs / 3_600_000;
@@ -58,7 +80,34 @@ export class AiLedStatsService implements OnModuleInit {
     this.lastTsMs = nowMs;
     this.lastLed = { led1, led2 };
 
+    // Fire and forget sync to DB
+    this.syncToDb();
+
     return { ...this.today };
+  }
+
+  private async syncToDb() {
+    try {
+      await this.prisma.aiLearningData.upsert({
+        where: { date: this.today.date },
+        create: {
+          date: this.today.date,
+          led1_wh: this.today.led1_wh,
+          led2_wh: this.today.led2_wh,
+          led1_on_minutes: this.today.led1_on_minutes,
+          led2_on_minutes: this.today.led2_on_minutes,
+        },
+        update: {
+          led1_wh: this.today.led1_wh,
+          led2_wh: this.today.led2_wh,
+          led1_on_minutes: this.today.led1_on_minutes,
+          led2_on_minutes: this.today.led2_on_minutes,
+        },
+      });
+    } catch (e) {
+      // Only log errors occasionally to avoid spamming
+      this.logger.error(`Failed to sync LED stats for ${this.today.date}`, e);
+    }
   }
 
   getToday(): LedDayEntry {
@@ -66,8 +115,37 @@ export class AiLedStatsService implements OnModuleInit {
   }
 
   async getHistory(days = 7): Promise<LedDayEntry[]> {
-    // Return mock or empty since we don't persist anymore
-    return [{ ...this.today }];
+    try {
+      const records = await this.prisma.aiLearningData.findMany({
+        where: {},
+        orderBy: { date: 'desc' },
+        take: days,
+      });
+
+      // Always include active "today" entry if not in records yet
+      const history = records.map(r => ({
+        date: r.date,
+        led1_wh: r.led1_wh,
+        led2_wh: r.led2_wh,
+        led1_on_minutes: r.led1_on_minutes,
+        led2_on_minutes: r.led2_on_minutes,
+      }));
+
+      // Ensure today is the most recent
+      const todayInHistory = history.find(h => h.date === this.today.date);
+      if (!todayInHistory) {
+        history.unshift({ ...this.today });
+      } else {
+        // Update today in history with in-memory precise values
+        const idx = history.findIndex(h => h.date === this.today.date);
+        history[idx] = { ...this.today };
+      }
+
+      return history.sort((a, b) => a.date.localeCompare(b.date));
+    } catch (e) {
+      this.logger.error('Failed to fetch LED history', e);
+      return [{ ...this.today }];
+    }
   }
 
   private utcToday(): string {
@@ -75,7 +153,12 @@ export class AiLedStatsService implements OnModuleInit {
   }
 
   private utcDateStr(d: Date): string {
-    return d.toISOString().slice(0, 10);
+    // Return YYYY-MM-DD in local-ish time but using ISO slice
+    // Use local date parts to ensure it matches user's expectation of "today"
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   private emptyEntry(date: string): LedDayEntry {

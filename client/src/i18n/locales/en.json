@@ -122,7 +122,6 @@
     "ledOnCount": "LEDs on",
     "touchActive": "Touch active",
     "iotDevices": "IoT Devices",
-    "iotSubtitle": "Maximum 2 devices · Updated via MQTT",
     "addDevice": "Add device",
     "noDevice": "No devices yet",
     "edit": "Edit",
@@ -504,7 +503,9 @@
     "weatherAndTemp": "What's the current weather and temperature?",
     "systemAlerts": "Are there any system errors or alerts?",
     "weeklyConsumption": "How much electricity was consumed last week?",
-    "minaPlaceholder": "Ask Mina why power is exceeding..."
+    "minaPlaceholder": "Ask Mina why power is exceeding...",
+    "minaName": "Mina AI Butler",
+    "minaSubtitle": "Data analysis assistant"
   },
   "weather": {
     "manyCloud": "Overcast",

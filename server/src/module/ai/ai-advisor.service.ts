@@ -247,8 +247,8 @@ export class AiAdvisorService {
       // Dự đoán Tối
       if (hour === this.predictedEveningHour && minute >= 0 && minute <= 30) {
         pushAdvice('predictive-evening-lights', [
-          ` Gợi ý thông minh: AI phân tích Data 30 ngày qua thấy bạn hay dùng điện lúc ${this.predictedEveningHour}h. Sắp tối rồi, bạn có muốn tôi bật chiếu sáng sớm giúp không? 🌙`,
-          ` AI Tiên Đoán (Dựa trên lịch sử): Ánh sáng ngoài trời sắp giảm. Bạn có muốn kích hoạt kịch bản "Bình Minh Tối" như thói quen ${this.predictedEveningHour}h mọi ngày không?`,
+          ` Gợi ý thông minh: AI phân tích dữ liệu 30 ngày qua thấy bạn hay dùng điện lúc ${this.predictedEveningHour}h. Sắp tối rồi, bạn có muốn tôi bật chiếu sáng sớm giúp không? 🌙`,
+          ` AI Tiên Đoán: Ánh sáng ngoài trời sắp giảm. Bạn có muốn kích hoạt kịch bản "Bình Minh Tối" như thói quen ${this.predictedEveningHour}h mọi ngày không?`,
         ]);
       }
       
