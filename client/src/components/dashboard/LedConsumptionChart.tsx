@@ -271,14 +271,14 @@ export default function LedConsumptionChart() {
         <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
-              barCategoryGap="25%"
-              barGap={2}
-              margin={{ top: 4, right: 8, bottom: 0, left: -10 }}
+              barCategoryGap="30%"
+              barGap={4}
+              margin={{ top: 10, right: 10, bottom: 0, left: -20 }}
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
               <XAxis
                 dataKey="date"
-                tick={{ fontSize: 11, fill: '#9ca3af' }}
+                tick={{ fontSize: 10, fill: '#9ca3af' }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -290,18 +290,18 @@ export default function LedConsumptionChart() {
               <Tooltip content={<CustomTooltip mode={mode} />} />
               <Legend
                 iconType="circle"
-                iconSize={7}
-                wrapperStyle={{ fontSize: '11px', paddingTop: '4px' }}
+                iconSize={8}
+                wrapperStyle={{ fontSize: '10px', paddingTop: '10px' }}
               />
               {mode === 'wh' ? (
                 <>
-                  <Bar dataKey="led1_wh"      name={`${t('ai.led1')} (Wh)`}   fill="#f59e0b" radius={[3,3,0,0]} />
-                  <Bar dataKey="led2_wh"      name={`${t('ai.led2')} (Wh)`}   fill="#3b82f6" radius={[3,3,0,0]} />
+                  <Bar dataKey="led1_wh"      name={`${t('ai.led1')} (Wh)`}   fill="#fbbf24" radius={[4,4,0,0]} />
+                  <Bar dataKey="led2_wh"      name={`${t('ai.led2')} (Wh)`}   fill="#38bdf8" radius={[4,4,0,0]} />
                 </>
               ) : (
                 <>
-                  <Bar dataKey="led1_minutes" name={`${t('ai.led1')} (${t('dashboard.minutes').toLowerCase()})`} fill="#f59e0b" radius={[3,3,0,0]} />
-                  <Bar dataKey="led2_minutes" name={`${t('ai.led2')} (${t('dashboard.minutes').toLowerCase()})`} fill="#3b82f6" radius={[3,3,0,0]} />
+                  <Bar dataKey="led1_minutes" name={`${t('ai.led1')} (${t('dashboard.minutes').toLowerCase()})`} fill="#fbbf24" radius={[4,4,0,0]} />
+                  <Bar dataKey="led2_minutes" name={`${t('ai.led2')} (${t('dashboard.minutes').toLowerCase()})`} fill="#38bdf8" radius={[4,4,0,0]} />
                 </>
               )}
             </BarChart>

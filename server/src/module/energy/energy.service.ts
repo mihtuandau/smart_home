@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
-import { PowerSource } from '@prisma/client';
 
 const RAW_RETENTION_DAYS = Number(process.env.RAW_RETENTION_DAYS || 7);
 const RAW_RETENTION_HOURS = RAW_RETENTION_DAYS * 24;
@@ -11,9 +10,38 @@ export class EnergyService {
   constructor(private prisma: PrismaService) {}
 
   async getEnergyStats(hours: number = 24, mode: EnergyMode = 'auto') {
+    const allData = await this.fetchAllEnergyData(hours, mode);
+    return allData.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+  }
+
+  async getEnergyStatsPaginated(
+    hours: number = 24,
+    page: number = 1,
+    pageSize: number = 500,
+    mode: EnergyMode = 'auto',
+  ) {
+    const allData = await this.fetchAllEnergyData(hours, mode);
+    const sorted = allData.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+    
+    const total = sorted.length;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    const data = sorted.slice(start, end);
+
+    return {
+      data,
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
+  }
+
+  private async fetchAllEnergyData(hours: number = 24, mode: EnergyMode = 'auto') {
     const now = new Date();
     const startTime = new Date(now.getTime() - hours * 60 * 60 * 1000);
-    const shouldUseAverage = mode === 'avg' || (mode === 'auto' && hours > RAW_RETENTION_HOURS);
+    const shouldUseAverage =
+      mode === 'avg' || (mode === 'auto' && hours > RAW_RETENTION_HOURS);
 
     if (shouldUseAverage) {
       const aggRows = await this.prisma.powerAgg.findMany({
@@ -28,176 +56,120 @@ export class EnergyService {
 
       return aggRows.map((row) => ({
         timestamp: row.bucketStart,
-        power: row.powerAvg,
-        energy: row.energySum,
+        power: row.powerAvg, // mW
+        energy: (row.powerAvg / 1000) * (row.bucketMinutes / 60), // Wh calculated from mW
         voltage: row.voltageAvg,
-        current: row.currentAvg,
+        current: row.currentAvg, // mA
         source: 'AGGREGATED',
         samples: row.samples,
       }));
     }
 
+    // Use combined approach: PowerAgg for old data + PowerData for recent data
+    // This matches the calculation in AI billing service for consistency
+    const rawCutoff = new Date(now.getTime() - RAW_RETENTION_DAYS * 24 * 3_600_000);
+    // Explicitly type the array to avoid TS 'never' errors
+    const allDataPoints: Array<{
+      timestamp: Date;
+      power: number;
+      energy: number;
+      voltage: number;
+      current: number;
+      source: 'AGGREGATED' | 'CORE';
+      samples?: number;
+    }> = [];
+
+    // Part 1: Get aggregated data for records older than 7 days
+    if (startTime < rawCutoff) {
+      const aggRows = await this.prisma.powerAgg.findMany({
+        where: {
+          bucketStart: { gte: startTime, lt: rawCutoff },
+        },
+        orderBy: { bucketStart: 'asc' },
+      });
+
+      const aggDataPoints = aggRows.map((row) => ({
+        timestamp: row.bucketStart,
+        power: row.powerAvg, // mW
+        energy: (row.powerAvg / 1000) * (row.bucketMinutes / 60), // Wh calculated from mW
+        voltage: row.voltageAvg,
+        current: row.currentAvg, // mA
+        source: 'AGGREGATED' as const,
+        samples: row.samples,
+      }));
+      allDataPoints.push(...aggDataPoints);
+    }
+
+    // Part 2: Get raw data for recent records (≤ 7 days)
+    const effectiveRawStart = startTime > rawCutoff ? startTime : rawCutoff;
     const powerData = await this.prisma.powerData.findMany({
       where: {
-        timestamp: {
-          gte: startTime,
-          lte: now,
-        },
-        source: 'SOLAR',
+        timestamp: { gte: effectiveRawStart, lte: now },
       },
       orderBy: { timestamp: 'asc' },
     });
 
-    if (powerData.length === 0) {
-      return [];
+    if (powerData.length > 0) {
+      const energyData = powerData.map((data, index) => {
+        let energy = 0;
+        if (index > 0) {
+          const prev = powerData[index - 1];
+          const timeDiffHours =
+            (data.timestamp.getTime() - prev.timestamp.getTime()) / 3_600_000;
+
+          // Use Trapezoidal rule: (P_prev + P_curr) / 2 for better accuracy
+          // data.power is mW, energy is Wh -> (mW / 1000) * hours
+          if (timeDiffHours < 2) {
+            const avgPowerMw = (data.power + prev.power) / 2;
+            energy = (avgPowerMw / 1000) * timeDiffHours;
+          }
+        }
+
+        return {
+          timestamp: data.timestamp,
+          power: data.power,
+          energy: energy,
+          voltage: data.voltage,
+          current: data.current,
+          source: 'CORE' as const,
+        };
+      });
+      allDataPoints.push(...energyData);
     }
 
-    const energyData = powerData.map((data, index) => {
-      let energy = 0;
-      if (index > 0) {
-        const timeDiffMs =
-          data.timestamp.getTime() - powerData[index - 1].timestamp.getTime();
-        const timeDiffHours = timeDiffMs / (1000 * 60 * 60);
-        energy = (data.power || 0) * timeDiffHours;
-      }
-
-      return {
-        timestamp: data.timestamp,
-        power: data.power || 0,
-        energy: energy,
-        voltage: data.voltage || 0,
-        current: data.current || 0,
-        source: data.source,
-      };
-    });
-
-    return energyData;
+    // Sort by timestamp to ensure correct order
+    return allDataPoints.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   }
 
-  async getBatteryStatus() {
+  async getLatestStatus() {
     const latest = await this.prisma.powerData.findFirst({
       orderBy: { timestamp: 'desc' },
     });
 
     if (!latest) {
       return {
-        level: 0,
         voltage: 0,
         current: 0,
-        status: 'UNKNOWN',
+        power: 0,
+        status: 'OFFLINE',
         lastUpdate: null,
       };
     }
 
-    let status = 'UNKNOWN';
-    if (latest.current > 0) {
-      status = 'CHARGING';
-    } else if (latest.current < 0) {
-      status = 'DISCHARGING';
-    } else {
-      status = 'IDLE';
+    let status = 'IDLE';
+    if (latest.current > 5) {
+      status = 'ACTIVE';
+    } else if (latest.current < -5) {
+      status = 'CONSUMING';
     }
 
     return {
-      level: latest.batteryLevel || 0,
-      voltage: latest.voltage || 0,
-      current: latest.current || 0,
+      voltage: latest.voltage,
+      current: latest.current,
+      power: latest.power,
       status,
       lastUpdate: latest.timestamp,
     };
-  }
-
-  async getSolarStats(hours: number = 24) {
-    const now = new Date();
-    const startTime = new Date(now.getTime() - hours * 60 * 60 * 1000);
-
-    const solarData = await this.prisma.powerData.findMany({
-      where: {
-        timestamp: {
-          gte: startTime,
-          lte: now,
-        },
-        source: 'SOLAR',
-      },
-      orderBy: { timestamp: 'asc' },
-    });
-
-    if (solarData.length === 0) {
-      return {
-        totalGenerated: 0,
-        peakPower: 0,
-        averagePower: 0,
-        data: [],
-      };
-    }
-
-    const powers = solarData.map((d) => d.power || 0);
-    const totalPower = powers.reduce((a, b) => a + b, 0);
-    const avgPower = totalPower / powers.length;
-    const peakPower = Math.max(...powers);
-
-    const totalEnergy = avgPower * hours;
-
-    return {
-      totalGenerated: totalEnergy,
-      peakPower,
-      averagePower: avgPower,
-      data: solarData.map((d) => ({
-        timestamp: d.timestamp,
-        power: d.power || 0,
-      })),
-    };
-  }
-
-  async getPowerSourceStats(hours: number = 24) {
-    const now = new Date();
-    const startTime = new Date(now.getTime() - hours * 60 * 60 * 1000);
-
-    const powerData = await this.prisma.powerData.findMany({
-      where: {
-        timestamp: {
-          gte: startTime,
-          lte: now,
-        },
-      },
-      orderBy: { timestamp: 'asc' },
-    });
-
-    const sources: Record<string, number[]> = {
-      SOLAR: [],
-      BATTERY: [],
-      GRID: [],
-    };
-
-    powerData.forEach((data) => {
-      const source = data.source || 'GRID';
-      if (!sources[source]) {
-        sources[source] = [];
-      }
-      sources[source].push(data.power || 0);
-    });
-
-    const stats: Record<string, any> = {};
-    Object.entries(sources).forEach(([source, powers]) => {
-      if (powers.length === 0) {
-        stats[source] = {
-          count: 0,
-          total: 0,
-          average: 0,
-          peak: 0,
-        };
-      } else {
-        const total = powers.reduce((a, b) => a + b, 0);
-        stats[source] = {
-          count: powers.length,
-          total: total,
-          average: total / powers.length,
-          peak: Math.max(...powers),
-        };
-      }
-    });
-
-    return stats;
   }
 
   async getEfficiencyMetrics(hours: number = 24) {
@@ -223,8 +195,9 @@ export class EnergyService {
       }),
     ]);
 
-    const totalPower = powerData.reduce((sum, d) => sum + (d.power || 0), 0);
-    const avgPower = powerData.length > 0 ? totalPower / powerData.length : 0;
+    const totalPowerMw = powerData.reduce((sum, d) => sum + (d.power || 0), 0);
+    const avgPowerMw =
+      powerData.length > 0 ? totalPowerMw / powerData.length : 0;
     const avgTemperature =
       sensorData.length > 0
         ? sensorData.reduce((sum, d) => sum + (d.temperature || 0), 0) /
@@ -232,11 +205,11 @@ export class EnergyService {
         : 0;
 
     return {
-      totalConsumption: totalPower,
-      averagePower: avgPower,
-      peakPower: Math.max(...powerData.map((d) => d.power || 0), 0),
+      totalConsumptionMw: totalPowerMw,
+      averagePowerMw: avgPowerMw,
+      peakPowerMw: Math.max(...powerData.map((d) => d.power), 0),
       avgTemperature: avgTemperature,
-      efficiency: avgPower > 0 ? ((100 - avgTemperature) / 100) * 100 : 0,
+      efficiency: avgPowerMw > 0 ? ((100 - avgTemperature) / 100) * 100 : 0,
       period: `${hours}h`,
       timestamp: new Date(),
     };
@@ -250,20 +223,17 @@ export class EnergyService {
       const timestamp = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
       const hour = timestamp.getHours();
 
-      let power = 0;
+      let powerMw = 0;
       if (hour >= 6 && hour <= 18) {
         const peakHour = 12;
         const hoursFromPeak = Math.abs(hour - peakHour);
-        power = Math.max(0, 100 - hoursFromPeak * 10 + Math.random() * 20);
+        powerMw = Math.max(0, 5000 - hoursFromPeak * 400 + Math.random() * 500); // 5000mW = 5W
       }
 
       testData.push({
-        voltage: 18 + Math.random() * 2,
-        current: power / 20,
-        power: power,
-        energy: (power * 1) / 60,
-        source: PowerSource.SOLAR,
-        batteryLevel: null,
+        voltage: 12 + Math.random() * 1,
+        current: powerMw / 12, // mA
+        power: powerMw,
         timestamp,
       });
     }
@@ -277,7 +247,7 @@ export class EnergyService {
     });
 
     for (const data of testData) {
-      await (this.prisma.powerData.create as any)({ data });
+      await this.prisma.powerData.create({ data });
     }
 
     return {
@@ -287,29 +257,79 @@ export class EnergyService {
     };
   }
 
-  async cleanupZeroEnergyData() {
+  async cleanupOldData() {
     const deleted = await this.prisma.powerData.deleteMany({
       where: {
-        energy: 0,
-        source: PowerSource.SOLAR,
-      },
-    });
-
-    return `Deleted ${deleted.count} old SOLAR records with energy = 0`;
-  }
-
-  async deleteOldSolarData() {
-    const cutoffTime = new Date('2026-02-04T16:55:00Z');
-
-    const deleted = await this.prisma.powerData.deleteMany({
-      where: {
-        source: PowerSource.SOLAR,
         timestamp: {
-          lt: cutoffTime,
+          lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
         },
       },
     });
 
-    return `Deleted ${deleted.count} SOLAR records before ${cutoffTime.toISOString()}`;
+    return `Deleted ${deleted.count} old power records older than 30 days`;
+  }
+
+  async getEnergySummary() {
+    // 1. Calculate Today (from 00:00 today LOCAL time)
+    const now = new Date();
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    );
+    const startOfTodayUtc = new Date(startOfToday.getTime());
+
+    // Get all points since midnight
+    const points = await this.prisma.powerData.findMany({
+      where: { timestamp: { gte: startOfTodayUtc } },
+      orderBy: { timestamp: 'asc' },
+    });
+
+    let todayWh = 0;
+    for (let i = 1; i < points.length; i++) {
+      const prev = points[i - 1];
+      const curr = points[i];
+      const hours =
+        (curr.timestamp.getTime() - prev.timestamp.getTime()) / 3600000;
+      if (hours < 2) {
+        const avgPowerW = (curr.power + prev.power) / 2000; // mW to W
+        todayWh += avgPowerW * hours;
+      }
+    }
+
+    // 2. Calculate Month (from 1st of current month)
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    // Use Aggregated data for days before today
+    const monthlyAgg = await this.prisma.powerAgg.aggregate({
+      where: {
+        bucketStart: {
+          gte: startOfMonth,
+          lt: startOfTodayUtc,
+        },
+      },
+      _sum: {
+        powerAvg: true,
+      },
+      _count: true,
+    });
+
+    // Simple estimation for aggregated month energy: (sum of avgPower / count) * hours
+    // More accurately: Sum of (avgPowerW * bucketHours)
+    const aggRows = await this.prisma.powerAgg.findMany({
+      where: {
+        bucketStart: { gte: startOfMonth, lt: startOfTodayUtc },
+      },
+    });
+
+    let historicalMonthWh = 0;
+    aggRows.forEach((row) => {
+      historicalMonthWh += (row.powerAvg / 1000) * (row.bucketMinutes / 60);
+    });
+
+    return {
+      todayWh,
+      monthWh: historicalMonthWh + todayWh,
+    };
   }
 }

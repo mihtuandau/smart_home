@@ -1,7 +1,7 @@
 'use client';
 
 import SensorStatsGrid from '@/components/sensors/SensorStatsGrid';
-import RainProbabilityPredictor from '@/components/sensors/RainProbabilityPredictor';
+import RainForecastCard from '@/components/dashboard/RainForecastCard';
 import TemperatureHumidityChart from '@/components/sensors/TemperatureHumidityChart';
 import SensorHistoryTable from '@/components/sensors/SensorHistoryTable';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -20,7 +20,7 @@ export default function SensorsPage() {
 
       <SensorStatsGrid />
 
-      <RainProbabilityPredictor />
+      <RainForecastCard />
 
       <div className="grid grid-cols-1 gap-4 sm:gap-6 min-w-0">
         <TemperatureHumidityChart hours={24} />

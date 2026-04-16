@@ -122,7 +122,6 @@
     "ledOnCount": "LEDs on",
     "touchActive": "Touch active",
     "iotDevices": "IoT Devices",
-    "iotSubtitle": "Maximum 2 devices · Updated via MQTT",
     "addDevice": "Add device",
     "noDevice": "No devices yet",
     "edit": "Edit",
@@ -178,6 +177,14 @@
     ,"powerOverTime": "Power generation over time"
     ,"noSolarData": "No solar panel data yet"
     ,"solarDataHint": "Data will appear once the system starts collecting"
+    ,"billingForecast": "Electricity Bill Forecast"
+    ,"billingDescription": "AI analysis based on actual load trends"
+    ,"unitPrice": "Unit price"
+    ,"currency": "VND"
+    ,"estimatedBill": "Estimated Bill End of Month"
+    ,"usedThisMonth": "Used this month"
+    ,"confidenceInterval": "95% confidence interval"
+    ,"highConsumptionWarning": "AI system detected that electricity usage trend is higher than safe average level. Please check devices with high power consumption!"
   },
   "automation": {
     "title": "Automation",
@@ -254,7 +261,44 @@
     "sample": "Sample",
     "minutes": "Minutes",
     "last7Days": "7 days",
-    "total": "Total"
+    "total": "Total",
+    "rain_forecast": "Rain Forecast",
+    "rain_forecast_error": "Unable to load rain forecast",
+    "next_hour": "Next Hour",
+    "forecast_temp": "Forecast Temperature",
+    "forecast_humidity": "Forecast Humidity",
+    "forecast_pressure": "Forecast Pressure",
+    "forecast_pop": "Forecast Probability",
+    "current_rain_probability": "Current rain probability",
+    "sensor_vs_forecast": "Sensors vs Forecast",
+    "adjusted_pop": "Adjusted",
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "hours_aligned": "hours aligned",
+    "next_hours_forecast": "Next 6 Hours",
+    "updated": "Updated",
+    "bias_analysis": "Bias Analysis",
+    "rain_forecast_title": "Rain Forecast - Next Hour",
+    "local_weather_check": "Local Weather Check",
+    "likely_to_rain": "Likely to rain",
+    "probably_raining": "Probably raining",
+    "maybe_rain": "Maybe rain",
+    "unlikely_to_rain": "Unlikely to rain",
+    "no_rain_expected": "No rain expected",
+    "why_this_number": "Why this number?",
+    "less_rain": "weather from sensors suggests less rain than",
+    "more_rain": "weather from sensors suggests more rain than",
+    "match_forecast": "local readings match the forecast.",
+    "after_local_check": "After local check",
+    "original_forecast": "Original forecast",
+    "lower": "📉 Lower",
+    "higher": "📈 Higher",
+    "same": "↔️ Same",
+    "next_hours_trend": "Next 6 hours trend",
+    "temperature_label": "°C Temperature",
+    "humidity_label": "💧 Humidity",
+    "pressure_label": "⚖️ Pressure",
+    "local_readings_checked": "local readings checked"
   },
   "settings": {
     "title": "Settings",
@@ -446,7 +490,49 @@
     "medium": "Slightly high",
     "high": "High — Alert",
     "led1": "Light 1",
-    "led2": "Light 2"
+    "led2": "Light 2",
+    "aiReportError": "Cannot load AI report from Mina at this time.",
+    "aiAnalyzing": "Mina is analyzing power chart...",
+    "projectedLabel": "Projected",
+    "estimatedNote": "(Projected: {kwh} kWh × {price})",
+    "minaGreeting": "Hello! I'm Mina. What would you like to know about your energy usage this week?",
+    "minaError": "Sorry, Mina is busy right now.",
+    "minaNetworkError": "Network connection with Mina encountered an error.",
+    "billThisMonth": "How much is the electricity bill this month?",
+    "weatherAndTemp": "What's the current weather and temperature?",
+    "systemAlerts": "Are there any system errors or alerts?",
+    "weeklyConsumption": "How much electricity was consumed last week?",
+    "minaPlaceholder": "Ask Mina why power is exceeding...",
+    "minaName": "Mina AI Butler",
+    "minaSubtitle": "Data analysis assistant"
+  },
+  "weather": {
+    "manyCloud": "Overcast",
+    "clear": "Clear",
+    "fairlyClear": "Fairly clear",
+    "brightSunlight": "Bright sunshine",
+    "strongWind": "Strong wind",
+    "moderateWind": "Moderate wind",
+    "highHumidity": "High humidity",
+    "lowHumidity": "Low humidity"
+  },
+  "time": {
+    "from00hToday": "From 00h today",
+    "last24h": "Last 24 hours",
+    "last7d": "Last 7 days",
+    "last30d": "Last 30 days",
+    "drifting": "(Floating)"
+  },
+  "report": {
+    "raining": "Raining",
+    "notRaining": "Not raining",
+    "raining_label": "Raining",
+    "samples": "Samples",
+    "consumption": "Consumption (Wh)"
+  },
+  "export": {
+    "yes": "Yes",
+    "no": "No"
   },
   "theme": {
     "switchLight": "Switch to light",

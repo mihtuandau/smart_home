@@ -3,10 +3,7 @@ import {
   IsBoolean,
   IsString,
   IsNumber,
-  IsInt,
   IsIn,
-  Min,
-  Max,
   Matches,
 } from 'class-validator';
 
@@ -24,45 +21,11 @@ export type NotificationFrequency =
 export class UpdateSystemSettingsDto {
   @IsOptional()
   @IsBoolean()
-  autoLightEnabled?: boolean;
-
-  @IsOptional()
-  @IsString()
-  lightOnTime?: string;
-
-  @IsOptional()
-  @IsString()
-  lightOffTime?: string;
-
-  @IsOptional()
-  @IsInt()
-  lightThreshold?: number;
-
-  @IsOptional()
-  @IsBoolean()
   autoRainProtection?: boolean;
 
   @IsOptional()
   @IsNumber()
   rainHumidityThreshold?: number;
-
-  @IsOptional()
-  @IsBoolean()
-  powerSaveMode?: boolean;
-
-  @IsOptional()
-  @IsNumber()
-  @Min(10)
-  @Max(10000)
-  maxPowerConsumption?: number;
-
-  @IsOptional()
-  @IsBoolean()
-  aiLearningEnabled?: boolean;
-
-  @IsOptional()
-  @IsInt()
-  predictionHorizon?: number;
 }
 
 export class UpdateNotificationSettingsDto {
@@ -77,10 +40,6 @@ export class UpdateNotificationSettingsDto {
   @IsOptional()
   @IsBoolean()
   deviceAlerts?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  automationAlerts?: boolean;
 
   @IsOptional()
   @IsBoolean()

@@ -3,6 +3,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Sparkles, User } from 'lucide-react';
 import { apiClient } from '@/lib/api/client';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+import { Language } from '@/i18n';
+import { localizeAiText } from '@/lib/aiTextLocalization';
 
 // Helper để render markdown cơ bản (In đậm, In nghiêng, Xuống dòng)
 const formatMarkdown = (text: string) => {
@@ -15,8 +19,9 @@ const formatMarkdown = (text: string) => {
 
 export function FloatingMinaChat() {
   const [isOpen, setIsOpen] = useState(false);
+  const { t, language } = useLanguage();
   const [messages, setMessages] = useState<{role: 'mina'|'user', text: string}[]>([
-    { role: 'mina', text: 'Chào bạn! Mình là Mina. Bạn muốn hỏi gì về số liệu năng lượng tuần này?' }
+    { role: 'mina', text: t('ai.minaGreeting') }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,9 +46,10 @@ export function FloatingMinaChat() {
         method: 'POST',
         body: JSON.stringify({ message: userMsg })
       });
-      setMessages(prev => [...prev, { role: 'mina', text: res.reply || 'Xin lỗi, Mina đang bận ạ.' }]);
+      const localizedReply = localizeAiText(res.reply || t('ai.minaError'), language);
+      setMessages(prev => [...prev, { role: 'mina', text: localizedReply }]);
     } catch (e) {
-      setMessages(prev => [...prev, { role: 'mina', text: 'Kết nối mạng với Mina gặp lỗi.' }]);
+      setMessages(prev => [...prev, { role: 'mina', text: t('ai.minaNetworkError') }]);
     }
     setLoading(false);
   };
@@ -59,9 +65,10 @@ export function FloatingMinaChat() {
         method: 'POST',
         body: JSON.stringify({ message: promptMsg })
       });
-      setMessages(prev => [...prev, { role: 'mina', text: res.reply || 'Xin lỗi, Mina đang bận ạ.' }]);
+      const localizedReply = localizeAiText(res.reply || t('ai.minaError'), language);
+      setMessages(prev => [...prev, { role: 'mina', text: localizedReply }]);
     } catch (e) {
-      setMessages(prev => [...prev, { role: 'mina', text: 'Kết nối mạng với Mina gặp lỗi.' }]);
+      setMessages(prev => [...prev, { role: 'mina', text: t('ai.minaNetworkError') }]);
     }
     setLoading(false);
   };
@@ -77,8 +84,8 @@ export function FloatingMinaChat() {
                 <Sparkles className="w-5 h-5 text-purple-100 animate-pulse" />
               </div>
               <div>
-                <h3 className="font-bold text-sm">Quản gia Mina AI</h3>
-                <p className="text-[10px] text-indigo-200">Trợ lý phân tích số liệu</p>
+                <h3 className="font-bold text-sm tracking-tight">{t('ai.minaName')}</h3>
+                <p className="text-[10px] text-indigo-100/80">{t('ai.minaSubtitle')}</p>
               </div>
             </div>
             <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white transition-colors">
@@ -123,10 +130,10 @@ export function FloatingMinaChat() {
           {/* Quick Prompts */}
           <div className="px-3 pt-2 pb-1 bg-white dark:bg-gray-900 overflow-x-auto custom-scrollbar flex gap-2 w-full border-t border-gray-100 dark:border-gray-800 shrink-0">
             {[
-              'Tiền điện tháng này bao nhiêu?',
-              'Thời tiết và Nhiệt độ hiện tại?',
-              'Hệ thống có cảnh báo lỗi gì không?',
-              'Tuần qua tốn bao nhiêu điện năng?',
+              t('ai.billThisMonth'),
+              t('ai.weatherAndTemp'),
+              t('ai.systemAlerts'),
+              t('ai.weeklyConsumption'),
             ].map((prompt, idx) => (
               <button
                 key={idx}
@@ -147,7 +154,7 @@ export function FloatingMinaChat() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Hỏi Mina lý do vượt tải..."
+                placeholder={t('ai.minaPlaceholder')}
                 className="w-full bg-gray-100 dark:bg-gray-800 border-transparent rounded-full py-2.5 px-4 pr-12 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all font-medium text-gray-800 dark:text-gray-100"
               />
               <button 

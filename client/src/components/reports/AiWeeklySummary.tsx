@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Bot, Sparkles, Loader2, Zap, AlertTriangle } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Bot, Sparkles, Loader2, Zap, AlertTriangle } from "lucide-react";
 
 export default function AiWeeklySummary() {
   const [summaryData, setSummaryData] = useState<any>(null);
@@ -12,8 +12,8 @@ export default function AiWeeklySummary() {
     const fetchSummary = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3100/ai/weekly-summary');
-        if (!response.ok) throw new Error('Network response was not ok');
+        const response = await fetch("http://localhost:3100/ai/weekly-summary");
+        if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         setSummaryData(data);
       } catch (err) {
@@ -42,7 +42,9 @@ export default function AiWeeklySummary() {
     return (
       <div className="bg-red-50 dark:bg-red-900/20 backdrop-blur-md rounded-2xl p-6 border border-red-100 dark:border-red-800/30 shadow-sm flex items-center space-x-3">
         <AlertTriangle className="text-red-500 w-6 h-6" />
-        <p className="text-sm text-red-600 dark:text-red-400 font-medium">{error}</p>
+        <p className="text-sm text-red-600 dark:text-red-400 font-medium">
+          {error}
+        </p>
       </div>
     );
   }
@@ -52,7 +54,7 @@ export default function AiWeeklySummary() {
       <div className="absolute -top-10 -right-10 p-4 opacity-10 group-hover:scale-110 transition-transform duration-700 ease-out pointer-events-none">
         <Bot className="w-48 h-48 text-indigo-600" />
       </div>
-      
+
       <div className="relative bg-white/60 dark:bg-gray-900/60 backdrop-blur-2xl rounded-[1.4rem] p-6 sm:p-8">
         <div className="flex items-center space-x-4 mb-6">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
@@ -69,7 +71,9 @@ export default function AiWeeklySummary() {
         </div>
 
         <div className="bg-white/50 dark:bg-gray-800/50 p-5 rounded-2xl mb-8 border border-white dark:border-gray-700 shadow-sm relative">
-          <span className="text-5xl text-indigo-200 dark:text-indigo-600/50 absolute -top-4 -left-2 tracking-tighter">"</span>
+          <span className="text-5xl text-indigo-200 dark:text-indigo-600/50 absolute -top-4 -left-2 tracking-tighter">
+            "
+          </span>
           <p className="text-gray-700 dark:text-gray-200 leading-relaxed text-base font-medium relative z-10 pl-4 py-2 border-l-4 border-indigo-400">
             {summaryData?.summary}
           </p>
@@ -80,24 +84,39 @@ export default function AiWeeklySummary() {
             <div className="p-3 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-full">
               <Zap className="w-5 h-5" />
             </div>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Điện Chiếu Sáng</p>
-            <p className="text-xl font-black text-gray-800 dark:text-gray-100">{summaryData?.data?.kwhTotal} <span className="text-xs font-semibold text-gray-500">kWh</span></p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">
+              Điện Chiếu Sáng
+            </p>
+            <p className="text-xl font-black text-gray-800 dark:text-gray-100">
+              {summaryData?.data?.kwhTotal}{" "}
+              <span className="text-xs font-semibold text-gray-500">kWh</span>
+            </p>
           </div>
-          
+
           <div className="bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-800 transition-colors rounded-2xl p-4 flex flex-col items-center justify-center space-y-2 border border-white dark:border-gray-700 shadow-sm text-center">
             <div className="p-3 bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400 rounded-full">
               <AlertTriangle className="w-5 h-5" />
             </div>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Vượt Tải Bất Thường</p>
-            <p className="text-xl font-black text-gray-800 dark:text-gray-100">{summaryData?.data?.highPeakCount} <span className="text-xs font-semibold text-gray-500">lần</span></p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">
+              Vượt Tải Bất Thường
+            </p>
+            <p className="text-xl font-black text-gray-800 dark:text-gray-100">
+              {summaryData?.data?.highPeakCount}{" "}
+              <span className="text-xs font-semibold text-gray-500">lần</span>
+            </p>
           </div>
 
           <div className="bg-white/80 dark:bg-gray-800/80 hover:bg-white dark:hover:bg-gray-800 transition-colors rounded-2xl p-4 flex flex-col items-center justify-center space-y-2 border border-white dark:border-gray-700 shadow-sm text-center">
             <div className="p-3 bg-purple-100 dark:bg-purple-900/50 text-purple-600 dark:text-purple-400 rounded-full">
               <Bot className="w-5 h-5" />
             </div>
-            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Quên Tắt Đèn</p>
-            <p className="text-xl font-black text-gray-800 dark:text-gray-100">{summaryData?.data?.ledForgotCount} <span className="text-xs font-semibold text-gray-500">lần</span></p>
+            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">
+              Quên Tắt Đèn
+            </p>
+            <p className="text-xl font-black text-gray-800 dark:text-gray-100">
+              {summaryData?.data?.ledForgotCount}{" "}
+              <span className="text-xs font-semibold text-gray-500">lần</span>
+            </p>
           </div>
         </div>
       </div>

@@ -62,12 +62,13 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
   };
 
   const chartData = useMemo(() => {
-    const historyData = ((historyResponse as SensorHistoryResponse | undefined)?.data || []) as SensorHistoryPoint[];
+    const historyData = ((historyResponse as any)?.data || []) as any[];
     if (!historyData || historyData.length === 0) return [];
 
     const slotsMap = new Map<string, { timestamp: string; temps: number[]; hums: number[] }>();
     const now = new Date();
     
+    // Initialize slots for the selected time range
     for (let i = timeRange - 1; i >= 0; i--) {
       const d = new Date(now.getTime() - i * 60 * 60 * 1000);
       d.setMinutes(0, 0, 0);
@@ -77,24 +78,26 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
 
     historyData.forEach((item) => {
       const time = new Date(item.timestamp);
-      const temperature = toNumberOrNull(item.temperature);
-      const humidity = toNumberOrNull(item.humidity);
+      // Support both raw and aggregated field names
+      const temperature = toNumberOrNull(item.temperature ?? item.temperatureAvg);
+      const humidity = toNumberOrNull(item.humidity ?? item.humidityAvg);
       
-      if (temperature === null || humidity === null || Number.isNaN(time.getTime())) return;
+      if (Number.isNaN(time.getTime())) return;
       
       time.setMinutes(0, 0, 0);
       const key = time.getTime().toString();
       const slot = slotsMap.get(key);
       if (slot) {
-        slot.temps.push(temperature);
-        slot.hums.push(humidity);
+        if (temperature !== null) slot.temps.push(temperature);
+        if (humidity !== null) slot.hums.push(humidity);
       }
     });
 
     return Array.from(slotsMap.values()).map((slot) => {
-      const hasData = slot.temps.length > 0;
-      const avgTemp = hasData ? slot.temps.reduce((a, b) => a + b, 0) / slot.temps.length : null;
-      const avgHum = hasData ? slot.hums.reduce((a, b) => a + b, 0) / slot.hums.length : null;
+      const hasTemp = slot.temps.length > 0;
+      const hasHum = slot.hums.length > 0;
+      const avgTemp = hasTemp ? slot.temps.reduce((a, b) => a + b, 0) / slot.temps.length : null;
+      const avgHum = hasHum ? slot.hums.reduce((a, b) => a + b, 0) / slot.hums.length : null;
       
       const formatOpts: Intl.DateTimeFormatOptions = timeRange > 24 
         ? { day: '2-digit', month: '2-digit', hour: '2-digit' } 
@@ -176,42 +179,49 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
         <ComposedChart data={chartData}>
           <defs>
             <linearGradient id="colorHumidity" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
-              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+              <stop offset="5%" stopColor="#14b8a6" stopOpacity={0.2}/>
+              <stop offset="95%" stopColor="#14b8a6" stopOpacity={0}/>
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} />
+          <CartesianGrid strokeDasharray="3 3" stroke={colors.gridColor} vertical={false} />
           <XAxis
             dataKey="time"
             stroke={colors.axisColor}
-            tick={{ fill: colors.axisLabelColor, fontSize: 12 }}
+            tick={{ fill: colors.axisLabelColor, fontSize: 11 }}
+            tickLine={false}
+            axisLine={{ strokeWidth: 0.5 }}
           />
           <YAxis
             yAxisId="left"
-            stroke="#ef4444"
-            tick={{ fill: '#ef4444', fontSize: 12 }}
-            label={{ value: '°C', angle: -90, position: 'insideLeft' }}
+            stroke="#f43f5e"
+            tick={{ fill: '#f43f5e', fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+            label={{ value: '°C', angle: -90, position: 'insideLeft', style: { fill: '#f43f5e', fontWeight: 600 } }}
           />
           <YAxis
             yAxisId="right"
             orientation="right"
-            stroke="#3b82f6"
-            tick={{ fill: '#3b82f6', fontSize: 12 }}
-            label={{ value: '%', angle: 90, position: 'insideRight' }}
+            stroke="#14b8a6"
+            tick={{ fill: '#14b8a6', fontSize: 11 }}
+            axisLine={false}
+            tickLine={false}
+            label={{ value: '%', angle: 90, position: 'insideRight', style: { fill: '#14b8a6', fontWeight: 600 } }}
           />
           <Tooltip content={CustomTooltip} />
           <Legend
-            wrapperStyle={{ paddingTop: '10px', fontSize: '12px', color: colors.axisLabelColor }}
+            wrapperStyle={{ paddingTop: '15px', fontSize: '11px', color: colors.axisLabelColor }}
+            iconType="circle"
           />
           <Area
             yAxisId="right"
             type="monotone"
             dataKey="humidity"
             fill="url(#colorHumidity)"
-            stroke="#3b82f6"
-            strokeWidth={2}
+            stroke="#14b8a6"
+            strokeWidth={3}
             dot={false}
-            activeDot={{ r: 6 }}
+            activeDot={{ r: 6, strokeWidth: 0 }}
             name={`${t('sensors.humidity')} (%)`}
             connectNulls={true}
           />
@@ -219,10 +229,10 @@ const TemperatureHumidityChart: React.FC<TemperatureHumidityChartProps> = ({ hou
             yAxisId="left"
             type="monotone"
             dataKey="temperature"
-            stroke="#ef4444"
-            strokeWidth={2}
+            stroke="#f43f5e"
+            strokeWidth={3}
             dot={false}
-            activeDot={{ r: 6, fill: '#ef4444' }}
+            activeDot={{ r: 6, fill: '#f43f5e', strokeWidth: 0 }}
             name={`${t('sensors.temperature')} (°C)`}
             connectNulls={true}
           />

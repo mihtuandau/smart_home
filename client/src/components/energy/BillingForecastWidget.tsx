@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Calculator, Zap, Receipt, TrendingUp, AlertTriangle } from 'lucide-react';
 
 interface BillingForecast {
@@ -17,6 +18,56 @@ interface BillingForecast {
 
 export default function BillingForecastWidget() {
   const [unitPrice, setUnitPrice] = useState<string>('3000');
+  const { t, language } = useLanguage();
+
+  // Conversion rates
+  const CONVERSION_RATES = {
+    vnd_to_usd: 24500, // 1 USD = 24,500 VND
+    vnd_to_cny: 3550,  // 1 CNY = 3,550 VND
+  };
+
+  // Map language to locale for number formatting
+  const getLocale = () => {
+    switch (language) {
+      case 'en':
+        return 'en-US';
+      case 'zh':
+        return 'zh-CN';
+      case 'vi':
+      default:
+        return 'vi-VN';
+    }
+  };
+
+  // Convert currency based on language
+  const convertCurrency = (valueVnd: number): { value: number; currency: string } => {
+    switch (language) {
+      case 'en':
+        return { value: valueVnd / CONVERSION_RATES.vnd_to_usd, currency: 'USD' };
+      case 'zh':
+        return { value: valueVnd / CONVERSION_RATES.vnd_to_cny, currency: 'CNY' };
+      case 'vi':
+      default:
+        return { value: valueVnd, currency: 'VND' };
+    }
+  };
+
+  // Format currency display
+  const formatCurrency = (valueVnd: number): string => {
+    const converted = convertCurrency(valueVnd);
+    const currencySymbol = converted.currency === 'USD' ? '$' : converted.currency === 'CNY' ? '¥' : '';
+    const formattedValue = converted.value.toLocaleString(locale, { 
+      maximumFractionDigits: converted.currency === 'VND' ? 0 : 2,
+      minimumFractionDigits: converted.currency === 'VND' ? 0 : 2
+    });
+    
+    if (converted.currency === 'USD' || converted.currency === 'CNY') {
+      return `${currencySymbol}${formattedValue}`;
+    }
+    return `${formattedValue} ${converted.currency}`;
+  };
+
+  const locale = getLocale();
 
   const fetchForecast = async (price: string) => {
     const res = await apiClient.request<BillingForecast>(`/ai/forecast?price=${price}`);
@@ -37,13 +88,13 @@ export default function BillingForecastWidget() {
             <Calculator className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-semibold text-base">Dự báo Hóa đơn Điện</h3>
-            <p className="text-xs text-muted-foreground">Phân tích bằng AI dựa trên xu hướng tải thực tế</p>
+            <h3 className="font-semibold text-base">{t('energy.billingForecast')}</h3>
+            <p className="text-xs text-muted-foreground">{t('energy.billingDescription')}</p>
           </div>
         </div>
         
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground whitespace-nowrap">Đơn giá:</span>
+          <span className="text-muted-foreground whitespace-nowrap">{t('energy.unitPrice')}:</span>
           <div className="relative">
             <input 
               type="number" 
@@ -51,7 +102,7 @@ export default function BillingForecastWidget() {
               onChange={(e) => setUnitPrice(e.target.value)}
               className="w-24 px-3 py-1.5 border border-border rounded-md text-sm outline-none focus:ring-1 focus:ring-indigo-500 bg-background"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">VNĐ</span>
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{t('energy.currency')}</span>
           </div>
         </div>
       </div>
@@ -69,13 +120,13 @@ export default function BillingForecastWidget() {
           <div className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/10 dark:to-orange-900/10 p-5 rounded-2xl border border-red-100 dark:border-red-900/20 text-center">
             <p className="text-sm font-medium text-red-800 dark:text-red-400 mb-1 flex items-center justify-center gap-1.5">
               <Receipt className="w-4 h-4" />
-              Ước tính Hóa đơn Cuối tháng {data.month.split('-')[1]}
+              {t('energy.estimatedBill')} {data.month.split('-')[1]}
             </p>
             <div className="text-3xl sm:text-4xl font-bold text-red-600 dark:text-red-400 tracking-tight">
-              {data.projectedCostVnd.toLocaleString('vi-VN')} <span className="text-xl sm:text-2xl text-red-500/70">VNĐ</span>
+              {formatCurrency(data.projectedCostVnd)}
             </div>
             <p className="text-xs text-red-700/60 dark:text-red-400/60 mt-2 font-medium">
-              (Dự kiến: {data.projectedKwh.toFixed(2)} kWh × {data.priceVndPerKwh.toLocaleString()} VNĐ)
+              ({t('ai.projectedLabel')}: {data.projectedKwh.toFixed(2)} kWh × {formatCurrency(data.priceVndPerKwh)})
             </p>
           </div>
 
@@ -85,10 +136,10 @@ export default function BillingForecastWidget() {
                 <Zap className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground font-medium mb-1">Đã dùng tháng này</p>
+                <p className="text-xs text-muted-foreground font-medium mb-1">{t('energy.usedThisMonth')}</p>
                 <div className="text-lg font-bold text-foreground">
                   {data.kwhSoFar.toFixed(3)} <span className="text-xs font-normal text-muted-foreground">kWh</span>
-                </div>
+                  </div>
               </div>
             </div>
 
@@ -97,7 +148,7 @@ export default function BillingForecastWidget() {
                 <TrendingUp className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground font-medium mb-1">Khoảng dao động 95%</p>
+                <p className="text-xs text-muted-foreground font-medium mb-1">{t('energy.confidenceInterval')}</p>
                 <div className="text-sm font-bold text-foreground mt-1">
                   {data.ciLow.toFixed(1)} <span className="text-muted-foreground font-normal mx-0.5">-</span> {data.ciHigh.toFixed(1)} <span className="text-xs font-normal text-muted-foreground">kWh</span>
                 </div>
@@ -108,7 +159,7 @@ export default function BillingForecastWidget() {
           {data.projectedCostVnd > 500000 && (
             <div className="bg-orange-50 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300 px-4 py-3 rounded-xl border border-orange-200 dark:border-orange-800/30 flex gap-2 items-start text-sm mt-4">
               <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-              <p>Hệ thống AI nhận thấy xu hướng dùng điện đang cao hơn mức trung bình an toàn. Hãy kiểm tra lại thiết bị tiêu thụ công suất lớn nhé!</p>
+              <p>{t('energy.highConsumptionWarning')}</p>
             </div>
           )}
         </div>

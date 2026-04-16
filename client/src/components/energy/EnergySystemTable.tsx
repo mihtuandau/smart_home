@@ -45,26 +45,30 @@ export default function EnergySystemTable() {
 
   const components: SystemComponent[] = [
     {
-      name: t('energy.solarPower'),
-      spec: `${(latestEnergy.voltage || 0).toFixed(1)}V ${(latestEnergy.current || 0).toFixed(1)}A`,
+      name: t('energy.consumption'),
+      spec: `${(latestEnergy.voltage || 0).toFixed(1)}V ${((latestEnergy.current || 0) / 1000).toFixed(2)}A`,
       status: t('energy.currentPower'),
       statusColor: 'text-foreground',
-      metric: `${(latestEnergy.power || 0).toFixed(2)} W`,
-      value: `${(latestEnergy.power || 0).toFixed(2)} W`,
-      valueColor: 'text-orange-600'
+      metric: `${((latestEnergy.power || 0) / 1000).toFixed(2)} W`,
+      value: `${((latestEnergy.power || 0) / 1000).toFixed(2)} W`,
+      valueColor: 'text-blue-600'
     },
     {
       name: t('energy.harvestedEnergy'),
       spec: t('energy.today'),
       status: t('energy.totalEnergy'),
       statusColor: 'text-green-700',
-      metric: `${totalEnergy.toFixed(2)} Wh`,
-      value: `${totalEnergy.toFixed(2)} Wh`,
+      metric: totalEnergy >= 1000 
+        ? `${(totalEnergy / 1000).toFixed(2)} kWh`
+        : `${totalEnergy.toFixed(1)} Wh`,
+      value: totalEnergy >= 1000 
+        ? `${(totalEnergy / 1000).toFixed(2)} kWh`
+        : `${totalEnergy.toFixed(1)} Wh`,
       valueColor: 'text-gray-900'
     },
     {
       name: t('energy.powerSource'),
-      spec: localizePowerSource(latestEnergy.source, t),
+      spec: t('energy.system'),
       status: t('devices.status'),
       statusColor: 'text-blue-700',
       metric: t('energy.active'),
@@ -76,8 +80,8 @@ export default function EnergySystemTable() {
       spec: t('energy.system'),
       status: t('energy.conversionRate'),
       statusColor: 'text-foreground',
-      metric: '85%',
-      value: '85%',
+      metric: '95%',
+      value: '95%',
       valueColor: 'text-green-700'
     }
   ];

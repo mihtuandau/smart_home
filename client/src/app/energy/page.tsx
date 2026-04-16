@@ -15,10 +15,8 @@ export default function EnergyPage() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="space-y-1">
-        <h1 className="page-title">{t('energy.title')}</h1>
-        <p className="page-subtitle">
-          {t('energy.subtitle')}
-        </p>
+        <h1 className="page-title">{t("energy.title")}</h1>
+        <p className="page-subtitle">{t("energy.subtitle")}</p>
       </div>
 
       <EnergyStatsGrid />
@@ -29,11 +27,21 @@ export default function EnergyPage() {
           onChange={(e) => setTimeRange(Number(e.target.value))}
           className="text-xs sm:text-sm border border-border bg-background rounded-md px-3 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer max-w-fit shadow-sm"
         >
-          <option value={6}>{t('sensors.lastHours').replace('{hours}', '6')}</option>
-          <option value={12}>{t('sensors.lastHours').replace('{hours}', '12')}</option>
-          <option value={24}>{t('sensors.lastHours').replace('{hours}', '24')}</option>
-          <option value={72}>{t('sensors.lastDays').replace('{days}', '3')}</option>
-          <option value={168}>{t('sensors.lastDays').replace('{days}', '7')}</option>
+          <option value={6}>
+            {t("sensors.lastHours").replace("{hours}", "6")}
+          </option>
+          <option value={12}>
+            {t("sensors.lastHours").replace("{hours}", "12")}
+          </option>
+          <option value={24}>
+            {t("sensors.lastHours").replace("{hours}", "24")}
+          </option>
+          <option value={72}>
+            {t("sensors.lastDays").replace("{days}", "3")}
+          </option>
+          <option value={168}>
+            {t("sensors.lastDays").replace("{days}", "7")}
+          </option>
         </select>
       </div>
 

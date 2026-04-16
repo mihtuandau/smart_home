@@ -5,6 +5,7 @@ import { AiAdvisorService } from './ai-advisor.service';
 import { AiBaselineService } from './ai-baseline.service';
 import { AiBillingService } from './ai-billing.service';
 import { AiLedStatsService } from './ai-led-stats.service';
+import { RainForecastOptimizerService } from './rain-forecast-optimizer.service';
 import { AiResultDto } from './dto/ai-result.dto';
 import { SensorPayload } from '../mqtt/mqtt.service';
 import { AiEventsGateway } from '../mqtt/ai-events.gateway';
@@ -24,6 +25,7 @@ export class AiService {
     private baseline: AiBaselineService,
     private billing: AiBillingService,
     private ledStats: AiLedStatsService,
+    private rainForecast: RainForecastOptimizerService,
     private aiEventsGateway: AiEventsGateway,
   ) {}
 
@@ -31,6 +33,13 @@ export class AiService {
     this.messageCount++;
     const now = new Date();
     const powerMw = data.power_mW;
+
+    // Cập nhật dữ liệu cảm biến cho rain forecast optimizer
+    try {
+      await this.rainForecast.addSensorReading(data);
+    } catch (err) {
+      this.logger.warn(`Failed to update rain forecast with sensor data: ${err.message}`);
+    }
 
     const dailyLed = this.ledStats.tick(data.led1, data.led2, now);
 
@@ -71,7 +80,7 @@ export class AiService {
     }
 
     if (anomaly || advice.length > 0) {
-      this.saveToDb(data, analysis, anomaly, summary, advice).catch(() => {});
+      this.logger.debug(`AI Advice: ${advice.join('; ')}`);
     }
 
     const result: AiResultDto = {
@@ -108,32 +117,5 @@ export class AiService {
 
   getLatestResult(): AiResultDto | null {
     return this.latestResult;
-  }
-
-  private async saveToDb(
-    data: SensorPayload,
-    analysis: string,
-    anomaly: string | null,
-    summary: string,
-    advice: string[],
-  ) {
-    try {
-      await this.prisma.aiLearningData.create({
-        data: {
-          feature: anomaly ? 'anomaly_detection' : 'energy_monitoring',
-          inputData: {
-            power_mW: data.power_mW,
-            current_mA: data.current_mA,
-            voltage: data.voltage,
-            led1: data.led1,
-            led2: data.led2,
-          },
-          outputData: { analysis, anomaly, summary, advice },
-          accuracy: null,
-        },
-      });
-    } catch (err) {
-      this.logger.debug(`Failed to persist AI result: ${err.message}`);
-    }
   }
 }

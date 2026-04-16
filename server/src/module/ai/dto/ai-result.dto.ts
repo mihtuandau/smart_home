@@ -25,6 +25,10 @@ export interface BillingForecastDto {
   ciLow: number;
   ciHigh: number;
   priceVndPerKwh: number;
+  dataStartIso?: string | null;
+  dataCoverageLabel?: string;
+  estimatedFromMonthStart?: boolean;
+  estimatedMissingDays?: number;
 }
 
 export interface BaselineSlot {

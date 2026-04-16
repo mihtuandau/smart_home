@@ -58,7 +58,7 @@ export class SensorsController {
 
   @Get('chart/:type')
   async getChartData(
-    @Param('type') type: 'temperature' | 'humidity' | 'pressure' | 'light',
+    @Param('type') type: 'temperature' | 'humidity' | 'pressure',
     @Query('hours', ParseIntPipe) hours: number = 24,
   ) {
     const data = await this.sensorsService.getChartData(type, hours);

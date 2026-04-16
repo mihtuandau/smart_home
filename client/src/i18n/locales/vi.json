@@ -121,7 +121,7 @@
     "ledOnCount": "LED đang bật",
     "touchActive": "Touch đang chạm",
     "iotDevices": "Thiết bị IoT",
-    "iotSubtitle": "Tối đa 2 thiết bị · Cập nhật qua MQTT",
+    "iotSubtitle": "",
     "addDevice": "Thêm thiết bị",
     "noDevice": "Chưa có thiết bị nào",
     "edit": "Sửa",
@@ -143,25 +143,25 @@
   },
   "energy": {
     "title": "Giám sát năng lượng",
-    "subtitle": "Theo dõi hệ thống năng lượng mặt trời và pin",
-    "solarPower": "Điện năng lượng mặt trời",
-    "batteryStatus": "Trạng thái pin",
+    "subtitle": "Theo dõi tiêu thụ điện năng thời gian thực",
+    "solarPower": "Tiêu thụ năng lượng",
+    "batteryStatus": "Trạng thái hệ thống",
     "consumption": "Tiêu thụ điện",
-    "production": "Sản xuất điện",
+    "production": "Công suất tổng",
     "voltage": "Điện áp",
     "current": "Dòng điện",
-    "power": "Công suất",
+    "power": "Công suất (mW)",
     "dailyUsage": "Sử dụng hàng ngày",
     "monthlyUsage": "Sử dụng hàng tháng",
-    "currentAndVoltage": "Dòng điện & Điện áp Pin",
-    "monitoringChart": "Theo dõi dòng và áp qua thời gian",
-    "currentAxis": "Dòng điện (A)",
+    "currentAndVoltage": "Dòng điện & Điện áp",
+    "monitoringChart": "Theo dõi dòng (mA) và áp (V) qua thời gian",
+    "currentAxis": "Dòng điện (mA)",
     "voltageAxis": "Điện áp (V)",
     "currentPower": "Công suất hiện tại",
     "currentConsumption": "Dòng tiêu thụ",
     "outputVoltage": "Điện áp đầu ra",
     "last24Hours": "24 giờ qua",
-    "harvestedEnergy": "Năng lượng thu được",
+    "harvestedEnergy": "Điện năng tiêu thụ",
     "today": "Hôm nay",
     "totalEnergy": "Tổng năng lượng",
     "powerSource": "Nguồn điện",
@@ -177,6 +177,14 @@
     ,"powerOverTime": "Công suất phát điện theo thời gian"
     ,"noSolarData": "Chưa có dữ liệu Solar Panel"
     ,"solarDataHint": "Dữ liệu sẽ xuất hiện khi hệ thống bắt đầu thu thập"
+    ,"billingForecast": "Dự báo Hóa đơn Điện"
+    ,"billingDescription": "Phân tích bằng AI dựa trên xu hướng tải thực tế"
+    ,"unitPrice": "Đơn giá"
+    ,"currency": "VNĐ"
+    ,"estimatedBill": "Ước tính Hóa đơn Cuối tháng"
+    ,"usedThisMonth": "Đã dùng tháng này"
+    ,"confidenceInterval": "Khoảng dao động 95%"
+    ,"highConsumptionWarning": "Hệ thống AI nhận thấy xu hướng dùng điện đang cao hơn mức trung bình an toàn. Hãy kiểm tra lại thiết bị tiêu thụ công suất lớn nhé!"
   },
   "automation": {
     "title": "Tự động hóa",
@@ -246,14 +254,52 @@
     "activeDevices": "Thiết bị hoạt động",
     "onState": "Đang bật",
     "todayEnergy": "Năng lượng hôm nay",
-    "systemVoltage": "Điện áp hệ thống",
+    "systemVoltage": "Điện áp hệ thống (V)",
     "humidityLabel": "Độ ẩm",
     "quickLedControl": "Bật/Tắt Đèn LED",
     "ledConsumptionDaily": "Tiêu thụ LED theo ngày",
     "sample": "Mẫu",
     "minutes": "Phút",
     "last7Days": "7 ngày",
-    "total": "Tổng"
+    "total": "Tổng",
+    "rain_forecast": "Dự báo mưa",
+    "rain_forecast_error": "Không thể tải dự báo mưa",
+    "next_hour": "Giờ tới",
+    "forecast_temp": "Dự đoán nhiệt độ",
+    "forecast_humidity": "Dự đoán độ ẩm",
+    "forecast_pressure": "Dự đoán áp suất",
+    "forecast_pop": "Dự đoán xác suất mưa",
+    "current_rain_probability": "Xác suất mưa hiện tại",
+    "sensor_vs_forecast": "Cảm biến vs Dự báo",
+    "adjusted_pop": "Hiệu chỉnh",
+    "temperature": "Nhiệt độ",
+    "humidity": "Độ ẩm",
+    "hours_aligned": "giờ khớp",
+    "next_hours_forecast": "Dự báo 6 giờ tới",
+    "updated": "Cập nhật",
+    "bias_analysis": "Phân tích Bias",
+    "rain_forecast_title": "Dự báo mưa - Giờ tới",
+    "local_weather_check": "Kiểm tra thời tiết địa phương",
+    "likely_to_rain": "Có khả năng mưa",
+    "probably_raining": "Chắc chắn mưa",
+    "maybe_rain": "Có thể mưa",
+    "unlikely_to_rain": "Không chắc mưa",
+    "no_rain_expected": "Không có mưa",
+    "why_this_number": "Tại sao số này?",
+    "less_rain": "cảm biến cho thấy ít mưa hơn",
+    "more_rain": "cảm biến cho thấy nhiều mưa hơn",
+    "match_forecast": "dữ liệu địa phương khớp với dự báo.",
+    "weather_api_says": "Dự báo OpenWeather ",
+    "after_local_check": "Sau kiểm tra địa phương",
+    "original_forecast": "Dự báo gốc",
+    "lower": "📉 Thấp hơn",
+    "higher": "📈 Cao hơn",
+    "same": "↔️ Bằng nhau",
+    "next_hours_trend": "Xu hướng 6 giờ tới",
+    "temperature_label": "°C Nhiệt độ",
+    "humidity_label": "💧 Độ ẩm",
+    "pressure_label": "⚖️ Áp suất",
+    "local_readings_checked": "đọc số cảm biến được kiểm tra"
   },
   "settings": {
     "title": "Cài đặt",
@@ -391,9 +437,9 @@
     "exportFailed": "Xuất dữ liệu thất bại",
     "emptyToDateHint": "Để trống \"Đến ngày\" = đến hiện tại",
     "exportSensorData": "Xuất dữ liệu cảm biến",
-    "sensorSublabel": "Nhiệt độ, độ ẩm, áp suất, ánh sáng, mưa",
+    "sensorSublabel": "Nhiệt độ, độ ẩm, áp suất, mưa",
     "exportEnergyData": "Xuất dữ liệu năng lượng",
-    "energySublabel": "Điện áp, dòng điện, công suất, năng lượng"
+    "energySublabel": "Điện áp, dòng điện (mA), công suất (mW)"
   },
   "auth": {
     "login": "Đăng nhập",
@@ -431,6 +477,34 @@
     "ifIssuePersists": "Nếu lỗi tiếp tục xảy ra, vui lòng",
     "contactSupport": "liên hệ hỗ trợ"
   },
+  "weather": {
+    "manyCloud": "Trời nhiều mây",
+    "clear": "Trời quang",
+    "fairlyClear": "Trời khá quang",
+    "brightSunlight": "Trời quang ánh sáng",
+    "strongWind": "Gió mạnh",
+    "moderateWind": "Gió vừa",
+    "highHumidity": "Ẩm cao",
+    "lowHumidity": "Ẩm thấp"
+  },
+  "time": {
+    "from00hToday": "Từ 00h sáng (Hôm nay)",
+    "last24h": "24 giờ qua",
+    "last7d": "7 ngày qua",
+    "last30d": "30 ngày qua",
+    "drifting": "(Trôi)"
+  },
+  "report": {
+    "raining": "Có mưa",
+    "notRaining": "Không mưa",
+    "raining_label": "Có mưa",
+    "samples": "Số mẫu",
+    "consumption": "Tiêu thụ (Wh)"
+  },
+  "export": {
+    "yes": "Có",
+    "no": "Không"
+  },
   "ai": {
     "title": "AI Theo dõi Điện",
     "live": "Trực tiếp",
@@ -445,7 +519,21 @@
     "medium": "Hơi cao",
     "high": "Cao — cảnh báo",
     "led1": "Đèn 1",
-    "led2": "Đèn 2"
+    "led2": "Đèn 2",
+    "minaGreeting": "Chào bạn! Mình là Mina. Bạn muốn hỏi gì về số liệu năng lượng tuần này?",
+    "minaError": "Xin lỗi, Mina đang bận ạ.",
+    "minaNetworkError": "Kết nối mạng với Mina gặp lỗi.",
+    "billThisMonth": "Tiền điện tháng này bao nhiêu?",
+    "weatherAndTemp": "Thời tiết và Nhiệt độ hiện tại?",
+    "systemAlerts": "Hệ thống có cảnh báo lỗi gì không?",
+    "weeklyConsumption": "Tuần qua tốn bao nhiêu điện năng?",
+    "minaPlaceholder": "Hỏi Mina lý do vượt tải...",
+    "minaName": "Quản gia Mina AI",
+    "minaSubtitle": "Trợ lý phân tích số liệu",
+    "aiReportError": "Không thể tải báo cáo AI từ Mina lúc này.",
+    "aiAnalyzing": "Mina đang phân tích biểu đồ điện...",
+    "projectedLabel": "Dự kiến",
+    "estimatedNote": "(Dự kiến: {kwh} kWh × {price})"
   },
   "theme": {
     "switchLight": "Chuyển sang sáng",

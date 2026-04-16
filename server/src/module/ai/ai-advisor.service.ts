@@ -23,6 +23,9 @@ export class AiAdvisorService {
   private static readonly POST_SWITCH_SETTLE_MS = 45 * 1000;
 
   private readonly logger = new Logger(AiAdvisorService.name);
+  private readonly routineTimeZone = process.env.AI_ROUTINE_TIMEZONE ?? 'Asia/Ho_Chi_Minh';
+  private routineSamples = 0;
+  private routineLearned = false;
 
   // Dynamic predicted hours based on 30-day historical data
   private predictedEveningHour = 18;
@@ -30,6 +33,21 @@ export class AiAdvisorService {
   
   private predictedMorningHour = 6;
   private predictedMorningMinute = 15;
+
+  private getHourInRoutineTimeZone(ts: Date): number {
+    try {
+      const parts = new Intl.DateTimeFormat('en-US', {
+        hour: '2-digit',
+        hour12: false,
+        timeZone: this.routineTimeZone,
+      }).formatToParts(ts);
+      const hourPart = parts.find((p) => p.type === 'hour')?.value;
+      const hour = Number(hourPart);
+      return Number.isFinite(hour) ? hour : ts.getUTCHours();
+    } catch {
+      return ts.getUTCHours();
+    }
+  }
 
   constructor(
     private baseline: AiBaselineService,
@@ -53,16 +71,18 @@ export class AiAdvisorService {
       const data = await this.prisma.powerData.findMany({
         where: {
           timestamp: { gte: thirtyDaysAgo },
-          power: { gt: 1 }, // Ngưỡng bật đèn LED đồ án thường rất nhỏ
+          power: { gt: 1000 }, // Ngưỡng bật thiết bị đáng kể (1000mW = 1W)
         },
         select: { timestamp: true }
       });
+
+      this.routineSamples = data.length;
 
       if (data.length >= 5) {
         // Gom nhóm theo Giờ (Hour)
         const hourCounts = new Map<number, number>();
         for (const row of data) {
-          const h = row.timestamp.getHours();
+          const h = this.getHourInRoutineTimeZone(row.timestamp);
           hourCounts.set(h, (hourCounts.get(h) || 0) + 1);
         }
 
@@ -86,17 +106,27 @@ export class AiAdvisorService {
 
         this.predictedEveningHour = bestEveningHour;
         this.predictedMorningHour = bestMorningHour;
-        this.logger.log(`[AI Routine Learned] Buổi tối bật lúc: ${bestEveningHour}h, Buổi sáng lúc: ${bestMorningHour}h`);
+        this.routineLearned = true;
+        this.logger.log(
+          `[AI Routine Learned] TZ=${this.routineTimeZone}, samples=${data.length}, ` +
+            `Buổi tối bật lúc: ${bestEveningHour}h, Buổi sáng lúc: ${bestMorningHour}h`,
+        );
       } else {
+        this.routineLearned = false;
         this.logger.log('Chưa đủ Data (cần >= 5 records có dòng điện), tạm giữ mức mặc định 18h và 6h.');
       }
-    } catch(err) {
-      this.logger.error('Lỗi khi học Routine: ' + err.message);
+    } catch (err: unknown) {
+      this.routineLearned = false;
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error('Lỗi khi học Routine: ' + message);
     }
   }
 
   public getLearnedRoutineSummary(): string {
-    return `AI đã học được thói quen 30 ngày qua: Bạn thường dùng thiết bị công suất cao lúc ${this.predictedMorningHour}h sáng và ${this.predictedEveningHour}h tối.`;
+    if (!this.routineLearned) {
+      return `AI đang học thói quen dùng điện 30 ngày qua (đã thu thập ${this.routineSamples} mẫu), chưa đủ dữ liệu để kết luận khung giờ ổn định.`;
+    }
+    return `AI đã phân tích thói quen 30 ngày qua (${this.routineSamples} mẫu, múi giờ ${this.routineTimeZone}): bạn thường dùng thiết bị công suất cao vào khoảng ${this.predictedMorningHour}h sáng và ${this.predictedEveningHour}h chiều/tối.`;
   }
 
   getAdvice(input: AdvisorInput): string[] {
@@ -113,7 +143,7 @@ export class AiAdvisorService {
     const expected = expectedMw ?? (led1 || led2 ? 1600 : 800);
     const ratio = expected > 0 ? powerMw / expected : 1;
     const now = ts.getTime();
-    const hour = ts.getHours();
+    const hour = this.getHourInRoutineTimeZone(ts);
 
     const bumpStreak = (key: string, met: boolean): number => {
       const next = met ? (this.streakByCondition.get(key) ?? 0) + 1 : 0;
@@ -217,8 +247,8 @@ export class AiAdvisorService {
       // Dự đoán Tối
       if (hour === this.predictedEveningHour && minute >= 0 && minute <= 30) {
         pushAdvice('predictive-evening-lights', [
-          ` Gợi ý thông minh: AI phân tích Data 30 ngày qua thấy bạn hay dùng điện lúc ${this.predictedEveningHour}h. Sắp tối rồi, bạn có muốn tôi bật chiếu sáng sớm giúp không? 🌙`,
-          ` AI Tiên Đoán (Dựa trên lịch sử): Ánh sáng ngoài trời sắp giảm. Bạn có muốn kích hoạt kịch bản "Bình Minh Tối" như thói quen ${this.predictedEveningHour}h mọi ngày không?`,
+          ` Gợi ý thông minh: AI phân tích dữ liệu 30 ngày qua thấy bạn hay dùng điện lúc ${this.predictedEveningHour}h. Sắp tối rồi, bạn có muốn tôi bật chiếu sáng sớm giúp không? 🌙`,
+          ` AI Tiên Đoán: Ánh sáng ngoài trời sắp giảm. Bạn có muốn kích hoạt kịch bản "Bình Minh Tối" như thói quen ${this.predictedEveningHour}h mọi ngày không?`,
         ]);
       }
       

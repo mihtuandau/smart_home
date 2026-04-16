@@ -19,35 +19,26 @@ export class EnergyController {
     };
   }
 
-  @Get('battery')
-  async getBatteryStatus() {
-    const data = await this.energyService.getBatteryStatus();
-    return {
-      success: true,
-      data,
-    };
-  }
-
-  @Get('solar')
-  async getSolarStats(
+  @Get('stats-paginated')
+  async getEnergyStatsPaginated(
     @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
+    @Query('pageSize', new ParseIntPipe({ optional: true })) pageSize: number = 500,
+    @Query('mode') mode?: 'auto' | 'raw' | 'avg',
   ) {
-    const data = await this.energyService.getSolarStats(hours);
+    const result = await this.energyService.getEnergyStatsPaginated(hours, page, pageSize, mode);
     return {
       success: true,
       period: `${hours}h`,
-      data,
+      ...result,
     };
   }
 
-  @Get('sources')
-  async getPowerSources(
-    @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
-  ) {
-    const data = await this.energyService.getPowerSourceStats(hours);
+  @Get('latest')
+  async getLatestStatus() {
+    const data = await this.energyService.getLatestStatus();
     return {
       success: true,
-      period: `${hours}h`,
       data,
     };
   }
@@ -57,6 +48,15 @@ export class EnergyController {
     @Query('hours', new ParseIntPipe({ optional: true })) hours: number = 24,
   ) {
     const data = await this.energyService.getEfficiencyMetrics(hours);
+    return {
+      success: true,
+      data,
+    };
+  }
+
+  @Get("summary")
+  async getEnergySummary() {
+    const data = await this.energyService.getEnergySummary();
     return {
       success: true,
       data,
