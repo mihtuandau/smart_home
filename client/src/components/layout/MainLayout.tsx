@@ -3,8 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import DashboardSidebar from '@/components/layout/SideBar';
 import DashboardHeader from '@/components/layout/Header';
+import { FloatingMinaChat } from '@/components/chat/FloatingMinaChat';
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -12,14 +14,15 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const { user, isLoading, isAuthenticated, logout } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isAuthPage = pathname?.startsWith('/login') || pathname?.startsWith('/register');
 
-  const protectedPages = ['/automation', '/settings'];
-  const isProtectedPage = protectedPages.some(page => pathname?.startsWith(page));
+  // Tất cả các trang ngoài login/register đều bắt buộc phải đăng nhập
+  const isProtectedPage = !isAuthPage;
 
   useEffect(() => {
     if (isProtectedPage && !isAuthenticated && !isLoading) {
@@ -45,7 +48,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-muted border-t-blue-500"></div>
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -56,7 +59,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-muted border-t-blue-500"></div>
-          <p className="text-muted-foreground">Redirecting...</p>
+          <p className="text-muted-foreground">{t('common.redirecting')}</p>
         </div>
       </div>
     );
@@ -79,6 +82,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
           </main>
         </div>
       </div>
+      <FloatingMinaChat />
     </div>
   );
 }

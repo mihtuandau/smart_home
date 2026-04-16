@@ -1,12 +1,19 @@
-import { apiClient } from './client';
+import { apiClient } from "./client";
 
 export const energyApi = {
-  async getEnergyStats(hours: number = 24, mode: 'auto' | 'raw' | 'avg' = 'auto') {
+  async getEnergyStats(
+    hours: number = 24,
+    mode: "auto" | "raw" | "avg" = "auto",
+  ) {
     return apiClient.request(`/energy/stats?hours=${hours}&mode=${mode}`);
   },
 
+  async getLatestStatus() {
+    return apiClient.request("/energy/latest");
+  },
+
   async getBatteryStatus() {
-    return apiClient.request('/energy/battery');
+    return apiClient.request("/energy/battery");
   },
 
   async getSolarStats(hours: number = 24) {
@@ -19,5 +26,9 @@ export const energyApi = {
 
   async getEfficiency(hours: number = 24) {
     return apiClient.request(`/energy/efficiency?hours=${hours}`);
+  },
+
+  async getEnergySummary() {
+    return apiClient.request("/energy/summary");
   },
 };

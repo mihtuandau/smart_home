@@ -253,8 +253,17 @@ export function mergeLatestCacheFromIoT(
   if (normalized.current_mA !== undefined) {
     dataObj.current_mA = normalized.current_mA;
   }
+  if (normalized.power_mW !== undefined) {
+    dataObj.power_mW = normalized.power_mW;
+  }
   if (normalized.power !== undefined) {
     dataObj.power = normalized.power;
+  }
+  if (normalized.device1 !== undefined) {
+    dataObj.device1 = normalized.device1;
+  }
+  if (normalized.device2 !== undefined) {
+    dataObj.device2 = normalized.device2;
   }
 
   merged.data = dataObj;

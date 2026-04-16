@@ -1,8 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { energyService } from '@/services/energy.service';
-import { energyKeys } from './energyKeys';
+import { useQuery } from "@tanstack/react-query";
+import { energyService } from "@/services/energy.service";
+import { energyKeys } from "./energyKeys";
 
-export const useEnergyStats = (hours: number = 24, refetchInterval?: number) => {
+export const useEnergyStats = (
+  hours: number = 24,
+  refetchInterval?: number,
+) => {
   return useQuery({
     queryKey: energyKeys.stats(hours),
     queryFn: () => energyService.getEnergyStats(hours),
@@ -55,5 +58,14 @@ export const useEfficiencyMetrics = (hours: number = 24) => {
     gcTime: 1000 * 60 * 10,
     enabled: true,
     retry: 1,
+  });
+};
+
+export const useEnergySummary = () => {
+  return useQuery({
+    queryKey: energyKeys.summary(),
+    queryFn: () => energyService.getEnergySummary(),
+    staleTime: 1000 * 30, // 30 seconds
+    refetchInterval: 10000, // 10 seconds
   });
 };

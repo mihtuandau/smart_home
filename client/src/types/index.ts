@@ -6,3 +6,4 @@ export * from './automation';
 export * from './energy';
 export * from './iot';
 export * from './settings';
+export * from './rain-forecast';

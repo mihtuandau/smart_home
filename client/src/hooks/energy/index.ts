@@ -5,4 +5,5 @@ export {
   useSolarStats,
   usePowerSources,
   useEfficiencyMetrics,
+  useEnergySummary,
 } from './useEnergy';

@@ -1,8 +1,18 @@
 "use client";
 
-import { useEnergyStats } from "@/hooks/energy";
-import { ChartNoAxesColumn, Plug, Sun, TrendingUp, Zap } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useEnergyStats, useEnergySummary } from "@/hooks/energy";
+import {
+  Activity,
+  ChartNoAxesColumn,
+  Plug,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+interface EnergyStatsGridProps {
+  mode?: "today" | "24h";
+}
 
 interface StatCardProps {
   title: string;
@@ -47,70 +57,79 @@ function EnergyStatCard({
   return (
     <div className="section-card shadow-sm border border-border p-3 sm:p-4 md:p-6 hover:shadow-sm transition-shadow">
       <div className="flex items-center justify-between mb-2 sm:mb-3 md:mb-4">
-        <span className="text-xs sm:text-sm text-muted-foreground">{title}</span>
+        <span className="text-xs sm:text-sm text-muted-foreground">
+          {title}
+        </span>
         <div className="w-8 h-8 flex items-center justify-center">
           <div style={{ color: iconColor }}>{icon}</div>
         </div>
       </div>
       <div className="mb-2">
-        <span className="text-xl sm:text-2xl md:text-4xl font-bold text-foreground">{value}</span>
-        <span className="text-sm sm:text-base md:text-xl text-muted-foreground ml-1">{unit}</span>
+        <span className="text-xl sm:text-2xl md:text-4xl font-bold text-foreground">
+          {value}
+        </span>
+        <span className="text-sm sm:text-base md:text-xl text-muted-foreground ml-1">
+          {unit}
+        </span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-[11px] sm:text-xs text-muted-foreground">{subtitle}</span>
-        {trend === "up" && (
-          <TrendingUp className="w-4 h-4 text-green-500" />
-        )}
+        <span className="text-[11px] sm:text-xs text-muted-foreground">
+          {subtitle}
+        </span>
+        {trend === "up" && <TrendingUp className="w-4 h-4 text-green-500" />}
       </div>
     </div>
   );
 }
 
-export default function EnergyStatsGrid() {
+export default function EnergyStatsGrid({ mode = "24h" }: EnergyStatsGridProps) {
   const { t } = useLanguage();
-  const { data, isLoading } = useEnergyStats(24);
+  const { data: statsData, isLoading: statsLoading } = useEnergyStats(24);
+  const { data: summaryData, isLoading: summaryLoading } = useEnergySummary();
 
-  const energyData = ((data as EnergyResponse | undefined)?.data || []) as EnergyPoint[];
+  const energyData = ((statsData as EnergyResponse | undefined)?.data || []) as EnergyPoint[];
   const latestData = energyData[energyData.length - 1] || {};
+  
+  const summary = (summaryData as any)?.data || { todayWh: 0, monthWh: 0 };
+  
+  // Calculate 24h total from the points list
+  const total24hWh = energyData.reduce((sum, item) => sum + (item.energy || 0), 0);
 
-  const totalEnergy = energyData.reduce(
-    (sum: number, item) => sum + (item.energy || 0),
-    0,
-  );
+  const isLoading = statsLoading || summaryLoading;
 
   const stats = [
     {
-      title: t('energy.solarPower'),
-      value: (latestData.power || 0).toFixed(2),
+      title: t("energy.consumption"),
+      value: ((latestData.power || 0) / 1000).toFixed(2),
       unit: "W",
-      subtitle: t('energy.currentPower'),
-      icon: <Sun className="w-5 h-5" />,
+      subtitle: t("energy.currentPower"),
+      icon: <Zap className="w-5 h-5" />,
       iconColor: "#f59e0b",
       trend: "up" as const,
     },
     {
-      title: t('energy.current'),
-      value: (latestData.current || 0).toFixed(2),
+      title: t("energy.current"),
+      value: ((latestData.current || 0) / 1000).toFixed(3),
       unit: "A",
-      subtitle: t('energy.currentConsumption'),
-      icon: <Zap className="w-5 h-5" />,
+      subtitle: t("energy.currentConsumption"),
+      icon: <Activity className="w-5 h-5" />,
       iconColor: "#f97316",
       trend: undefined,
     },
     {
-      title: t('energy.voltage'),
+      title: t("energy.voltage"),
       value: (latestData.voltage || 0).toFixed(2),
       unit: "V",
-      subtitle: t('energy.outputVoltage'),
+      subtitle: t("energy.outputVoltage"),
       icon: <Plug className="w-5 h-5" />,
       iconColor: "#a855f7",
       trend: undefined,
     },
     {
-      title: t('energy.totalEnergy'),
-      value: totalEnergy.toFixed(2),
+      title: t("energy.totalEnergy"),
+      value: total24hWh.toFixed(3),
       unit: "Wh",
-      subtitle: t('energy.last24Hours'),
+      subtitle: t("energy.last24Hours") + " (Trôi)",
       icon: <ChartNoAxesColumn className="w-5 h-5" />,
       iconColor: "#10b981",
       trend: undefined,

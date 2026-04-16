@@ -33,12 +33,8 @@ export class DashboardService {
       by: ['status'],
       _count: true,
     });
-    const byType = await this.prisma.device.groupBy({
-      by: ['type'],
-      _count: true,
-    });
 
-    const ledsTotal = 2;
+    const ledsTotal = 2; // Hardcoded LEDs in ESP32
     let ledsOnCount = 0;
 
     const latestMqttData = this.mqttService.getLatestData();
@@ -47,22 +43,11 @@ export class DashboardService {
       if (latestMqttData.led2 === true) ledsOnCount++;
     }
 
-    let customDevicesTotal = 0;
-    let customDevicesOnCount = 0;
-    if (latestMqttData) {
-      if (latestMqttData.device1 !== undefined) {
-        customDevicesTotal++;
-        if (latestMqttData.device1) customDevicesOnCount++;
-      }
-      if (latestMqttData.device2 !== undefined) {
-        customDevicesTotal++;
-        if (latestMqttData.device2) customDevicesOnCount++;
-      }
-    }
-
     const dbOnCount = byStatus.find((s) => s.status === 'ON')?._count || 0;
-    const total = dbTotal + ledsTotal + customDevicesTotal;
-    const online = dbOnCount + ledsOnCount + customDevicesOnCount;
+    
+    // We treat everything as generic devices now
+    const total = dbTotal + ledsTotal;
+    const online = dbOnCount + ledsOnCount;
     const offline = total - online;
 
     return {
@@ -72,13 +57,6 @@ export class DashboardService {
       byStatus: byStatus.reduce(
         (acc, item) => {
           acc[item.status] = item._count;
-          return acc;
-        },
-        {} as Record<string, number>,
-      ),
-      byType: byType.reduce(
-        (acc, item) => {
-          acc[item.type] = item._count;
           return acc;
         },
         {} as Record<string, number>,
@@ -97,8 +75,6 @@ export class DashboardService {
       temperature: latest.temperature,
       humidity: latest.humidity,
       pressure: latest.pressure,
-      lightLevel: latest.lightLevel,
-      isDark: latest.isDark,
       isRaining: latest.isRaining,
       timestamp: latest.timestamp,
     };
@@ -113,11 +89,8 @@ export class DashboardService {
 
     return {
       voltage: latest.voltage,
-      current: latest.current,
-      power: latest.power,
-      energy: latest.energy,
-      source: latest.source,
-      batteryLevel: latest.batteryLevel,
+      current: latest.current, // mA
+      power: latest.power, // mW
       timestamp: latest.timestamp,
     };
   }
@@ -130,7 +103,6 @@ export class DashboardService {
         device: {
           select: {
             name: true,
-            type: true,
           },
         },
       },
@@ -151,27 +123,31 @@ export class DashboardService {
 
     if (data.length === 0) {
       return {
-        totalEnergy: 0,
-        avgPower: 0,
-        avgVoltage: 0,
-        avgCurrent: 0,
+        totalEnergyWh: 0,
+        avgPowerMw: 0,
+        avgVoltageV: 0,
+        avgCurrentMa: 0,
         count: 0,
         period: `${hours}h`,
       };
     }
 
-    const totalEnergy = data.reduce((sum, d) => sum + (d.energy || 0), 0);
+    // Calculate energy Wh dynamically from power mW data points
+    const totalEnergyWh = data.reduce((sum, d, i) => {
+      if (i === 0) return sum;
+      const timeDiffHours = (d.timestamp.getTime() - data[i - 1].timestamp.getTime()) / 3600000;
+      return sum + (d.power / 1000) * timeDiffHours;
+    }, 0);
+
     const avgPower = data.reduce((sum, d) => sum + d.power, 0) / data.length;
-    const avgVoltage =
-      data.reduce((sum, d) => sum + d.voltage, 0) / data.length;
-    const avgCurrent =
-      data.reduce((sum, d) => sum + d.current, 0) / data.length;
+    const avgVoltage = data.reduce((sum, d) => sum + d.voltage, 0) / data.length;
+    const avgCurrent = data.reduce((sum, d) => sum + d.current, 0) / data.length;
 
     return {
-      totalEnergy: Math.round(totalEnergy * 100) / 100,
-      avgPower: Math.round(avgPower * 100) / 100,
-      avgVoltage: Math.round(avgVoltage * 100) / 100,
-      avgCurrent: Math.round(avgCurrent * 100) / 100,
+      totalEnergyWh: Math.round(totalEnergyWh * 100) / 100,
+      avgPowerMw: Math.round(avgPower * 100) / 100,
+      avgVoltageV: Math.round(avgVoltage * 100) / 100,
+      avgCurrentMa: Math.round(avgCurrent * 100) / 100,
       count: data.length,
       period: `${hours}h`,
     };
@@ -209,7 +185,7 @@ export class DashboardService {
     return {
       devices: {
         total: deviceCount,
-        healthy: deviceCount > 0,
+        healthy: true,
       },
       sensors: {
         totalReadings: sensorCount,

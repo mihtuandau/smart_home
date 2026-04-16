@@ -25,12 +25,18 @@ export interface BillingForecastDto {
   ciLow: number;
   ciHigh: number;
   priceVndPerKwh: number;
+  dataStartIso?: string | null;
+  dataCoverageLabel?: string;
+  estimatedFromMonthStart?: boolean;
+  estimatedMissingDays?: number;
 }
 
 export interface BaselineSlot {
   count: number;
   sum: number;
+  sumSq?: number;
   mean: number | null;
+  stdDev?: number | null;
 }
 
 export type LedState = 'none' | 'led1' | 'led2' | 'both';

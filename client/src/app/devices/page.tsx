@@ -3,7 +3,7 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import QuickControls from '@/components/devices/QuickControls';
 import LEDControl from '@/components/devices/LEDControl';
-import DeviceSummary from '@/components/devices/DeviceSummary';
+// import DeviceSummary from '@/components/devices/DeviceSummary';
 import IoTDeviceManager from '@/components/devices/IoTDeviceManager';
 
 export default function DevicesPage() {
@@ -22,7 +22,7 @@ export default function DevicesPage() {
 
       <IoTDeviceManager />
 
-      <DeviceSummary />
+      {/* <DeviceSummary /> */}
     </div>
   );
 }

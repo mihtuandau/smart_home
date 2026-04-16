@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useSensorHistory } from '@/hooks/sensors';
 import { useLanguage } from '@/contexts/LanguageContext';
+import toast from 'react-hot-toast';
 
 const dateLocaleMap = {
   vi: 'vi-VN',
@@ -35,21 +36,115 @@ export default function SensorHistoryTable() {
     return Number.isFinite(parsed) ? parsed.toFixed(digits) : '--';
   };
 
+  const pickFirstFiniteNumber = (...values: unknown[]) => {
+    for (const value of values) {
+      const parsed = typeof value === 'number' ? value : Number(value);
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
+    return undefined;
+  };
+
+  const normalizeHistoryItem = (item: SensorHistoryItem) => {
+    const raw = item as unknown as Record<string, unknown>;
+    const timestampRaw =
+      item.timestamp ??
+      (typeof raw.time === 'string' ? raw.time : undefined) ??
+      (typeof raw.createdAt === 'string' ? raw.createdAt : undefined);
+
+    if (!timestampRaw) {
+      return null;
+    }
+
+    const temperature = pickFirstFiniteNumber(item.temperature, raw.temp, raw.temp_c);
+    const humidity = pickFirstFiniteNumber(item.humidity, raw.humi, raw.humidity_percent);
+    const pressure = pickFirstFiniteNumber(item.pressure, raw.pres, raw.pressure_hpa);
+
+    if (temperature === undefined && humidity === undefined && pressure === undefined) {
+      return null;
+    }
+
+    return {
+      timestampRaw,
+      temperature,
+      humidity,
+      pressure,
+    };
+  };
+
   const historyResponse = (response as SensorHistoryResponse | undefined);
   const historyData = (historyResponse?.data || []) as SensorHistoryItem[];
   const totalPages: number = historyResponse?.totalPages || 1;
   const total: number = historyResponse?.total || 0;
-  const data = historyData.map((item, index) => ({
-    id: index,
-    timestamp: new Date(item.timestamp).toLocaleString(dateLocaleMap[language]),
-    temperature: item.temperature,
-    humidity: item.humidity,
-    pressure: item.pressure,
-  }));
+  const data = historyData
+    .map(normalizeHistoryItem)
+    .filter((item): item is NonNullable<typeof item> => item !== null)
+    .map((item, index) => ({
+      id: `${item.timestampRaw}-${index}`,
+      timestamp: new Date(item.timestampRaw).toLocaleString(dateLocaleMap[language]),
+      temperature: item.temperature,
+      humidity: item.humidity,
+      pressure: item.pressure,
+    }));
 
   const handleHoursChange = (newHours: number) => {
     setHours(newHours);
     setPage(1);
+  };
+
+  const exportCurrentTable = () => {
+    if (!data.length) {
+      toast.error(t('reports.noDataRange'));
+      return;
+    }
+
+    try {
+      const headers = [
+        t('sensors.time'),
+        `${t('sensors.temperature')} (°C)`,
+        `${t('sensors.humidity')} (%)`,
+        `${t('sensors.pressure')} (hPa)`,
+      ];
+
+      const escapeCsv = (value: string) => {
+        const escaped = value.replace(/"/g, '""');
+        if (/[",\n\r]/.test(escaped)) {
+          return `"${escaped}"`;
+        }
+        return escaped;
+      };
+
+      const body = data
+        .map((row) => [
+          escapeCsv(row.timestamp),
+          formatNumber(row.temperature, 1),
+          formatNumber(row.humidity, 1),
+          formatNumber(row.pressure, 1),
+        ].join(','))
+        .join('\n');
+
+      const filename = `sensor-history-${hours}h-page-${page}.csv`;
+      const csv = `\uFEFF${headers.map(escapeCsv).join(',')}\n${body}`;
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      toast.success(
+        t('reports.exportSuccess')
+          .replace('{rows}', String(data.length))
+          .replace('{filename}', filename),
+      );
+    } catch {
+      toast.error(t('reports.exportFailed'));
+    }
   };
 
   return (
@@ -70,7 +165,11 @@ export default function SensorHistoryTable() {
             <option value={168}>{t('sensors.lastDays').replace('{days}', '7')}</option>
             <option value={720}>{t('sensors.lastDays').replace('{days}', '30')}</option>
           </select>
-          <button className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button
+            onClick={exportCurrentTable}
+            disabled={isLoading || data.length === 0}
+            className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             {t('sensors.exportCsv')}
           </button>
         </div>

@@ -14,29 +14,9 @@ enum UserRole {
   GUEST
 }
 
-enum DeviceType {
-  LED
-  SERVO
-  TOUCH
-}
-
 enum DeviceStatus {
   ON
-  OFF 
-  AUTO
-  ERROR
-}
-
-enum PowerSource {
-  SOLAR
-  BATTERY
-  GRID
-}
-
-enum SolarStatus {
-  CHARGING
-  STANDBY
-  ERROR
+  OFF
 }
 
 // User management
@@ -52,7 +32,6 @@ model User {
   updatedAt DateTime  @updatedAt
 
   devices      Device[]
-  automations  AutomationRule[]
   activityLogs ActivityLog[]
   notificationSettings UserNotificationSettings?
 
@@ -68,7 +47,6 @@ model UserNotificationSettings {
   emailAlerts       Boolean @default(true)
   pushNotifications Boolean @default(true)
   deviceAlerts      Boolean @default(true)
-  automationAlerts  Boolean @default(true)
   systemAlerts      Boolean @default(true)
   energyAlerts      Boolean @default(true)
   dailyReport       Boolean @default(true)
@@ -83,25 +61,18 @@ model UserNotificationSettings {
   @@map("user_notification_settings")
 }
 
-// Device management
+// Simplified Device management
 model Device {
   id               String       @id @default(cuid())
   name             String
-  type             DeviceType
+  pin              Int          // GPIO pin on ESP32
   status           DeviceStatus @default(OFF)
-  pin              Int // GPIO pin on ESP32
-  value            Int? // Brightness for LED, position for servo
-  manualMode       Boolean      @default(false)
-  powerConsumption Float?       @default(0)
+  powerConsumption Float        @default(0) // Watts (entered by user)
+  manualMode       Boolean      @default(true)
   lastActive       DateTime?
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  // Specific device types
-  led   Led?
-  servo Servo?
-  touch Touch?
 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -111,51 +82,7 @@ model Device {
   @@map("devices")
 }
 
-// LED devices (x3)
-model Led {
-  id       String @id @default(cuid())
-  deviceId String @unique
-  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-
-  color         String? @default("#FFFFFF")
-  brightness    Int     @default(100) // 0-100%
-  minBrightness Int     @default(0)
-  maxBrightness Int     @default(100)
-
-  @@map("leds")
-}
-
-// Servo device (for coffee shelter)
-model Servo {
-  id       String @id @default(cuid())
-  deviceId String @unique
-  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-
-  position Int @default(0) // 0-180 degrees
-  minAngle Int @default(0)
-  maxAngle Int @default(180)
-  speed    Int @default(10) // degrees per second
-
-  // Rain protection
-  autoRetract   Boolean @default(true)
-  rainThreshold Float   @default(80) // Humidity threshold for rain
-
-  @@map("servos")
-}
-
-// Touch sensors (x4)
-model Touch {
-  id       String @id @default(cuid())
-  deviceId String @unique
-  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-
-  sensitivity Int     @default(50) // 0-100
-  isTouched   Boolean @default(false)
-
-  @@map("touches")
-}
-
-// Sensor data
+// Sensor data (Simplified)
 model SensorData {
   id String @id @default(cuid())
 
@@ -164,15 +91,11 @@ model SensorData {
   humidity    Float // Percentage
   pressure    Float // hPa
 
-  // LM393 LDR
-  lightLevel Int // 0-1023
-  isDark     Boolean // Based on threshold
-
-  // Rain sensor
+  // Rain sensor (LM393)
   isRaining Boolean
 
   timestamp DateTime @default(now())
-  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'")) // Auto-delete after 30 days
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'"))
 
   @@index([timestamp])
   @@index([expiresAt])
@@ -198,12 +121,7 @@ model SensorAgg {
   pressureMin Float
   pressureMax Float
 
-  lightLevelAvg Float
-  lightLevelMin Int
-  lightLevelMax Int
-
   rainCount Int @default(0)
-  darkCount Int @default(0)
   samples   Int
 
   @@unique([bucketStart, bucketMinutes])
@@ -211,20 +129,16 @@ model SensorAgg {
   @@map("sensor_aggs")
 }
 
-// Power monitoring (INA219 DC)
+// Power monitoring (INA219 DC) - Fixed Units
 model PowerData {
   id String @id @default(cuid())
 
   voltage Float // Volts
-  current Float // Amps
-  power   Float // Watts
-  energy  Float // Watt-hours
-
-  source       PowerSource @default(SOLAR)
-  batteryLevel Float? // 0-100%
+  current Float // mA (as sent by INA219)
+  power   Float // mW (as sent by INA219)
 
   timestamp DateTime @default(now())
-  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'")) // Auto-delete after 30 days
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'"))
 
   @@index([timestamp])
   @@index([expiresAt])
@@ -242,111 +156,19 @@ model PowerAgg {
   voltageMin Float
   voltageMax Float
 
-  currentAvg Float
-  currentMin Float
-  currentMax Float
+  currentAvg Float // mA
+  currentMin Float // mA
+  currentMax Float // mA
 
-  powerAvg Float
-  powerMin Float
-  powerMax Float
+  powerAvg Float // mW
+  powerMin Float // mW
+  powerMax Float // mW
 
-  energySum Float
-  samples   Int
+  samples Int
 
   @@unique([bucketStart, bucketMinutes])
   @@index([bucketStart])
   @@map("power_aggs")
-}
-
-// Solar charging (CN3791)
-model SolarData {
-  id String @id @default(cuid())
-
-  solarVoltage   Float // Solar panel voltage
-  solarCurrent   Float // Solar panel current
-  chargeVoltage  Float // Battery charging voltage
-  chargeCurrent  Float // Battery charging current
-  batteryVoltage Float // Battery voltage
-
-  status      SolarStatus @default(STANDBY)
-  temperature Float? // Charger temperature
-
-  timestamp DateTime @default(now())
-  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'")) // Auto-delete after 30 days
-
-  @@index([timestamp])
-  @@index([expiresAt])
-  @@map("solar_data")
-}
-
-// OLED Display data
-model DisplayData {
-  id String @id @default(cuid())
-
-  line1 String?
-  line2 String?
-  line3 String?
-  line4 String?
-
-  isDisplayOn Boolean @default(true)
-  brightness  Int     @default(100)
-
-  updatedAt DateTime @updatedAt
-
-  @@map("display_data")
-}
-
-// AI Learning Data
-model AiLearningData {
-  id String @id @default(cuid())
-
-  feature    String // Feature name (e.g., "light_control")
-  inputData  Json // Input parameters
-  outputData Json // Output/result
-  accuracy   Float? // Model accuracy
-
-  timestamp DateTime @default(now())
-
-  @@index([feature, timestamp])
-  @@map("ai_learning_data")
-}
-
-// Behavior Pattern
-model BehaviorPattern {
-  id String @id @default(cuid())
-
-  patternName String
-  condition   Json // Conditions for pattern
-  action      Json // Actions to perform
-  priority    Int     @default(1)
-  isActive    Boolean @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("behavior_patterns")
-}
-
-// Automation Rules
-model AutomationRule {
-  id          String  @id @default(cuid())
-  name        String
-  description String?
-
-  conditionType String // "sensor", "time", "ai_prediction"
-  conditions    Json // Array of conditions
-  actions       Json // Array of actions
-
-  isActive      Boolean   @default(true)
-  lastTriggered DateTime?
-
-  userId String?
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("automation_rules")
 }
 
 // Activity Log
@@ -371,29 +193,31 @@ model ActivityLog {
   @@map("activity_logs")
 }
 
-// System Settings
+// Simplified System Settings
 model SystemSettings {
   id String @id @default(cuid())
 
-  // Lighting settings
-  autoLightEnabled Boolean @default(true)
-  lightOnTime      String? @default("18:00")
-  lightOffTime     String? @default("06:00")
-  lightThreshold   Int     @default(30) // LDR threshold
-
-  // Rain protection
+  // Rain protection (The only automation currently supported by ESP32 logic)
   autoRainProtection    Boolean @default(true)
   rainHumidityThreshold Float   @default(80)
-
-  // Energy saving
-  powerSaveMode       Boolean @default(false)
-  maxPowerConsumption Float   @default(100) // Watts
-
-  // AI settings
-  aiLearningEnabled Boolean @default(true)
-  predictionHorizon Int     @default(24) // hours
 
   updatedAt DateTime @updatedAt
 
   @@map("system_settings")
+}
+
+// Persist daily LED consumption and routine patterns
+model AiLearningData {
+  id    String @id @default(cuid())
+  date  String @unique // Format: YYYY-MM-DD
+  
+  led1_wh         Float @default(0)
+  led2_wh         Float @default(0)
+  led1_on_minutes Float @default(0)
+  led2_on_minutes Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("ai_learning_data")
 }

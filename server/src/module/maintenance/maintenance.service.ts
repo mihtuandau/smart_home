@@ -3,6 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../../common/prisma.service';
 import { SettingsService } from '../settings/settings.service';
 import { NotificationEmailService } from '../settings/notification-email.service';
+import { DeviceStatus } from '@prisma/client';
 
 const BUCKET_MINUTES = 5;
 const RAW_RETENTION_DAYS = 7;
@@ -14,7 +15,6 @@ const HUMIDITY_HIGH_PERCENT = Number(process.env.HUMIDITY_HIGH_PERCENT || 85);
 const HUMIDITY_LOW_PERCENT = Number(process.env.HUMIDITY_LOW_PERCENT || 30);
 const PRESSURE_LOW_HPA = Number(process.env.PRESSURE_LOW_HPA || 980);
 const PRESSURE_HIGH_HPA = Number(process.env.PRESSURE_HIGH_HPA || 1035);
-const ENERGY_ALERT_DELTA_W = Number(process.env.ENERGY_ALERT_DELTA_W || 0);
 
 @Injectable()
 export class MaintenanceService implements OnModuleInit {
@@ -29,6 +29,11 @@ export class MaintenanceService implements OnModuleInit {
   async onModuleInit() {
     this.logger.log('Running startup cleanup...');
     await this.cleanupRawData();
+    
+    // Run backfill asynchronously to not block other services
+    this.backfillHistoricalAggregations().catch((error) => {
+      this.logger.error('Backfill failed', error);
+    });
   }
 
   @Cron(CronExpression.EVERY_MINUTE)
@@ -38,6 +43,8 @@ export class MaintenanceService implements OnModuleInit {
     const bucketStart = new Date(
       bucketEnd.getTime() - BUCKET_MINUTES * 60 * 1000,
     );
+
+    this.logger.debug(`[Cron] Aggregating bucket: ${bucketStart} - ${bucketEnd}`);
 
     await Promise.all([
       this.aggregateSensorBucket(bucketStart, bucketEnd),
@@ -56,20 +63,17 @@ export class MaintenanceService implements OnModuleInit {
       Date.now() - RAW_RETENTION_DAYS * 24 * 60 * 60 * 1000,
     );
 
-    const [sensorResult, powerResult, solarResult] = await Promise.all([
+    const [sensorResult, powerResult] = await Promise.all([
       this.prisma.sensorData.deleteMany({
         where: { timestamp: { lt: cutoffDate } },
       }),
       this.prisma.powerData.deleteMany({
         where: { timestamp: { lt: cutoffDate } },
       }),
-      this.prisma.solarData.deleteMany({
-        where: { timestamp: { lt: cutoffDate } },
-      }),
     ]);
 
     this.logger.log(
-      `Cleanup data older than ${RAW_RETENTION_DAYS} days: sensor=${sensorResult.count}, power=${powerResult.count}, solar=${solarResult.count}`,
+      `Cleanup data older than ${RAW_RETENTION_DAYS} days: sensor=${sensorResult.count}, power=${powerResult.count}`,
     );
   }
 
@@ -93,7 +97,6 @@ export class MaintenanceService implements OnModuleInit {
     const temps = rows.map((r) => r.temperature);
     const hums = rows.map((r) => r.humidity);
     const pres = rows.map((r) => r.pressure);
-    const lights = rows.map((r) => r.lightLevel);
 
     const payload = {
       bucketStart: start,
@@ -107,11 +110,7 @@ export class MaintenanceService implements OnModuleInit {
       pressureAvg: this.avg(pres),
       pressureMin: Math.min(...pres),
       pressureMax: Math.max(...pres),
-      lightLevelAvg: this.avg(lights),
-      lightLevelMin: Math.min(...lights),
-      lightLevelMax: Math.max(...lights),
       rainCount: rows.filter((r) => r.isRaining).length,
-      darkCount: rows.filter((r) => r.isDark).length,
       samples: rows.length,
     };
 
@@ -132,6 +131,7 @@ export class MaintenanceService implements OnModuleInit {
       where: {
         timestamp: { gte: start, lt: end },
       },
+      orderBy: { timestamp: 'asc' },
     });
 
     if (rows.length === 0) {
@@ -141,8 +141,7 @@ export class MaintenanceService implements OnModuleInit {
     const voltages = rows.map((r) => r.voltage);
     const currents = rows.map((r) => r.current);
     const powers = rows.map((r) => r.power);
-    const energySum = rows.reduce((sum, r) => sum + (r.energy || 0), 0);
-
+    
     const payload = {
       bucketStart: start,
       bucketMinutes: BUCKET_MINUTES,
@@ -155,7 +154,6 @@ export class MaintenanceService implements OnModuleInit {
       powerAvg: this.avg(powers),
       powerMin: Math.min(...powers),
       powerMax: Math.max(...powers),
-      energySum: Math.round(energySum * 1000) / 1000,
       samples: rows.length,
     };
 
@@ -169,31 +167,6 @@ export class MaintenanceService implements OnModuleInit {
       create: payload,
       update: payload,
     });
-
-    const latestPower = rows[rows.length - 1]?.power ?? 0;
-    if (latestPower <= 0) {
-      return;
-    }
-
-    const systemSettings = await this.settingsService.getSettings();
-    const triggerThreshold =
-      Number(systemSettings.maxPowerConsumption) + ENERGY_ALERT_DELTA_W;
-
-    if (latestPower <= triggerThreshold) {
-      return;
-    }
-
-    const result = await this.notificationEmailService.sendEnergyThresholdAlert({
-      currentPower: latestPower,
-      thresholdPower: triggerThreshold,
-      measuredAt: end,
-    });
-
-    if (result.sent > 0) {
-      this.logger.warn(
-        `Energy threshold exceeded (${latestPower.toFixed(2)}W > ${triggerThreshold.toFixed(2)}W). Sent ${result.sent} alert email(s).`,
-      );
-    }
   }
 
   private async checkDeviceOfflineAlerts(now: Date) {
@@ -201,9 +174,7 @@ export class MaintenanceService implements OnModuleInit {
 
     const staleDevices = await this.prisma.device.findMany({
       where: {
-        status: {
-          in: ['ON', 'AUTO'],
-        },
+        status: DeviceStatus.ON,
         OR: [
           { lastActive: null },
           {
@@ -256,36 +227,11 @@ export class MaintenanceService implements OnModuleInit {
       );
     }
 
-    if (latest.temperature >= TEMPERATURE_HIGH_C) {
-      issues.push(
-        `Temperature is too high: ${latest.temperature.toFixed(1)} C (>= ${TEMPERATURE_HIGH_C} C).`,
-      );
-    }
-    if (latest.temperature <= TEMPERATURE_LOW_C) {
-      issues.push(
-        `Temperature is too low: ${latest.temperature.toFixed(1)} C (<= ${TEMPERATURE_LOW_C} C).`,
-      );
-    }
-    if (latest.humidity >= HUMIDITY_HIGH_PERCENT) {
-      issues.push(
-        `Humidity is too high: ${latest.humidity.toFixed(1)}% (>= ${HUMIDITY_HIGH_PERCENT}%).`,
-      );
-    }
-    if (latest.humidity <= HUMIDITY_LOW_PERCENT) {
-      issues.push(
-        `Humidity is too low: ${latest.humidity.toFixed(1)}% (<= ${HUMIDITY_LOW_PERCENT}%).`,
-      );
-    }
-    if (latest.pressure <= PRESSURE_LOW_HPA) {
-      issues.push(
-        `Pressure is too low: ${latest.pressure.toFixed(1)} hPa (<= ${PRESSURE_LOW_HPA} hPa).`,
-      );
-    }
-    if (latest.pressure >= PRESSURE_HIGH_HPA) {
-      issues.push(
-        `Pressure is too high: ${latest.pressure.toFixed(1)} hPa (>= ${PRESSURE_HIGH_HPA} hPa).`,
-      );
-    }
+    if (latest.temperature >= TEMPERATURE_HIGH_C) issues.push(`Temperature is too high: ${latest.temperature.toFixed(1)} C`);
+    if (latest.temperature <= TEMPERATURE_LOW_C) issues.push(`Temperature is too low: ${latest.temperature.toFixed(1)} C`);
+    if (latest.humidity >= HUMIDITY_HIGH_PERCENT) issues.push(`Humidity is too high: ${latest.humidity.toFixed(1)}%`);
+    if (latest.humidity <= HUMIDITY_LOW_PERCENT) issues.push(`Humidity is too low: ${latest.humidity.toFixed(1)}%`);
+    if (latest.pressure <= PRESSURE_LOW_HPA) issues.push(`Pressure is too low: ${latest.pressure.toFixed(1)} hPa`);
 
     if (issues.length === 0) {
       return;
@@ -297,9 +243,7 @@ export class MaintenanceService implements OnModuleInit {
     });
 
     if (result.sent > 0) {
-      this.logger.warn(
-        `Detected ${issues.length} sensor anomaly issue(s). Sent ${result.sent} system alert email(s).`,
-      );
+      this.logger.warn(`Detected ${issues.length} sensor anomaly issue(s). Sent alert email(s).`);
     }
   }
 
@@ -307,4 +251,122 @@ export class MaintenanceService implements OnModuleInit {
     const total = values.reduce((sum, v) => sum + v, 0);
     return Math.round((total / values.length) * 1000) / 1000;
   }
+
+  async backfillHistoricalAggregations() {
+    try {
+      const now = new Date();
+      const startTime = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Last 30 days
+
+      // Get the earliest sensor aggregation record
+      const earliestSensorAgg = await this.prisma.sensorAgg.findFirst({
+        orderBy: { bucketStart: 'asc' },
+      });
+
+      const earliestSensorAggTime = earliestSensorAgg?.bucketStart || now;
+
+      // Get the earliest sensor raw data record (within last 7 days to avoid deleted data)
+      const rawCutoff = new Date(now.getTime() - RAW_RETENTION_DAYS * 24 * 60 * 60 * 1000);
+      const earliestRawData = await this.prisma.sensorData.findFirst({
+        where: { timestamp: { gte: startTime, lt: now } },
+        orderBy: { timestamp: 'asc' },
+      });
+
+      if (!earliestRawData) {
+        this.logger.debug('No raw sensor data found for backfill');
+        return;
+      }
+
+      // Determine the backfill start time
+      const backfillStart = Math.max(
+        earliestRawData.timestamp.getTime(),
+        startTime.getTime()
+      );
+
+      // Backfill sensor aggregations
+      let bucketTime = this.getBucketEnd(new Date(backfillStart));
+      const bucketMs = BUCKET_MINUTES * 60 * 1000;
+      let aggregatedCount = 0;
+
+      while (bucketTime <= now) {
+        const bucketStart = new Date(bucketTime.getTime() - bucketMs);
+        const exists = await this.prisma.sensorAgg.findUnique({
+          where: {
+            bucketStart_bucketMinutes: {
+              bucketStart,
+              bucketMinutes: BUCKET_MINUTES,
+            },
+          },
+        });
+
+        if (!exists) {
+          await this.aggregateSensorBucket(bucketStart, bucketTime);
+          aggregatedCount++;
+        }
+
+        bucketTime = new Date(bucketTime.getTime() + bucketMs);
+
+        // Log progress every 100 buckets
+        if (aggregatedCount % 100 === 0) {
+          this.logger.log(`Sensor backfill progress: ${aggregatedCount} buckets created`);
+        }
+      }
+
+      if (aggregatedCount > 0) {
+        this.logger.log(`Sensor aggregation backfill completed: ${aggregatedCount} buckets created`);
+      }
+
+      // Similar backfill for power data
+      const earliestPowerAgg = await this.prisma.powerAgg.findFirst({
+        orderBy: { bucketStart: 'asc' },
+      });
+
+      const earliestPowerData = await this.prisma.powerData.findFirst({
+        where: { timestamp: { gte: startTime, lt: now } },
+        orderBy: { timestamp: 'asc' },
+      });
+
+      if (!earliestPowerData) {
+        this.logger.debug('No raw power data found for backfill');
+        return;
+      }
+
+      const powerBackfillStart = Math.max(
+        earliestPowerData.timestamp.getTime(),
+        startTime.getTime()
+      );
+
+      bucketTime = this.getBucketEnd(new Date(powerBackfillStart));
+      let powerAggregatedCount = 0;
+
+      while (bucketTime <= now) {
+        const bucketStart = new Date(bucketTime.getTime() - bucketMs);
+        const exists = await this.prisma.powerAgg.findUnique({
+          where: {
+            bucketStart_bucketMinutes: {
+              bucketStart,
+              bucketMinutes: BUCKET_MINUTES,
+            },
+          },
+        });
+
+        if (!exists) {
+          await this.aggregatePowerBucket(bucketStart, bucketTime);
+          powerAggregatedCount++;
+        }
+
+        bucketTime = new Date(bucketTime.getTime() + bucketMs);
+
+        if (powerAggregatedCount % 100 === 0) {
+          this.logger.log(`Power backfill progress: ${powerAggregatedCount} buckets created`);
+        }
+      }
+
+      if (powerAggregatedCount > 0) {
+        this.logger.log(`Power aggregation backfill completed: ${powerAggregatedCount} buckets created`);
+      }
+    } catch (error) {
+      this.logger.error('Historical aggregation backfill failed', error);
+    }
+  }
+
 }

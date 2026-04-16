@@ -1,9 +1,13 @@
 'use client';
 
 import { useSensors } from '@/hooks/sensors';
+import { useRainProbability } from '@/hooks/rain';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { calculateRainProbability, estimatePressureTrend, getColorScheme } from '@/lib/rainProbabilityUtils';
+import { estimatePressureTrend } from '@/lib/rainProbabilityUtils';
 import { Gauge, Sparkles } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { rainForecastKeys } from '@/hooks/rain/rainForecastKeys';
 
 interface EnvironmentSensorData {
   temperature: number;
@@ -86,9 +90,29 @@ function PressureCard({ title, subtitle, value, statusLabel, status, borderColor
 
 export default function EnvironmentStatus() {
   const { data: response, isLoading } = useSensors(6, 2000);
+  const { data: rainReport, refetch: refetchRain } = useRainProbability(10.9509538, 106.8226134, true);
+  const { t, language } = useLanguage();
+  const queryClient = useQueryClient();
+  const lastSensorChangeRef = useRef<string>('');
+
   const records = (response as SensorsResponseShape | undefined)?.data ?? [];
   const data = records[0] || null;
-  const { t, language } = useLanguage();
+
+  // Invalidate rain forecast query when sensor data changes
+  useEffect(() => {
+    if (data) {
+      const sensorKey = `${data.temperature}-${data.humidity}-${data.pressure}`;
+      if (sensorKey !== lastSensorChangeRef.current) {
+        lastSensorChangeRef.current = sensorKey;
+        console.log('[EnvironmentStatus] Sensor change detected:', sensorKey);
+        // Both invalidate AND refetch for aggressive update
+        queryClient.invalidateQueries({
+          queryKey: rainForecastKeys.probability(10.9509538, 106.8226134)
+        });
+        refetchRain?.();
+      }
+    }
+  }, [data, queryClient, refetchRain]);
 
   if (isLoading || !data) {
     return (
@@ -98,17 +122,68 @@ export default function EnvironmentStatus() {
     );
   }
 
+  // Use rain forecast API data if available
+  // Note: getLatestRainProbability returns { adjusted_probability, unit }
+  let rainProbability = 0;
+  if (rainReport?.adjusted_probability !== null && rainReport?.adjusted_probability !== undefined) {
+    rainProbability = Math.round(rainReport.adjusted_probability);
+  }
+  
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[EnvironmentStatus] rainReport:', rainReport, '| rainProbability:', rainProbability);
+  }
+
+  // Get color scheme matching Sensors page (based on percentage)
+  const getRainProbabilityColors = (probability: number) => {
+    if (probability >= 80) {
+      return { 
+        bg: 'bg-red-50 dark:bg-red-950/30', 
+        border: '#dc2626', 
+        badgeColor: 'bg-red-600 text-white',
+        descKey: 'sensors.highChance'
+      };
+    }
+    if (probability >= 60) {
+      return { 
+        bg: 'bg-orange-50 dark:bg-orange-950/30', 
+        border: '#f59e0b', 
+        badgeColor: 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300',
+        descKey: 'sensors.mediumChance'
+      };
+    }
+    if (probability >= 40) {
+      return { 
+        bg: 'bg-yellow-50 dark:bg-yellow-950/30', 
+        border: '#eab308', 
+        badgeColor: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300',
+        descKey: 'dashboard.lowMedium'
+      };
+    }
+    if (probability >= 20) {
+      return { 
+        bg: 'bg-blue-50 dark:bg-blue-950/30', 
+        border: '#3b82f6', 
+        badgeColor: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300',
+        descKey: 'sensors.lowChance'
+      };
+    }
+    return { 
+      bg: 'bg-green-50 dark:bg-green-950/30', 
+      border: '#10b981', 
+      badgeColor: 'bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300',
+      descKey: 'sensors.lowChance'
+    };
+  };
+
   const pressureTrend = estimatePressureTrend(records);
-  const analysis = calculateRainProbability(
-    data.temperature,
-    data.humidity,
-    data.pressure,
-    data.isRaining ?? false,
-    pressureTrend,
-    language,
-  );
-  const rainProbability = analysis.probability;
-  const colorScheme = getColorScheme(rainProbability);
+  const colorScheme = getRainProbabilityColors(rainProbability);
+
+  const getPressureStatus = (pressure: number) => {
+    if (pressure < 1000) return t('sensors.pressureVeryLow');
+    if (pressure < 1013) return t('sensors.pressureSlightLow');
+    if (pressure < 1030) return t('sensors.pressureNormal');
+    return t('sensors.pressureHigh');
+  };
 
   return (
     <div className="section-card shadow-sm border border-border p-4 sm:p-5 md:p-6">
@@ -122,8 +197,8 @@ export default function EnvironmentStatus() {
           <SensorCard
             title={t('dashboard.rainProbability')}
             value={`${rainProbability}%`}
-            badge={data.isRaining ? t('dashboard.rainingNow') : rainProbability >= 80 ? t('sensors.highChance') : rainProbability >= 60 ? t('sensors.mediumChance') : rainProbability >= 40 ? t('dashboard.lowMedium') : t('sensors.lowChance')}
-            badgeColor={colorScheme.badge}
+            badge={data.isRaining ? t('dashboard.rainingNow') : t(colorScheme.descKey)}
+            badgeColor={colorScheme.badgeColor}
             borderColor={colorScheme.border}
             bgColor={colorScheme.bg}
             icon={<Sparkles className="w-5 h-5" />}
@@ -135,7 +210,7 @@ export default function EnvironmentStatus() {
           subtitle={t('dashboard.pressureCurrent')}
           value={`${data.pressure.toFixed(1)} hPa`}
           statusLabel={t('devices.status')}
-          status={t('dashboard.stable')}
+          status={getPressureStatus(data.pressure)}
           borderColor="#a855f7"
           bgColor="bg-purple-50"
           icon={<Gauge className="w-5 h-5" />}

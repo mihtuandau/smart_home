@@ -11,7 +11,6 @@ import {
 } from '@nestjs/common';
 import { DevicesService } from './devices.service';
 import { UpdateDeviceDto } from './dto/update-device.dto';
-import { DeviceType } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('devices')
@@ -34,16 +33,6 @@ export class DevicesController {
     return {
       success: true,
       data: stats,
-    };
-  }
-
-  @Get('type/:type')
-  async getByType(@Param('type') type: DeviceType) {
-    const devices = await this.devicesService.getByType(type);
-    return {
-      success: true,
-      count: devices.length,
-      data: devices,
     };
   }
 

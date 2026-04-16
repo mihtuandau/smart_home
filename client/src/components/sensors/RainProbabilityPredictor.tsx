@@ -3,7 +3,7 @@
 import { useSensors } from '@/hooks/sensors';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { calculateRainProbability, estimatePressureTrend, getColorScheme } from '@/lib/rainProbabilityUtils';
-import { ChartColumn, CircleHelp, Lightbulb, Search, ShieldCheck, Sparkles, TriangleAlert, Zap } from 'lucide-react';
+import { ChartColumn, CircleHelp, Lightbulb, Search, ShieldCheck, TriangleAlert, Zap } from 'lucide-react';
 
 interface FactorAnalysis {
   name: string;
@@ -177,10 +177,8 @@ export default function RainProbabilityPredictor() {
   return (
     <div className={`rounded-xl p-4 sm:p-5 border border-border ${colorScheme.bg} shadow-sm`}>
       <div className="mb-4 flex items-center justify-between gap-3">
-        <div>
-          <h2 className={`text-sm sm:text-base font-semibold ${colorScheme.text} inline-flex items-center gap-1.5`}><Sparkles className="w-4 h-4" />{t('sensors.rainProbabilityQuestion')}</h2>
-        </div>
-        <span className="text-[10px] sm:text-xs px-2 py-1 rounded-full bg-card/80 border border-border text-muted-foreground">{t('sensors.updatedRealtime')}</span>
+        <div />
+        
       </div>
 
       <div className="mb-4 bg-card rounded-xl p-3 sm:p-4 border border-border">

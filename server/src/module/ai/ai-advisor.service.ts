@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { AiBaselineService } from './ai-baseline.service';
+import { PrismaService } from '../../common/prisma.service';
 
 export interface AdvisorInput {
   powerMw: number;
@@ -21,7 +22,112 @@ export class AiAdvisorService {
   private static readonly ADVICE_COOLDOWN_MS = 2 * 60 * 1000;
   private static readonly POST_SWITCH_SETTLE_MS = 45 * 1000;
 
-  constructor(private baseline: AiBaselineService) {}
+  private readonly logger = new Logger(AiAdvisorService.name);
+  private readonly routineTimeZone = process.env.AI_ROUTINE_TIMEZONE ?? 'Asia/Ho_Chi_Minh';
+  private routineSamples = 0;
+  private routineLearned = false;
+
+  // Dynamic predicted hours based on 30-day historical data
+  private predictedEveningHour = 18;
+  private predictedEveningMinute = 30;
+  
+  private predictedMorningHour = 6;
+  private predictedMorningMinute = 15;
+
+  private getHourInRoutineTimeZone(ts: Date): number {
+    try {
+      const parts = new Intl.DateTimeFormat('en-US', {
+        hour: '2-digit',
+        hour12: false,
+        timeZone: this.routineTimeZone,
+      }).formatToParts(ts);
+      const hourPart = parts.find((p) => p.type === 'hour')?.value;
+      const hour = Number(hourPart);
+      return Number.isFinite(hour) ? hour : ts.getUTCHours();
+    } catch {
+      return ts.getUTCHours();
+    }
+  }
+
+  constructor(
+    private baseline: AiBaselineService,
+    private prisma: PrismaService,
+  ) {}
+
+  async onModuleInit() {
+    await this.learnRoutinesFromHistory();
+  }
+
+  /**
+   * Phân tích lịch sử 30 ngày để học thói quen (Routine) thực tế của người dùng.
+   */
+  private async learnRoutinesFromHistory() {
+    try {
+      this.logger.log('Đang phân tích dữ liệu 30 ngày qua để train mô hình Dự đoán hành vi...');
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+      // Lấy lịch sử biến động công suất đột ngột (hoặc ActivityLog nếu có)
+      const data = await this.prisma.powerData.findMany({
+        where: {
+          timestamp: { gte: thirtyDaysAgo },
+          power: { gt: 1000 }, // Ngưỡng bật thiết bị đáng kể (1000mW = 1W)
+        },
+        select: { timestamp: true }
+      });
+
+      this.routineSamples = data.length;
+
+      if (data.length >= 5) {
+        // Gom nhóm theo Giờ (Hour)
+        const hourCounts = new Map<number, number>();
+        for (const row of data) {
+          const h = this.getHourInRoutineTimeZone(row.timestamp);
+          hourCounts.set(h, (hourCounts.get(h) || 0) + 1);
+        }
+
+        // Tìm giờ buổi tối được kích hoạt thiết bị nhiều nhất (Từ 17h -> 22h)
+        let maxEveningCount = 0;
+        let bestEveningHour = 18;
+        // Tìm giờ buổi sáng nhiều nhất (Từ 5h -> 9h)
+        let maxMorningCount = 0;
+        let bestMorningHour = 6;
+
+        for (const [h, count] of hourCounts.entries()) {
+          if (h >= 17 && h <= 22 && count > maxEveningCount) {
+            maxEveningCount = count;
+            bestEveningHour = h;
+          }
+          if (h >= 5 && h <= 9 && count > maxMorningCount) {
+            maxMorningCount = count;
+            bestMorningHour = h;
+          }
+        }
+
+        this.predictedEveningHour = bestEveningHour;
+        this.predictedMorningHour = bestMorningHour;
+        this.routineLearned = true;
+        this.logger.log(
+          `[AI Routine Learned] TZ=${this.routineTimeZone}, samples=${data.length}, ` +
+            `Buổi tối bật lúc: ${bestEveningHour}h, Buổi sáng lúc: ${bestMorningHour}h`,
+        );
+      } else {
+        this.routineLearned = false;
+        this.logger.log('Chưa đủ Data (cần >= 5 records có dòng điện), tạm giữ mức mặc định 18h và 6h.');
+      }
+    } catch (err: unknown) {
+      this.routineLearned = false;
+      const message = err instanceof Error ? err.message : String(err);
+      this.logger.error('Lỗi khi học Routine: ' + message);
+    }
+  }
+
+  public getLearnedRoutineSummary(): string {
+    if (!this.routineLearned) {
+      return `AI đang học thói quen dùng điện 30 ngày qua (đã thu thập ${this.routineSamples} mẫu), chưa đủ dữ liệu để kết luận khung giờ ổn định.`;
+    }
+    return `AI đã phân tích thói quen 30 ngày qua (${this.routineSamples} mẫu, múi giờ ${this.routineTimeZone}): bạn thường dùng thiết bị công suất cao vào khoảng ${this.predictedMorningHour}h sáng và ${this.predictedEveningHour}h chiều/tối.`;
+  }
 
   getAdvice(input: AdvisorInput): string[] {
     const { powerMw, led1, led2, ts = new Date() } = input;
@@ -33,10 +139,11 @@ export class AiAdvisorService {
     const led2Changed = this.prevLed2 !== null && this.prevLed2 !== led2;
     const prevPower = this.prevPowerMw ?? powerMw;
     const expectedMw = this.baseline.expectedPowerMw(ts, led1, led2);
+    const zStats = this.baseline.getZScoreStats(ts, led1, led2);
     const expected = expectedMw ?? (led1 || led2 ? 1600 : 800);
     const ratio = expected > 0 ? powerMw / expected : 1;
     const now = ts.getTime();
-    const hour = ts.getHours();
+    const hour = this.getHourInRoutineTimeZone(ts);
 
     const bumpStreak = (key: string, met: boolean): number => {
       const next = met ? (this.streakByCondition.get(key) ?? 0) + 1 : 0;
@@ -65,32 +172,34 @@ export class AiAdvisorService {
 
     if (led1Changed) {
       const delta = Math.abs(Math.round(powerMw - prevPower));
+      const costPerDay = ((delta / 1000 / 1000) * 24 * 3000).toLocaleString('vi-VN', { maximumFractionDigits: 0 });
       this.lastStateChangeAt = now;
       if (led1) {
         pushAdvice('led1-on', [
-          ` Đèn 1 vừa bật — điện tăng thêm ${W(delta)} W (đang dùng: ${W(powerMw)} W)`,
-          ` Phát hiện bật Đèn 1, công suất tăng khoảng ${W(delta)} W (hiện tại: ${W(powerMw)} W)`,
+          ` Đèn 1 vừa bật — làm tăng tải thêm ${W(delta)} W. Tương đương tốn khoảng ${costPerDay}đ mỗi ngày nếu giữ liên tục.`,
+          ` Phát hiện bật Đèn 1. Bật đèn hợp lý sẽ giúp tiết kiệm điện, đừng quên tắt khi không dùng nhé!`,
         ]);
       } else {
         pushAdvice('led1-off', [
-          ` Đèn 1 vừa tắt — điện giảm ${W(delta)} W (hiện tiêu thụ: ${W(powerMw)} W)`,
-          ` Đèn 1 đã tắt, công suất giảm khoảng ${W(delta)} W (còn: ${W(powerMw)} W)`,
+          ` Thật tuyệt! Đèn 1 vừa tắt, giúp bạn tiết kiệm được khoảng ${costPerDay}đ mỗi ngày.`,
+          ` Đèn 1 đã tắt. Hành động nhỏ tiết kiệm lớn, hệ thống cảm ơn bạn!`,
         ]);
       }
     }
 
     if (led2Changed) {
       const delta = Math.abs(Math.round(powerMw - prevPower));
+      const costPerDay = ((delta / 1000 / 1000) * 24 * 3000).toLocaleString('vi-VN', { maximumFractionDigits: 0 });
       this.lastStateChangeAt = now;
       if (led2) {
         pushAdvice('led2-on', [
-          ` Đèn 2 vừa bật — điện tăng thêm ${W(delta)} W (đang dùng: ${W(powerMw)} W)`,
-          ` Phát hiện bật Đèn 2, công suất tăng khoảng ${W(delta)} W (hiện tại: ${W(powerMw)} W)`,
+          ` Đèn 2 vừa bật — làm tăng tải thêm ${W(delta)} W. Sẽ tốn thêm tầm ${costPerDay}đ/ngày nếu không tắt.`,
+          ` Phát hiện bật Đèn 2. Nhớ tận dụng ánh sáng tự nhiên nếu được nhé!`,
         ]);
       } else {
         pushAdvice('led2-off', [
-          ` Đèn 2 vừa tắt — điện giảm ${W(delta)} W (hiện tiêu thụ: ${W(powerMw)} W)`,
-          ` Đèn 2 đã tắt, công suất giảm khoảng ${W(delta)} W (còn: ${W(powerMw)} W)`,
+          ` Quá chuẩn! Đêm qua hoặc nãy giờ bạn đã tắt Đèn 2, tiết kiệm thêm được ${costPerDay}đ.`,
+          ` Đèn 2 đã tắt, ngân sách tháng này lại rủng rỉnh thêm một chút rồi!`,
         ]);
       }
     }
@@ -106,47 +215,70 @@ export class AiAdvisorService {
       return advice;
     }
 
-    const hasBaseline = expectedMw !== null;
+    const hasBaseline = zStats !== null;
 
     if (!led1 && !led2) {
       const standbyCritical = hasBaseline
-        ? ratio >= 1.7
+        ? powerMw > zStats.mean + 3 * zStats.stdDev
         : powerMw >= 2200;
       const standbyElevated = hasBaseline
-        ? ratio >= 1.3
+        ? powerMw > zStats.mean + 2 * zStats.stdDev
         : powerMw >= 1600;
 
+      const extraMw = Math.max(0, powerMw - expected);
+      const wastedVnd = Math.round((extraMw / 1000 / 1000) * 24 * 30 * 3000).toLocaleString('vi-VN');
+
       if (shouldFire('standby-critical', standbyCritical, 2)) {
-        const pct = Math.round((ratio - 1) * 100);
         pushAdvice('standby-critical', [
-          `️ Điện nền đang cao bất thường (${W(powerMw)} W, cao hơn ~${pct}% so với mức thường ${W(expected)} W) — nên kiểm tra thiết bị chạy ngầm`,
-          `️ Cảnh báo tải nền: dù tắt đèn, hệ thống vẫn tiêu thụ ${W(powerMw)} W (mức thường ~${W(expected)} W)`,
+          `️ ⚠️ Tải nền đang cao bất thường! Ước tính hóa đơn sẽ ĐỘI THÊM ${wastedVnd}đ tháng này nếu bạn không kiểm tra ngay các thiết bị chạy ngầm!`,
+          `️ ⚠️ Z-Score Cảnh báo: Tải nền rò rỉ rất đắt đỏ. Bạn sẽ lãng phí ${wastedVnd}VNĐ vào cuối tháng nếu giữ mức tải này khi đã tắt đèn.`,
         ]);
       } else if (shouldFire('standby-elevated', standbyElevated, 3)) {
         pushAdvice('standby-elevated', [
-          ` Điện nền hơi cao (${W(powerMw)} W so với ~${W(expected)} W) — có thể còn thiết bị chờ`,
-          ` Quan sát tải nền: hiện ${W(powerMw)} W, cao hơn mức thường khi tắt đèn`,
+          ` Điện nền dao động làm tốn kém thêm ${wastedVnd}đ/tháng. Nên rút phích cắm đồ điện khi không xài.`,
+          ` Hệ thống thấy bạn đang tốn thêm chút tiền cho tải nền. Hãy xem có củ sạc hay máy bơm nào quên tắt không nhé.`,
         ]);
       }
+
+      // ===== PREDICTIVE ACTIONS (DỰ ĐOÁN HÀNH VI THỰC TẾ) ======
+      // Sử dụng giờ đã học (Learned Routine) từ cơ sở dữ liệu thay vì Hardcode!
+      const minute = ts.getMinutes();
+      
+      // Dự đoán Tối
+      if (hour === this.predictedEveningHour && minute >= 0 && minute <= 30) {
+        pushAdvice('predictive-evening-lights', [
+          ` Gợi ý thông minh: AI phân tích dữ liệu 30 ngày qua thấy bạn hay dùng điện lúc ${this.predictedEveningHour}h. Sắp tối rồi, bạn có muốn tôi bật chiếu sáng sớm giúp không? 🌙`,
+          ` AI Tiên Đoán: Ánh sáng ngoài trời sắp giảm. Bạn có muốn kích hoạt kịch bản "Bình Minh Tối" như thói quen ${this.predictedEveningHour}h mọi ngày không?`,
+        ]);
+      }
+      
+      // Dự đoán Sáng
+      if (hour === this.predictedMorningHour && minute >= 0 && minute <= 30) {
+        pushAdvice('predictive-morning-lights', [
+          ` Gợi ý thông minh: AI phân tích thói quen sáng quanh mức ${this.predictedMorningHour}h của bạn! Bạn có muốn ngắt điện các thiết bị ban đêm không? ☀️`
+        ]);
+      }
+
     } else {
       const loadVeryHigh = hasBaseline
-        ? ratio >= 1.8
+        ? powerMw > zStats.mean + 3 * zStats.stdDev
         : powerMw >= 4500;
       const loadHigh = hasBaseline
-        ? ratio >= 1.4
+        ? powerMw > zStats.mean + 2 * zStats.stdDev
         : powerMw >= 3500;
 
+      const extraMw = Math.max(0, Math.abs(powerMw - expected));
+      const wastedVnd = Math.round((extraMw / 1000 / 1000) * 3000).toLocaleString('vi-VN');
+
       if (shouldFire('load-very-high', loadVeryHigh, 2)) {
-        const pct = Math.round((ratio - 1) * 100);
         pushAdvice('load-very-high', [
-          `️ Công suất đang vượt mức thường ${pct}% (${W(powerMw)} W so với ~${W(expected)} W) — ưu tiên kiểm tra thiết bị công suất lớn`,
-          `️ Hệ thống đang ở mức tiêu thụ cao (${W(powerMw)} W), vượt xa baseline theo trạng thái đèn hiện tại`,
+          `️ ⚠️ Cảnh báo tiền điện! Thiết bị công suất khủng đang đốt của bạn khoảng ${wastedVnd}đ MỖI GIỜ. Hãy tắt ngay bình nóng lạnh hoặc thiết bị nặng nếu không dùng!`,
+          `️ ⚠️ Bất thường Cấp độ 3 (Z-Score): Tải đỉnh báo động đỏ. Bạn đang đốt tiền điện rất nhanh (${wastedVnd}đ/giờ). Ưu tiên giảm công suất lập tức!`,
         ]);
       } else if (shouldFire('load-high', loadHigh, 3)) {
-        const pct = Math.round((ratio - 1) * 100);
         pushAdvice('load-high', [
-          ` Điện đang cao hơn baseline khoảng ${pct}% (${W(powerMw)} W / ~${W(expected)} W)`,
-          ` Tải điện cao hơn bình thường (${W(powerMw)} W), cân nhắc tắt thiết bị chưa cần`,
+          ` Đang có thiết bị tiêu thụ khá mạnh, tốn khoảng ${wastedVnd}đ/giờ. Chú ý chi phí nhé!`,
+          ` Cảnh báo chi phí: Công suất đang vọt lên, hệ thống ghi nhận bạn đang xài lố so với thói quen hằng ngày.`,
         ]);
       }
 
