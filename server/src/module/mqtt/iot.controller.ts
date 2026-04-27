@@ -147,6 +147,7 @@ export class IotController {
     }
   }
 
+  /*
   @UseGuards(JwtAuthGuard)
   @Post('control/servo')
   async controlServo(@Body() dto: { angle: number }) {
@@ -157,6 +158,7 @@ export class IotController {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+  */
 
   @UseGuards(JwtAuthGuard)
   @Post('device/add')

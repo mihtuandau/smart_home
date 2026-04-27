@@ -78,6 +78,7 @@ export interface RainForecastReport {
   };
   forecast_span_hours: number;
   aligned_records: number;
+  prediction_source: 'LSTM Model' | 'Heuristic Algorithm';
   bias_summary: BiasSummary;
   adjusted_hourly: AdjustedForecastItem[];
 }
@@ -106,6 +107,7 @@ export class RainForecastOptimizerService {
   private readonly cacheDir: string;
   private readonly cacheFile: string;
   private readonly mqttCacheFile: string;
+  private readonly pythonAiResultsFile: string;
 
   // Sensorhistory buffer
   private sensorHistory: NormalizedSensorRecord[] = [];
@@ -121,6 +123,17 @@ export class RainForecastOptimizerService {
     this.cacheDir = process.env.CACHE_DIR || './cache';
     this.cacheFile = path.join(this.cacheDir, 'forecast_cache.json');
     this.mqttCacheFile = path.join(this.cacheDir, 'mqtt_sensor_cache.json');
+
+    // AI Python Integration
+    const pythonDir = process.env.AI_PYTHON_DIR || '../AI_DuBaoTT';
+    const pythonResultsFile =
+      process.env.AI_PYTHON_RESULTS_FILE || 'results/current_forecast.json';
+    this.pythonAiResultsFile = path.resolve(
+      process.cwd(),
+      pythonDir,
+      pythonResultsFile,
+    );
+
     this.ensureCacheDir();
   }
 
@@ -572,11 +585,43 @@ export class RainForecastOptimizerService {
       location: { lat, lon },
       forecast_span_hours: hourly.length,
       aligned_records: adjusted.length,
+      prediction_source: 'Heuristic Algorithm',
       bias_summary: this.summarizeBias(aligned),
       adjusted_hourly: adjusted,
     };
 
+    // Integration: Try to override the current hour with the Python AI result
+    const pythonAiProb = await this.getPythonAiPrediction();
+    if (pythonAiProb !== null && report.adjusted_hourly.length > 0) {
+      this.logger.debug(
+        `Overriding heuristic prob (${Math.round(report.adjusted_hourly[0].adjusted_pop * 100)}%) with Python AI LSTM prob (${Math.round(pythonAiProb * 100)}%)`,
+      );
+      report.adjusted_hourly[0].adjusted_pop = pythonAiProb;
+      report.prediction_source = 'LSTM Model';
+    }
+
     return report;
+  }
+
+  /**
+   * Đọc kết quả từ mô hình AI LSTM (Python)
+   */
+  private async getPythonAiPrediction(): Promise<number | null> {
+    try {
+      const data = await fs.readFile(this.pythonAiResultsFile, 'utf-8');
+      const forecast = JSON.parse(data);
+
+      if (
+        forecast.status === 'predicted' &&
+        forecast.prediction &&
+        typeof forecast.prediction.next_hour_rain_probability === 'number'
+      ) {
+        return forecast.prediction.next_hour_rain_probability;
+      }
+    } catch (error) {
+      this.logger.warn(`Could not read Python AI results: ${error.message}`);
+    }
+    return null;
   }
 
   /**

@@ -416,10 +416,6 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     await this.commandService.controlBothLeds(led1State, led2State);
   }
 
-  async controlServo(angle: number): Promise<void> {
-    await this.commandService.controlServo(angle);
-  }
-
   async addIoTDevice(name: string, powerConsumption: number): Promise<void> {
     await this.commandService.addIoTDevice(name, powerConsumption);
   }

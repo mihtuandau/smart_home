@@ -76,14 +76,4 @@ export class SettingsController {
       data: settings,
     };
   }
-
-  @Post('toggle/rain-protection')
-  async toggleRainProtection() {
-    const settings = await this.settingsService.toggleRainProtection();
-    return {
-      success: true,
-      message: `Rain protection ${settings.autoRainProtection ? 'enabled' : 'disabled'}`,
-      data: settings,
-    };
-  }
 }

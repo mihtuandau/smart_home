@@ -3,7 +3,7 @@
 import React from "react";
 import { useRainForecast } from "@/hooks/rain";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Cloud, Droplets, TrendingDown, AlertCircle } from "lucide-react";
+import { Cloud, Droplets, TrendingDown, AlertCircle, Cpu } from "lucide-react";
 
 function getProbabilityLabel(
   probability: number,
@@ -159,7 +159,13 @@ export default function RainForecastCard({ lat, lon }: RainForecastCardProps) {
         <div className="flex justify-center gap-2 mb-2">
           <span className="text-4xl">{emoji}</span>
         </div>
-        <p className="text-sm font-semibold text-muted-foreground m-5">
+
+        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider mb-2">
+          <Cpu className="w-3 h-3" />
+          {report.prediction_source === 'LSTM Model' ? 'LSTM AI Model' : 'Heuristic Engine'}
+        </div>
+
+        <p className="text-sm font-semibold text-muted-foreground mb-1">
           {t("dashboard.current_rain_probability")}
         </p>
         <div className="flex items-baseline justify-center gap-3 mb-3">

@@ -28,8 +28,11 @@ export class AiLedStatsService implements OnModuleInit {
   async onModuleInit() {
     // Load today's persisted data if exists
     try {
-      const persisted = await this.prisma.aiLearningData.findUnique({
-        where: { date: this.currentDay },
+      const persisted = await this.prisma.aiLearningData.findFirst({
+        where: { 
+          date: this.currentDay,
+          feature: 'daily_stats'
+        },
       });
       if (persisted) {
         this.today = {
@@ -88,22 +91,37 @@ export class AiLedStatsService implements OnModuleInit {
 
   private async syncToDb() {
     try {
-      await this.prisma.aiLearningData.upsert({
-        where: { date: this.today.date },
-        create: {
+      const existing = await this.prisma.aiLearningData.findFirst({
+        where: {
           date: this.today.date,
-          led1_wh: this.today.led1_wh,
-          led2_wh: this.today.led2_wh,
-          led1_on_minutes: this.today.led1_on_minutes,
-          led2_on_minutes: this.today.led2_on_minutes,
-        },
-        update: {
-          led1_wh: this.today.led1_wh,
-          led2_wh: this.today.led2_wh,
-          led1_on_minutes: this.today.led1_on_minutes,
-          led2_on_minutes: this.today.led2_on_minutes,
+          feature: 'daily_stats',
         },
       });
+
+      if (existing) {
+        await this.prisma.aiLearningData.update({
+          where: { id: existing.id },
+          data: {
+            led1_wh: this.today.led1_wh,
+            led2_wh: this.today.led2_wh,
+            led1_on_minutes: this.today.led1_on_minutes,
+            led2_on_minutes: this.today.led2_on_minutes,
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Refresh expiry
+          },
+        });
+      } else {
+        await this.prisma.aiLearningData.create({
+          data: {
+            date: this.today.date,
+            feature: 'daily_stats',
+            led1_wh: this.today.led1_wh,
+            led2_wh: this.today.led2_wh,
+            led1_on_minutes: this.today.led1_on_minutes,
+            led2_on_minutes: this.today.led2_on_minutes,
+            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Keep for 30 days
+          },
+        });
+      }
     } catch (e) {
       // Only log errors occasionally to avoid spamming
       this.logger.error(`Failed to sync LED stats for ${this.today.date}`, e);
@@ -117,7 +135,7 @@ export class AiLedStatsService implements OnModuleInit {
   async getHistory(days = 7): Promise<LedDayEntry[]> {
     try {
       const records = await this.prisma.aiLearningData.findMany({
-        where: {},
+        where: { feature: 'daily_stats' }, // Filter correctly!
         orderBy: { date: 'desc' },
         take: days,
       });
@@ -141,7 +159,7 @@ export class AiLedStatsService implements OnModuleInit {
         history[idx] = { ...this.today };
       }
 
-      return history.sort((a, b) => a.date.localeCompare(b.date));
+      return history.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
     } catch (e) {
       this.logger.error('Failed to fetch LED history', e);
       return [{ ...this.today }];

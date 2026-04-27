@@ -20,14 +20,6 @@ export type NotificationFrequency =
 
 export class UpdateSystemSettingsDto {
   @IsOptional()
-  @IsBoolean()
-  autoRainProtection?: boolean;
-
-  @IsOptional()
-  @IsNumber()
-  rainHumidityThreshold?: number;
-
-  @IsOptional()
   @IsNumber()
   energyPriceKwh?: number;
 

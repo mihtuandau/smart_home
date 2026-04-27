@@ -78,20 +78,11 @@ export class SettingsService {
     return this.prisma.systemSettings.update({
       where: { id: this.DEFAULT_SETTINGS_ID },
       data: {
-        autoRainProtection: true,
-        rainHumidityThreshold: 80,
         energyPriceKwh: 2500,
         powerAlertThreshold: 2000,
         aiAdvisorEnabled: true,
         updatedAt: new Date(),
       },
-    });
-  }
-
-  async toggleRainProtection() {
-    const settings = await this.getSettings();
-    return this.updateSettings({
-      autoRainProtection: !settings.autoRainProtection,
     });
   }
 }

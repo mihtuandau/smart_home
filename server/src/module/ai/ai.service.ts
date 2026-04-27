@@ -34,7 +34,7 @@ export class AiService {
     const now = new Date();
     const powerMw = data.power_mW;
 
-    // Cập nhật dữ liệu cảm biến cho rain forecast optimizer
+    // Cập nhật dữ liệu cảm biến cho rain forecast optimizer (chỉ để dự báo, không tự động hóa)
     try {
       await this.rainForecast.addSensorReading(data);
     } catch (err) {
@@ -111,6 +111,34 @@ export class AiService {
     if (advice.length) advice.forEach((a) => this.logger.log(a));
 
     const isAlert = advice.length > 0 || !!anomaly;
+    
+    // Lưu snapshot định kỳ hoặc khi có bất thường để tránh bloat DB
+    if (anomaly || this.messageCount % 100 === 1) {
+      try {
+        await this.prisma.aiLearningData.create({
+          data: {
+            date: new Date().toISOString().split('T')[0],
+            feature: anomaly ? 'anomaly_detection' : 'energy_monitoring',
+            inputData: {
+              power_mW: data.power_mW,
+              current_mA: data.current_mA,
+              voltage: data.voltage,
+              led1: data.led1,
+              led2: data.led2,
+            },
+            outputData: { analysis, anomaly, summary, advice },
+            accuracy: null,
+            // Snapshot thông thường hết hạn sau 1 ngày, Anomaly giữ lại 7 ngày
+            expiresAt: anomaly 
+              ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+              : new Date(Date.now() + 24 * 60 * 60 * 1000),
+          },
+        });
+      } catch (err) {
+        this.logger.warn(`Failed to save AI learning data: ${err.message}`);
+      }
+    }
+
     this.aiEventsGateway.emitAiAdvice({
       time: now.toISOString(),
       advice,

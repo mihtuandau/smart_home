@@ -63,17 +63,23 @@ export class MaintenanceService implements OnModuleInit {
       Date.now() - RAW_RETENTION_DAYS * 24 * 60 * 60 * 1000,
     );
 
-    const [sensorResult, powerResult] = await Promise.all([
+    const [sensorResult, powerResult, aiResult] = await Promise.all([
       this.prisma.sensorData.deleteMany({
         where: { timestamp: { lt: cutoffDate } },
       }),
       this.prisma.powerData.deleteMany({
         where: { timestamp: { lt: cutoffDate } },
       }),
+      this.prisma.aiLearningData.deleteMany({
+        where: { 
+          expiresAt: { lt: new Date() },
+          feature: { not: 'daily_stats' } // Keep daily stats for history
+        },
+      }),
     ]);
 
     this.logger.log(
-      `Cleanup data older than ${RAW_RETENTION_DAYS} days: sensor=${sensorResult.count}, power=${powerResult.count}`,
+      `Cleanup complete: sensor=${sensorResult.count}, power=${powerResult.count}, ai=${aiResult.count}`,
     );
   }
 

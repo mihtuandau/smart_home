@@ -32,8 +32,6 @@ async function main() {
     update: {},
     create: {
       id: 'default',
-      autoRainProtection: true,
-      rainHumidityThreshold: 80,
     },
   });
 
