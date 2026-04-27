@@ -17,6 +17,23 @@ enum UserRole {
 enum DeviceStatus {
   ON
   OFF
+  AUTO
+}
+
+enum DeviceType {
+  LED
+  FAN
+  AC
+  PUMP
+  OTHER
+  TOUCH
+  SERVO
+}
+
+enum PowerSource {
+  SOLAR
+  GRID
+  BATTERY
 }
 
 // User management
@@ -61,18 +78,25 @@ model UserNotificationSettings {
   @@map("user_notification_settings")
 }
 
-// Simplified Device management
+// Device management
 model Device {
   id               String       @id @default(cuid())
   name             String
+  type             DeviceType   @default(LED)
   pin              Int          // GPIO pin on ESP32
   status           DeviceStatus @default(OFF)
-  powerConsumption Float        @default(0) // Watts (entered by user)
+  value            Int          @default(0) // Brightness or state 0-100
+  powerConsumption Float        @default(0) // Watts
   manualMode       Boolean      @default(true)
   lastActive       DateTime?
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Sub-device metadata
+  led   Led?
+  servo Servo?
+  touch Touch?
 
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -82,17 +106,51 @@ model Device {
   @@map("devices")
 }
 
-// Sensor data (Simplified)
+model Led {
+  id            String @id @default(cuid())
+  deviceId      String @unique
+  device        Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  
+  color         String @default("#FFFFFF")
+  brightness    Int    @default(100)
+  minBrightness Int    @default(0)
+  maxBrightness Int    @default(100)
+
+  @@map("device_led_meta")
+}
+
+model Servo {
+  id       String @id @default(cuid())
+  deviceId String @unique
+  device   Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  
+  angle    Int    @default(0)
+  minAngle Int    @default(0)
+  maxAngle Int    @default(180)
+
+  @@map("device_servo_meta")
+}
+
+model Touch {
+  id        String @id @default(cuid())
+  deviceId  String @unique
+  device    Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  
+  sensitivity Int @default(50)
+
+  @@map("device_touch_meta")
+}
+
+// Sensor data
 model SensorData {
   id String @id @default(cuid())
 
-  // AHT20 + BMP280
   temperature Float // Celsius
   humidity    Float // Percentage
   pressure    Float // hPa
-
-  // Rain sensor (LM393)
-  isRaining Boolean
+  lightLevel  Float @default(0)
+  isDark      Boolean @default(false)
+  isRaining   Boolean
 
   timestamp DateTime @default(now())
   expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'"))
@@ -102,7 +160,7 @@ model SensorData {
   @@map("sensor_data")
 }
 
-// Sensor aggregates (5-minute buckets)
+// Sensor aggregates
 model SensorAgg {
   id String @id @default(cuid())
 
@@ -121,6 +179,11 @@ model SensorAgg {
   pressureMin Float
   pressureMax Float
 
+  lightLevelAvg Float @default(0)
+  lightLevelMin Float @default(0)
+  lightLevelMax Float @default(0)
+  darkCount     Int @default(0)
+
   rainCount Int @default(0)
   samples   Int
 
@@ -129,13 +192,16 @@ model SensorAgg {
   @@map("sensor_aggs")
 }
 
-// Power monitoring (INA219 DC) - Fixed Units
+// Power monitoring
 model PowerData {
   id String @id @default(cuid())
 
-  voltage Float // Volts
-  current Float // mA (as sent by INA219)
-  power   Float // mW (as sent by INA219)
+  voltage      Float // Volts
+  current      Float // mA
+  power        Float // mW
+  energy       Float @default(0) // Wh
+  batteryLevel Float? // % (Optional to allow null)
+  source       PowerSource @default(GRID)
 
   timestamp DateTime @default(now())
   expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'"))
@@ -145,7 +211,7 @@ model PowerData {
   @@map("power_data")
 }
 
-// Power aggregates (5-minute buckets)
+// Power aggregates
 model PowerAgg {
   id String @id @default(cuid())
 
@@ -163,6 +229,8 @@ model PowerAgg {
   powerAvg Float // mW
   powerMin Float // mW
   powerMax Float // mW
+  
+  energySum Float @default(0)
 
   samples Int
 
@@ -193,31 +261,66 @@ model ActivityLog {
   @@map("activity_logs")
 }
 
-// Simplified System Settings
+// System Settings
 model SystemSettings {
   id String @id @default(cuid())
 
-  // Rain protection (The only automation currently supported by ESP32 logic)
   autoRainProtection    Boolean @default(true)
   rainHumidityThreshold Float   @default(80)
+  autoLightEnabled      Boolean @default(true)
+  lightOnTime           String  @default("18:00")
+  lightOffTime          String  @default("06:00")
+  lightThreshold        Float   @default(30)
+  powerSaveMode         Boolean @default(false)
+
+  // Energy & AI Settings
+  energyPriceKwh      Float   @default(2500)
+  powerAlertThreshold Float   @default(2000)
+  maxPowerConsumption Float   @default(2000) 
+  aiAdvisorEnabled    Boolean @default(true)
+  aiLearningEnabled   Boolean @default(true)
+  predictionHorizon   Int     @default(24)
 
   updatedAt DateTime @updatedAt
 
   @@map("system_settings")
 }
 
-// Persist daily LED consumption and routine patterns
+// AI Learning & Statistics
 model AiLearningData {
-  id    String @id @default(cuid())
-  date  String @unique // Format: YYYY-MM-DD
+  id      String @id @default(cuid())
+  date    String? // Made optional to fix build errors
+  feature String @default("daily_stats")
   
+  // Storage for various AI outputs
   led1_wh         Float @default(0)
   led2_wh         Float @default(0)
   led1_on_minutes Float @default(0)
   led2_on_minutes Float @default(0)
+  
+  accuracy        Float?
+  inputData       Json?
+  outputData      Json?
+  timestamp       DateTime @default(now())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([date, feature])
+  @@index([feature, timestamp])
   @@map("ai_learning_data")
+}
+
+model SolarData {
+  id String @id @default(cuid())
+
+  voltage Float
+  current Float
+  power   Float
+
+  timestamp DateTime @default(now())
+  expiresAt DateTime @default(dbgenerated("NOW() + INTERVAL '30 days'"))
+
+  @@index([timestamp])
+  @@map("solar_data")
 }
