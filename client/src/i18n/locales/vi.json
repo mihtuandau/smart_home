@@ -270,7 +270,7 @@
     "forecast_pressure": "Dự đoán áp suất",
     "forecast_pop": "Dự đoán xác suất mưa",
     "current_rain_probability": "Xác suất mưa hiện tại",
-    "sensor_vs_forecast": "Cảm biến vs Dự báo",
+    "sensor_vs_forecast": "Thông số từ mô hình",
     "adjusted_pop": "Hiệu chỉnh",
     "temperature": "Nhiệt độ",
     "humidity": "Độ ẩm",
@@ -299,7 +299,8 @@
     "temperature_label": "°C Nhiệt độ",
     "humidity_label": "💧 Độ ẩm",
     "pressure_label": "⚖️ Áp suất",
-    "local_readings_checked": "đọc số cảm biến được kiểm tra"
+    "local_readings_checked": "đọc số cảm biến được kiểm tra",
+    "energyTitle": "Năng lượng"
   },
   "settings": {
     "title": "Cài đặt",

@@ -16,11 +16,10 @@ const dateLocaleMap = {
 } as const;
 
 function powerLevel(mw: number): 'idle' | 'normal' | 'medium' | 'high' {
-  if (mw < 300)  return 'idle';
-  if (mw < 1500) return 'normal';
-  if (mw < 2800) return 'normal';
-  if (mw < 4000) return 'medium';
-  return 'high';
+  if (mw < 20000)   return 'idle';    // < 20W: Standby
+  if (mw < 500000)  return 'normal';  // < 500W: Normal (Lights, Fans)
+  if (mw < 1800000) return 'medium';  // < 1800W: Elevated (AC or Heavy device)
+  return 'high';                      // > 1800W: High (Multiple heavy devices)
 }
 
 function parseMwFromText(text: string): number | null {
@@ -50,7 +49,8 @@ function levelLabel(level: ReturnType<typeof powerLevel>, t: (key: string) => st
   return t('ai.high');
 }
 function barPct(powerMw: number) {
-  return Math.min(Math.round((powerMw / 6000) * 100), 100);
+  // Scale based on 3000W (3,000,000 mW)
+  return Math.min(Math.round((powerMw / 3000000) * 100), 100);
 }
 
 function analysisBg(text: string) {
@@ -125,10 +125,10 @@ function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean
         />
       </div>
       <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-        <span>0</span>
-        <span>1000 mW</span>
-        <span>3000 mW</span>
-        <span>6000+ mW</span>
+        <span>0W</span>
+        <span>500 W</span>
+        <span>1500 W</span>
+        <span>3000 W+</span>
       </div>
     </div>
   );

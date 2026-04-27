@@ -253,19 +253,25 @@ export class NotificationEmailService {
 
     return notificationRows
       .filter((row) => {
+        const userEmail = userEmailMap.get(row.userId);
+        if (!userEmail) return false;
+
         if (row.emailFrequency !== 'real-time') {
+          this.logger.debug(`User ${userEmail} skipped: frequency is ${row.emailFrequency}`);
           return false;
         }
 
         if (this.isInsideQuietHours(row.quietHoursFrom, row.quietHoursTo, now)) {
+          this.logger.debug(`User ${userEmail} skipped: inside quiet hours`);
           return false;
         }
 
         if (this.isInCooldown(row.userId, alertType, nowMs)) {
+          this.logger.warn(`User ${userEmail} skipped: alert '${alertType}' is in cooldown`);
           return false;
         }
 
-        return Boolean(userEmailMap.get(row.userId));
+        return true;
       })
       .map((row) => ({
         userId: row.userId,
@@ -372,6 +378,8 @@ export class NotificationEmailService {
       text,
       html,
     );
+
+    this.logger.log(`Energy threshold alert process finished. Recipients: ${recipients.length}, Sent: ${sent}`);
 
     return {
       sent,

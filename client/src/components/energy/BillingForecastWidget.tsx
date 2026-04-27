@@ -17,7 +17,6 @@ interface BillingForecast {
 }
 
 export default function BillingForecastWidget() {
-  const [unitPrice, setUnitPrice] = useState<string>('3000');
   const { t, language } = useLanguage();
 
   // Conversion rates
@@ -69,14 +68,14 @@ export default function BillingForecastWidget() {
 
   const locale = getLocale();
 
-  const fetchForecast = async (price: string) => {
-    const res = await apiClient.request<BillingForecast>(`/ai/forecast?price=${price}`);
+  const fetchForecast = async () => {
+    const res = await apiClient.request<BillingForecast>(`/ai/forecast`);
     return res;
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ['billing-forecast', unitPrice],
-    queryFn: () => fetchForecast(unitPrice),
+    queryKey: ['billing-forecast'],
+    queryFn: fetchForecast,
     refetchInterval: 60000,
   });
 
@@ -90,19 +89,6 @@ export default function BillingForecastWidget() {
           <div>
             <h3 className="font-semibold text-base">{t('energy.billingForecast')}</h3>
             <p className="text-xs text-muted-foreground">{t('energy.billingDescription')}</p>
-          </div>
-        </div>
-        
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground whitespace-nowrap">{t('energy.unitPrice')}:</span>
-          <div className="relative">
-            <input 
-              type="number" 
-              value={unitPrice} 
-              onChange={(e) => setUnitPrice(e.target.value)}
-              className="w-24 px-3 py-1.5 border border-border rounded-md text-sm outline-none focus:ring-1 focus:ring-indigo-500 bg-background"
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{t('energy.currency')}</span>
           </div>
         </div>
       </div>

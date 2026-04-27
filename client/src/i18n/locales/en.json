@@ -270,7 +270,7 @@
     "forecast_pressure": "Forecast Pressure",
     "forecast_pop": "Forecast Probability",
     "current_rain_probability": "Current rain probability",
-    "sensor_vs_forecast": "Sensors vs Forecast",
+    "sensor_vs_forecast": "Hardware Sensor Data",
     "adjusted_pop": "Adjusted",
     "temperature": "Temperature",
     "humidity": "Humidity",

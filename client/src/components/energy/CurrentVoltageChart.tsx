@@ -47,9 +47,16 @@ export default function CurrentVoltageChart({ timeRange = 24 }: CurrentVoltageCh
     const slotsMap = new Map<string, { timestamp: string; data: EnergyPoint[] }>();
     const now = new Date();
     
-    for (let i = timeRange - 1; i >= 0; i--) {
-      const slotTime = new Date(now.getTime() - i * 60 * 60 * 1000);
-      slotTime.setMinutes(0, 0, 0);
+    const intervalMs = timeRange <= 24 ? 5 * 60 * 1000 : 60 * 60 * 1000;
+    const numSlots = Math.floor((timeRange * 60 * 60 * 1000) / intervalMs);
+
+    for (let i = numSlots - 1; i >= 0; i--) {
+      const slotTime = new Date(now.getTime() - i * intervalMs);
+      if (timeRange <= 24) {
+        slotTime.setMinutes(Math.floor(slotTime.getMinutes() / 5) * 5, 0, 0);
+      } else {
+        slotTime.setMinutes(0, 0, 0);
+      }
       const key = slotTime.getTime().toString();
       slotsMap.set(key, { timestamp: slotTime.toISOString(), data: [] });
     }
@@ -58,7 +65,12 @@ export default function CurrentVoltageChart({ timeRange = 24 }: CurrentVoltageCh
       if (!item.timestamp) return;
       const itemDate = new Date(item.timestamp);
       if (isNaN(itemDate.getTime())) return;
-      itemDate.setMinutes(0, 0, 0);
+      
+      if (timeRange <= 24) {
+        itemDate.setMinutes(Math.floor(itemDate.getMinutes() / 5) * 5, 0, 0);
+      } else {
+        itemDate.setMinutes(0, 0, 0);
+      }
       const key = itemDate.getTime().toString();
       const slot = slotsMap.get(key);
       if (slot) slot.data.push(item);

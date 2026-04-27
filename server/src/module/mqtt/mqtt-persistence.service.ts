@@ -59,4 +59,10 @@ export class MqttPersistenceService {
       this.logger.error(`Failed to log activity: ${error.message}`);
     }
   }
+
+  async getSystemSettings() {
+    return this.prisma.systemSettings.findUnique({
+      where: { id: 'default' },
+    });
+  }
 }

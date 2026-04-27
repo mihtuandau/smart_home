@@ -1,6 +1,6 @@
 "use client";
 
-import { useEnergyStats, useEnergySummary } from "@/hooks/energy";
+import { useEnergyStats, useEnergySummary, useLatestEnergy } from "@/hooks/energy";
 import {
   Activity,
   ChartNoAxesColumn,
@@ -84,18 +84,19 @@ function EnergyStatCard({
 
 export default function EnergyStatsGrid({ mode = "24h" }: EnergyStatsGridProps) {
   const { t } = useLanguage();
+  const { data: latestRes, isLoading: latestLoading } = useLatestEnergy(5000);
   const { data: statsData, isLoading: statsLoading } = useEnergyStats(24);
   const { data: summaryData, isLoading: summaryLoading } = useEnergySummary();
 
   const energyData = ((statsData as EnergyResponse | undefined)?.data || []) as EnergyPoint[];
-  const latestData = energyData[energyData.length - 1] || {};
+  const latestData = (latestRes as any)?.data || {};
   
   const summary = (summaryData as any)?.data || { todayWh: 0, monthWh: 0 };
   
   // Calculate 24h total from the points list
   const total24hWh = energyData.reduce((sum, item) => sum + (item.energy || 0), 0);
 
-  const isLoading = statsLoading || summaryLoading;
+  const isLoading = latestLoading || statsLoading || summaryLoading;
 
   const stats = [
     {

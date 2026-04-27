@@ -34,7 +34,16 @@ export class AiController {
   @Get('forecast')
   @ApiOperation({ summary: 'Dự báo kWh và chi phí tháng hiện tại' })
   async getForecast(@Query('price') price?: string) {
-    const priceVnd = price ? parseFloat(price) : undefined;
+    let priceVnd = price ? parseFloat(price) : undefined;
+
+    // If no price provided, fetch from system settings
+    if (!priceVnd) {
+      const settings = await this.prisma.systemSettings.findUnique({
+        where: { id: 'default' },
+      });
+      priceVnd = settings?.energyPriceKwh ?? 2500;
+    }
+
     const result = await this.billing.projectMonthly(new Date(), priceVnd);
     return {
       ...result,

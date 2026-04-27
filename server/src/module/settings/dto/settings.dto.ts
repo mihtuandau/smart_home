@@ -26,6 +26,18 @@ export class UpdateSystemSettingsDto {
   @IsOptional()
   @IsNumber()
   rainHumidityThreshold?: number;
+
+  @IsOptional()
+  @IsNumber()
+  energyPriceKwh?: number;
+
+  @IsOptional()
+  @IsNumber()
+  powerAlertThreshold?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  aiAdvisorEnabled?: boolean;
 }
 
 export class UpdateNotificationSettingsDto {

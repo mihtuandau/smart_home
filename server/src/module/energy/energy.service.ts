@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 
 const RAW_RETENTION_DAYS = Number(process.env.RAW_RETENTION_DAYS || 7);
@@ -6,8 +6,17 @@ const RAW_RETENTION_HOURS = RAW_RETENTION_DAYS * 24;
 type EnergyMode = 'auto' | 'raw' | 'avg';
 
 @Injectable()
-export class EnergyService {
+export class EnergyService implements OnModuleInit {
   constructor(private prisma: PrismaService) {}
+
+  async onModuleInit() {
+    // Check if we have any power data. If not, seed some initial data for a better UI experience.
+    const count = await this.prisma.powerData.count();
+    if (count === 0) {
+      console.log('No energy data found. Seeding initial test data...');
+      await this.seedTestPowerData();
+    }
+  }
 
   async getEnergyStats(hours: number = 24, mode: EnergyMode = 'auto') {
     const allData = await this.fetchAllEnergyData(hours, mode);

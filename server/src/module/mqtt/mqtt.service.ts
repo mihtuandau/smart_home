@@ -59,8 +59,10 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       return;
     }
 
-    // Default threshold since SystemSettings no longer has maxPowerConsumption
-    const triggerThreshold = 100 + this.energyAlertDeltaW; 
+    // Fetch system settings for dynamic threshold
+    const settings = await this.persistenceService.getSystemSettings();
+    const threshold = settings?.powerAlertThreshold ?? 2000;
+    const triggerThreshold = threshold + this.energyAlertDeltaW; 
 
     if (currentPowerW <= triggerThreshold) {
       return;
@@ -84,9 +86,6 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     const temp = Number(raw.temp ?? raw.temperature ?? 0);
     const humi = Number(raw.humi ?? raw.humidity ?? 0);
     const pres = Number(raw.pres ?? raw.pressure ?? 0);
-    const volt = Number(raw.voltage ?? 0);
-    const current_mA = Number(raw.current ?? raw.current_mA ?? 0);
-    const power_mW = Number(raw.power ?? raw.power_mW ?? 0);
     const rain = Boolean(raw.rain ?? raw.isRaining ?? false);
 
     // Handle device1/device2 if they are objects
@@ -95,16 +94,54 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     const device2State = typeof raw.device2 === 'object' && raw.device2 !== null && 'state' in raw.device2 
       ? (raw.device2 as any).state : raw.device2;
 
+    const toBool = (val: any) => {
+      if (typeof val === 'boolean') return val;
+      if (typeof val === 'number') return val > 0;
+      if (typeof val === 'string') {
+        const lower = val.toLowerCase();
+        return lower === 'true' || lower === '1' || lower === 'on';
+      }
+      return false;
+    };
+
+    const led1 = toBool(raw.led1);
+    const led2 = toBool(raw.led2);
+    const d1 = toBool(device1State);
+    const d2 = toBool(device2State);
+
+    // --- REALISTIC POWER SIMULATION (220V) ---
+    // Instead of using the raw low-power values from the model,
+    // we simulate realistic household appliance power for the Web/AI.
+    const POWER_RATINGS = {
+      led1: 15,    // 15W bulb
+      led2: 25,    // 25W bulb
+      device1: 1500, // 1500W Air Conditioner
+      device2: 80,   // 80W Fan
+    };
+
+    let simulatedPowerW = 0;
+    if (led1) simulatedPowerW += POWER_RATINGS.led1;
+    if (led2) simulatedPowerW += POWER_RATINGS.led2;
+    if (d1) simulatedPowerW += POWER_RATINGS.device1;
+    if (d2) simulatedPowerW += POWER_RATINGS.device2;
+
+    // Add a bit of random noise (98% - 102%)
+    simulatedPowerW *= (0.98 + Math.random() * 0.04);
+    
+    // Simulate 220V with slight fluctuation
+    const simulatedVoltage = 220 + (Math.random() * 4 - 2); 
+    const simulatedCurrentA = simulatedPowerW / simulatedVoltage;
+
     return {
       temperature: temp,
       humidity: humi,
       pressure: pres,
-      voltage: volt,
-      current_mA,
-      power_mW,
+      voltage: Number(simulatedVoltage.toFixed(1)),
+      current_mA: Number((simulatedCurrentA * 1000).toFixed(0)),
+      power_mW: Number((simulatedPowerW * 1000).toFixed(0)),
       rain,
-      led1: Boolean(raw.led1),
-      led2: Boolean(raw.led2),
+      led1,
+      led2,
       device1: typeof device1State === 'boolean' ? device1State : undefined,
       device2: typeof device2State === 'boolean' ? device2State : undefined,
     };

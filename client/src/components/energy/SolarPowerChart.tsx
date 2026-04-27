@@ -42,9 +42,17 @@ export default function SolarPowerChart({ timeRange = 24 }: SolarPowerChartProps
     const slotsMap = new Map<string, { timestamp: string; data: SolarPoint[] }>();
     const now = new Date();
     
-    for (let i = timeRange - 1; i >= 0; i--) {
-      const slotTime = new Date(now.getTime() - i * 60 * 60 * 1000);
-      slotTime.setMinutes(0, 0, 0);
+    const intervalMs = timeRange <= 24 ? 5 * 60 * 1000 : 60 * 60 * 1000;
+    const numSlots = Math.floor((timeRange * 60 * 60 * 1000) / intervalMs);
+
+    for (let i = numSlots - 1; i >= 0; i--) {
+      const slotTime = new Date(now.getTime() - i * intervalMs);
+      if (timeRange <= 24) {
+        // Round to 5 mins
+        slotTime.setMinutes(Math.floor(slotTime.getMinutes() / 5) * 5, 0, 0);
+      } else {
+        slotTime.setMinutes(0, 0, 0);
+      }
       const key = slotTime.getTime().toString();
       slotsMap.set(key, { timestamp: slotTime.toISOString(), data: [] });
     }
@@ -54,7 +62,11 @@ export default function SolarPowerChart({ timeRange = 24 }: SolarPowerChartProps
       const itemDate = item.timestamp instanceof Date ? item.timestamp : new Date(item.timestamp);
       if (isNaN(itemDate.getTime())) return;
       
-      itemDate.setMinutes(0, 0, 0);
+      if (timeRange <= 24) {
+        itemDate.setMinutes(Math.floor(itemDate.getMinutes() / 5) * 5, 0, 0);
+      } else {
+        itemDate.setMinutes(0, 0, 0);
+      }
       const key = itemDate.getTime().toString();
       const slot = slotsMap.get(key);
       if (slot) slot.data.push(item);

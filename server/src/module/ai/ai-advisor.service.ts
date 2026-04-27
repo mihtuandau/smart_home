@@ -19,7 +19,7 @@ export class AiAdvisorService {
   private readonly adviceVariantCursor = new Map<string, number>();
   private readonly streakByCondition = new Map<string, number>();
 
-  private static readonly ADVICE_COOLDOWN_MS = 2 * 60 * 1000;
+  private static readonly ADVICE_COOLDOWN_MS = 5 * 60 * 1000; // Increased to 5 mins to prevent spam
   private static readonly POST_SWITCH_SETTLE_MS = 45 * 1000;
 
   private readonly logger = new Logger(AiAdvisorService.name);
@@ -230,13 +230,13 @@ export class AiAdvisorService {
 
       if (shouldFire('standby-critical', standbyCritical, 2)) {
         pushAdvice('standby-critical', [
-          `️ ⚠️ Tải nền đang cao bất thường! Ước tính hóa đơn sẽ ĐỘI THÊM ${wastedVnd}đ tháng này nếu bạn không kiểm tra ngay các thiết bị chạy ngầm!`,
-          `️ ⚠️ Z-Score Cảnh báo: Tải nền rò rỉ rất đắt đỏ. Bạn sẽ lãng phí ${wastedVnd}VNĐ vào cuối tháng nếu giữ mức tải này khi đã tắt đèn.`,
+          `️ ⚠️ Cảnh báo: Tiền điện tháng này có nguy cơ tăng mạnh! Hệ thống phát hiện các thiết bị chạy ngầm đang tiêu tốn của bạn khoảng ${wastedVnd}đ mỗi tháng. Hãy kiểm tra và ngắt điện các thiết bị không dùng đến nhé!`,
+          `️ ⚠️ Nhắc nhở: Bạn đang lãng phí khoảng ${wastedVnd}đ/tháng cho các thiết bị ở chế độ chờ. Hãy rút phích cắm để bảo vệ túi tiền của mình!`,
         ]);
       } else if (shouldFire('standby-elevated', standbyElevated, 3)) {
         pushAdvice('standby-elevated', [
-          ` Điện nền dao động làm tốn kém thêm ${wastedVnd}đ/tháng. Nên rút phích cắm đồ điện khi không xài.`,
-          ` Hệ thống thấy bạn đang tốn thêm chút tiền cho tải nền. Hãy xem có củ sạc hay máy bơm nào quên tắt không nhé.`,
+          ` Tiền điện đang nhích lên một chút do các thiết bị chạy ngầm (khoảng ${wastedVnd}đ/tháng). Một hành động nhỏ như tắt công tắc sẽ giúp bạn tiết kiệm hơn đấy.`,
+          ` Có vẻ như đang có vài thiết bị (như củ sạc, máy bơm...) đang chạy lãng phí. Bạn hãy kiểm tra lại nhé!`,
         ]);
       }
 
@@ -272,13 +272,13 @@ export class AiAdvisorService {
 
       if (shouldFire('load-very-high', loadVeryHigh, 2)) {
         pushAdvice('load-very-high', [
-          `️ ⚠️ Cảnh báo tiền điện! Thiết bị công suất khủng đang đốt của bạn khoảng ${wastedVnd}đ MỖI GIỜ. Hãy tắt ngay bình nóng lạnh hoặc thiết bị nặng nếu không dùng!`,
-          `️ ⚠️ Bất thường Cấp độ 3 (Z-Score): Tải đỉnh báo động đỏ. Bạn đang đốt tiền điện rất nhanh (${wastedVnd}đ/giờ). Ưu tiên giảm công suất lập tức!`,
+          `️ ⚠️ Cảnh báo chi phí: Bạn đang sử dụng thiết bị công suất rất lớn, tiêu tốn khoảng ${wastedVnd}đ mỗi giờ. Nếu không thực sự cần thiết, bạn hãy tắt bớt để tiết kiệm điện nhé!`,
+          `️ ⚠️ Hệ thống ghi nhận mức tiêu thụ điện đang tăng vọt (${wastedVnd}đ/giờ). Bạn nên kiểm tra xem có thiết bị nào đang bật quá mức cần thiết không.`,
         ]);
       } else if (shouldFire('load-high', loadHigh, 3)) {
         pushAdvice('load-high', [
-          ` Đang có thiết bị tiêu thụ khá mạnh, tốn khoảng ${wastedVnd}đ/giờ. Chú ý chi phí nhé!`,
-          ` Cảnh báo chi phí: Công suất đang vọt lên, hệ thống ghi nhận bạn đang xài lố so với thói quen hằng ngày.`,
+          ` Công suất điện đang ở mức khá cao, tiêu tốn khoảng ${wastedVnd}đ mỗi giờ. Bạn chú ý cân đối sử dụng nhé!`,
+          ` Nhắc nhở: Mức dùng điện hiện tại đang cao hơn so với thói quen hàng ngày của bạn.`,
         ]);
       }
 
@@ -298,12 +298,12 @@ export class AiAdvisorService {
     }
 
     const deltaMw = powerMw - prevPower;
-    const significantSpike = !led1Changed && !led2Changed && Math.abs(deltaMw) >= 1100;
-    if (shouldFire('power-spike', significantSpike, 2)) {
+    const significantSpike = !led1Changed && !led2Changed && Math.abs(deltaMw) >= 500000; // Threshold: 500W
+    if (shouldFire('power-spike', significantSpike, 3)) {
       const trend = deltaMw > 0 ? 'tăng' : 'giảm';
       pushAdvice('power-spike', [
-        `️ Công suất vừa ${trend} nhanh ${W(Math.abs(deltaMw))} W dù trạng thái đèn không đổi — nên kiểm tra tải tức thời`,
-        ` Phát hiện dao động công suất lớn (${trend} ${W(Math.abs(deltaMw))} W) không do chuyển trạng thái đèn`,
+        `️ Công suất điện vừa tăng đột ngột thêm ${W(Math.abs(deltaMw))} W — Bạn có vừa bật thêm thiết bị nặng nào không?`,
+        ` Phát hiện thay đổi công suất lớn (${trend} ${W(Math.abs(deltaMw))} W). Bạn hãy kiểm tra lại các thiết bị trong nhà nhé!`,
       ]);
     }
 

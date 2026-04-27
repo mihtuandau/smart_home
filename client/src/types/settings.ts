@@ -20,3 +20,15 @@ export interface NotificationSettings {
 
 export interface UpdateNotificationSettingsDto
   extends Partial<NotificationSettings> {}
+
+export interface SystemSettings {
+  id: string;
+  autoRainProtection: boolean;
+  rainHumidityThreshold: number;
+  energyPriceKwh: number;
+  powerAlertThreshold: number;
+  aiAdvisorEnabled: boolean;
+  updatedAt: string;
+}
+
+export interface UpdateSystemSettingsDto extends Partial<Omit<SystemSettings, 'id' | 'updatedAt'>> {}

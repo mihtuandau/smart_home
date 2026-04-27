@@ -14,6 +14,7 @@ export interface ForecastHourly {
   pop: number; // Probability of precipitation
   clouds: number;
   wind_speed: number;
+  wind_deg?: number;
   visibility: number;
 }
 
@@ -403,36 +404,57 @@ export class RainForecastOptimizerService {
     forecast: ForecastHourly,
     actual: NormalizedSensorRecord,
   ): number {
+    // 1. RULE #1: If physical rain sensor is wet, it IS raining (100% probability)
+    if (actual.rain_mm !== undefined && actual.rain_mm >= 0.1) {
+      return 1.0;
+    }
+
+    // 2. Scientific Logic based on Atmospheric Physics
+    // Credits: Based on simplified Zambretti Algorithm and psychrometric principles
+    
     const basePop = forecast.pop || 0.0;
+    const humidity = actual.humidity;
+    const pressure = actual.pressure;
+    const temp = actual.temp;
 
-    const deltaHumidity = actual.humidity - forecast.humidity;
-    const deltaPressure = forecast.pressure - actual.pressure;
-    const deltaTemp = actual.temp - forecast.temp;
+    // A. Humidity Factor: Rain requires high relative humidity
+    // Threshold usually starts at 70%, critical at 90%
+    let humidityScore = 0;
+    if (humidity > 90) humidityScore = 0.4;
+    else if (humidity > 80) humidityScore = 0.2;
+    else if (humidity < 60) humidityScore = -0.2;
 
-    // Tính correction theo hệ số
-    const humidityCorrection = 0.6 * (deltaHumidity / 100);
-    const pressureCorrection = 0.28 * (deltaPressure / 10);
-    const temperatureCorrection = 0.12 * (deltaTemp / 10);
+    // B. Pressure Factor: Low pressure systems bring rain
+    // Standard atmosphere is 1013.25 hPa
+    let pressureScore = 0;
+    if (pressure < 1000) pressureScore = 0.3; // Low pressure
+    else if (pressure < 1008) pressureScore = 0.15;
+    else if (pressure > 1020) pressureScore = -0.2; // High pressure (Sunny)
 
-    let correction =
-      humidityCorrection + pressureCorrection + temperatureCorrection;
+    // C. Pressure Trend (if we had history, but we can compare with forecast)
+    // If local pressure is lower than forecast pressure, it indicates a falling trend/local low
+    const pressureDelta = forecast.pressure - actual.pressure;
+    let trendScore = 0;
+    if (pressureDelta > 2) trendScore = 0.15; // Falling fast
+    else if (pressureDelta < -2) trendScore = -0.15; // Rising fast
 
-    // Thêm điều chỉnh nếu có mưa thực tế
-    if (actual.rain_mm !== undefined) {
-      const actualRainFlag = actual.rain_mm >= 0.1 ? 1.0 : 0.0;
-      const forecastError = actualRainFlag - basePop;
-      correction += 0.2 * forecastError;
+    // D. Temperature/Dew Point Gap (Simplified)
+    // Small gap between temp and dew point increases rain chance.
+    // High humidity already covers this mostly.
+
+    // E. OpenWeather External Factors (Wind, Clouds)
+    const cloudsScore = (forecast.clouds || 0) / 100 * 0.1;
+    const windScore = (forecast.wind_speed || 0) > 8 ? 0.05 : 0;
+
+    let finalPop = basePop + humidityScore + pressureScore + trendScore + cloudsScore + windScore;
+
+    // High humidity + Falling pressure is a very strong indicator
+    if (humidity > 85 && pressureDelta > 1) {
+      finalPop = Math.max(finalPop, 0.75);
     }
 
-    // Thêm điều chỉnh bổ sung nếu có dấu hiệu mưa rõ rệt
-    if (deltaHumidity >= 10 && deltaPressure >= 2) {
-      correction += 0.05;
-    }
-    if (deltaHumidity <= -10 && deltaPressure <= -2) {
-      correction -= 0.05;
-    }
-
-    return this.clamp(basePop + correction);
+    // Cap values
+    return this.clamp(finalPop, 0.0, 0.95); // 0.95 to keep some uncertainty unless physical sensor says so
   }
 
   /**

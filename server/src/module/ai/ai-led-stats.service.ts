@@ -9,8 +9,8 @@ export interface LedDayEntry {
   led2_on_minutes: number;
 }
 
-export const LED1_POWER_W = 0.5;
-export const LED2_POWER_W = 0.8;
+export const LED1_POWER_W = 15.0;
+export const LED2_POWER_W = 25.0;
 
 @Injectable()
 export class AiLedStatsService implements OnModuleInit {

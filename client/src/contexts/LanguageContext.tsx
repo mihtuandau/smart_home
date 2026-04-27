@@ -19,22 +19,19 @@ function normalizeLanguage(value: string | null): Language | null {
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>(() => {
-    if (typeof window === 'undefined') return 'vi';
+  const [language, setLanguageState] = useState<Language>('vi');
 
+  useEffect(() => {
     const savedLanguage = normalizeLanguage(localStorage.getItem('language'));
     const browserLanguage = navigator.language.split('-')[0];
     const browserDefault: Language =
       normalizeLanguage(browserLanguage) ??
       (browserLanguage === 'en' ? 'en' : browserLanguage === 'zh' ? 'zh' : 'vi');
 
-    return savedLanguage || browserDefault;
-  });
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    localStorage.setItem('language', language);
-  }, [language]);
+    const initialLang = savedLanguage || browserDefault;
+    setLanguageState(initialLang);
+    document.documentElement.lang = initialLang;
+  }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);

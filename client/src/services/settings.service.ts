@@ -1,7 +1,9 @@
 import { settingsApi } from '@/lib/api';
 import {
   NotificationSettings,
+  SystemSettings,
   UpdateNotificationSettingsDto,
+  UpdateSystemSettingsDto,
 } from '@/types/settings';
 
 const normalizeNotificationSettings = (
@@ -56,5 +58,15 @@ export const settingsService = {
     return normalizeNotificationSettings(
       response.data as Partial<NotificationSettings> & Record<string, unknown>,
     );
+  },
+
+  getSystemSettings: async (): Promise<SystemSettings> => {
+    const response = await settingsApi.getSettings();
+    return response.data as SystemSettings;
+  },
+
+  updateSystemSettings: async (data: UpdateSystemSettingsDto): Promise<SystemSettings> => {
+    const response = await settingsApi.updateSettings(data);
+    return response.data as SystemSettings;
   },
 };

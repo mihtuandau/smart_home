@@ -74,9 +74,11 @@ export default function StatsGrid() {
     },
     {
       label: t('dashboard.todayEnergy'),
-      value: `${(summary.todayWh || 0).toFixed(1)} Wh`,
+      value: summary.todayWh >= 1000 
+        ? `${(summary.todayWh / 1000).toFixed(2)} kWh` 
+        : `${(summary.todayWh || 0).toFixed(1)} Wh`,
       color: '#f59e0b',
-      subtitle: "Từ 00h sáng (Hôm nay)"
+      subtitle: summary.todayWh >= 1000 ? t('energy.totalEnergy') : "Từ 00h sáng (Hôm nay)"
     },
     {
       label: t('sensors.temperature'),

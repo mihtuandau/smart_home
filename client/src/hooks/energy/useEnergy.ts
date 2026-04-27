@@ -17,16 +17,18 @@ export const useEnergyStats = (
   });
 };
 
-export const useBatteryStatus = (refetchInterval?: number) => {
+export const useLatestEnergy = (refetchInterval?: number) => {
   return useQuery({
-    queryKey: energyKeys.battery(),
-    queryFn: energyService.getBatteryStatus,
+    queryKey: energyKeys.battery(), // Reuse the same key category
+    queryFn: energyService.getLatestStatus,
     enabled: true,
-    refetchInterval: refetchInterval || 10000,
+    refetchInterval: refetchInterval || 5000,
     gcTime: 1000 * 60 * 5,
     retry: 1,
   });
 };
+
+export const useBatteryStatus = useLatestEnergy; // Backward compatibility
 
 export const useSolarStats = (hours: number = 24) => {
   return useQuery({

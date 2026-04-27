@@ -80,6 +80,9 @@ export class SettingsService {
       data: {
         autoRainProtection: true,
         rainHumidityThreshold: 80,
+        energyPriceKwh: 2500,
+        powerAlertThreshold: 2000,
+        aiAdvisorEnabled: true,
         updatedAt: new Date(),
       },
     });

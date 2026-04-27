@@ -193,13 +193,18 @@ model ActivityLog {
   @@map("activity_logs")
 }
 
-// Simplified System Settings
+// Improved System Settings
 model SystemSettings {
   id String @id @default(cuid())
 
-  // Rain protection (The only automation currently supported by ESP32 logic)
+  // Rain protection (ESP32 automation)
   autoRainProtection    Boolean @default(true)
   rainHumidityThreshold Float   @default(80)
+
+  // Energy & AI Settings
+  energyPriceKwh      Float   @default(2500) // VND per kWh
+  powerAlertThreshold Float   @default(2000) // Watts
+  aiAdvisorEnabled    Boolean @default(true)
 
   updatedAt DateTime @updatedAt
 

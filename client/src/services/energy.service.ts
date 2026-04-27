@@ -5,8 +5,11 @@ export const energyService = {
     return energyApi.getEnergyStats(hours);
   },
 
+  getLatestStatus: async () => {
+    return energyApi.getLatestStatus();
+  },
+
   getBatteryStatus: async () => {
-    // Battery feature removed, returning latest power status instead
     return energyApi.getLatestStatus();
   },
 

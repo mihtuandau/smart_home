@@ -17,8 +17,8 @@ import { Language } from '@/i18n';
 import type { LedDayEntry } from '@/hooks/socket';
 import { Lightbulb, Zap } from 'lucide-react';
 
-export const LED1_POWER_W = 0.5;
-export const LED2_POWER_W = 0.8;
+export const LED1_POWER_W = 15.0;
+export const LED2_POWER_W = 25.0;
 
 const SEED_DAYS = [
   { led1_min: 268, led2_min: 0   },

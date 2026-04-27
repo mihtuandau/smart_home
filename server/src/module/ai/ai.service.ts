@@ -41,6 +41,11 @@ export class AiService {
       this.logger.warn(`Failed to update rain forecast with sensor data: ${err.message}`);
     }
 
+    // Fetch system settings
+    const settings = await this.prisma.systemSettings.findUnique({
+      where: { id: 'default' },
+    });
+
     const dailyLed = this.ledStats.tick(data.led1, data.led2, now);
 
     this.baseline.updateWithReading(
@@ -63,17 +68,23 @@ export class AiService {
 
     const summary = await this.analyzer.getDailySummary();
 
-    const advice = this.advisor.getAdvice({
-      powerMw,
-      led1: data.led1,
-      led2: data.led2,
-      ts: now,
-    });
+    let advice: string[] = [];
+    if (settings?.aiAdvisorEnabled !== false) {
+      advice = this.advisor.getAdvice({
+        powerMw,
+        led1: data.led1,
+        led2: data.led2,
+        ts: now,
+      });
+    }
 
     let billingDto = this.latestResult?.billing ?? null;
     if (this.messageCount % BILLING_EVERY_N === 1) {
       try {
-        billingDto = await this.billing.projectMonthly(now);
+        billingDto = await this.billing.projectMonthly(
+          now, 
+          settings?.energyPriceKwh ?? 2500
+        );
       } catch (err) {
         this.logger.warn(`Billing forecast failed: ${err.message}`);
       }
