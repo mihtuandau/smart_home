@@ -1,0 +1,6 @@
+# Cấu hình bảo mật (CỰC KỲ QUAN TRỌNG)
+.env
+
+# Các file dữ liệu tạm hoặc cache
+*.json
+!README.md
