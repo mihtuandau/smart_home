@@ -38,9 +38,7 @@ export class AiController {
 
     // If no price provided, fetch from system settings
     if (!priceVnd) {
-      const settings = await this.prisma.systemSettings.findUnique({
-        where: { id: 'default' },
-      });
+      const settings = await this.prisma.systemSettings.findFirst();
       priceVnd = settings?.energyPriceKwh ?? 2500;
     }
 
@@ -97,11 +95,19 @@ export class AiController {
     const { kwh: exactKwh7d } = await this.billing.computeRollingStats(168);
     let totalKwh = Math.round(exactKwh7d * 1000) / 1000;
 
+    // Tính số lần vượt ngưỡng công suất đỉnh (ví dụ > 25W) trong 7 ngày qua
+    const peakThresholdMw = 25000;
+    const highPeakCount = await this.prisma.powerData.count({
+      where: {
+        power: { gt: peakThresholdMw },
+        timestamp: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+      }
+    });
+
     const realData = {
       kwhTotal: totalKwh,
       ledForgotCount: ledForgotCount,
-      // Đếm số ngày có tiêu thụ đèn > 50Wh
-      highPeakCount: history.filter(d => (d.led1_wh + d.led2_wh) > 50).length,
+      highPeakCount: highPeakCount,
     };
     
     const summary = await this.aiSummary.generateWeeklySummary(realData);
@@ -121,8 +127,9 @@ export class AiController {
     const { kwh: exactKwh7d } = await this.billing.computeRollingStats(168);
     let totalKwh = Math.round(exactKwh7d * 1000) / 1000;
 
-    // 2. Dữ liệu Hoá đơn (Billing)
-    const billingInfo = await this.billing.projectMonthly(new Date());
+    // 2. Dữ liệu Hoá đơn (Billing) - Lấy đúng giá từ cài đặt
+    const settings = await this.prisma.systemSettings.findFirst();
+    const billingInfo = await this.billing.projectMonthly(new Date(), settings?.energyPriceKwh ?? 3000);
 
     // 3. Dữ liệu Logic/Z-Score (Advisor & Service)
     const latestAiData = this.aiService.getLatestResult();
@@ -137,11 +144,20 @@ export class AiController {
       orderBy: { timestamp: 'desc' },
     });
 
+    // Tính số lần vượt ngưỡng công suất đỉnh (ví dụ > 25W) trong 7 ngày qua
+    const peakThresholdMw = 25000; 
+    const highPeakCount = await this.prisma.powerData.count({
+      where: {
+        power: { gt: peakThresholdMw },
+        timestamp: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+      }
+    });
+
     // Gộp Unified Context
     const unifiedContext = {
       kwhTotal: totalKwh,
       ledForgotCount: ledForgotCount,
-      highPeakCount: history.filter(d => (d.led1_wh + d.led2_wh) > 50).length,
+      highPeakCount: highPeakCount,
       billingForecast: billingInfo,
       advisorAdvice: adviceList,
       baselineStatus: null,

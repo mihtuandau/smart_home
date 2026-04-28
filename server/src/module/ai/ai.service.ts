@@ -42,9 +42,7 @@ export class AiService {
     }
 
     // Fetch system settings
-    const settings = await this.prisma.systemSettings.findUnique({
-      where: { id: 'default' },
-    });
+    const settings = await this.prisma.systemSettings.findFirst();
 
     const dailyLed = this.ledStats.tick(data.led1, data.led2, now);
 

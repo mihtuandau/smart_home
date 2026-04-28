@@ -95,6 +95,26 @@ export function FloatingMinaChat() {
 
           {/* Chat Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-gray-50/50 dark:bg-gray-800/20">
+            {/* Quick Prompts moved to Top */}
+            {!loading && (
+              <div className="flex flex-col gap-2 mb-6 ml-11">
+                {[
+                  t('ai.billThisMonth'),
+                  t('ai.weatherAndTemp'),
+                  t('ai.systemAlerts'),
+                  t('ai.weeklyConsumption'),
+                ].map((prompt, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSendPrompt(prompt)}
+                    className="w-fit text-left px-4 py-2.5 text-xs font-semibold bg-white hover:bg-indigo-50 text-indigo-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-indigo-300 border border-indigo-200 dark:border-gray-700 rounded-2xl shadow-sm transition-all active:scale-95 hover:shadow-md"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            )}
+
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
                 <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${msg.role === 'user' ? 'bg-indigo-500' : 'bg-gradient-to-tr from-purple-500 to-indigo-500'}`}>
@@ -125,24 +145,6 @@ export function FloatingMinaChat() {
               </div>
             )}
             <div ref={chatEndRef} />
-          </div>
-
-          {/* Quick Prompts */}
-          <div className="px-3 pt-2 pb-1 bg-white dark:bg-gray-900 overflow-x-auto custom-scrollbar flex gap-2 w-full border-t border-gray-100 dark:border-gray-800 shrink-0">
-            {[
-              t('ai.billThisMonth'),
-              t('ai.weatherAndTemp'),
-              t('ai.systemAlerts'),
-              t('ai.weeklyConsumption'),
-            ].map((prompt, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSendPrompt(prompt)}
-                className="whitespace-nowrap px-3 py-1.5 text-xs font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:hover:bg-indigo-900 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/50 rounded-xl transition-all shrink-0 active:scale-95"
-              >
-                {prompt}
-              </button>
-            ))}
           </div>
 
           {/* Input */}

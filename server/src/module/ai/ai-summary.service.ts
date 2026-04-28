@@ -79,7 +79,7 @@ Hãy viết một đoạn TÓM TẮT THÔNG MINH khoảng 3-4 câu. Văn phong: 
     // Explicitly lock to gemini-2.5-flash to bypass limit=20
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
 
-    const prompt = `Bạn là Quản gia AI SmartHome tên Mina cực kỳ thông minh. Bạn quản lý hệ thống phân tích năng lượng phức tạp.
+    const prompt = `Bạn là Quản gia AI SmartHome tên Mina cực kỳ thông minh và tận tâm. Bạn quản lý hệ thống phân tích năng lượng dựa trên dữ liệu thực tế từ cảm biến.
 Dưới đây là TOÀN BỘ số liệu hệ thống đang thu thập (dùng để trả lời nếu được hỏi):
 
 1. THỐNG KÊ TUẦN (7 Ngày Qua):
@@ -87,22 +87,21 @@ Dưới đây là TOÀN BỘ số liệu hệ thống đang thu thập (dùng đ
 - Quên tắt đèn ban đêm: ${context.ledForgotCount} lần
 - Vượt đỉnh tải: ${context.highPeakCount} lần
 
-2. DỰ BÁO TIỀN ĐIỆN VÀ HOÁ ĐƠN (Tháng Bảng):
+2. DỰ BÁO TIỀN ĐIỆN VÀ HOÁ ĐƠN (Tháng này):
+- Giá điện đang áp dụng: ${context.billingForecast?.priceVndPerKwh?.toLocaleString('vi-VN')} VNĐ/kWh
 - Đã dùng tháng này: ${this.formatKwh(context.billingForecast?.kwhSoFar)} kWh
 - Dự báo cuối tháng: ${this.formatKwh(context.billingForecast?.projectedKwh)} kWh
-- Ước tính tiền điện: ${context.billingForecast?.projectedCostVnd?.toLocaleString('vi-VN')} VNĐ
+- Ước tính tổng tiền điện: ${context.billingForecast?.projectedCostVnd?.toLocaleString('vi-VN')} VNĐ
 
-
-
-3. CẢNH BÁO / LỜI KHUYÊN HIỆN TẠI TỪ HỆ THỐNG:
+3. CẢNH BÁO / LỜI KHUYÊN HIỆN TẠI:
 ${JSON.stringify(context.advisorAdvice)}
 
-4. TRẠNG THÁI HIỆN TẠI TỪ CẢM BIẾN (Dữ liệu tức thời):
-- Môi trường: ${context.currentStatus?.sensor ? `Nhiệt độ ${context.currentStatus.sensor.temperature}°C, Độ ẩm ${context.currentStatus.sensor.humidity}%, Áp suất khí quyển ${context.currentStatus.sensor.pressure} hPa, ${context.currentStatus.sensor.isRaining ? 'Trời đang có mưa' : 'Trời tạnh ráo'}` : 'Chưa cập nhật'}
-- Điện lực: ${context.currentStatus?.power ? `Đang tiêu thụ ${context.currentStatus.power.power} mW (${context.currentStatus.power.voltage} V), dòng điện ${context.currentStatus.power.current} mA` : 'Chưa cập nhật'}
+4. TRẠNG THÁI CẢM BIẾN (Tức thời):
+- Môi trường: ${context.currentStatus?.sensor ? `Nhiệt độ ${context.currentStatus.sensor.temperature}°C, Độ ẩm ${context.currentStatus.sensor.humidity}%, Áp suất ${context.currentStatus.sensor.pressure} hPa, ${context.currentStatus.sensor.isRaining ? 'Trời đang có mưa' : 'Trời tạnh ráo'}` : 'Chưa cập nhật'}
+- Điện năng: ${context.currentStatus?.power ? `Đang tiêu thụ ${context.currentStatus.power.power} mW (${context.currentStatus.power.voltage} V), dòng điện ${context.currentStatus.power.current} mA` : 'Chưa cập nhật'}
 
 Người dùng hỏi: "${question}"
-Hãy trả lời trực tiếp như một người trợ lý đắc lực, xưng là "Mina" và gọi người dùng là "bạn" hoặc "gia đình". Khéo léo lồng ghép thông tin cảm biến/điện năng nếu câu hỏi liên quan. Trả lời ngắn gọn (1-4 câu), tự nhiên và thuyết phục. Không dùng markdown phức tạp.`;
+Hãy trả lời trực tiếp như một người trợ lý đắc lực, xưng là "Mina" và gọi người dùng là "bạn" hoặc "gia đình". Hãy dùng kiến thức của bạn để phân tích dữ liệu trên và đưa ra câu trả lời thông minh nhất. Trả lời tự nhiên, có tâm, không dùng markdown phức tạp.`;
 
     try {
       const res = await fetch(url, {
@@ -127,15 +126,7 @@ Hãy trả lời trực tiếp như một người trợ lý đắc lực, xưng
   private generateLocalFallback(question: string, context: UnifiedAiContext): string {
     const q = question.toLowerCase();
 
-    // 1. Chào hỏi
-    if (q.includes('chào') || q.includes('hello') || q.includes('hi ') || q === 'hi') {
-      return 'Dạ, em là Mina - Quản gia AI của Smart Home. Bạn cần xem thông tin gì về nhiệt độ, điện năng hay dự án ạ?';
-    }
 
-    // 2. Dự án / Giới thiệu / Đồ án
-    if (q.includes('dự án') || q.includes('đồ án') || q.includes('tốt nghiệp') || q.includes('mục đích')) {
-      return 'Dạ, đây là Đồ án Tốt nghiệp Smart Home kết hợp IoT đo lường điện năng. Hệ thống sử dụng ESP32, INA219 kết hợp với GenAI để vừa điều khiển từ xa, vừa phân tích và tối ưu hóa năng lượng ạ!';
-    }
 
     // 3. Linh kiện / Cấu trúc
     if (q.includes('thiết bị') || q.includes('linh kiện') || q.includes('mạch') || q.includes('dùng gì') || q.includes('esp')) {
@@ -146,7 +137,7 @@ Hãy trả lời trực tiếp như một người trợ lý đắc lực, xưng
     if (q.includes('tiền') || q.includes('chi phí') || q.includes('hóa đơn') || q.includes('từ đầu tháng')) {
       const kwhSoFar = context.billingForecast?.kwhSoFar ?? 0;
       const projectedKwh = context.billingForecast?.projectedKwh ?? 0;
-      const price = context.billingForecast?.priceVndPerKwh ?? 2500;
+      const price = context.billingForecast?.priceVndPerKwh ?? 0;
       const costSoFar = Math.round(kwhSoFar * price);
       const kwhDisplay = this.formatKwh(kwhSoFar);
       const projDisplay = this.formatKwh(projectedKwh);
@@ -164,27 +155,37 @@ Hãy trả lời trực tiếp như một người trợ lý đắc lực, xưng
     
     // 5. Thống kê điện năng
     if (q.includes('tốn') || q.includes('tiêu thụ') || q.includes('tuần') || q.includes('điện')) {
-      return `Tuần qua nhà mình đã dùng ${this.formatKwh(context.kwhTotal)} kWh. Đã có ${context.ledForgotCount ?? 0} lần quên tắt đèn ban đêm. Việc để quên này tuy tốn ít điện (khoảng 0.5W/đèn) nhưng sẽ lãng phí từ từ đó nha!`;
+      const forgotCount = context.ledForgotCount ?? 0;
+      const praiseOrWarn = forgotCount === 0 
+        ? 'Thật tuyệt vời! Tuần qua gia đình mình không quên tắt đèn lần nào, rất ý thức tiết kiệm điện ạ.'
+        : `Đã có ${forgotCount} lần gia đình mình quên tắt đèn ban đêm. Việc này tuy tốn ít điện (khoảng 0.5W/đèn) nhưng tích tiểu thành đại sẽ lãng phí đó nha!`;
+      
+      return `Tuần qua nhà mình đã dùng ${this.formatKwh(context.kwhTotal)} kWh. ${praiseOrWarn}`;
     }
 
-    // 6. Cảm biến / Môi trường hiện tại
-    if (q.includes('nhiệt độ') || q.includes('cảnh báo') || q.includes('độ ẩm') || q.includes('áp suất') || q.includes('mưa') || q.includes('thời tiết')) {
-      if (!context.currentStatus?.sensor) return 'Em đang không lấy được tín hiệu từ cảm biến ạ, có thể mạch ESP đang tắt.';
-      return `Dạ, lúc này cảm biến báo nhiệt độ là ${context.currentStatus.sensor.temperature}°C, độ ẩm ${context.currentStatus.sensor.humidity}% và áp suất là ${context.currentStatus.sensor.pressure} hPa. Trời đang ${context.currentStatus.sensor.isRaining ? 'có mưa' : 'tạnh ráo'} ạ.`;
-    }
-
-    // 7. Cảnh báo lỗi
+    // 6. Cảnh báo lỗi
     if (q.includes('cảnh báo') || q.includes('lỗi') || q.includes('nguy hiểm') || q.includes('ổn không')) {
       return `Hệ thống ghi nhận trạng thái: "${context.advisorAdvice?.[0] || 'Tất cả bình thường'}". Bạn có thể xem trên Biểu đồ điện năng để theo dõi thêm nhé!`;
     }
 
+    // 7. Cảm biến / Môi trường hiện tại
+    if (q.includes('nhiệt độ') || q.includes('độ ẩm') || q.includes('áp suất') || q.includes('mưa') || q.includes('thời tiết')) {
+      if (!context.currentStatus?.sensor) return 'Em đang không lấy được tín hiệu từ cảm biến ạ, có thể mạch ESP đang tắt.';
+      return `Dạ, lúc này cảm biến báo nhiệt độ là ${context.currentStatus.sensor.temperature}°C, độ ẩm ${context.currentStatus.sensor.humidity}% và áp suất là ${context.currentStatus.sensor.pressure} hPa. Trời đang ${context.currentStatus.sensor.isRaining ? 'có mưa' : 'tạnh ráo'} ạ.`;
+    }
+
     // 8. Routine / Ai thói quen
-    if (q.includes('thói quen') || q.includes('mấy giờ') || q.includes('học')) {
+    if (q.includes('thói quen') || q.includes('mấy giờ') || q.includes('học') || q.includes('công suất') || q.includes('khi nào') || q.includes('giờ nào')) {
       const routineString = context.advisorAdvice?.find(a => a.includes('thói quen 30 ngày')) || 'Hệ thống năng lượng đang học thói quen của bạn dựa trên độ lệch (Z-score), cần khoảng vài ngày để em nhận biết chính xác ạ.';
       return `Dạ, ${routineString}`;
     }
 
-    // 9. Default if completely unmatched
-    return 'Dạ, mạng AI của em đang dùng chế độ Offline nội bộ nên ngôn ngữ hơi hạn chế. Bạn có thể hỏi em về Nhiệt độ, Tiền điện, Thống kê năng lượng hoặc thông tin Đồ án nhé!';
+    // 9. Chào hỏi (Ưu tiên thấp hơn)
+    if (q.includes('chào') || q.includes('hello') || q.includes('hi ') || q === 'hi') {
+      return 'Dạ, em là Mina - Quản gia AI của Smart Home. Bạn cần xem thông tin gì về nhiệt độ, điện năng hay dự án ạ?';
+    }
+
+    // 10. Default if completely unmatched
+    return 'Dạ, mạng AI của em đang dùng chế độ Offline nội bộ nên ngôn ngữ hơi hạn chế. Bạn có thể hỏi em về Nhiệt độ, Tiền điện, Thống kê năng lượng nhé!';
   }
 }

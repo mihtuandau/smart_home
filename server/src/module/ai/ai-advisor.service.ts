@@ -63,42 +63,59 @@ export class AiAdvisorService {
    */
   private async learnRoutinesFromHistory() {
     try {
-      this.logger.log('Đang phân tích dữ liệu 30 ngày qua để train mô hình Dự đoán hành vi...');
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      this.logger.log('Đang phân tích dữ liệu 30 ngày (kết hợp Raw + Aggregated) để học thói quen...');
+      const now = new Date();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-      // Lấy lịch sử biến động công suất đột ngột (hoặc ActivityLog nếu có)
-      const data = await this.prisma.powerData.findMany({
+      // 1. Lấy dữ liệu chi tiết (7 ngày qua)
+      const rawData = await this.prisma.powerData.findMany({
         where: {
-          timestamp: { gte: thirtyDaysAgo },
-          power: { gt: 1000 }, // Ngưỡng bật thiết bị đáng kể (1000mW = 1W)
+          timestamp: { gte: sevenDaysAgo },
+          power: { gt: 100 }, 
         },
         select: { timestamp: true }
       });
 
-      this.routineSamples = data.length;
+      // 2. Lấy dữ liệu tổng hợp (23 ngày trước đó)
+      const aggData = await this.prisma.powerAgg.findMany({
+        where: {
+          bucketStart: { gte: thirtyDaysAgo, lt: sevenDaysAgo },
+          powerAvg: { gt: 100 },
+        },
+        select: { bucketStart: true, samples: true }
+      });
 
-      if (data.length >= 5) {
-        // Gom nhóm theo Giờ (Hour)
+      this.routineSamples = rawData.length + aggData.reduce((s, a) => s + a.samples, 0);
+
+      if (this.routineSamples >= 5) {
         const hourCounts = new Map<number, number>();
-        for (const row of data) {
+
+        // Gom nhóm từ dữ liệu chi tiết
+        for (const row of rawData) {
           const h = this.getHourInRoutineTimeZone(row.timestamp);
           hourCounts.set(h, (hourCounts.get(h) || 0) + 1);
         }
 
-        // Tìm giờ buổi tối được kích hoạt thiết bị nhiều nhất (Từ 17h -> 22h)
+        // Gom nhóm từ dữ liệu tổng hợp (nhân với số mẫu để đảm bảo trọng số)
+        for (const row of aggData) {
+          const h = this.getHourInRoutineTimeZone(row.bucketStart);
+          hourCounts.set(h, (hourCounts.get(h) || 0) + (row.samples || 1));
+        }
+
+        // Tìm giờ buổi tối (16h -> 23h)
         let maxEveningCount = 0;
         let bestEveningHour = 18;
-        // Tìm giờ buổi sáng nhiều nhất (Từ 5h -> 9h)
+        // Tìm giờ buổi sáng (4h -> 11h)
         let maxMorningCount = 0;
         let bestMorningHour = 6;
 
         for (const [h, count] of hourCounts.entries()) {
-          if (h >= 17 && h <= 22 && count > maxEveningCount) {
+          if (h >= 16 && h <= 23 && count > maxEveningCount) {
             maxEveningCount = count;
             bestEveningHour = h;
           }
-          if (h >= 5 && h <= 9 && count > maxMorningCount) {
+          if (h >= 4 && h <= 11 && count > maxMorningCount) {
             maxMorningCount = count;
             bestMorningHour = h;
           }
@@ -108,8 +125,8 @@ export class AiAdvisorService {
         this.predictedMorningHour = bestMorningHour;
         this.routineLearned = true;
         this.logger.log(
-          `[AI Routine Learned] TZ=${this.routineTimeZone}, samples=${data.length}, ` +
-            `Buổi tối bật lúc: ${bestEveningHour}h, Buổi sáng lúc: ${bestMorningHour}h`,
+          `[AI Routine Learned] Kết hợp Raw+Agg, samples=${this.routineSamples}, ` +
+            `Tối: ${bestEveningHour}h, Sáng: ${bestMorningHour}h`,
         );
       } else {
         this.routineLearned = false;
