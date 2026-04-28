@@ -516,7 +516,7 @@ def run_once(sensor_file: Path, use_mqtt: bool, lat: float, lon: float, output_p
         cur.execute(insert_query, (
             forecast_id,
             'rain_solar',
-            forecast.get('prediction', {}).get('next_hour_rain_probability', 0.0),
+            prediction_data.get('next_hour_rain_probability', 0.0),
             0.0, # solarForecastW (cập nhật sau if có)
             recs,
             datetime.utcnow()
