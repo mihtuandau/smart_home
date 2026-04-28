@@ -493,7 +493,9 @@ def run_once(sensor_file: Path, use_mqtt: bool, lat: float, lon: float, output_p
         cur = conn.cursor()
         
         # Chuyển đổi recommendations list thành array cho SQL
-        recs = forecast.get('prediction', {}).get('recommendations', ["Giá trị gần đúng, dùng cho cảnh báo sớm."])
+        # Lấy recommendations an toàn kể cả khi prediction là None
+        prediction_data = forecast.get('prediction') or {}
+        recs = prediction_data.get('recommendations', ["Giá trị gần đúng, dùng cho cảnh báo sớm."])
         
         insert_query = """
         INSERT INTO ai_forecasts (id, type, "rainProbability", "solarForecastW", recommendations, "forecastAt", "updatedAt")
