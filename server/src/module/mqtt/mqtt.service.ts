@@ -124,21 +124,30 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     if (led2) simulatedPowerW += POWER_RATINGS.led2;
     if (d1) simulatedPowerW += POWER_RATINGS.device1;
     if (d2) simulatedPowerW += POWER_RATINGS.device2;
-
-    // Add a bit of random noise (98% - 102%)
     simulatedPowerW *= (0.98 + Math.random() * 0.04);
+
+    // Use actual power from hardware if available
+    const actualPowerW = (Number(raw.power_mW || 0)) / 1000;
     
-    // Simulate 220V with slight fluctuation
-    const simulatedVoltage = 220 + (Math.random() * 4 - 2); 
-    const simulatedCurrentA = simulatedPowerW / simulatedVoltage;
+    // Choose the best power value: prioritized simulated if LED/Devices are ON
+    // or actual power if everything is OFF but sensor detects something
+    let finalPowerW = actualPowerW;
+    if (simulatedPowerW > 0) {
+      finalPowerW = simulatedPowerW;
+    }
+
+    // Simulate 220V only if raw voltage is low (battery voltage)
+    const rawVoltage = Number(raw.voltage ?? 0);
+    const finalVoltage = rawVoltage > 10 ? rawVoltage : (220 + (Math.random() * 4 - 2));
+    const finalCurrentA = finalPowerW / finalVoltage;
 
     return {
       temperature: temp,
       humidity: humi,
       pressure: pres,
-      voltage: Number(simulatedVoltage.toFixed(1)),
-      current_mA: Number((simulatedCurrentA * 1000).toFixed(0)),
-      power_mW: Number((simulatedPowerW * 1000).toFixed(0)),
+      voltage: Number(finalVoltage.toFixed(1)),
+      current_mA: Number((finalCurrentA * 1000).toFixed(0)),
+      power_mW: Number((finalPowerW * 1000).toFixed(0)),
       rain,
       led1,
       led2,

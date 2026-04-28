@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { SensorPayload } from '../mqtt/mqtt.service';
+import { PrismaService } from 'src/common/prisma.service';
 
 /**
  * Dữ liệu dự báo từ OpenWeather API
@@ -116,23 +117,13 @@ export class RainForecastOptimizerService {
   // Request deduplication - prevent multiple simultaneous API calls
   private pendingRequests = new Map<string, Promise<any>>();
 
-  constructor() {
+  constructor(private prisma: PrismaService) {
     this.API_KEY =
       process.env.OPENWEATHER_API_KEY ||
       '8422bfa505cc5e2a183da771f3571304';
     this.cacheDir = process.env.CACHE_DIR || './cache';
     this.cacheFile = path.join(this.cacheDir, 'forecast_cache.json');
     this.mqttCacheFile = path.join(this.cacheDir, 'mqtt_sensor_cache.json');
-
-    // AI Python Integration
-    const pythonDir = process.env.AI_PYTHON_DIR || '../AI_DuBaoTT';
-    const pythonResultsFile =
-      process.env.AI_PYTHON_RESULTS_FILE || 'results/current_forecast.json';
-    this.pythonAiResultsFile = path.resolve(
-      process.cwd(),
-      pythonDir,
-      pythonResultsFile,
-    );
 
     this.ensureCacheDir();
   }
@@ -604,22 +595,19 @@ export class RainForecastOptimizerService {
   }
 
   /**
-   * Đọc kết quả từ mô hình AI LSTM (Python)
+   * Đọc kết quả từ mô hình AI LSTM (Từ Database thay vì file)
    */
   private async getPythonAiPrediction(): Promise<number | null> {
     try {
-      const data = await fs.readFile(this.pythonAiResultsFile, 'utf-8');
-      const forecast = JSON.parse(data);
+      const forecast = await this.prisma.aiForecast.findUnique({
+        where: { id: 'latest_forecast' },
+      });
 
-      if (
-        forecast.status === 'predicted' &&
-        forecast.prediction &&
-        typeof forecast.prediction.next_hour_rain_probability === 'number'
-      ) {
-        return forecast.prediction.next_hour_rain_probability;
+      if (forecast && typeof forecast.rainProbability === 'number') {
+        return forecast.rainProbability;
       }
     } catch (error) {
-      this.logger.warn(`Could not read Python AI results: ${error.message}`);
+      this.logger.warn(`Could not read Python AI results from DB: ${error.message}`);
     }
     return null;
   }

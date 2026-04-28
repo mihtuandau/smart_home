@@ -322,3 +322,18 @@ model SolarData {
   @@index([timestamp])
   @@map("solar_data")
 }
+
+model AiForecast {
+  id               String   @id @default(cuid())
+  type             String   @default("rain_solar")
+  rainProbability  Float
+  solarForecastW   Float
+  recommendations  String[]
+  forecastAt       DateTime
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([type, forecastAt])
+  @@map("ai_forecasts")
+}

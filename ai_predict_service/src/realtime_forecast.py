@@ -472,7 +472,64 @@ def run_once(sensor_file: Path, use_mqtt: bool, lat: float, lon: float, output_p
             forecast['status'] = 'predicted'
 
     write_forecast_output(output_path, forecast)
-    logger.info(f"Đã lưu dự báo thời gian thực vào: {output_path}")
+    logger.info(f"Đã lưu dự báo thời gian thực vào file: {output_path}")
+    
+    # --- SAVE TO DATABASE ---
+    try:
+        import psycopg2
+        from psycopg2 import sql
+        
+        db_url = os.environ.get("DATABASE_URL")
+        if not db_url:
+            logger.warning("DATABASE_URL không tồn tại trong .env, bỏ qua lưu DB.")
+            return forecast
+            
+        # Sửa lại URL cho phù hợp với Python (psycopg2 cần postgresql://)
+        if db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql://", 1)
+        
+        # Kết nối và lưu
+        conn = psycopg2.connect(db_url)
+        cur = conn.cursor()
+        
+        # Chuyển đổi recommendations list thành array cho SQL
+        recs = forecast.get('prediction', {}).get('recommendations', ["Giá trị gần đúng, dùng cho cảnh báo sớm."])
+        
+        insert_query = """
+        INSERT INTO ai_forecasts (id, type, "rainProbability", "solarForecastW", recommendations, "forecastAt", "updatedAt")
+        VALUES (%s, %s, %s, %s, %s, %s, NOW())
+        ON CONFLICT (id) DO UPDATE SET
+            "rainProbability" = EXCLUDED."rainProbability",
+            "solarForecastW" = EXCLUDED."solarForecastW",
+            recommendations = EXCLUDED.recommendations,
+            "forecastAt" = EXCLUDED."forecastAt",
+            "updatedAt" = NOW();
+        """
+        
+        # Dùng ID cố định cho bản ghi "mới nhất" hoặc tạo ID mới
+        # Ở đây ta dùng ID cố định là 'latest' để dễ truy vấn, 
+        # hoặc bạn có thể tạo CUID/UUID nếu muốn lưu lịch sử.
+        forecast_id = 'latest_forecast'
+        
+        cur.execute(insert_query, (
+            forecast_id,
+            'rain_solar',
+            forecast.get('prediction', {}).get('next_hour_rain_probability', 0.0),
+            0.0, # solarForecastW (cập nhật sau if có)
+            recs,
+            datetime.utcnow()
+        ))
+        
+        conn.commit()
+        cur.close()
+        conn.close()
+        logger.info("Đã cập nhật dự báo vào Database thành công!")
+        
+    except ImportError:
+        logger.warning("Chưa cài psycopg2-binary, không thể lưu vào DB. Hãy chạy 'pip install psycopg2-binary'")
+    except Exception as e:
+        logger.error(f"Lỗi khi lưu vào Database: {e}")
+
     return forecast
 
 
