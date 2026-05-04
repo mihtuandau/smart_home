@@ -18,7 +18,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('iot')
 export class IotController {
-  private readonly customDeviceBasePin = 9001;
+  private readonly customDeviceBasePin = 13;
 
   constructor(
     private mqttService: MqttService,
@@ -55,16 +55,8 @@ export class IotController {
 
     // Combine database devices with raw MQTT device data
     const allDevices: any[] = [];
-    
-    // Add database devices
-    for (let index = 0; index < devices.length; index++) {
-      const d = devices[index];
-      const mqttState =
-        index === 0
-          ? latestData.device1
-          : index === 1
-            ? latestData.device2
-            : undefined;
+    for (const d of devices) {
+      const mqttState = d.pin === 13 ? latestData.device1 : undefined;
       const state = typeof mqttState === 'boolean' ? mqttState : d.status === 'ON';
 
       allDevices.push({
@@ -76,23 +68,14 @@ export class IotController {
       });
     }
 
-    // Add raw MQTT devices that aren't in database
+    // Add raw MQTT devices that aren't in database (fallback)
     if (rawDevices.device1 && devices.length === 0) {
       allDevices.push({
         id: 'mqtt-device1',
         name: rawDevices.device1.name || 'Device 1',
         power: rawDevices.device1.power || 0,
         state: rawDevices.device1.state || false,
-        pin: rawDevices.device1.pin || 9001,
-      });
-    }
-    if (rawDevices.device2 && devices.length < 2) {
-      allDevices.push({
-        id: 'mqtt-device2',
-        name: rawDevices.device2.name || 'Device 2',
-        power: rawDevices.device2.power || 0,
-        state: rawDevices.device2.state || false,
-        pin: rawDevices.device2.pin || 9002,
+        pin: rawDevices.device1.pin || 13,
       });
     }
 
@@ -100,7 +83,6 @@ export class IotController {
       ...latestData,
       devices: allDevices,
       device1: allDevices[0] || undefined,
-      device2: allDevices[1] || undefined,
     };
 
     return { success: true, data, timestamp: new Date().toISOString() };
@@ -174,11 +156,10 @@ export class IotController {
     try {
       await this.mqttService.addIoTDevice(dto.name, dto.power_consumption);
       
-      const pin = this.getSlotPin(currentDevices);
       await this.prisma.device.create({
         data: {
           name: dto.name,
-          pin,
+          pin: 13,
           status: DeviceStatus.OFF,
           powerConsumption: dto.power_consumption,
           userId: req?.user?.id || null,
@@ -245,6 +226,39 @@ export class IotController {
       await this.prisma.device.delete({ where: { id: target.id } });
 
       return { success: true, message: 'Device deleted' };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('device/update/:index')
+  async updateIoTDevice(
+    @Param('index') index: string,
+    @Body() dto: { name?: string; power_consumption?: number },
+  ) {
+    const idx = parseInt(index, 10);
+    try {
+      const devices = await this.getCustomDevicesOrdered();
+      const target = devices[idx];
+
+      if (target) {
+        await this.prisma.device.update({
+          where: { id: target.id },
+          data: {
+            name: dto.name,
+            powerConsumption: dto.power_consumption,
+          },
+        });
+      }
+
+      await this.mqttService.updateIoTDevice(
+        idx,
+        dto.name,
+        dto.power_consumption,
+      );
+
+      return { success: true, message: 'Device updated' };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

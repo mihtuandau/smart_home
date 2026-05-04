@@ -100,6 +100,9 @@ export class AiService {
       advice,
       billing: billingDto,
       dailyLed,
+      powerW: powerMw / 1000,
+      led1: data.led1,
+      led2: data.led2,
     };
 
     this.latestResult = result;

@@ -70,7 +70,7 @@ export default function StatsGrid() {
       label: t('dashboard.activeDevices'),
       value: `${devicesOn}/${totalDevices}`,
       color: '#10b981',
-      subtitle: t('dashboard.onState')
+      subtitle: devicesOn > 0 ? t('dashboard.onState') : t('devices.allOff')
     },
     {
       label: t('dashboard.todayEnergy'),
@@ -78,7 +78,7 @@ export default function StatsGrid() {
         ? `${(summary.todayWh / 1000).toFixed(2)} kWh` 
         : `${(summary.todayWh || 0).toFixed(1)} Wh`,
       color: '#f59e0b',
-      subtitle: summary.todayWh >= 1000 ? t('energy.totalEnergy') : "Từ 00h sáng (Hôm nay)"
+      subtitle: t('energy.consumption')
     },
     {
       label: t('sensors.temperature'),

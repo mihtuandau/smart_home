@@ -7,8 +7,8 @@ async function main() {
 
   // Create LED devices (Mapped to hardcoded ESP32 indicators)
   const initialDevices = [
-    { name: 'LED1', pin: 25, status: DeviceStatus.OFF, powerConsumption: 0.5 },
-    { name: 'LED2', pin: 26, status: DeviceStatus.OFF, powerConsumption: 0.8 },
+    { name: 'Đèn Phòng Khách', pin: 25, status: DeviceStatus.OFF, powerConsumption: 0.5 },
+    { name: 'Đèn Ban Công', pin: 26, status: DeviceStatus.OFF, powerConsumption: 0.8 },
   ];
 
   for (const deviceData of initialDevices) {

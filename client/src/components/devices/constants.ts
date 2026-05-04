@@ -14,7 +14,7 @@ export interface ToastMessage {
 
 export const IOT_DEVICE_MANAGER = {
   MAX_DEVICES: 1,
-  DEVICE_SLOTS: [0, 1] as const,
+  DEVICE_SLOTS: [0] as const,
 
   MIN_POWER: 0.1,
 

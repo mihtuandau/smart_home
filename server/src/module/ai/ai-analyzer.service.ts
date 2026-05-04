@@ -55,11 +55,11 @@ export class AiAnalyzerService {
     const ledsOn = led1 || led2;
     const ledLabel =
       led1 && led2
-        ? 'Đèn 1 + Đèn 2'
+        ? 'Phòng khách + Ban công'
         : led1
-          ? 'Đèn 1'
+          ? 'Phòng khách'
           : led2
-            ? 'Đèn 2'
+            ? 'Ban công'
             : 'Tất cả đèn';
 
     const ledJustChanged =
@@ -94,7 +94,7 @@ export class AiAnalyzerService {
       const avgMw =
         sameStateWindow.reduce((s, r) => s + r.powerMw, 0) /
         sameStateWindow.length;
-      if (powerMw > avgMw * 1.5) {
+      if (powerMw > avgMw * 1.3) {
         const pct = Math.round((powerMw / avgMw - 1) * 100);
         return `️ Điện cao hơn mức thường ${pct}% — nên kiểm tra xem có thiết bị nào bật quên không`;
       }

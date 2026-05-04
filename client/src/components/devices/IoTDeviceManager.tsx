@@ -139,7 +139,7 @@ export default function IoTDeviceManager() {
                       {device.name}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {device.power}W{device.pin ? ` · Pin ${device.pin}` : ` · Slot ${device.index + 1}`}
+                      {device.power}W · {device.pin ? `Pin ${device.pin}` : `Slot ${device.index + 1}`}
                     </p>
                   </div>
                 </div>

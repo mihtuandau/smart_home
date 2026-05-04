@@ -18,6 +18,8 @@ export class AiAdvisorService {
   private readonly lastAdviceAt = new Map<string, number>();
   private readonly adviceVariantCursor = new Map<string, number>();
   private readonly streakByCondition = new Map<string, number>();
+  private led1StartedAt: number | null = null;
+  private led2StartedAt: number | null = null;
 
   private static readonly ADVICE_COOLDOWN_MS = 5 * 60 * 1000; // Increased to 5 mins to prevent spam
   private static readonly POST_SWITCH_SETTLE_MS = 45 * 1000;
@@ -189,34 +191,52 @@ export class AiAdvisorService {
 
     if (led1Changed) {
       const delta = Math.abs(Math.round(powerMw - prevPower));
-      const costPerDay = ((delta / 1000 / 1000) * 24 * 3000).toLocaleString('vi-VN', { maximumFractionDigits: 0 });
       this.lastStateChangeAt = now;
       if (led1) {
+        this.led1StartedAt = now;
+        const dailyCost = Math.round((delta / 1000000) * 24 * 3000);
+        const costInfo = delta > 2000 
+          ? ` — làm tăng tải thêm ${W(delta)} W (tốn ~${dailyCost.toLocaleString('vi-VN')}đ/ngày nếu bật liên tục).` 
+          : '.';
         pushAdvice('led1-on', [
-          ` Đèn 1 vừa bật — làm tăng tải thêm ${W(delta)} W. Tương đương tốn khoảng ${costPerDay}đ mỗi ngày nếu giữ liên tục.`,
-          ` Phát hiện bật Đèn 1. Bật đèn hợp lý sẽ giúp tiết kiệm điện, đừng quên tắt khi không dùng nhé!`,
+          ` Phòng khách vừa bật${costInfo}`,
+          ` Phát hiện bật đèn Phòng khách. Đừng quên tắt khi không dùng để tối ưu điện năng nhé!`,
         ]);
       } else {
+        this.led1StartedAt = null;
+        const dailySave = Math.round((delta / 1000000) * 24 * 3000);
+        const saveInfo = delta > 2000 
+          ? `, giúp bạn tiết kiệm được khoảng ${dailySave.toLocaleString('vi-VN')}đ mỗi ngày.` 
+          : '.';
         pushAdvice('led1-off', [
-          ` Thật tuyệt! Đèn 1 vừa tắt, giúp bạn tiết kiệm được khoảng ${costPerDay}đ mỗi ngày.`,
-          ` Đèn 1 đã tắt. Hành động nhỏ tiết kiệm lớn, hệ thống cảm ơn bạn!`,
+          ` Thật tuyệt! Đèn Phòng khách vừa tắt${saveInfo}`,
+          ` Đèn Phòng khách đã tắt. Hệ thống cảm ơn hành động tiết kiệm điện của bạn!`,
         ]);
       }
     }
 
     if (led2Changed) {
       const delta = Math.abs(Math.round(powerMw - prevPower));
-      const costPerDay = ((delta / 1000 / 1000) * 24 * 3000).toLocaleString('vi-VN', { maximumFractionDigits: 0 });
       this.lastStateChangeAt = now;
       if (led2) {
+        this.led2StartedAt = now;
+        const dailyCost = Math.round((delta / 1000000) * 24 * 3000);
+        const costInfo = delta > 2000 
+          ? ` — làm tăng tải thêm ${W(delta)} W (tốn ~${dailyCost.toLocaleString('vi-VN')}đ/ngày).` 
+          : '.';
         pushAdvice('led2-on', [
-          ` Đèn 2 vừa bật — làm tăng tải thêm ${W(delta)} W. Sẽ tốn thêm tầm ${costPerDay}đ/ngày nếu không tắt.`,
-          ` Phát hiện bật Đèn 2. Nhớ tận dụng ánh sáng tự nhiên nếu được nhé!`,
+          ` Đèn Ban công vừa bật${costInfo}`,
+          ` Phát hiện bật đèn Ban công. Nhớ tận dụng ánh sáng tự nhiên nếu được nhé!`,
         ]);
       } else {
+        this.led2StartedAt = null;
+        const dailySave = Math.round((delta / 1000000) * 24 * 3000);
+        const saveInfo = delta > 2000 
+          ? `, tiết kiệm thêm được ${dailySave.toLocaleString('vi-VN')}đ cho gia đình.` 
+          : '.';
         pushAdvice('led2-off', [
-          ` Quá chuẩn! Đêm qua hoặc nãy giờ bạn đã tắt Đèn 2, tiết kiệm thêm được ${costPerDay}đ.`,
-          ` Đèn 2 đã tắt, ngân sách tháng này lại rủng rỉnh thêm một chút rồi!`,
+          ` Quá chuẩn! Bạn đã tắt đèn Ban công${saveInfo}`,
+          ` Đèn Ban công đã tắt, ngân sách tháng này lại rủng rỉnh thêm một chút rồi!`,
         ]);
       }
     }
@@ -236,11 +256,11 @@ export class AiAdvisorService {
 
     if (!led1 && !led2) {
       const standbyCritical = hasBaseline
-        ? powerMw > zStats.mean + 3 * zStats.stdDev
-        : powerMw >= 2200;
+        ? powerMw > zStats.mean + 3 * zStats.stdDev && powerMw > 10000
+        : powerMw >= 10000; // > 10W
       const standbyElevated = hasBaseline
-        ? powerMw > zStats.mean + 2 * zStats.stdDev
-        : powerMw >= 1600;
+        ? powerMw > zStats.mean + 2 * zStats.stdDev && powerMw > 5000
+        : powerMw >= 5000;  // > 5W as per documentation
 
       const extraMw = Math.max(0, powerMw - expected);
       const wastedVnd = Math.round((extraMw / 1000 / 1000) * 24 * 30 * 3000).toLocaleString('vi-VN');
@@ -278,11 +298,11 @@ export class AiAdvisorService {
 
     } else {
       const loadVeryHigh = hasBaseline
-        ? powerMw > zStats.mean + 3 * zStats.stdDev
-        : powerMw >= 4500;
+        ? (powerMw > zStats.mean + 3 * zStats.stdDev && powerMw > 1000000) // Phải > 1000W mới báo Rất Cao
+        : powerMw >= 1000000; // > 1000W
       const loadHigh = hasBaseline
-        ? powerMw > zStats.mean + 2 * zStats.stdDev
-        : powerMw >= 3500;
+        ? (powerMw > zStats.mean + 2 * zStats.stdDev && powerMw > 500000)  // Phải > 500W mới báo Cao
+        : powerMw >= 500000;  // > 500W
 
       const extraMw = Math.max(0, Math.abs(powerMw - expected));
       const wastedVnd = Math.round((extraMw / 1000 / 1000) * 3000).toLocaleString('vi-VN');
@@ -302,15 +322,27 @@ export class AiAdvisorService {
       if (led1 && led2) {
         if (hour >= 18 && hour <= 22) {
           pushAdvice('peak-hour-tip', [
-            ' Giờ cao điểm: đang bật cả 2 đèn, nên giảm bớt nếu không cần để tiết kiệm chi phí',
-            ' Khung giờ tối thường tải cao, có thể tắt bớt 1 đèn để giảm công suất tức thời',
+            ' Giờ cao điểm tối: bạn đang bật cả 2 đèn, nếu không cần thiết hãy tắt bớt 1 bên để tiết kiệm điện nhé.',
+            ' Khung giờ tối thường có tải cao, việc dùng 1 đèn thay vì 2 sẽ giúp giảm công suất tức thời hiệu quả.',
           ]);
         } else {
           pushAdvice('both-led-tip', [
-            ' Gợi ý: bật đồng thời 2 đèn chỉ khi cần thiết để tối ưu điện năng',
-            ' Nếu độ sáng đã đủ, bạn có thể tắt bớt một đèn để giảm tiêu thụ',
+            ' Gợi ý tối ưu: Bạn đang dùng cả Phòng khách và Ban công, có thể tắt bớt nếu độ sáng đã đủ dùng.',
           ]);
         }
+      }
+
+      // Kiểm tra thời gian sử dụng liên tục (Usage Duration)
+      if (this.led1StartedAt && (now - this.led1StartedAt > 2 * 60 * 60 * 1000)) {
+        pushAdvice('led1-long-usage', [
+          ` Nhận xét: Dựa vào mức độ sử dụng, bạn đã bật đèn Phòng khách liên tục hơn 2 tiếng. Nếu không có người ở đó, bạn nên tắt đi để tiết kiệm điện.`,
+          ` Khuyến nghị: Đèn Phòng khách đã bật khá lâu rồi, hãy tắt bớt trong khung giờ này để tối ưu hóa hóa đơn tháng này nhé!`
+        ]);
+      }
+      if (this.led2StartedAt && (now - this.led2StartedAt > 2 * 60 * 60 * 1000)) {
+        pushAdvice('led2-long-usage', [
+          ` Cảnh báo: Đèn Ban công đã sáng liên tục hơn 2 giờ. Bạn nên tắt thiết bị này nếu không thực sự cần thiết lúc này.`,
+        ]);
       }
     }
 

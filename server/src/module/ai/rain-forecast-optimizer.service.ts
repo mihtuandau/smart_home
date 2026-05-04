@@ -79,7 +79,7 @@ export interface RainForecastReport {
   };
   forecast_span_hours: number;
   aligned_records: number;
-  prediction_source: 'LSTM Model' | 'Heuristic Algorithm';
+  prediction_source: 'LSTM Model' | 'Heuristic Algorithm' | 'LSTM Model (Corrected by Rain Sensor)';
   bias_summary: BiasSummary;
   adjusted_hourly: AdjustedForecastItem[];
 }
@@ -108,7 +108,6 @@ export class RainForecastOptimizerService {
   private readonly cacheDir: string;
   private readonly cacheFile: string;
   private readonly mqttCacheFile: string;
-  private readonly pythonAiResultsFile: string;
 
   // Sensorhistory buffer
   private sensorHistory: NormalizedSensorRecord[] = [];
@@ -457,8 +456,37 @@ export class RainForecastOptimizerService {
       finalPop = Math.max(finalPop, 0.75);
     }
 
-    // Cap values
-    return this.clamp(finalPop, 0.0, 0.95); // 0.95 to keep some uncertainty unless physical sensor says so
+    // RULE #2: Multiple conditions for 100% confidence in rain
+    
+    // Condition 1: Very high humidity (>90%) + Very low pressure (<1000) + High forecast probability (>60%)
+    if (humidity > 90 && pressure < 1000 && basePop > 0.6) {
+      return 1.0;
+    }
+
+    // Condition 2: High humidity + Falling pressure trend + Any rain in forecast
+    if (humidity > 85 && pressureDelta > 2 && basePop > 0.4) {
+      return 1.0;
+    }
+
+    // Condition 3: Very high humidity (>85%) + Low/medium pressure (<1010 hPa) + Moderate-High forecast (>50%)
+    // This catches current raining conditions even if pressure not extremely low
+    if (humidity > 85 && pressure < 1010 && basePop > 0.5) {
+      return 1.0;
+    }
+
+    // Condition 4: Already high confidence from calculations + High humidity confirms it
+    // If sensor data + forecast already suggests 65%+ and humidity is high, it IS raining
+    if (finalPop > 0.6 && humidity > 80 && pressure < 1013) {
+      return 1.0;
+    }
+
+    // Condition 5: Rapidly falling pressure + Any hint of rain in forecast + High humidity
+    if (humidity > 80 && pressureDelta > 1.5 && basePop > 0.35) {
+      return 1.0;
+    }
+
+    // Cap values (allow up to 100% for confident predictions)
+    return this.clamp(finalPop, 0.0, 1.0);
   }
 
   /**
@@ -591,6 +619,21 @@ export class RainForecastOptimizerService {
       report.prediction_source = 'LSTM Model';
     }
 
+    // CRITICAL: If physical rain sensor detected actual rain, ensure probability is 100%
+    // This is the ground truth - no AI should contradict physical sensor
+    if (report.adjusted_hourly.length > 0) {
+      const currentHour = report.adjusted_hourly[0];
+      if (currentHour.sensor_rain_mm !== undefined && currentHour.sensor_rain_mm >= 0.1) {
+        if (currentHour.adjusted_pop < 1.0) {
+          this.logger.warn(
+            `Rain sensor detected actual rain (${currentHour.sensor_rain_mm}mm) but LSTM prob was only ${Math.round(currentHour.adjusted_pop * 100)}%. Correcting to 100%`,
+          );
+          report.adjusted_hourly[0].adjusted_pop = 1.0;
+          report.prediction_source = 'LSTM Model (Corrected by Rain Sensor)';
+        }
+      }
+    }
+
     return report;
   }
 
@@ -607,7 +650,8 @@ export class RainForecastOptimizerService {
         return forecast.rainProbability;
       }
     } catch (error) {
-      this.logger.warn(`Could not read Python AI results from DB: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.warn(`Could not read Python AI results from DB: ${errorMessage}`);
     }
     return null;
   }

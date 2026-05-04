@@ -109,45 +109,18 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     const d1 = toBool(device1State);
     const d2 = toBool(device2State);
 
-    // --- REALISTIC POWER SIMULATION (220V) ---
-    // Instead of using the raw low-power values from the model,
-    // we simulate realistic household appliance power for the Web/AI.
-    const POWER_RATINGS = {
-      led1: 15,    // 15W bulb
-      led2: 25,    // 25W bulb
-      device1: 1500, // 1500W Air Conditioner
-      device2: 80,   // 80W Fan
-    };
-
-    let simulatedPowerW = 0;
-    if (led1) simulatedPowerW += POWER_RATINGS.led1;
-    if (led2) simulatedPowerW += POWER_RATINGS.led2;
-    if (d1) simulatedPowerW += POWER_RATINGS.device1;
-    if (d2) simulatedPowerW += POWER_RATINGS.device2;
-    simulatedPowerW *= (0.98 + Math.random() * 0.04);
-
-    // Use actual power from hardware if available
-    const actualPowerW = (Number(raw.power_mW || 0)) / 1000;
-    
-    // Choose the best power value: prioritized simulated if LED/Devices are ON
-    // or actual power if everything is OFF but sensor detects something
-    let finalPowerW = actualPowerW;
-    if (simulatedPowerW > 0) {
-      finalPowerW = simulatedPowerW;
-    }
-
-    // Simulate 220V only if raw voltage is low (battery voltage)
-    const rawVoltage = Number(raw.voltage ?? 0);
-    const finalVoltage = rawVoltage > 10 ? rawVoltage : (220 + (Math.random() * 4 - 2));
-    const finalCurrentA = finalPowerW / finalVoltage;
+    // Use actual values from hardware
+    const finalPowerW = Number(raw.power_mW || 0) / 1000;
+    const finalVoltage = Number(raw.voltage || 0);
+    const finalCurrentA = Number(raw.current_mA || 0) / 1000;
 
     return {
       temperature: temp,
       humidity: humi,
       pressure: pres,
-      voltage: Number(finalVoltage.toFixed(1)),
-      current_mA: Number((finalCurrentA * 1000).toFixed(0)),
-      power_mW: Number((finalPowerW * 1000).toFixed(0)),
+      voltage: Number(finalVoltage.toFixed(2)),
+      current_mA: Number((finalCurrentA * 1000).toFixed(2)),
+      power_mW: Number((finalPowerW * 1000).toFixed(2)),
       rain,
       led1,
       led2,
@@ -378,7 +351,7 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
           `️  Temp: ${mergedData.temperature}°C |  Humidity: ${mergedData.humidity}% |  Voltage: ${mergedData.voltage}V`,
         );
         this.logger.log(
-          ` LED1: ${mergedData.led1 ? 'ON' : 'OFF'} | LED2: ${mergedData.led2 ? 'ON' : 'OFF'}`,
+          ` Đèn Phòng Khách: ${mergedData.led1 ? 'ON' : 'OFF'} | Đèn Ban Công: ${mergedData.led2 ? 'ON' : 'OFF'}`,
         );
 
         await this.processSensorData(mergedData);
@@ -417,8 +390,9 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   }
 
   async controlLed(led: 'led1' | 'led2', state: boolean): Promise<void> {
+    const displayName = led === 'led1' ? 'Đèn Phòng Khách' : 'Đèn Ban Công';
     await this.commandService.controlLed(led, state);
-    await this.persistenceService.logActivity(led, state);
+    await this.persistenceService.logActivity(displayName, state);
   }
 
   async controlBothLeds(led1State: boolean, led2State: boolean): Promise<void> {

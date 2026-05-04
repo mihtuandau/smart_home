@@ -15,6 +15,12 @@ export interface AiResultDto {
   billing: BillingForecastDto | null;
 
   dailyLed: LedDayEntry;
+
+  powerW: number;
+
+  led1: boolean;
+
+  led2: boolean;
 }
 
 export interface BillingForecastDto {

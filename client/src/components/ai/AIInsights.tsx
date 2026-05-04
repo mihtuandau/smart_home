@@ -16,7 +16,7 @@ const dateLocaleMap = {
 } as const;
 
 function powerLevel(mw: number): 'idle' | 'normal' | 'medium' | 'high' {
-  if (mw < 20000)   return 'idle';    // < 20W: Standby
+  if (mw < 2000)    return 'idle';    // < 2W: Standby
   if (mw < 500000)  return 'normal';  // < 500W: Normal (Lights, Fans)
   if (mw < 1800000) return 'medium';  // < 1800W: Elevated (AC or Heavy device)
   return 'high';                      // > 1800W: High (Multiple heavy devices)

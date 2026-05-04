@@ -1,690 +1,619 @@
 {
-  "timestamp": 1777365524,
+  "timestamp": 1777893693,
   "forecast": {
     "hourly": [
       {
-        "dt": 1777363200,
-        "temp": 33.98,
-        "feels_like": 38.35,
-        "pressure": 1005,
-        "humidity": 50,
-        "dew_point": 22.09,
-        "uvi": 1.12,
-        "clouds": 93,
-        "visibility": 10000,
-        "wind_speed": 3.93,
-        "wind_deg": 153,
-        "wind_gust": 3.09,
-        "weather": [
-          {
-            "id": 804,
-            "main": "Clouds",
-            "description": "mây đen u ám",
-            "icon": "04d"
-          }
-        ],
-        "pop": 0.11
-      },
-      {
-        "dt": 1777366800,
-        "temp": 33.92,
-        "feels_like": 37.89,
-        "pressure": 1005,
-        "humidity": 49,
-        "dew_point": 21.7,
-        "uvi": 1.02,
-        "clouds": 91,
-        "visibility": 10000,
-        "wind_speed": 5.81,
-        "wind_deg": 163,
-        "wind_gust": 4.28,
-        "weather": [
-          {
-            "id": 804,
-            "main": "Clouds",
-            "description": "mây đen u ám",
-            "icon": "04d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777370400,
-        "temp": 33.66,
-        "feels_like": 37.66,
-        "pressure": 1005,
-        "humidity": 50,
-        "dew_point": 21.8,
-        "uvi": 0.5,
-        "clouds": 91,
-        "visibility": 10000,
-        "wind_speed": 6.45,
-        "wind_deg": 163,
-        "wind_gust": 6.31,
-        "weather": [
-          {
-            "id": 804,
-            "main": "Clouds",
-            "description": "mây đen u ám",
-            "icon": "04d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777374000,
-        "temp": 32.88,
-        "feels_like": 36.92,
-        "pressure": 1006,
-        "humidity": 53,
-        "dew_point": 22.03,
+        "dt": 1777892400,
+        "temp": 30.29,
+        "feels_like": 35.5,
+        "pressure": 1008,
+        "humidity": 69,
+        "dew_point": 23.96,
         "uvi": 0,
-        "clouds": 92,
+        "clouds": 100,
+        "visibility": 7408,
+        "wind_speed": 6.63,
+        "wind_deg": 147,
+        "wind_gust": 9.1,
+        "weather": [
+          {
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10d"
+          }
+        ],
+        "pop": 0.99,
+        "rain": {
+          "1h": 0.78
+        }
+      },
+      {
+        "dt": 1777896000,
+        "temp": 30.15,
+        "feels_like": 35.16,
+        "pressure": 1008,
+        "humidity": 69,
+        "dew_point": 23.83,
+        "uvi": 0,
+        "clouds": 98,
         "visibility": 10000,
-        "wind_speed": 5.57,
-        "wind_deg": 158,
-        "wind_gust": 6.95,
+        "wind_speed": 5.78,
+        "wind_deg": 145,
+        "wind_gust": 9.51,
         "weather": [
           {
             "id": 804,
             "main": "Clouds",
             "description": "mây đen u ám",
-            "icon": "04d"
+            "icon": "04n"
+          }
+        ],
+        "pop": 0.79
+      },
+      {
+        "dt": 1777899600,
+        "temp": 29.76,
+        "feels_like": 34.69,
+        "pressure": 1008,
+        "humidity": 71,
+        "dew_point": 23.93,
+        "uvi": 0,
+        "clouds": 88,
+        "visibility": 10000,
+        "wind_speed": 6.24,
+        "wind_deg": 144,
+        "wind_gust": 10.76,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0.03
+      },
+      {
+        "dt": 1777903200,
+        "temp": 29.38,
+        "feels_like": 34,
+        "pressure": 1009,
+        "humidity": 72,
+        "dew_point": 23.8,
+        "uvi": 0,
+        "clouds": 77,
+        "visibility": 10000,
+        "wind_speed": 6.12,
+        "wind_deg": 138,
+        "wind_gust": 11.58,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04n"
           }
         ],
         "pop": 0
       },
       {
-        "dt": 1777377600,
-        "temp": 31.52,
-        "feels_like": 35.44,
-        "pressure": 1007,
-        "humidity": 58,
-        "dew_point": 22.25,
+        "dt": 1777906800,
+        "temp": 28.93,
+        "feels_like": 33.13,
+        "pressure": 1010,
+        "humidity": 73,
+        "dew_point": 23.6,
         "uvi": 0,
-        "clouds": 93,
+        "clouds": 80,
         "visibility": 10000,
-        "wind_speed": 5.86,
-        "wind_deg": 143,
-        "wind_gust": 8.44,
+        "wind_speed": 5.19,
+        "wind_deg": 136,
+        "wind_gust": 10.87,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1777910400,
+        "temp": 28.49,
+        "feels_like": 32.13,
+        "pressure": 1010,
+        "humidity": 73,
+        "dew_point": 23.17,
+        "uvi": 0,
+        "clouds": 71,
+        "visibility": 10000,
+        "wind_speed": 4.33,
+        "wind_deg": 129,
+        "wind_gust": 8.94,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1777914000,
+        "temp": 28.34,
+        "feels_like": 31.96,
+        "pressure": 1010,
+        "humidity": 74,
+        "dew_point": 23.1,
+        "uvi": 0,
+        "clouds": 75,
+        "visibility": 10000,
+        "wind_speed": 4.06,
+        "wind_deg": 132,
+        "wind_gust": 8.37,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1777917600,
+        "temp": 28.17,
+        "feels_like": 31.58,
+        "pressure": 1009,
+        "humidity": 74,
+        "dew_point": 23.13,
+        "uvi": 0,
+        "clouds": 77,
+        "visibility": 10000,
+        "wind_speed": 4.27,
+        "wind_deg": 133,
+        "wind_gust": 8.43,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1777921200,
+        "temp": 27.89,
+        "feels_like": 30.98,
+        "pressure": 1008,
+        "humidity": 74,
+        "dew_point": 23.11,
+        "uvi": 0,
+        "clouds": 51,
+        "visibility": 10000,
+        "wind_speed": 4.22,
+        "wind_deg": 133,
+        "wind_gust": 8.66,
         "weather": [
           {
             "id": 500,
             "main": "Rain",
             "description": "mưa nhẹ",
             "icon": "10n"
+          }
+        ],
+        "pop": 0.68,
+        "rain": {
+          "1h": 0.27
+        }
+      },
+      {
+        "dt": 1777924800,
+        "temp": 27.72,
+        "feels_like": 30.88,
+        "pressure": 1008,
+        "humidity": 76,
+        "dew_point": 23.26,
+        "uvi": 0,
+        "clouds": 75,
+        "visibility": 10000,
+        "wind_speed": 3.38,
+        "wind_deg": 120,
+        "wind_gust": 7.04,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0.56
+      },
+      {
+        "dt": 1777928400,
+        "temp": 27.72,
+        "feels_like": 30.88,
+        "pressure": 1009,
+        "humidity": 76,
+        "dew_point": 23.13,
+        "uvi": 0,
+        "clouds": 82,
+        "visibility": 10000,
+        "wind_speed": 3.02,
+        "wind_deg": 109,
+        "wind_gust": 6.19,
+        "weather": [
+          {
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10n"
+          }
+        ],
+        "pop": 0.8,
+        "rain": {
+          "1h": 0.18
+        }
+      },
+      {
+        "dt": 1777932000,
+        "temp": 27.75,
+        "feels_like": 30.94,
+        "pressure": 1009,
+        "humidity": 76,
+        "dew_point": 23.12,
+        "uvi": 0,
+        "clouds": 82,
+        "visibility": 10000,
+        "wind_speed": 2.89,
+        "wind_deg": 93,
+        "wind_gust": 5.61,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0.73
+      },
+      {
+        "dt": 1777935600,
+        "temp": 27.48,
+        "feels_like": 30.6,
+        "pressure": 1009,
+        "humidity": 78,
+        "dew_point": 23.29,
+        "uvi": 0,
+        "clouds": 83,
+        "visibility": 10000,
+        "wind_speed": 3.06,
+        "wind_deg": 60,
+        "wind_gust": 5.18,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0.61
+      },
+      {
+        "dt": 1777939200,
+        "temp": 27.92,
+        "feels_like": 31.04,
+        "pressure": 1010,
+        "humidity": 74,
+        "dew_point": 22.55,
+        "uvi": 0.84,
+        "clouds": 83,
+        "visibility": 10000,
+        "wind_speed": 3.32,
+        "wind_deg": 50,
+        "wind_gust": 4.54,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0.49
+      },
+      {
+        "dt": 1777942800,
+        "temp": 29.87,
+        "feels_like": 33.18,
+        "pressure": 1011,
+        "humidity": 63,
+        "dew_point": 22.11,
+        "uvi": 2.75,
+        "clouds": 44,
+        "visibility": 10000,
+        "wind_speed": 3.23,
+        "wind_deg": 47,
+        "wind_gust": 4.12,
+        "weather": [
+          {
+            "id": 802,
+            "main": "Clouds",
+            "description": "mây rải rác",
+            "icon": "03d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1777946400,
+        "temp": 32,
+        "feels_like": 35.92,
+        "pressure": 1011,
+        "humidity": 56,
+        "dew_point": 22.05,
+        "uvi": 5.82,
+        "clouds": 46,
+        "visibility": 10000,
+        "wind_speed": 3.29,
+        "wind_deg": 29,
+        "wind_gust": 3.44,
+        "weather": [
+          {
+            "id": 802,
+            "main": "Clouds",
+            "description": "mây rải rác",
+            "icon": "03d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1777950000,
+        "temp": 33.66,
+        "feels_like": 37.66,
+        "pressure": 1010,
+        "humidity": 50,
+        "dew_point": 21.74,
+        "uvi": 9.21,
+        "clouds": 59,
+        "visibility": 10000,
+        "wind_speed": 3.14,
+        "wind_deg": 17,
+        "wind_gust": 3.05,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1777953600,
+        "temp": 35.21,
+        "feels_like": 38.92,
+        "pressure": 1010,
+        "humidity": 44,
+        "dew_point": 21.34,
+        "uvi": 11.22,
+        "clouds": 67,
+        "visibility": 10000,
+        "wind_speed": 2.95,
+        "wind_deg": 4,
+        "wind_gust": 2.74,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1777957200,
+        "temp": 36.71,
+        "feels_like": 40.22,
+        "pressure": 1008,
+        "humidity": 39,
+        "dew_point": 20.53,
+        "uvi": 7.39,
+        "clouds": 74,
+        "visibility": 10000,
+        "wind_speed": 3.05,
+        "wind_deg": 344,
+        "wind_gust": 2.88,
+        "weather": [
+          {
+            "id": 803,
+            "main": "Clouds",
+            "description": "mây cụm",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1777960800,
+        "temp": 36.95,
+        "feels_like": 39.96,
+        "pressure": 1007,
+        "humidity": 37,
+        "dew_point": 19.81,
+        "uvi": 2.48,
+        "clouds": 78,
+        "visibility": 10000,
+        "wind_speed": 2.63,
+        "wind_deg": 322,
+        "wind_gust": 2.53,
+        "weather": [
+          {
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10d"
           }
         ],
         "pop": 0.2,
         "rain": {
-          "1h": 0.17
+          "1h": 0.25
         }
       },
       {
-        "dt": 1777381200,
-        "temp": 30.73,
-        "feels_like": 35.01,
-        "pressure": 1007,
-        "humidity": 63,
-        "dew_point": 22.87,
-        "uvi": 0,
-        "clouds": 23,
-        "visibility": 10000,
-        "wind_speed": 5.1,
-        "wind_deg": 138,
-        "wind_gust": 7.98,
-        "weather": [
-          {
-            "id": 801,
-            "main": "Clouds",
-            "description": "mây thưa",
-            "icon": "02n"
-          }
-        ],
-        "pop": 0.47
-      },
-      {
-        "dt": 1777384800,
-        "temp": 29.34,
-        "feels_like": 33.28,
-        "pressure": 1009,
-        "humidity": 69,
-        "dew_point": 21.9,
-        "uvi": 0,
-        "clouds": 9,
-        "visibility": 10000,
-        "wind_speed": 4.59,
-        "wind_deg": 119,
-        "wind_gust": 7.75,
-        "weather": [
-          {
-            "id": 800,
-            "main": "Clear",
-            "description": "bầu trời quang đãng",
-            "icon": "01n"
-          }
-        ],
-        "pop": 0.32
-      },
-      {
-        "dt": 1777388400,
-        "temp": 28.98,
-        "feels_like": 32.87,
-        "pressure": 1009,
-        "humidity": 71,
-        "dew_point": 22.1,
-        "uvi": 0,
-        "clouds": 15,
-        "visibility": 10000,
-        "wind_speed": 4.66,
-        "wind_deg": 133,
-        "wind_gust": 8.36,
-        "weather": [
-          {
-            "id": 801,
-            "main": "Clouds",
-            "description": "mây thưa",
-            "icon": "02n"
-          }
-        ],
-        "pop": 0.23
-      },
-      {
-        "dt": 1777392000,
-        "temp": 28.37,
-        "feels_like": 32.03,
-        "pressure": 1009,
-        "humidity": 74,
-        "dew_point": 22.28,
-        "uvi": 0,
-        "clouds": 20,
-        "visibility": 10000,
-        "wind_speed": 3.44,
-        "wind_deg": 142,
-        "wind_gust": 7.21,
-        "weather": [
-          {
-            "id": 801,
-            "main": "Clouds",
-            "description": "mây thưa",
-            "icon": "02n"
-          }
-        ],
-        "pop": 0.38
-      },
-      {
-        "dt": 1777395600,
-        "temp": 28.43,
-        "feels_like": 32.33,
-        "pressure": 1009,
-        "humidity": 75,
-        "dew_point": 22.46,
-        "uvi": 0,
-        "clouds": 36,
-        "visibility": 10000,
-        "wind_speed": 2.55,
-        "wind_deg": 176,
-        "wind_gust": 4.84,
-        "weather": [
-          {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03n"
-          }
-        ],
-        "pop": 0.38
-      },
-      {
-        "dt": 1777399200,
-        "temp": 28.09,
-        "feels_like": 31.86,
-        "pressure": 1009,
-        "humidity": 77,
-        "dew_point": 22.55,
-        "uvi": 0,
-        "clouds": 35,
-        "visibility": 10000,
-        "wind_speed": 2.29,
-        "wind_deg": 169,
-        "wind_gust": 4.42,
-        "weather": [
-          {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03n"
-          }
-        ],
-        "pop": 0.35
-      },
-      {
-        "dt": 1777402800,
-        "temp": 28.08,
-        "feels_like": 31.99,
-        "pressure": 1008,
-        "humidity": 78,
-        "dew_point": 22.72,
-        "uvi": 0,
-        "clouds": 64,
-        "visibility": 10000,
-        "wind_speed": 1.99,
-        "wind_deg": 159,
-        "wind_gust": 3.46,
-        "weather": [
-          {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
-            "icon": "04n"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777406400,
-        "temp": 27.92,
-        "feels_like": 31.75,
-        "pressure": 1008,
-        "humidity": 79,
-        "dew_point": 22.7,
-        "uvi": 0,
-        "clouds": 39,
-        "visibility": 10000,
-        "wind_speed": 1.8,
-        "wind_deg": 154,
-        "wind_gust": 2.45,
-        "weather": [
-          {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03n"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777410000,
-        "temp": 27.99,
-        "feels_like": 32.07,
-        "pressure": 1009,
-        "humidity": 80,
-        "dew_point": 22.71,
-        "uvi": 0,
-        "clouds": 46,
-        "visibility": 10000,
-        "wind_speed": 1.19,
-        "wind_deg": 121,
-        "wind_gust": 1.31,
-        "weather": [
-          {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03n"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777413600,
-        "temp": 27.97,
-        "feels_like": 32.18,
-        "pressure": 1009,
-        "humidity": 81,
-        "dew_point": 22.71,
-        "uvi": 0,
-        "clouds": 59,
-        "visibility": 10000,
-        "wind_speed": 1.4,
-        "wind_deg": 92,
-        "wind_gust": 1.43,
-        "weather": [
-          {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
-            "icon": "04n"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777417200,
-        "temp": 28.3,
-        "feels_like": 33.04,
-        "pressure": 1010,
-        "humidity": 81,
-        "dew_point": 22.67,
-        "uvi": 0,
-        "clouds": 57,
-        "visibility": 10000,
-        "wind_speed": 1.9,
-        "wind_deg": 100,
-        "wind_gust": 2.22,
-        "weather": [
-          {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
-            "icon": "04d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777420800,
-        "temp": 28.39,
-        "feels_like": 31.91,
-        "pressure": 1010,
-        "humidity": 73,
-        "dew_point": 22.54,
-        "uvi": 0.78,
-        "clouds": 48,
-        "visibility": 10000,
-        "wind_speed": 2.15,
-        "wind_deg": 105,
-        "wind_gust": 2.24,
-        "weather": [
-          {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777424400,
-        "temp": 29.7,
-        "feels_like": 32.65,
-        "pressure": 1011,
-        "humidity": 62,
-        "dew_point": 21.82,
-        "uvi": 2.59,
-        "clouds": 7,
-        "visibility": 10000,
-        "wind_speed": 2.54,
-        "wind_deg": 121,
-        "wind_gust": 2.49,
-        "weather": [
-          {
-            "id": 800,
-            "main": "Clear",
-            "description": "bầu trời quang đãng",
-            "icon": "01d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777428000,
-        "temp": 31.88,
-        "feels_like": 34.63,
-        "pressure": 1011,
-        "humidity": 52,
-        "dew_point": 20.76,
-        "uvi": 5.53,
-        "clouds": 6,
-        "visibility": 10000,
-        "wind_speed": 2.18,
-        "wind_deg": 129,
-        "wind_gust": 1.91,
-        "weather": [
-          {
-            "id": 800,
-            "main": "Clear",
-            "description": "bầu trời quang đãng",
-            "icon": "01d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777431600,
-        "temp": 34.34,
-        "feels_like": 37.17,
-        "pressure": 1011,
-        "humidity": 44,
-        "dew_point": 20.38,
-        "uvi": 8.84,
-        "clouds": 7,
-        "visibility": 10000,
-        "wind_speed": 1.48,
-        "wind_deg": 153,
-        "wind_gust": 1.23,
-        "weather": [
-          {
-            "id": 800,
-            "main": "Clear",
-            "description": "bầu trời quang đãng",
-            "icon": "01d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777435200,
-        "temp": 36.39,
-        "feels_like": 39.22,
-        "pressure": 1010,
-        "humidity": 38,
-        "dew_point": 19.95,
-        "uvi": 11.06,
-        "clouds": 8,
-        "visibility": 10000,
-        "wind_speed": 1.28,
-        "wind_deg": 178,
-        "wind_gust": 1.23,
-        "weather": [
-          {
-            "id": 800,
-            "main": "Clear",
-            "description": "bầu trời quang đãng",
-            "icon": "01d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777438800,
-        "temp": 37.88,
-        "feels_like": 40.66,
-        "pressure": 1009,
-        "humidity": 34,
-        "dew_point": 19.44,
-        "uvi": 11.92,
-        "clouds": 7,
-        "visibility": 10000,
-        "wind_speed": 1.17,
-        "wind_deg": 190,
-        "wind_gust": 1.59,
-        "weather": [
-          {
-            "id": 800,
-            "main": "Clear",
-            "description": "bầu trời quang đãng",
-            "icon": "01d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777442400,
-        "temp": 39.07,
-        "feels_like": 41.77,
-        "pressure": 1007,
-        "humidity": 31,
-        "dew_point": 19.07,
-        "uvi": 10.73,
-        "clouds": 7,
-        "visibility": 10000,
-        "wind_speed": 0.95,
-        "wind_deg": 221,
-        "wind_gust": 1.77,
-        "weather": [
-          {
-            "id": 800,
-            "main": "Clear",
-            "description": "bầu trời quang đãng",
-            "icon": "01d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777446000,
-        "temp": 39.3,
-        "feels_like": 41.8,
+        "dt": 1777964400,
+        "temp": 35.57,
+        "feels_like": 38.3,
         "pressure": 1006,
-        "humidity": 30,
-        "dew_point": 18.63,
-        "uvi": 7.87,
-        "clouds": 54,
+        "humidity": 40,
+        "dew_point": 20.12,
+        "uvi": 2.21,
+        "clouds": 100,
         "visibility": 10000,
-        "wind_speed": 1.53,
-        "wind_deg": 263,
-        "wind_gust": 1.88,
+        "wind_speed": 1.7,
+        "wind_deg": 297,
+        "wind_gust": 1.33,
         "weather": [
           {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
-            "icon": "04d"
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10d"
           }
         ],
-        "pop": 0
+        "pop": 0.94,
+        "rain": {
+          "1h": 0.23
+        }
       },
       {
-        "dt": 1777449600,
-        "temp": 38.56,
-        "feels_like": 40.44,
-        "pressure": 1005,
-        "humidity": 30,
-        "dew_point": 18.2,
-        "uvi": 4.66,
-        "clouds": 65,
+        "dt": 1777968000,
+        "temp": 33.73,
+        "feels_like": 36.87,
+        "pressure": 1006,
+        "humidity": 47,
+        "dew_point": 21.04,
+        "uvi": 1.54,
+        "clouds": 100,
         "visibility": 10000,
-        "wind_speed": 2.14,
-        "wind_deg": 266,
-        "wind_gust": 2.18,
+        "wind_speed": 0.17,
+        "wind_deg": 336,
+        "wind_gust": 1.08,
         "weather": [
           {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
-            "icon": "04d"
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10d"
           }
         ],
-        "pop": 0
+        "pop": 0.98,
+        "rain": {
+          "1h": 0.23
+        }
       },
       {
-        "dt": 1777453200,
-        "temp": 38.4,
-        "feels_like": 40.51,
-        "pressure": 1005,
-        "humidity": 31,
-        "dew_point": 18.41,
-        "uvi": 1.7,
-        "clouds": 49,
+        "dt": 1777971600,
+        "temp": 32.94,
+        "feels_like": 36.17,
+        "pressure": 1006,
+        "humidity": 50,
+        "dew_point": 21.19,
+        "uvi": 0.48,
+        "clouds": 100,
         "visibility": 10000,
-        "wind_speed": 1.27,
-        "wind_deg": 192,
-        "wind_gust": 2.01,
+        "wind_speed": 2.75,
+        "wind_deg": 250,
+        "wind_gust": 2.02,
         "weather": [
           {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03d"
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10d"
           }
         ],
-        "pop": 0
+        "pop": 0.94,
+        "rain": {
+          "1h": 0.12
+        }
       },
       {
-        "dt": 1777456800,
-        "temp": 36.24,
-        "feels_like": 38.59,
-        "pressure": 1005,
-        "humidity": 37,
-        "dew_point": 19.38,
-        "uvi": 0.31,
-        "clouds": 48,
+        "dt": 1777975200,
+        "temp": 32.24,
+        "feels_like": 35.59,
+        "pressure": 1006,
+        "humidity": 53,
+        "dew_point": 21.6,
+        "uvi": 0.08,
+        "clouds": 100,
         "visibility": 10000,
-        "wind_speed": 6.02,
-        "wind_deg": 149,
-        "wind_gust": 4.07,
+        "wind_speed": 3.08,
+        "wind_deg": 237,
+        "wind_gust": 3.03,
         "weather": [
           {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03d"
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10d"
           }
         ],
-        "pop": 0
+        "pop": 0.87,
+        "rain": {
+          "1h": 0.2
+        }
       },
       {
-        "dt": 1777460400,
-        "temp": 32.34,
-        "feels_like": 34.5,
+        "dt": 1777978800,
+        "temp": 31.6,
+        "feels_like": 35.08,
         "pressure": 1007,
-        "humidity": 48,
-        "dew_point": 19.95,
-        "uvi": 0,
-        "clouds": 46,
-        "visibility": 10000,
-        "wind_speed": 6.65,
-        "wind_deg": 145,
-        "wind_gust": 7.29,
-        "weather": [
-          {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777464000,
-        "temp": 31.17,
-        "feels_like": 33.11,
-        "pressure": 1008,
-        "humidity": 51,
-        "dew_point": 19.87,
-        "uvi": 0,
-        "clouds": 48,
-        "visibility": 10000,
-        "wind_speed": 5.09,
-        "wind_deg": 119,
-        "wind_gust": 7.35,
-        "weather": [
-          {
-            "id": 802,
-            "main": "Clouds",
-            "description": "mây rải rác",
-            "icon": "03n"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777467600,
-        "temp": 30.24,
-        "feels_like": 32.11,
-        "pressure": 1009,
-        "humidity": 54,
-        "dew_point": 19.97,
+        "humidity": 56,
+        "dew_point": 21.87,
         "uvi": 0,
         "clouds": 100,
         "visibility": 10000,
-        "wind_speed": 4.32,
-        "wind_deg": 114,
-        "wind_gust": 6.78,
+        "wind_speed": 3.11,
+        "wind_deg": 194,
+        "wind_gust": 5.5,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0.76
+      },
+      {
+        "dt": 1777982400,
+        "temp": 31.04,
+        "feels_like": 34.44,
+        "pressure": 1008,
+        "humidity": 58,
+        "dew_point": 21.97,
+        "uvi": 0,
+        "clouds": 100,
+        "visibility": 10000,
+        "wind_speed": 4.35,
+        "wind_deg": 134,
+        "wind_gust": 6.92,
         "weather": [
           {
             "id": 804,
@@ -693,421 +622,502 @@
             "icon": "04n"
           }
         ],
-        "pop": 0.32
+        "pop": 0.76
       },
       {
-        "dt": 1777471200,
-        "temp": 29.54,
-        "feels_like": 31.46,
-        "pressure": 1009,
-        "humidity": 57,
-        "dew_point": 20.15,
+        "dt": 1777986000,
+        "temp": 29.37,
+        "feels_like": 32.76,
+        "pressure": 1008,
+        "humidity": 66,
+        "dew_point": 22.22,
         "uvi": 0,
-        "clouds": 79,
+        "clouds": 70,
         "visibility": 10000,
-        "wind_speed": 4.67,
-        "wind_deg": 138,
-        "wind_gust": 7.27,
+        "wind_speed": 5.22,
+        "wind_deg": 129,
+        "wind_gust": 8.99,
+        "weather": [
+          {
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10n"
+          }
+        ],
+        "pop": 1,
+        "rain": {
+          "1h": 0.54
+        }
+      },
+      {
+        "dt": 1777989600,
+        "temp": 28.75,
+        "feels_like": 32.02,
+        "pressure": 1010,
+        "humidity": 69,
+        "dew_point": 22.44,
+        "uvi": 0,
+        "clouds": 72,
+        "visibility": 10000,
+        "wind_speed": 3.17,
+        "wind_deg": 110,
+        "wind_gust": 6.36,
+        "weather": [
+          {
+            "id": 501,
+            "main": "Rain",
+            "description": "mưa vừa",
+            "icon": "10n"
+          }
+        ],
+        "pop": 1,
+        "rain": {
+          "1h": 1.53
+        }
+      },
+      {
+        "dt": 1777993200,
+        "temp": 28.24,
+        "feels_like": 31.43,
+        "pressure": 1010,
+        "humidity": 72,
+        "dew_point": 22.6,
+        "uvi": 0,
+        "clouds": 80,
+        "visibility": 10000,
+        "wind_speed": 2.42,
+        "wind_deg": 79,
+        "wind_gust": 4.51,
+        "weather": [
+          {
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10n"
+          }
+        ],
+        "pop": 1,
+        "rain": {
+          "1h": 0.56
+        }
+      },
+      {
+        "dt": 1777996800,
+        "temp": 27.53,
+        "feels_like": 30.35,
+        "pressure": 1010,
+        "humidity": 75,
+        "dew_point": 22.63,
+        "uvi": 0,
+        "clouds": 85,
+        "visibility": 10000,
+        "wind_speed": 1.96,
+        "wind_deg": 97,
+        "wind_gust": 3.72,
+        "weather": [
+          {
+            "id": 500,
+            "main": "Rain",
+            "description": "mưa nhẹ",
+            "icon": "10n"
+          }
+        ],
+        "pop": 1,
+        "rain": {
+          "1h": 0.31
+        }
+      },
+      {
+        "dt": 1778000400,
+        "temp": 27.4,
+        "feels_like": 29.97,
+        "pressure": 1008,
+        "humidity": 74,
+        "dew_point": 22.46,
+        "uvi": 0,
+        "clouds": 87,
+        "visibility": 10000,
+        "wind_speed": 2.52,
+        "wind_deg": 115,
+        "wind_gust": 5.57,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0.8
+      },
+      {
+        "dt": 1778004000,
+        "temp": 27.33,
+        "feels_like": 30.05,
+        "pressure": 1008,
+        "humidity": 76,
+        "dew_point": 22.56,
+        "uvi": 0,
+        "clouds": 89,
+        "visibility": 10000,
+        "wind_speed": 2.37,
+        "wind_deg": 108,
+        "wind_gust": 4.97,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0.8
+      },
+      {
+        "dt": 1778007600,
+        "temp": 26.96,
+        "feels_like": 29.47,
+        "pressure": 1007,
+        "humidity": 78,
+        "dew_point": 22.83,
+        "uvi": 0,
+        "clouds": 100,
+        "visibility": 10000,
+        "wind_speed": 2.19,
+        "wind_deg": 87,
+        "wind_gust": 4.2,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1778011200,
+        "temp": 26.58,
+        "feels_like": 26.58,
+        "pressure": 1007,
+        "humidity": 81,
+        "dew_point": 22.99,
+        "uvi": 0,
+        "clouds": 100,
+        "visibility": 10000,
+        "wind_speed": 2.29,
+        "wind_deg": 81,
+        "wind_gust": 3.89,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1778014800,
+        "temp": 26.4,
+        "feels_like": 26.4,
+        "pressure": 1007,
+        "humidity": 82,
+        "dew_point": 23.05,
+        "uvi": 0,
+        "clouds": 100,
+        "visibility": 10000,
+        "wind_speed": 2.27,
+        "wind_deg": 77,
+        "wind_gust": 3.74,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1778018400,
+        "temp": 26.31,
+        "feels_like": 26.31,
+        "pressure": 1008,
+        "humidity": 82,
+        "dew_point": 23.02,
+        "uvi": 0,
+        "clouds": 100,
+        "visibility": 10000,
+        "wind_speed": 2.25,
+        "wind_deg": 63,
+        "wind_gust": 3.71,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04n"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1778022000,
+        "temp": 26.31,
+        "feels_like": 26.31,
+        "pressure": 1009,
+        "humidity": 82,
+        "dew_point": 22.92,
+        "uvi": 0,
+        "clouds": 100,
+        "visibility": 10000,
+        "wind_speed": 2.13,
+        "wind_deg": 52,
+        "wind_gust": 3.62,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1778025600,
+        "temp": 27.52,
+        "feels_like": 30.33,
+        "pressure": 1009,
+        "humidity": 75,
+        "dew_point": 22.62,
+        "uvi": 0.81,
+        "clouds": 99,
+        "visibility": 10000,
+        "wind_speed": 2.58,
+        "wind_deg": 48,
+        "wind_gust": 3.39,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1778029200,
+        "temp": 29.56,
+        "feels_like": 33.15,
+        "pressure": 1010,
+        "humidity": 66,
+        "dew_point": 22.53,
+        "uvi": 2.66,
+        "clouds": 89,
+        "visibility": 10000,
+        "wind_speed": 2.73,
+        "wind_deg": 44,
+        "wind_gust": 3.31,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1778032800,
+        "temp": 31.5,
+        "feels_like": 35.39,
+        "pressure": 1010,
+        "humidity": 58,
+        "dew_point": 22.22,
+        "uvi": 5.75,
+        "clouds": 88,
+        "visibility": 10000,
+        "wind_speed": 2.73,
+        "wind_deg": 41,
+        "wind_gust": 3,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1778036400,
+        "temp": 33.38,
+        "feels_like": 37.38,
+        "pressure": 1009,
+        "humidity": 51,
+        "dew_point": 21.85,
+        "uvi": 9.16,
+        "clouds": 85,
+        "visibility": 10000,
+        "wind_speed": 2.71,
+        "wind_deg": 23,
+        "wind_gust": 2.75,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0
+      },
+      {
+        "dt": 1778040000,
+        "temp": 35.09,
+        "feels_like": 39.02,
+        "pressure": 1009,
+        "humidity": 45,
+        "dew_point": 21.44,
+        "uvi": 11.23,
+        "clouds": 83,
+        "visibility": 10000,
+        "wind_speed": 2.64,
+        "wind_deg": 3,
+        "wind_gust": 2.32,
         "weather": [
           {
             "id": 803,
             "main": "Clouds",
             "description": "mây cụm",
-            "icon": "04n"
+            "icon": "04d"
           }
         ],
-        "pop": 0.44
+        "pop": 0
       },
       {
-        "dt": 1777474800,
-        "temp": 28.36,
-        "feels_like": 30.66,
-        "pressure": 1011,
-        "humidity": 65,
-        "dew_point": 21.11,
-        "uvi": 0,
-        "clouds": 63,
+        "dt": 1778043600,
+        "temp": 36.06,
+        "feels_like": 39.99,
+        "pressure": 1008,
+        "humidity": 42,
+        "dew_point": 21.04,
+        "uvi": 11.97,
+        "clouds": 87,
         "visibility": 10000,
-        "wind_speed": 1.4,
-        "wind_deg": 168,
-        "wind_gust": 3.12,
+        "wind_speed": 2.71,
+        "wind_deg": 348,
+        "wind_gust": 2.27,
         "weather": [
           {
             "id": 500,
             "main": "Rain",
             "description": "mưa nhẹ",
-            "icon": "10n"
+            "icon": "10d"
           }
         ],
-        "pop": 0.97,
+        "pop": 0.2,
         "rain": {
-          "1h": 0.74
+          "1h": 0.1
         }
       },
       {
-        "dt": 1777478400,
-        "temp": 28.19,
-        "feels_like": 30.62,
-        "pressure": 1011,
-        "humidity": 67,
-        "dew_point": 21.48,
-        "uvi": 0,
-        "clouds": 54,
+        "dt": 1778047200,
+        "temp": 35.41,
+        "feels_like": 38.65,
+        "pressure": 1006,
+        "humidity": 42,
+        "dew_point": 20.57,
+        "uvi": 10.49,
+        "clouds": 89,
         "visibility": 10000,
-        "wind_speed": 2.51,
-        "wind_deg": 183,
-        "wind_gust": 4.84,
+        "wind_speed": 1.91,
+        "wind_deg": 10,
+        "wind_gust": 1.9,
         "weather": [
           {
             "id": 500,
             "main": "Rain",
             "description": "mưa nhẹ",
-            "icon": "10n"
+            "icon": "10d"
           }
         ],
-        "pop": 0.91,
+        "pop": 0.25,
         "rain": {
           "1h": 0.24
         }
       },
       {
-        "dt": 1777482000,
-        "temp": 28.07,
-        "feels_like": 30.67,
-        "pressure": 1011,
-        "humidity": 69,
-        "dew_point": 21.96,
-        "uvi": 0,
-        "clouds": 60,
+        "dt": 1778050800,
+        "temp": 34.7,
+        "feels_like": 37.88,
+        "pressure": 1006,
+        "humidity": 44,
+        "dew_point": 20.76,
+        "uvi": 7.33,
+        "clouds": 100,
         "visibility": 10000,
-        "wind_speed": 2.74,
-        "wind_deg": 169,
-        "wind_gust": 5.11,
+        "wind_speed": 1.08,
+        "wind_deg": 65,
+        "wind_gust": 1.12,
         "weather": [
           {
             "id": 500,
             "main": "Rain",
             "description": "mưa nhẹ",
-            "icon": "10n"
+            "icon": "10d"
           }
         ],
-        "pop": 0.88,
+        "pop": 0.68,
         "rain": {
           "1h": 0.19
         }
       },
       {
-        "dt": 1777485600,
-        "temp": 27.91,
-        "feels_like": 30.75,
-        "pressure": 1010,
-        "humidity": 72,
-        "dew_point": 22.34,
-        "uvi": 0,
-        "clouds": 66,
-        "visibility": 10000,
-        "wind_speed": 3.19,
-        "wind_deg": 158,
-        "wind_gust": 5.43,
-        "weather": [
-          {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
-            "icon": "04n"
-          }
-        ],
-        "pop": 0.82
-      },
-      {
-        "dt": 1777489200,
-        "temp": 27.64,
-        "feels_like": 30.46,
-        "pressure": 1009,
-        "humidity": 74,
-        "dew_point": 22.52,
-        "uvi": 0,
-        "clouds": 96,
-        "visibility": 10000,
-        "wind_speed": 3.14,
-        "wind_deg": 155,
-        "wind_gust": 5.43,
-        "weather": [
-          {
-            "id": 804,
-            "main": "Clouds",
-            "description": "mây đen u ám",
-            "icon": "04n"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777492800,
-        "temp": 27.33,
-        "feels_like": 30.05,
-        "pressure": 1009,
-        "humidity": 76,
-        "dew_point": 22.62,
-        "uvi": 0,
+        "dt": 1778054400,
+        "temp": 34.68,
+        "feels_like": 38.17,
+        "pressure": 1005,
+        "humidity": 45,
+        "dew_point": 21.03,
+        "uvi": 3.21,
         "clouds": 100,
         "visibility": 10000,
-        "wind_speed": 2.61,
-        "wind_deg": 132,
-        "wind_gust": 4.66,
+        "wind_speed": 3.08,
+        "wind_deg": 156,
+        "wind_gust": 2.14,
         "weather": [
           {
             "id": 804,
             "main": "Clouds",
             "description": "mây đen u ám",
-            "icon": "04n"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777496400,
-        "temp": 26.92,
-        "feels_like": 29.39,
-        "pressure": 1010,
-        "humidity": 78,
-        "dew_point": 22.84,
-        "uvi": 0,
-        "clouds": 73,
-        "visibility": 10000,
-        "wind_speed": 2.57,
-        "wind_deg": 120,
-        "wind_gust": 4.36,
-        "weather": [
-          {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
-            "icon": "04n"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777500000,
-        "temp": 26.59,
-        "feels_like": 26.59,
-        "pressure": 1010,
-        "humidity": 81,
-        "dew_point": 22.93,
-        "uvi": 0,
-        "clouds": 62,
-        "visibility": 10000,
-        "wind_speed": 2.74,
-        "wind_deg": 109,
-        "wind_gust": 4.57,
-        "weather": [
-          {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
-            "icon": "04n"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777503600,
-        "temp": 26.51,
-        "feels_like": 26.51,
-        "pressure": 1010,
-        "humidity": 81,
-        "dew_point": 22.88,
-        "uvi": 0,
-        "clouds": 60,
-        "visibility": 10000,
-        "wind_speed": 2.52,
-        "wind_deg": 115,
-        "wind_gust": 4.17,
-        "weather": [
-          {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
             "icon": "04d"
           }
         ],
-        "pop": 0
+        "pop": 0.65
       },
       {
-        "dt": 1777507200,
-        "temp": 28.2,
-        "feels_like": 31.2,
-        "pressure": 1011,
-        "humidity": 71,
-        "dew_point": 22.46,
-        "uvi": 0.8,
-        "clouds": 58,
-        "visibility": 10000,
-        "wind_speed": 2.7,
-        "wind_deg": 122,
-        "wind_gust": 3.65,
-        "weather": [
-          {
-            "id": 803,
-            "main": "Clouds",
-            "description": "mây cụm",
-            "icon": "04d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777510800,
-        "temp": 30.31,
-        "feels_like": 33.01,
-        "pressure": 1011,
-        "humidity": 58,
-        "dew_point": 21.09,
-        "uvi": 2.64,
-        "clouds": 11,
-        "visibility": 10000,
-        "wind_speed": 2.95,
-        "wind_deg": 105,
-        "wind_gust": 3.35,
-        "weather": [
-          {
-            "id": 801,
-            "main": "Clouds",
-            "description": "mây thưa",
-            "icon": "02d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777514400,
-        "temp": 32.2,
-        "feels_like": 34.49,
-        "pressure": 1011,
+        "dt": 1778058000,
+        "temp": 33.51,
+        "feels_like": 37.03,
+        "pressure": 1005,
         "humidity": 49,
-        "dew_point": 20.12,
-        "uvi": 5.41,
-        "clouds": 12,
+        "dew_point": 21.26,
+        "uvi": 0.53,
+        "clouds": 100,
         "visibility": 10000,
-        "wind_speed": 2.94,
-        "wind_deg": 102,
-        "wind_gust": 2.98,
-        "weather": [
-          {
-            "id": 801,
-            "main": "Clouds",
-            "description": "mây thưa",
-            "icon": "02d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777518000,
-        "temp": 34.21,
-        "feels_like": 36.62,
-        "pressure": 1011,
-        "humidity": 43,
-        "dew_point": 19.75,
-        "uvi": 8.82,
-        "clouds": 13,
-        "visibility": 10000,
-        "wind_speed": 2.5,
-        "wind_deg": 104,
-        "wind_gust": 2.38,
-        "weather": [
-          {
-            "id": 801,
-            "main": "Clouds",
-            "description": "mây thưa",
-            "icon": "02d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777521600,
-        "temp": 36.19,
-        "feels_like": 38.5,
-        "pressure": 1010,
-        "humidity": 37,
-        "dew_point": 19.44,
-        "uvi": 10.73,
-        "clouds": 11,
-        "visibility": 10000,
-        "wind_speed": 2.45,
-        "wind_deg": 114,
-        "wind_gust": 2.57,
-        "weather": [
-          {
-            "id": 801,
-            "main": "Clouds",
-            "description": "mây thưa",
-            "icon": "02d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777525200,
-        "temp": 37.81,
-        "feels_like": 40.16,
-        "pressure": 1009,
-        "humidity": 33,
-        "dew_point": 19.02,
-        "uvi": 11.71,
-        "clouds": 9,
-        "visibility": 10000,
-        "wind_speed": 2,
-        "wind_deg": 111,
-        "wind_gust": 2.56,
-        "weather": [
-          {
-            "id": 800,
-            "main": "Clear",
-            "description": "bầu trời quang đãng",
-            "icon": "01d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777528800,
-        "temp": 38.84,
-        "feels_like": 41.33,
-        "pressure": 1008,
-        "humidity": 31,
-        "dew_point": 18.83,
-        "uvi": 10.51,
-        "clouds": 11,
-        "visibility": 10000,
-        "wind_speed": 1.46,
-        "wind_deg": 98,
-        "wind_gust": 2.88,
-        "weather": [
-          {
-            "id": 801,
-            "main": "Clouds",
-            "description": "mây thưa",
-            "icon": "02d"
-          }
-        ],
-        "pop": 0
-      },
-      {
-        "dt": 1777532400,
-        "temp": 37.79,
-        "feels_like": 40.49,
-        "pressure": 1007,
-        "humidity": 34,
-        "dew_point": 19.06,
-        "uvi": 7.75,
-        "clouds": 97,
-        "visibility": 10000,
-        "wind_speed": 3.09,
-        "wind_deg": 154,
-        "wind_gust": 3.44,
+        "wind_speed": 4.72,
+        "wind_deg": 155,
+        "wind_gust": 4.7,
         "weather": [
           {
             "id": 804,
@@ -1116,7 +1126,30 @@
             "icon": "04d"
           }
         ],
-        "pop": 0
+        "pop": 0.52
+      },
+      {
+        "dt": 1778061600,
+        "temp": 33.26,
+        "feels_like": 36.82,
+        "pressure": 1006,
+        "humidity": 50,
+        "dew_point": 21.35,
+        "uvi": 0.18,
+        "clouds": 98,
+        "visibility": 10000,
+        "wind_speed": 3.76,
+        "wind_deg": 139,
+        "wind_gust": 4.13,
+        "weather": [
+          {
+            "id": 804,
+            "main": "Clouds",
+            "description": "mây đen u ám",
+            "icon": "04d"
+          }
+        ],
+        "pop": 0.37
       }
     ]
   }

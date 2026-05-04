@@ -13,24 +13,20 @@ export class MqttDeviceStateService {
 
   async updateDeviceStatesIfChanged(data: SensorPayload): Promise<void> {
     try {
-      // Check hardcoded LEDs
+      // Check hardcoded LEDs (Realistic names)
       if (this.lastStates.led1 !== data.led1) {
-        await this.updateDeviceInDb('LED1', data.led1);
+        await this.updateDeviceInDb('Đèn Phòng Khách', data.led1);
         this.lastStates.led1 = data.led1;
       }
       if (this.lastStates.led2 !== data.led2) {
-        await this.updateDeviceInDb('LED2', data.led2);
+        await this.updateDeviceInDb('Đèn Ban Công', data.led2);
         this.lastStates.led2 = data.led2;
       }
 
-      // Check dynamic devices
+      // Check dynamic device (Slot 1 -> Pin 13)
       if (data.device1 !== undefined && this.lastStates.device1 !== data.device1) {
         await this.updateDeviceBySlot(0, data.device1);
         this.lastStates.device1 = data.device1;
-      }
-      if (data.device2 !== undefined && this.lastStates.device2 !== data.device2) {
-        await this.updateDeviceBySlot(1, data.device2);
-        this.lastStates.device2 = data.device2;
       }
     } catch (error) {
       this.logger.error(`Failed to update device states: ${error.message}`);
@@ -56,7 +52,7 @@ export class MqttDeviceStateService {
 
   private async updateDeviceBySlot(slotIndex: number, state: boolean): Promise<void> {
     // We assume slot 0 is pin 9001, slot 1 is pin 9002
-    const pin = 9001 + slotIndex;
+    const pin = 13 + slotIndex;
     const device = await this.prisma.device.findFirst({
       where: { pin },
     });
