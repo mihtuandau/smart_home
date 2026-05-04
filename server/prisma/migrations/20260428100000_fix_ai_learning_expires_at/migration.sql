@@ -1,5 +1,6 @@
 -- 1. Vá bảng ai_learning_data
 ALTER TABLE "ai_learning_data" ADD COLUMN IF NOT EXISTS "date" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "ai_learning_data" ADD COLUMN IF NOT EXISTS "feature" TEXT NOT NULL DEFAULT 'daily_stats';
 ALTER TABLE "ai_learning_data" ADD COLUMN IF NOT EXISTS "expiresAt" TIMESTAMP(3) NOT NULL DEFAULT NOW() + INTERVAL '1 day';
 CREATE INDEX IF NOT EXISTS "ai_learning_data_expiresAt_idx" ON "ai_learning_data"("expiresAt");
 CREATE INDEX IF NOT EXISTS "ai_learning_data_date_feature_idx" ON "ai_learning_data"("date", "feature");
