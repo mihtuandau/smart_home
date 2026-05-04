@@ -31,6 +31,22 @@ services:
       postgres:
         condition: service_healthy
 
+  # ── AI Prediction Service ────────────────────────
+  ai-service:
+    build:
+      context: ./ai_predict_service
+      dockerfile: Dockerfile
+    container_name: smarthome_ai
+    restart: always
+    env_file:
+      - ./ai_predict_service/.env
+    # Ghi đè DATABASE_URL để trỏ vào mạng nội bộ Docker
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   postgres_data:
     driver: local

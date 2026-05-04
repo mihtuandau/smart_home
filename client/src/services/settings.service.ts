@@ -45,7 +45,7 @@ const toUpdateDto = (
 
 export const settingsService = {
   getNotificationSettings: async (): Promise<NotificationSettings> => {
-    const response = await settingsApi.getNotificationSettings();
+    const response = (await settingsApi.getNotificationSettings()) as any;
     return normalizeNotificationSettings(
       response.data as Partial<NotificationSettings> & Record<string, unknown>,
     );
@@ -54,19 +54,19 @@ export const settingsService = {
   updateNotificationSettings: async (
     data: UpdateNotificationSettingsDto,
   ): Promise<NotificationSettings> => {
-    const response = await settingsApi.updateNotificationSettings(toUpdateDto(data));
+    const response = (await settingsApi.updateNotificationSettings(toUpdateDto(data))) as any;
     return normalizeNotificationSettings(
       response.data as Partial<NotificationSettings> & Record<string, unknown>,
     );
   },
 
   getSystemSettings: async (): Promise<SystemSettings> => {
-    const response = await settingsApi.getSettings();
+    const response = (await settingsApi.getSettings()) as any;
     return response.data as SystemSettings;
   },
 
   updateSystemSettings: async (data: UpdateSystemSettingsDto): Promise<SystemSettings> => {
-    const response = await settingsApi.updateSettings(data);
+    const response = (await settingsApi.updateSettings(data)) as any;
     return response.data as SystemSettings;
   },
 };

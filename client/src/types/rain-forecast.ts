@@ -66,4 +66,5 @@ export interface RainForecastReport {
   aligned_records: number;
   bias_summary: BiasSummary;
   adjusted_hourly: AdjustedForecastItem[];
+  prediction_source?: string;
 }
