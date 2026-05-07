@@ -1,0 +1,957 @@
+logged_at,topic,cluster_id,is_anomaly,anomaly_score,alerts,recommendations
+2026-05-04T23:42:36,esp32/sensors,2,True,-0.25,High power,Turn off unused devices
+2026-05-05T11:32:53,TN/IOT/smarthome/tt,2,False,0.086461,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-05T11:33:03,TN/IOT/smarthome/tt,2,False,0.08134,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-05T11:33:13,TN/IOT/smarthome/tt,2,False,0.070606,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-05T11:33:23,TN/IOT/smarthome/tt,2,False,0.074133,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-05T11:33:33,TN/IOT/smarthome/tt,0,False,0.030057,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-05T11:33:43,TN/IOT/smarthome/tt,0,False,0.023257,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-05T11:33:53,TN/IOT/smarthome/tt,0,False,0.024309,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-05T11:34:03,TN/IOT/smarthome/tt,0,False,0.022081,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-05T11:34:13,TN/IOT/smarthome/tt,0,False,0.01833,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:38:35,TN/IOT/smarthome/tt,2,False,0.077317,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:38:45,TN/IOT/smarthome/tt,2,False,0.083424,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:38:55,TN/IOT/smarthome/tt,2,False,0.067162,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:39:05,TN/IOT/smarthome/tt,2,False,0.079195,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:39:15,TN/IOT/smarthome/tt,0,False,0.019409,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:39:25,TN/IOT/smarthome/tt,0,False,0.025509,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:39:35,TN/IOT/smarthome/tt,0,False,0.02125,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:39:45,TN/IOT/smarthome/tt,0,False,0.017176,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:39:55,TN/IOT/smarthome/tt,0,False,0.027935,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:40:05,TN/IOT/smarthome/tt,0,False,0.023288,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:40:15,TN/IOT/smarthome/tt,2,False,0.079875,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:40:25,TN/IOT/smarthome/tt,2,False,0.089009,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:40:35,TN/IOT/smarthome/tt,2,False,0.07689,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:40:45,TN/IOT/smarthome/tt,2,False,0.082803,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:40:55,TN/IOT/smarthome/tt,2,False,0.08922,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:41:05,TN/IOT/smarthome/tt,2,False,0.072951,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:41:15,TN/IOT/smarthome/tt,2,False,0.083915,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:41:25,TN/IOT/smarthome/tt,2,False,0.08766,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:41:35,TN/IOT/smarthome/tt,2,False,0.081525,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:41:45,TN/IOT/smarthome/tt,2,False,0.070966,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:41:55,TN/IOT/smarthome/tt,2,False,0.086586,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:42:05,TN/IOT/smarthome/tt,2,False,0.076943,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:42:15,TN/IOT/smarthome/tt,2,False,0.073591,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:42:25,TN/IOT/smarthome/tt,2,False,0.074448,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:42:35,TN/IOT/smarthome/tt,2,False,0.088754,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:42:45,TN/IOT/smarthome/tt,2,False,0.072193,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:42:55,TN/IOT/smarthome/tt,2,False,0.082259,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:43:05,TN/IOT/smarthome/tt,2,False,0.078717,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:43:15,TN/IOT/smarthome/tt,2,False,0.083469,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:43:25,TN/IOT/smarthome/tt,2,False,0.083617,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:43:35,TN/IOT/smarthome/tt,2,False,0.074602,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:43:45,TN/IOT/smarthome/tt,2,False,0.083616,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:43:55,TN/IOT/smarthome/tt,2,False,0.071494,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:44:05,TN/IOT/smarthome/tt,2,False,0.077411,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:44:15,TN/IOT/smarthome/tt,2,False,0.079138,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:44:25,TN/IOT/smarthome/tt,2,False,0.079214,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:44:35,TN/IOT/smarthome/tt,2,False,0.082194,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:44:45,TN/IOT/smarthome/tt,2,False,0.079746,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:44:55,TN/IOT/smarthome/tt,2,False,0.070732,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:45:05,TN/IOT/smarthome/tt,2,False,0.071145,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:45:15,TN/IOT/smarthome/tt,2,False,0.082725,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:45:25,TN/IOT/smarthome/tt,2,False,0.080807,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:45:35,TN/IOT/smarthome/tt,0,False,0.020009,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:45:45,TN/IOT/smarthome/tt,0,False,0.022144,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T14:45:55,TN/IOT/smarthome/tt,0,False,0.027212,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:04:25,TN/IOT/smarthome/tt,0,False,0.018705,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:04:35,TN/IOT/smarthome/tt,0,False,0.021352,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:04:45,TN/IOT/smarthome/tt,0,False,0.020518,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:04:55,TN/IOT/smarthome/tt,0,False,0.026002,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:05:05,TN/IOT/smarthome/tt,0,False,0.026688,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:05:15,TN/IOT/smarthome/tt,0,False,0.01895,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:05:25,TN/IOT/smarthome/tt,0,False,0.017087,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:05:35,TN/IOT/smarthome/tt,0,False,0.019722,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:05:45,TN/IOT/smarthome/tt,0,False,0.023267,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:05:55,TN/IOT/smarthome/tt,0,False,0.016385,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:06:05,TN/IOT/smarthome/tt,0,False,0.018476,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:06:15,TN/IOT/smarthome/tt,0,False,0.02551,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:06:25,TN/IOT/smarthome/tt,0,False,0.027339,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:06:35,TN/IOT/smarthome/tt,0,False,0.01815,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:11,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:28,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:29,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:29,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:30,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:31,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:31,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:32,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:32,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:33,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:34,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:34,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:35,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:35,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:36,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:36,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:37,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:38,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:38,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:39,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:39,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:40,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:40,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:41,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:42,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:42,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:43,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:43,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:23:44,TN/IOT/smarthome/tt,3,False,0.023832,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 0: công suất trung bình lịch sử khoảng 630.4 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:36:05,TN/IOT/smarthome/tt,0,False,0.088519,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:36:15,TN/IOT/smarthome/tt,0,False,0.083402,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:36:25,TN/IOT/smarthome/tt,0,False,0.091372,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:36:35,TN/IOT/smarthome/tt,0,False,0.078162,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:36:45,TN/IOT/smarthome/tt,0,False,0.089693,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:36:55,TN/IOT/smarthome/tt,0,False,0.093255,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:37:05,TN/IOT/smarthome/tt,2,False,0.127179,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:37:15,TN/IOT/smarthome/tt,2,False,0.130691,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:37:25,TN/IOT/smarthome/tt,2,False,0.13452,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:37:35,TN/IOT/smarthome/tt,2,False,0.131679,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:37:45,TN/IOT/smarthome/tt,2,False,0.113036,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:37:55,TN/IOT/smarthome/tt,2,False,0.107855,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:38:05,TN/IOT/smarthome/tt,2,False,0.134193,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:38:15,TN/IOT/smarthome/tt,2,False,0.133791,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:38:25,TN/IOT/smarthome/tt,2,False,0.129765,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:38:35,TN/IOT/smarthome/tt,2,False,0.122662,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:38:45,TN/IOT/smarthome/tt,2,False,0.113874,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:38:55,TN/IOT/smarthome/tt,2,False,0.12456,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:39:05,TN/IOT/smarthome/tt,2,False,0.129885,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:39:15,TN/IOT/smarthome/tt,2,False,0.116632,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:39:25,TN/IOT/smarthome/tt,2,False,0.126907,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:39:35,TN/IOT/smarthome/tt,2,False,0.11434,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:39:45,TN/IOT/smarthome/tt,2,False,0.129888,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:39:55,TN/IOT/smarthome/tt,2,False,0.134161,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:48:44,TN/IOT/smarthome/tt,3,False,0.061377,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:48:45,TN/IOT/smarthome/tt,3,False,0.061377,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:48:46,TN/IOT/smarthome/tt,3,False,0.061377,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:48:47,TN/IOT/smarthome/tt,3,False,0.061377,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T15:48:48,TN/IOT/smarthome/tt,3,False,0.061377,Công suất tiêu thụ vượt ngưỡng cài đặt. | Công suất đo được lệch đáng kể so với V x I. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Kiểm tra cảm biến đo điện hoặc hiệu chuẩn lại để tăng độ tin cậy dữ liệu. | Giờ 15: công suất trung bình lịch sử khoảng 6062.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-06T18:19:36,TN/IOT/smarthome/tt,2,False,0.111283,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:19:46,TN/IOT/smarthome/tt,2,False,0.123575,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:19:56,TN/IOT/smarthome/tt,2,False,0.119386,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:20:06,TN/IOT/smarthome/tt,2,False,0.131847,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:20:16,TN/IOT/smarthome/tt,2,False,0.125136,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:20:26,TN/IOT/smarthome/tt,2,False,0.127665,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:20:36,TN/IOT/smarthome/tt,2,False,0.132789,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:20:46,TN/IOT/smarthome/tt,2,False,0.120017,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:20:56,TN/IOT/smarthome/tt,2,False,0.130069,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:21:06,TN/IOT/smarthome/tt,2,False,0.130519,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:21:16,TN/IOT/smarthome/tt,2,False,0.132538,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:21:26,TN/IOT/smarthome/tt,0,False,0.099938,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:21:36,TN/IOT/smarthome/tt,0,False,0.102071,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:21:46,TN/IOT/smarthome/tt,0,False,0.106226,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:21:56,TN/IOT/smarthome/tt,0,False,0.107595,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:22:06,TN/IOT/smarthome/tt,0,False,0.100075,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:22:16,TN/IOT/smarthome/tt,0,False,0.09178,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:22:26,TN/IOT/smarthome/tt,0,False,0.09793,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:22:36,TN/IOT/smarthome/tt,0,False,0.102894,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:22:46,TN/IOT/smarthome/tt,0,False,0.099613,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:22:56,TN/IOT/smarthome/tt,0,False,0.102738,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:23:06,TN/IOT/smarthome/tt,0,False,0.112914,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:23:16,TN/IOT/smarthome/tt,0,False,0.099311,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:23:26,TN/IOT/smarthome/tt,0,False,0.100676,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:23:36,TN/IOT/smarthome/tt,0,False,0.098839,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:23:46,TN/IOT/smarthome/tt,0,False,0.10373,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:23:56,TN/IOT/smarthome/tt,0,False,0.092407,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:24:06,TN/IOT/smarthome/tt,0,False,0.105682,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:24:16,TN/IOT/smarthome/tt,0,False,0.097271,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:24:26,TN/IOT/smarthome/tt,0,False,0.106423,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:24:36,TN/IOT/smarthome/tt,0,False,0.102167,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:24:46,TN/IOT/smarthome/tt,0,False,0.114361,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:24:56,TN/IOT/smarthome/tt,0,False,0.10474,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:25:06,TN/IOT/smarthome/tt,0,False,0.104986,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:25:16,TN/IOT/smarthome/tt,0,False,0.10583,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:25:26,TN/IOT/smarthome/tt,0,False,0.111573,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:25:36,TN/IOT/smarthome/tt,0,False,0.103445,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:25:46,TN/IOT/smarthome/tt,0,False,0.097076,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:25:56,TN/IOT/smarthome/tt,0,False,0.108318,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:26:06,TN/IOT/smarthome/tt,0,False,0.115219,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:26:16,TN/IOT/smarthome/tt,0,False,0.107463,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:26:26,TN/IOT/smarthome/tt,0,False,0.102453,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:26:36,TN/IOT/smarthome/tt,0,False,0.101279,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:26:46,TN/IOT/smarthome/tt,0,False,0.10203,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:26:56,TN/IOT/smarthome/tt,0,False,0.094831,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:27:06,TN/IOT/smarthome/tt,0,False,0.111049,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:27:16,TN/IOT/smarthome/tt,0,False,0.101291,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:27:26,TN/IOT/smarthome/tt,0,False,0.098597,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:27:36,TN/IOT/smarthome/tt,0,False,0.100135,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:27:46,TN/IOT/smarthome/tt,0,False,0.101415,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:27:56,TN/IOT/smarthome/tt,0,False,0.110796,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:28:06,TN/IOT/smarthome/tt,0,False,0.112003,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:28:16,TN/IOT/smarthome/tt,0,False,0.104085,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:28:26,TN/IOT/smarthome/tt,0,False,0.097602,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:28:36,TN/IOT/smarthome/tt,0,False,0.106985,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:28:46,TN/IOT/smarthome/tt,0,False,0.111955,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:28:56,TN/IOT/smarthome/tt,0,False,0.110012,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:29:06,TN/IOT/smarthome/tt,0,False,0.101337,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:29:16,TN/IOT/smarthome/tt,0,False,0.095215,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:29:26,TN/IOT/smarthome/tt,0,False,0.098841,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:29:36,TN/IOT/smarthome/tt,0,False,0.094482,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:29:46,TN/IOT/smarthome/tt,0,False,0.099375,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:29:56,TN/IOT/smarthome/tt,0,False,0.097564,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:30:06,TN/IOT/smarthome/tt,0,False,0.104462,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:30:16,TN/IOT/smarthome/tt,0,False,0.102835,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:30:26,TN/IOT/smarthome/tt,0,False,0.113291,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:30:36,TN/IOT/smarthome/tt,0,False,0.10522,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:30:46,TN/IOT/smarthome/tt,0,False,0.09638,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:30:56,TN/IOT/smarthome/tt,0,False,0.095054,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:31:06,TN/IOT/smarthome/tt,0,False,0.097768,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:31:16,TN/IOT/smarthome/tt,0,False,0.105461,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:31:26,TN/IOT/smarthome/tt,0,False,0.103029,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:31:36,TN/IOT/smarthome/tt,0,False,0.103657,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:31:46,TN/IOT/smarthome/tt,0,False,0.099652,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:31:56,TN/IOT/smarthome/tt,0,False,0.100006,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:32:06,TN/IOT/smarthome/tt,0,False,0.104436,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:32:16,TN/IOT/smarthome/tt,0,False,0.099023,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:32:26,TN/IOT/smarthome/tt,0,False,0.098763,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:32:36,TN/IOT/smarthome/tt,0,False,0.099512,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:32:46,TN/IOT/smarthome/tt,0,False,0.102415,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:32:56,TN/IOT/smarthome/tt,0,False,0.10672,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T18:33:06,TN/IOT/smarthome/tt,0,False,0.097323,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:41:19,TN/IOT/smarthome/tt,0,False,0.100615,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:41:19,TN/IOT/smarthome/tt,0,False,0.100615,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:41:29,TN/IOT/smarthome/tt,0,False,0.095248,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:41:29,TN/IOT/smarthome/tt,0,False,0.095248,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:41:39,TN/IOT/smarthome/tt,0,False,0.08113,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:41:49,TN/IOT/smarthome/tt,0,False,0.089393,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:41:59,TN/IOT/smarthome/tt,0,False,0.090692,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:42:09,TN/IOT/smarthome/tt,0,False,0.079418,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:42:19,TN/IOT/smarthome/tt,0,False,0.081416,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:42:29,TN/IOT/smarthome/tt,0,False,0.082078,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:42:39,TN/IOT/smarthome/tt,0,False,0.080485,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:42:49,TN/IOT/smarthome/tt,0,False,0.085563,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:42:59,TN/IOT/smarthome/tt,0,False,0.086456,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:43:09,TN/IOT/smarthome/tt,0,False,0.090601,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:43:19,TN/IOT/smarthome/tt,0,False,0.08104,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:43:29,TN/IOT/smarthome/tt,0,False,0.086741,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:43:39,TN/IOT/smarthome/tt,0,False,0.085825,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:43:50,TN/IOT/smarthome/tt,0,False,0.089406,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:43:59,TN/IOT/smarthome/tt,0,False,0.079711,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:44:09,TN/IOT/smarthome/tt,0,False,0.087613,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:44:19,TN/IOT/smarthome/tt,0,False,0.087406,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:44:29,TN/IOT/smarthome/tt,0,False,0.099799,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:44:39,TN/IOT/smarthome/tt,0,False,0.081058,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:44:49,TN/IOT/smarthome/tt,0,False,0.083338,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:44:59,TN/IOT/smarthome/tt,0,False,0.095845,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:45:09,TN/IOT/smarthome/tt,0,False,0.091396,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:45:19,TN/IOT/smarthome/tt,0,False,0.084452,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:45:29,TN/IOT/smarthome/tt,0,False,0.09088,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:45:39,TN/IOT/smarthome/tt,0,False,0.08825,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:45:49,TN/IOT/smarthome/tt,0,False,0.087396,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:45:59,TN/IOT/smarthome/tt,0,False,0.078586,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:46:09,TN/IOT/smarthome/tt,0,False,0.08378,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:46:19,TN/IOT/smarthome/tt,0,False,0.09876,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:46:29,TN/IOT/smarthome/tt,0,False,0.078542,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:46:39,TN/IOT/smarthome/tt,0,False,0.080663,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:46:49,TN/IOT/smarthome/tt,0,False,0.092776,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:46:59,TN/IOT/smarthome/tt,0,False,0.086758,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:47:09,TN/IOT/smarthome/tt,0,False,0.085595,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:47:19,TN/IOT/smarthome/tt,0,False,0.087903,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:47:29,TN/IOT/smarthome/tt,0,False,0.08004,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:47:39,TN/IOT/smarthome/tt,0,False,0.090334,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:47:49,TN/IOT/smarthome/tt,0,False,0.086605,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:47:59,TN/IOT/smarthome/tt,0,False,0.083173,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:48:09,TN/IOT/smarthome/tt,0,False,0.088498,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:48:19,TN/IOT/smarthome/tt,0,False,0.081396,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:48:29,TN/IOT/smarthome/tt,0,False,0.093115,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:48:39,TN/IOT/smarthome/tt,0,False,0.088109,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-06T23:48:49,TN/IOT/smarthome/tt,0,False,0.081872,Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao.,"Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng."
+2026-05-07T10:35:23,TN/IOT/smarthome/tt,0,False,0.053183,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:35:33,TN/IOT/smarthome/tt,0,False,0.052511,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:35:43,TN/IOT/smarthome/tt,0,False,0.054654,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:35:53,TN/IOT/smarthome/tt,0,False,0.047188,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:36:03,TN/IOT/smarthome/tt,0,False,0.058836,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:36:13,TN/IOT/smarthome/tt,0,False,0.049712,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:36:23,TN/IOT/smarthome/tt,0,False,0.05289,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:36:33,TN/IOT/smarthome/tt,0,False,0.050102,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:36:43,TN/IOT/smarthome/tt,0,False,0.052405,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:36:53,TN/IOT/smarthome/tt,0,False,0.05414,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:37:03,TN/IOT/smarthome/tt,0,False,0.058997,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:37:13,TN/IOT/smarthome/tt,0,False,0.053626,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:37:23,TN/IOT/smarthome/tt,0,False,0.052109,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:37:33,TN/IOT/smarthome/tt,0,False,0.061168,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:37:43,TN/IOT/smarthome/tt,0,False,0.059335,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:37:53,TN/IOT/smarthome/tt,0,False,0.064812,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:38:03,TN/IOT/smarthome/tt,0,False,0.064186,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:38:13,TN/IOT/smarthome/tt,0,False,0.051214,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:38:23,TN/IOT/smarthome/tt,1,False,0.043886,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:41:43,TN/IOT/smarthome/tt,2,False,0.10722,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:41:53,TN/IOT/smarthome/tt,2,False,0.122105,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:42:03,TN/IOT/smarthome/tt,2,False,0.114257,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:42:13,TN/IOT/smarthome/tt,2,False,0.121102,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:42:23,TN/IOT/smarthome/tt,2,False,0.126496,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:42:33,TN/IOT/smarthome/tt,2,False,0.125999,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:42:43,TN/IOT/smarthome/tt,2,False,0.123266,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:42:53,TN/IOT/smarthome/tt,2,False,0.127316,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:43:03,TN/IOT/smarthome/tt,2,False,0.107424,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:43:13,TN/IOT/smarthome/tt,2,False,0.112961,Đèn đang bật vào ban ngày. | Công suất tiêu thụ vượt ngưỡng cài đặt. | Dòng điện tiêu thụ đang cao. | Công suất hiện tại cao bất thường so với thói quen theo giờ.,"Nên tắt đèn vào ban ngày để tiết kiệm điện. | Kiểm tra các thiết bị tải cao và giảm bớt thiết bị không cần thiết. | Xem lại thiết bị đang chạy đồng thời, ưu tiên tắt bớt tải không quan trọng. | Giờ 10: công suất trung bình lịch sử khoảng 7994.6 mW, hãy kiểm tra thiết bị đang hoạt động."
+2026-05-07T10:44:43,TN/IOT/smarthome/tt,0,False,0.050177,"Bạn ơi, hình như đèn vẫn đang bật dù trời đã sáng. | Hệ thống thấy công suất đang cao hơn hẳn mức bình thường. | Dòng điện đang ở mức khá cao. | Hôm nay bạn dùng điện nhiều hơn thói quen lúc 10 giờ thường ngày.","Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:44:53,TN/IOT/smarthome/tt,0,False,0.057003,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:45:03,TN/IOT/smarthome/tt,0,False,0.055044,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:45:13,TN/IOT/smarthome/tt,0,False,0.062615,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:45:23,TN/IOT/smarthome/tt,0,False,0.056416,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:45:33,TN/IOT/smarthome/tt,0,False,0.063277,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:45:43,TN/IOT/smarthome/tt,0,False,0.06378,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:45:53,TN/IOT/smarthome/tt,0,False,0.054821,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:46:03,TN/IOT/smarthome/tt,0,False,0.053916,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:46:13,TN/IOT/smarthome/tt,0,False,0.05585,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:46:23,TN/IOT/smarthome/tt,0,False,0.057366,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:46:33,TN/IOT/smarthome/tt,0,False,0.060705,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:46:43,TN/IOT/smarthome/tt,0,False,0.052057,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:46:53,TN/IOT/smarthome/tt,0,False,0.054144,"Bạn ơi, hình như đèn vẫn đang bật dù trời đã sáng. | Hệ thống thấy công suất đang cao hơn hẳn mức bình thường. | Dòng điện đang ở mức khá cao. | Hôm nay bạn dùng điện nhiều hơn thói quen lúc 10 giờ thường ngày.","Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:47:03,TN/IOT/smarthome/tt,0,False,0.049593,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:47:13,TN/IOT/smarthome/tt,0,False,0.052984,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:47:23,TN/IOT/smarthome/tt,0,False,0.056625,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:47:33,TN/IOT/smarthome/tt,0,False,0.051158,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:47:43,TN/IOT/smarthome/tt,0,False,0.058792,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:47:53,TN/IOT/smarthome/tt,0,False,0.053909,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:48:03,TN/IOT/smarthome/tt,0,False,0.051933,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:48:13,TN/IOT/smarthome/tt,0,False,0.052843,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:48:23,TN/IOT/smarthome/tt,0,False,0.052688,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:48:33,TN/IOT/smarthome/tt,0,False,0.048655,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:48:43,TN/IOT/smarthome/tt,2,False,0.123173,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:48:53,TN/IOT/smarthome/tt,2,False,0.116492,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:49:03,TN/IOT/smarthome/tt,2,False,0.124998,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:49:13,TN/IOT/smarthome/tt,2,False,0.116816,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:49:23,TN/IOT/smarthome/tt,2,False,0.127513,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:49:33,TN/IOT/smarthome/tt,2,False,0.116376,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:49:43,TN/IOT/smarthome/tt,2,False,0.112832,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:49:53,TN/IOT/smarthome/tt,2,False,0.122021,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:50:03,TN/IOT/smarthome/tt,2,False,0.125987,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:50:13,TN/IOT/smarthome/tt,2,False,0.124574,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:50:23,TN/IOT/smarthome/tt,2,False,0.123764,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:50:33,TN/IOT/smarthome/tt,2,False,0.125781,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:50:43,TN/IOT/smarthome/tt,2,False,0.107482,"Bạn ơi, hình như đèn vẫn đang bật dù trời đã sáng. | Hệ thống thấy công suất đang cao hơn hẳn mức bình thường. | Dòng điện đang ở mức khá cao. | Hôm nay bạn dùng điện nhiều hơn thói quen lúc 10 giờ thường ngày.","Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:50:53,TN/IOT/smarthome/tt,2,False,0.118228,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:51:03,TN/IOT/smarthome/tt,0,False,0.052255,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:51:13,TN/IOT/smarthome/tt,0,False,0.048154,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:51:23,TN/IOT/smarthome/tt,0,False,0.058897,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:51:33,TN/IOT/smarthome/tt,0,False,0.051817,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:51:43,TN/IOT/smarthome/tt,0,False,0.062366,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:51:53,TN/IOT/smarthome/tt,0,False,0.051814,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:52:03,TN/IOT/smarthome/tt,0,False,0.049272,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:52:13,TN/IOT/smarthome/tt,0,False,0.055282,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:52:23,TN/IOT/smarthome/tt,0,False,0.050306,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:52:33,TN/IOT/smarthome/tt,0,False,0.051722,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:52:43,TN/IOT/smarthome/tt,0,False,0.0561,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:52:53,TN/IOT/smarthome/tt,0,False,0.053983,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:53:03,TN/IOT/smarthome/tt,0,False,0.062015,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:53:13,TN/IOT/smarthome/tt,0,False,0.062431,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:53:23,TN/IOT/smarthome/tt,0,False,0.050674,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:53:33,TN/IOT/smarthome/tt,0,False,0.048669,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:53:43,TN/IOT/smarthome/tt,0,False,0.059196,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:53:53,TN/IOT/smarthome/tt,0,False,0.051764,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:54:03,TN/IOT/smarthome/tt,0,False,0.054635,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:54:13,TN/IOT/smarthome/tt,0,False,0.057953,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:54:23,TN/IOT/smarthome/tt,0,False,0.050538,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:54:33,TN/IOT/smarthome/tt,0,False,0.048997,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:54:43,TN/IOT/smarthome/tt,0,False,0.053134,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:54:53,TN/IOT/smarthome/tt,0,False,0.053204,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:55:03,TN/IOT/smarthome/tt,0,False,0.051426,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:55:13,TN/IOT/smarthome/tt,0,False,0.057406,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:55:23,TN/IOT/smarthome/tt,0,False,0.052615,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:55:33,TN/IOT/smarthome/tt,0,False,0.059013,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:55:43,TN/IOT/smarthome/tt,0,False,0.062642,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:55:53,TN/IOT/smarthome/tt,0,False,0.049954,"Bạn ơi, hình như đèn vẫn đang bật dù trời đã sáng. | Hệ thống thấy công suất đang cao hơn hẳn mức bình thường. | Dòng điện đang ở mức khá cao. | Hôm nay bạn dùng điện nhiều hơn thói quen lúc 10 giờ thường ngày.","Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:56:03,TN/IOT/smarthome/tt,0,False,0.059203,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:56:13,TN/IOT/smarthome/tt,0,False,0.05091,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:56:23,TN/IOT/smarthome/tt,0,False,0.050524,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:56:33,TN/IOT/smarthome/tt,0,False,0.051317,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:56:43,TN/IOT/smarthome/tt,0,False,0.059445,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:56:53,TN/IOT/smarthome/tt,0,False,0.051777,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:57:03,TN/IOT/smarthome/tt,0,False,0.052552,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:57:13,TN/IOT/smarthome/tt,0,False,0.057295,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:57:23,TN/IOT/smarthome/tt,0,False,0.049491,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:57:33,TN/IOT/smarthome/tt,0,False,0.053063,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:57:43,TN/IOT/smarthome/tt,0,False,0.056814,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:57:53,TN/IOT/smarthome/tt,0,False,0.055144,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:58:03,TN/IOT/smarthome/tt,0,False,0.051839,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:58:13,TN/IOT/smarthome/tt,0,False,0.054786,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:58:23,TN/IOT/smarthome/tt,0,False,0.051282,,"Tắt đèn lúc trời sáng giúp tiết kiệm điện và bảo vệ tuổi thọ bóng đèn đấy! | Hãy kiểm tra xem có thiết bị nào (như bếp điện, bàn là...) đang bật mà không dùng đến không nhé. | Bạn nên hạn chế bật quá nhiều thiết bị tải lớn cùng lúc để đảm bảo an toàn cho hệ thống điện. | Mọi khi giờ này bạn chỉ dùng khoảng 8.0W thôi. Bạn xem có thiết bị nào đang 'ngốn' điện không nhé."
+2026-05-07T10:58:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T10:58:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T10:59:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T10:59:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T10:59:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T10:59:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T10:59:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T10:59:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:00:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:00:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:00:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:00:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:00:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:00:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:01:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:01:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:01:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:01:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:01:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:01:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:02:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:02:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:02:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:02:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:02:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:02:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:03:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:03:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:03:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:03:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:03:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:03:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:04:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:04:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:04:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:04:33,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:04:43,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:04:53,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:05:03,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:05:13,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:05:23,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:05:33,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:05:43,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:05:53,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:06:03,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:06:13,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:06:23,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:06:33,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:06:43,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:06:53,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:07:03,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:07:13,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:07:23,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:07:33,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:07:43,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:07:53,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:08:03,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:08:13,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:08:23,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:08:33,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:08:43,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:08:53,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:09:03,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:09:13,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:09:23,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:09:33,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:09:43,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:09:53,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:10:03,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:10:13,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:10:23,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:11:43,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:11:53,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:12:03,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:12:13,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:12:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:12:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:12:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:12:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:13:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:13:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:13:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:13:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:13:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:13:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:14:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:14:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:14:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:14:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:14:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:14:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:15:03,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:15:13,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:15:23,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:15:33,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:15:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:15:53,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:16:03,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:16:13,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:16:23,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:16:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:16:43,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:16:53,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:17:03,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:17:13,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:17:23,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:17:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:17:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:17:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:18:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:18:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:18:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:18:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:18:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:18:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:19:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:19:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:19:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:19:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:19:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:19:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:20:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:20:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:20:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:20:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:20:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:20:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:21:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:21:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:21:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:21:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:21:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:21:53,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:22:03,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:22:13,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:22:23,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:22:33,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:22:43,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:22:53,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:23:03,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:23:13,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:23:23,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:23:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:23:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:23:53,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:24:03,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:24:13,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:24:23,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:24:33,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:24:43,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:24:53,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:25:03,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:25:13,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:25:23,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:25:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:25:43,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:25:53,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:26:03,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:26:13,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:26:33,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:26:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:26:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:27:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:27:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:27:23,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:27:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:27:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:27:53,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:28:03,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:28:13,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:28:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:28:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:28:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:28:53,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:29:03,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:29:13,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:29:23,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:29:33,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:29:43,TN/IOT/smarthome/tt,0,,,,
+2026-05-07T11:29:53,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:30:03,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:30:13,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:30:23,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:30:33,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:30:43,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:30:53,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:31:03,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:31:13,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:31:23,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:31:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:31:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:31:53,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:32:03,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:32:13,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:32:23,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:32:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:32:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:32:53,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:33:03,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:33:13,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:33:23,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:33:33,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:33:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:33:53,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:34:03,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:34:13,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:34:23,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:34:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:34:43,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:34:53,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:35:03,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:35:13,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:35:23,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:35:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:35:43,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:36:12,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:36:12,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:36:13,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:36:23,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:36:33,TN/IOT/smarthome/tt,3,,,,
+2026-05-07T11:36:43,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:36:53,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:37:04,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:37:13,TN/IOT/smarthome/tt,1,,,,
+2026-05-07T11:37:23,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:37:33,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T11:37:43,TN/IOT/smarthome/tt,2,,,,
+2026-05-07T12:43:14,,,,,,
+2026-05-07T12:43:23,,,,,,
+2026-05-07T12:43:33,,,,,,
+2026-05-07T12:43:43,,,,,,
+2026-05-07T12:43:53,,,,,,
+2026-05-07T12:44:03,,,,,,
+2026-05-07T12:44:13,,,,,,
+2026-05-07T12:44:23,,,,,,
+2026-05-07T12:44:33,,,,,,
+2026-05-07T12:44:43,,,,,,
+2026-05-07T12:44:53,,,,,,
+2026-05-07T12:45:03,,,,,,
+2026-05-07T12:45:13,,,,,,
+2026-05-07T12:45:23,,,,,,
+2026-05-07T12:45:33,,,,,,
+2026-05-07T12:45:43,,,,,,
+2026-05-07T12:45:54,,,,,,
+2026-05-07T12:46:03,,,,,,
+2026-05-07T12:46:14,,,,,,
+2026-05-07T12:46:23,,,,,,
+2026-05-07T12:46:33,,,,,,
+2026-05-07T12:46:43,,,,,,
+2026-05-07T12:46:53,,,,,,
+2026-05-07T12:47:03,,,,,,
+2026-05-07T12:47:13,,,,,,
+2026-05-07T12:47:23,,,,,,
+2026-05-07T12:47:33,,,,,,
+2026-05-07T12:47:43,,,,,,
+2026-05-07T12:47:53,,,,,,
+2026-05-07T12:48:03,,,,,,
+2026-05-07T12:48:13,,,,,,
+2026-05-07T12:48:23,,,,,,
+2026-05-07T12:48:33,,,,,,
+2026-05-07T12:48:43,,,,,,
+2026-05-07T12:48:53,,,,,,
+2026-05-07T12:49:03,,,,,,
+2026-05-07T12:49:13,,,,,,
+2026-05-07T12:49:23,,,,,,
+2026-05-07T12:49:33,,,,,,
+2026-05-07T12:49:43,,,,,,
+2026-05-07T12:49:53,,,,,,
+2026-05-07T12:50:03,,,,,,
+2026-05-07T12:50:13,,,,,,
+2026-05-07T12:50:23,,,,,,
+2026-05-07T12:50:33,,,,,,
+2026-05-07T12:50:43,,,,,,
+2026-05-07T12:50:53,,,,,,
+2026-05-07T12:51:03,,,,,,
+2026-05-07T12:51:13,,,,,,
+2026-05-07T12:51:23,,,,,,
+2026-05-07T12:51:33,,,,,,
+2026-05-07T12:51:43,,,,,,
+2026-05-07T12:51:53,,,,,,
+2026-05-07T12:52:03,,,,,,
+2026-05-07T12:52:13,,,,,,
+2026-05-07T12:52:23,,,,,,
+2026-05-07T12:52:33,,,,,,
+2026-05-07T12:52:43,,,,,,
+2026-05-07T12:52:53,,,,,,
+2026-05-07T12:53:03,,,,,,
+2026-05-07T12:53:13,,,,,,
+2026-05-07T12:53:23,,,,,,
+2026-05-07T12:53:33,,,,,,
+2026-05-07T12:53:43,,,,,,
+2026-05-07T12:53:53,,,,,,
+2026-05-07T12:54:03,,,,,,
+2026-05-07T12:54:13,,,,,,
+2026-05-07T12:54:23,,,,,,
+2026-05-07T12:54:34,,,,,,
+2026-05-07T12:54:43,,,,,,
+2026-05-07T12:54:53,,,,,,
+2026-05-07T12:55:03,,,,,,
+2026-05-07T12:55:13,,,,,,
+2026-05-07T12:55:23,,,,,,
+2026-05-07T12:55:33,,,,,,
+2026-05-07T12:55:44,,,,,,
+2026-05-07T12:55:53,,,,,,
+2026-05-07T12:56:03,,,,,,
+2026-05-07T12:56:13,,,,,,
+2026-05-07T12:56:23,,,,,,
+2026-05-07T12:56:33,,,,,,
+2026-05-07T12:56:43,,,,,,
+2026-05-07T12:56:54,,,,,,
+2026-05-07T12:57:03,,,,,,
+2026-05-07T12:57:13,,,,,,
+2026-05-07T12:57:23,,,,,,
+2026-05-07T12:57:33,,,,,,
+2026-05-07T12:57:43,,,,,,
+2026-05-07T12:57:53,,,,,,
+2026-05-07T12:58:03,,,,,,
+2026-05-07T12:58:13,,,,,,
+2026-05-07T12:58:24,,,,,,
+2026-05-07T12:58:33,,,,,,
+2026-05-07T12:58:43,,,,,,
+2026-05-07T12:58:53,,,,,,
+2026-05-07T12:59:03,,,,,,
+2026-05-07T12:59:13,,,,,,
+2026-05-07T12:59:23,,,,,,
+2026-05-07T12:59:33,,,,,,
+2026-05-07T12:59:43,,,,,,
+2026-05-07T12:59:53,,,,,,
+2026-05-07T13:00:03,,,,,,
+2026-05-07T13:00:13,,,,,,
+2026-05-07T13:00:23,,,,,,
+2026-05-07T13:00:33,,,,,,
+2026-05-07T13:00:43,,,,,,
+2026-05-07T13:00:53,,,,,,
+2026-05-07T13:01:03,,,,,,
+2026-05-07T13:01:13,,,,,,
+2026-05-07T13:01:23,,,,,,
+2026-05-07T13:01:33,,,,,,
+2026-05-07T13:01:43,,,,,,
+2026-05-07T13:01:53,,,,,,
+2026-05-07T13:02:03,,,,,,
+2026-05-07T13:02:13,,,,,,
+2026-05-07T13:02:23,,,,,,
+2026-05-07T13:02:34,,,,,,
+2026-05-07T13:02:43,,,,,,
+2026-05-07T13:02:53,,,,,,
+2026-05-07T13:03:03,,,,,,
+2026-05-07T13:03:13,,,,,,
+2026-05-07T13:03:23,,,,,,
+2026-05-07T13:03:33,,,,,,
+2026-05-07T13:03:43,,,,,,
+2026-05-07T13:03:53,,,,,,
+2026-05-07T13:04:03,,,,,,
+2026-05-07T13:04:13,,,,,,
+2026-05-07T13:04:23,,,,,,
+2026-05-07T13:04:33,,,,,,
+2026-05-07T13:04:43,,,,,,
+2026-05-07T13:04:53,,,,,,
+2026-05-07T13:05:03,,,,,,
+2026-05-07T13:05:13,,,,,,
+2026-05-07T13:10:23,,,,,,
+2026-05-07T13:10:33,,,,,,
+2026-05-07T13:10:43,,,,,,
+2026-05-07T13:10:54,,,,,,
+2026-05-07T13:11:04,,,,,,
+2026-05-07T13:11:13,,,,,,
+2026-05-07T13:11:23,,,,,,
+2026-05-07T13:11:33,,,,,,
+2026-05-07T13:11:43,,,,,,
+2026-05-07T13:11:53,,,,,,
+2026-05-07T13:12:03,,,,,,
+2026-05-07T13:12:13,,,,,,
+2026-05-07T13:14:24,,,,,,
+2026-05-07T13:15:13,,,,,,
+2026-05-07T13:16:23,,,,,,
+2026-05-07T13:16:53,,,,,,
+2026-05-07T13:17:13,,,,,,
+2026-05-07T13:17:23,,,,,,
+2026-05-07T13:18:24,,,,,,
+2026-05-07T13:19:34,,,,,,
+2026-05-07T13:20:34,,,,,,
+2026-05-07T13:21:43,,,,,,
+2026-05-07T13:22:34,,,,,,
+2026-05-07T13:23:14,,,,,,
+2026-05-07T13:24:23,,,,,,
+2026-05-07T13:25:23,,,,,,
+2026-05-07T13:26:33,,,,,,
+2026-05-07T13:27:33,,,,,,
+2026-05-07T13:28:43,,,,,,
+2026-05-07T13:29:43,,,,,,
+2026-05-07T13:30:53,,,,,,
+2026-05-07T13:31:54,,,,,,
+2026-05-07T13:33:03,,,,,,
+2026-05-07T13:34:03,,,,,,
+2026-05-07T13:34:14,,,,,,
+2026-05-07T13:34:33,,,,,,
+2026-05-07T13:34:43,,,,,,
+2026-05-07T13:34:53,,,,,,
+2026-05-07T13:36:03,,,,,,
+2026-05-07T13:37:03,,,,,,
+2026-05-07T13:38:13,,,,,,
+2026-05-07T13:39:13,,,,,,
+2026-05-07T13:40:13,,,,,,
+2026-05-07T13:41:23,,,,,,
+2026-05-07T13:42:23,,,,,,
+2026-05-07T13:43:33,,,,,,
+2026-05-07T13:44:43,,,,,,
+2026-05-07T13:45:53,,,,,,
+2026-05-07T13:47:03,,,,,,
+2026-05-07T13:48:13,,,,,,
+2026-05-07T13:49:23,,,,,,
+2026-05-07T13:50:23,,,,,,
+2026-05-07T13:51:23,,,,,,
+2026-05-07T13:51:33,,,,,,
+2026-05-07T13:52:03,,,,,,
+2026-05-07T13:53:03,,,,,,
+2026-05-07T13:53:53,,,,,,
+2026-05-07T13:54:43,,,,,,
+2026-05-07T13:55:03,,,,,,
+2026-05-07T13:56:03,,,,,,
+2026-05-07T13:56:23,,,,,,
+2026-05-07T13:57:33,,,,,,
+2026-05-07T13:58:23,,,,,,
+2026-05-07T13:58:53,,,,,,
+2026-05-07T13:59:13,,,,,,
+2026-05-07T13:59:53,,,,,,
+2026-05-07T14:00:13,,,,,,
+2026-05-07T14:01:23,,,,,,
+2026-05-07T14:01:33,,,,,,
+2026-05-07T14:02:43,,,,,,
+2026-05-07T14:03:43,,,,,,
+2026-05-07T14:04:43,,,,,,
+2026-05-07T14:05:23,,,,,,
+2026-05-07T14:06:33,,,,,,
+2026-05-07T14:07:43,,,,,,
+2026-05-07T14:08:43,,,,,,
+2026-05-07T14:09:43,,,,,,
+2026-05-07T14:10:23,,,,,,
+2026-05-07T14:10:53,,,,,,
+2026-05-07T14:11:53,,,,,,
+2026-05-07T14:13:03,,,,,,
+2026-05-07T14:14:03,,,,,,
+2026-05-07T14:15:03,,,,,,
+2026-05-07T14:16:03,,,,,,
+2026-05-07T14:17:13,,,,,,
+2026-05-07T14:18:13,,,,,,
+2026-05-07T14:19:23,,,,,,
+2026-05-07T14:20:23,,,,,,
+2026-05-07T14:21:23,,,,,,
+2026-05-07T14:22:33,,,,,,
+2026-05-07T14:23:33,,,,,,
+2026-05-07T14:24:33,,,,,,
+2026-05-07T14:25:43,,,,,,
+2026-05-07T14:26:43,,,,,,
+2026-05-07T14:27:53,,,,,,
+2026-05-07T14:29:03,,,,,,
+2026-05-07T14:30:03,,,,,,
+2026-05-07T14:31:13,,,,,,
+2026-05-07T14:32:13,,,,,,
+2026-05-07T14:33:13,,,,,,
+2026-05-07T14:34:23,,,,,,
+2026-05-07T14:35:24,,,,,,
+2026-05-07T14:36:33,,,,,,
+2026-05-07T14:37:33,,,,,,
+2026-05-07T14:38:43,,,,,,
+2026-05-07T14:39:43,,,,,,
+2026-05-07T14:40:43,,,,,,
+2026-05-07T14:41:53,,,,,,
+2026-05-07T14:42:53,,,,,,
+2026-05-07T14:44:03,,,,,,
+2026-05-07T14:45:13,,,,,,
+2026-05-07T14:46:23,,,,,,
+2026-05-07T14:47:33,,,,,,
+2026-05-07T14:48:33,,,,,,
+2026-05-07T14:49:33,,,,,,
+2026-05-07T14:50:33,,,,,,
+2026-05-07T14:51:33,,,,,,
+2026-05-07T14:52:43,,,,,,
+2026-05-07T14:53:53,,,,,,
+2026-05-07T14:55:03,,,,,,
+2026-05-07T14:56:13,,,,,,
+2026-05-07T14:57:23,,,,,,
+2026-05-07T14:58:33,,,,,,
+2026-05-07T14:59:43,,,,,,
+2026-05-07T15:00:53,,,,,,
+2026-05-07T15:02:03,,,,,,
+2026-05-07T15:03:13,,,,,,
+2026-05-07T15:04:13,,,,,,
+2026-05-07T15:05:23,,,,,,
+2026-05-07T15:06:23,,,,,,
+2026-05-07T15:07:23,,,,,,
+2026-05-07T15:08:23,,,,,,
+2026-05-07T15:09:34,,,,,,
+2026-05-07T15:10:43,,,,,,
+2026-05-07T15:11:43,,,,,,
+2026-05-07T15:12:43,,,,,,
+2026-05-07T15:13:43,,,,,,
+2026-05-07T15:14:43,,,,,,
+2026-05-07T15:15:53,,,,,,
+2026-05-07T15:16:53,,,,,,
+2026-05-07T15:18:03,,,,,,
+2026-05-07T15:19:13,,,,,,
+2026-05-07T15:20:13,,,,,,
+2026-05-07T15:21:13,,,,,,
+2026-05-07T15:22:13,,,,,,
+2026-05-07T15:23:13,,,,,,
+2026-05-07T15:24:23,,,,,,
+2026-05-07T15:25:33,,,,,,
+2026-05-07T15:26:43,,,,,,
+2026-05-07T15:27:43,,,,,,
+2026-05-07T15:28:43,,,,,,
+2026-05-07T15:29:53,,,,,,
+2026-05-07T15:31:03,,,,,,
+2026-05-07T15:32:03,,,,,,
+2026-05-07T15:32:23,,,,,,
+2026-05-07T15:33:33,,,,,,
+2026-05-07T15:34:43,,,,,,
+2026-05-07T15:35:43,,,,,,
+2026-05-07T15:36:43,,,,,,
+2026-05-07T15:37:43,,,,,,
+2026-05-07T15:38:43,,,,,,
+2026-05-07T15:39:43,,,,,,
+2026-05-07T15:40:53,,,,,,
+2026-05-07T15:41:53,,,,,,
+2026-05-07T15:42:53,,,,,,
+2026-05-07T15:44:03,,,,,,
+2026-05-07T15:44:43,,,,,,
+2026-05-07T15:44:53,,,,,,
+2026-05-07T15:45:33,,,,,,
+2026-05-07T15:46:33,,,,,,
+2026-05-07T15:46:53,,,,,,
+2026-05-07T15:47:53,,,,,,
+2026-05-07T15:48:53,,,,,,
+2026-05-07T15:50:03,,,,,,
+2026-05-07T15:51:13,,,,,,
+2026-05-07T15:52:23,,,,,,
+2026-05-07T15:53:33,,,,,,
+2026-05-07T15:54:33,,,,,,
+2026-05-07T15:55:43,,,,,,
+2026-05-07T15:56:43,,,,,,
+2026-05-07T15:57:53,,,,,,
+2026-05-07T15:58:53,,,,,,
+2026-05-07T16:00:03,,,,,,
+2026-05-07T16:01:13,,,,,,
+2026-05-07T16:02:13,,,,,,
+2026-05-07T16:03:23,,,,,,
+2026-05-07T16:04:23,,,,,,
+2026-05-07T16:05:24,,,,,,
+2026-05-07T16:06:33,,,,,,
+2026-05-07T16:07:43,,,,,,
+2026-05-07T16:08:53,,,,,,
+2026-05-07T16:09:53,,,,,,
+2026-05-07T16:10:53,,,,,,
+2026-05-07T16:12:03,,,,,,
+2026-05-07T16:13:13,,,,,,
+2026-05-07T16:14:13,,,,,,
+2026-05-07T16:15:24,,,,,,
+2026-05-07T16:16:33,,,,,,
+2026-05-07T16:16:53,,,,,,
+2026-05-07T16:17:03,,,,,,
+2026-05-07T16:18:13,,,,,,
+2026-05-07T16:19:13,,,,,,
+2026-05-07T16:20:13,,,,,,
+2026-05-07T16:21:23,,,,,,
+2026-05-07T16:22:23,,,,,,
+2026-05-07T16:23:33,,,,,,
+2026-05-07T16:24:43,,,,,,
+2026-05-07T16:25:43,,,,,,
+2026-05-07T16:26:53,,,,,,
+2026-05-07T16:27:54,,,,,,
+2026-05-07T16:29:03,,,,,,
+2026-05-07T16:30:03,,,,,,
+2026-05-07T16:31:04,,,,,,
+2026-05-07T16:32:13,,,,,,
+2026-05-07T16:33:14,,,,,,
+2026-05-07T16:33:23,,,,,,
+2026-05-07T16:34:23,,,,,,
+2026-05-07T16:35:33,,,,,,
+2026-05-07T16:36:33,,,,,,
+2026-05-07T16:37:33,,,,,,
+2026-05-07T16:38:43,,,,,,
+2026-05-07T16:39:43,,,,,,
+2026-05-07T16:40:53,,,,,,
+2026-05-07T16:42:03,,,,,,
+2026-05-07T16:43:13,,,,,,
+2026-05-07T16:44:13,,,,,,
+2026-05-07T16:45:13,,,,,,

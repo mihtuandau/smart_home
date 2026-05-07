@@ -1,0 +1,127 @@
+project:
+  name: "ai_power_analytics"
+  timezone: "Asia/Ho_Chi_Minh"
+  random_state: 42
+
+paths:
+  raw_csv: "data/raw/smart_home_realistic_7days.csv"
+  realtime_raw_csv: "data/raw/realtime_events.csv"
+  merged_raw_csv: "data/raw/merged_for_retrain.csv"
+  processed_csv: "data/processed/smart_home_processed.csv"
+  models_dir: "models"
+  kmeans_model: "models/kmeans.pkl"
+  iforest_model: "models/isolation_forest.pkl"
+  scaler_model: "models/scaler.pkl"
+  retrain_state: "models/retrain_state.json"
+
+data:
+  timestamp_col: "timestamp"
+  required_columns:
+    - "timestamp"
+    - "temperature"
+    - "humidity"
+    - "pressure"
+    - "voltage"
+    - "current_mA"
+    - "power_mW"
+    - "rain"
+    - "led1"
+    - "led2"
+  numeric_columns:
+    - "temperature"
+    - "humidity"
+    - "pressure"
+    - "voltage"
+    - "current_mA"
+    - "power_mW"
+    - "rain"
+    - "led1"
+    - "led2"
+  fillna_strategy: "median"
+  drop_duplicates: true
+
+features:
+  time:
+    add_hour: true
+    add_day_of_week: true
+    add_is_weekend: true
+  kmeans_features:
+    - "hour"
+    - "power_mW"
+    - "current_mA"
+    - "voltage"
+    - "led1"
+    - "led2"
+  iforest_features:
+    - "hour"
+    - "power_mW"
+    - "current_mA"
+    - "voltage"
+    - "temperature"
+    - "humidity"
+    - "led1"
+    - "led2"
+  scale_features: true
+
+training:
+  test_split_ratio: 0.2
+  kmeans:
+    n_clusters: 4
+    init: "k-means++"
+    n_init: 20
+    max_iter: 300
+  isolation_forest:
+    n_estimators: 300
+    contamination: 0.03
+    max_samples: "auto"
+    bootstrap: false
+
+realtime:
+  mqtt:
+    broker: "nfa1412a.ala.asia-southeast1.emqxsl.com"
+    port: 8883
+    topic: "TN/IOT/smarthome/tt"
+    alert_topic: "TN/IOT/smarthome/alerts"
+    qos: 1
+    keepalive: 60
+    username: "iot_32_items"
+    password: "123456789"
+    tls:
+      enabled: true
+      ca_cert: "D:/Deadline Year 4/Tốt Nghiệp/smart_home/AI_PhanTichDien/emqxsl-ca.crt" 
+      insecure: false
+  inference:
+    anomaly_score_threshold: -0.1
+    use_rule_engine: true
+
+rules:
+  daytime:
+    start_hour: 7
+    end_hour: 17
+  environment:
+    high_temperature_threshold_c: 33
+    high_humidity_threshold_pct: 80
+  power:
+    high_power_mw_threshold: 50000
+    high_current_ma_threshold: 300
+    low_voltage_threshold_v: 205
+    abnormal_multiplier_vs_hourly_mean: 1.5
+    vi_mismatch_ratio_threshold: 0.35
+  baseline:
+    enable_hourly_baseline: true
+    min_hourly_mean_mw: 50
+  alerts:
+    led_on_in_daylight: true
+    high_power_anomaly: true
+    hourly_baseline_anomaly: true
+    include_recommendation: true
+
+logging:
+  level: "INFO"
+  log_file: "logs/app.log"
+
+auto_retrain:
+  enabled: true
+  interval_days: 7
+  min_new_rows: 200
+  schedule_time: "02:00"
