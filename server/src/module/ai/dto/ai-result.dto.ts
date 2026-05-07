@@ -21,6 +21,7 @@ export interface AiResultDto {
   led1: boolean;
 
   led2: boolean;
+  type: 'status' | 'alert';
 }
 
 export interface BillingForecastDto {

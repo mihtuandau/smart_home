@@ -1,247 +1,202 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useAiContext } from '@/contexts/AiContext';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useSocket } from '@/hooks/socket';
-import { Language } from '@/i18n';
-import { localizeAiText } from '@/lib/aiTextLocalization';
-import type { AiAdvicePayload } from '@/hooks/socket';
-import { Activity, Bell, Bot, Lightbulb } from 'lucide-react';
+import React from "react";
+import { useAiContext } from "@/contexts/AiContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { localizeAiText } from "@/lib/aiTextLocalization";
+import { 
+  Brain, 
+  Zap, 
+  Lightbulb, 
+  AlertTriangle, 
+  ShieldCheck, 
+  Info,
+  Clock
+} from "lucide-react";
 
-const dateLocaleMap = {
-  vi: 'vi-VN',
-  en: 'en-US',
-  zh: 'zh-CN',
-} as const;
-
-function powerLevel(mw: number): 'idle' | 'normal' | 'medium' | 'high' {
-  if (mw < 2000)    return 'idle';    // < 2W: Standby
-  if (mw < 500000)  return 'normal';  // < 500W: Normal (Lights, Fans)
-  if (mw < 1800000) return 'medium';  // < 1800W: Elevated (AC or Heavy device)
-  return 'high';                      // > 1800W: High (Multiple heavy devices)
-}
-
-function parseMwFromText(text: string): number | null {
-  const mwMatch = text.match(/(\d+(?:\.\d+)?)\s*mW/i);
-  if (mwMatch) return parseFloat(mwMatch[1]);
-  const wMatch = text.match(/(\d+(?:\.\d+)?)\s*W(?!h)/i);
-  if (wMatch) return parseFloat(wMatch[1]) * 1000;
-  return null;
-}
-
-function barClass(level: ReturnType<typeof powerLevel>) {
-  if (level === 'idle')   return 'bg-muted';
-  if (level === 'normal') return 'bg-green-400';
-  if (level === 'medium') return 'bg-yellow-400';
-  return 'bg-red-400';
-}
-function badgeClass(level: ReturnType<typeof powerLevel>) {
-  if (level === 'idle')   return 'bg-muted text-muted-foreground';
-  if (level === 'normal') return 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300';
-  if (level === 'medium') return 'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300';
-  return 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300';
-}
-function levelLabel(level: ReturnType<typeof powerLevel>, t: (key: string) => string) {
-  if (level === 'idle')   return t('ai.idle');
-  if (level === 'normal') return t('ai.normal');
-  if (level === 'medium') return t('ai.medium');
-  return t('ai.high');
-}
-function barPct(powerMw: number) {
-  // Scale based on 3000W (3,000,000 mW)
-  return Math.min(Math.round((powerMw / 3000000) * 100), 100);
-}
-
-function analysisBg(text: string) {
-  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high|higher|警告|异常|风险|危险|burning money|peak load|red alert|prioritize|reducing power/i.test(text)) return 'bg-red-50 text-red-700 border-red-100 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800';
-  if (/ổn định|an toàn|thành công|tốt|bình thường|thấp|vừa tắt|đã tắt|giảm|stable|safe|success|good|normal|low|turned off|are off|decreased|稳定|安全|成功|好|正常|关闭|下降|savings/i.test(text)) return 'bg-green-50 text-green-700 border-green-100 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800';
-  if (/khuyến nghị|gợi ý|tiết kiệm|theo dõi|tối ưu|đang làm quen|nhắc nhở|vừa bật|đang bật|đang dùng|hiện tiêu thụ|thay đổi|tăng|recommend|suggestion|saving|save|monitor|optimi|learning|turned on|is on|using|changed|increased|建议|节能|监控|优化|提示|开启|变化|增加|detected|remember|turn off|lights/i.test(text)) return 'bg-blue-50 text-blue-700 border-blue-100 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
-  return 'bg-muted text-muted-foreground border-border';
-}
-
-function alertBorderClass(text: string): string {
-  if (/cảnh báo|bất thường|nguy cơ|cao|alert|abnormal|risk|high|higher|警告|异常|风险|危险|burning money|peak load|red alert|prioritize|reducing power/i.test(text))
-    return 'border-red-400 bg-red-50 text-red-800 dark:border-red-700 dark:bg-red-900/20 dark:text-red-300';
-  if (/ổn định|an toàn|thành công|tốt|bình thường|thấp|vừa tắt|đã tắt|giảm|stable|safe|success|good|normal|low|turned off|are off|decreased|稳定|安全|成功|好|正常|关闭|下降|savings/i.test(text))
-    return 'border-green-400 bg-green-50 text-green-800 dark:border-green-700 dark:bg-green-900/20 dark:text-green-300';
-  if (/khuyến nghị|gợi ý|tiết kiệm|theo dõi|tối ưu|đang làm quen|nhắc nhở|vừa bật|đang bật|đang dùng|hiện tiêu thụ|thay đổi|tăng|recommend|suggestion|saving|save|monitor|optimi|learning|turned on|is on|using|changed|increased|建议|节能|监控|优化|提示|开启|变化|增加|detected|remember|turn off|lights/i.test(text))
-    return 'border-blue-400 bg-blue-50 text-blue-800 dark:border-blue-700 dark:bg-blue-900/20 dark:text-blue-300';
-  return 'border-muted-foreground bg-muted/50 text-muted-foreground dark:bg-muted/10';
-}
-
-function formatTime(iso: string, language: Language) {
-  return new Date(iso).toLocaleTimeString(dateLocaleMap[language], {
-    hour: '2-digit', minute: '2-digit', second: '2-digit',
-  });
-}
-
-function formatPower(mw: number): { value: string; unit: string } {
-  if (mw < 1000) return { value: Math.round(mw).toString(), unit: 'mW' };
-  const w = mw / 1000;
-  return { value: parseFloat(w.toFixed(2)).toString(), unit: 'W' };
-}
-
-
-function PowerGauge({ powerMw, led1, led2, t }: { powerMw: number; led1: boolean; led2: boolean; t: (key: string) => string }) {
-  const level = powerLevel(powerMw);
-  const { value, unit } = formatPower(powerMw);
-
-  return (
-    <div className="px-4 py-3 border-b border-border">
-
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className={`text-2xl font-bold ${
-            level === 'idle'   ? 'text-gray-400 dark:text-gray-500' :
-            level === 'normal' ? 'text-green-600 dark:text-green-400' :
-            level === 'medium' ? 'text-yellow-600 dark:text-yellow-400' :
-            'text-red-600 dark:text-red-400'
-          }`}>{value}</span>
-          <span className="text-sm text-muted-foreground font-medium">{unit}</span>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${badgeClass(level)}`}>
-            {levelLabel(level, t)}
-          </span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-1.5 text-[11px] sm:text-xs">
-          <span className={`px-2 py-0.5 rounded-full font-medium transition-colors ${
-            led1 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-muted text-muted-foreground'
-          }`}>
-            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />{t('ai.led1')}</span>
-          </span>
-          <span className={`px-2 py-0.5 rounded-full font-medium transition-colors ${
-            led2 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-muted text-muted-foreground'
-          }`}>
-            <span className="inline-flex items-center gap-1"><Lightbulb className="w-3 h-3" />{t('ai.led2')}</span>
-          </span>
-        </div>
-      </div>
-
-      <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
-        <div
-          className={`h-3 rounded-full transition-all duration-700 ease-out ${barClass(level)}`}
-          style={{ width: `${barPct(powerMw)}%` }}
-        />
-      </div>
-      <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-        <span>0W</span>
-        <span>500 W</span>
-        <span>1500 W</span>
-        <span>3000 W+</span>
-      </div>
-    </div>
-  );
-}
-
-export default function AIInsights() {
-  const { isConnected } = useSocket();
-  const {
-    status,
-    alerts,
-    clearAlerts: clear,
-  } = useAiContext();
+export default function AIInsights({ className = "" }: { className?: string }) {
+  const { status, alerts } = useAiContext();
   const { t, language } = useLanguage();
-  const localizedAnalysis = status ? localizeAiText(status.analysis, language) : '';
+
+  // Safety check for initial loading state
+  if (!status || !status.severity) {
+    return (
+      <div className={`section-card border border-border rounded-xl shadow-sm flex flex-col h-full bg-card items-center justify-center p-8 ${className}`}>
+        <Brain className="w-8 h-8 text-indigo-400 animate-pulse mb-3" />
+        <p className="text-xs text-muted-foreground font-medium">{t("common.loading") || "Đang tải dữ liệu AI..."}</p>
+      </div>
+    );
+  }
+
+  const getStatusConfig = (severity: string) => {
+    switch (severity) {
+      case "high":
+        return {
+          bg: "bg-red-50 dark:bg-red-950/20",
+          border: "border-red-200 dark:border-red-800",
+          text: "text-red-700 dark:text-red-300",
+          icon: AlertTriangle,
+        };
+      case "medium":
+        return {
+          bg: "bg-amber-50 dark:bg-amber-950/20",
+          border: "border-amber-200 dark:border-amber-800",
+          text: "text-amber-700 dark:text-amber-300",
+          icon: Info,
+        };
+      default:
+        return {
+          bg: "bg-emerald-50 dark:bg-emerald-950/20",
+          border: "border-emerald-200 dark:border-emerald-800",
+          text: "text-emerald-700 dark:text-emerald-300",
+          icon: ShieldCheck,
+        };
+    }
+  };
+
+  const config = getStatusConfig(status.severity);
+  const StatusIcon = config.icon;
+  const analysisLines = localizeAiText(status.analysis, language).split("|");
+
+  const shouldShowCurrentStatus = 
+    alerts.length === 0 || 
+    localizeAiText(status.analysis, language).trim() !== localizeAiText(alerts[0].analysis, language).trim() ||
+    status.is_critical;
+
+  const formatPower = (w: number) => {
+    if (w < 1) {
+      return `${(w * 1000).toFixed(2)}mW`;
+    }
+    return `${w.toFixed(2)}W`;
+  };
 
   return (
-    <div className="section-card border border-border rounded-xl shadow-sm flex flex-col h-full">
+    <div className={`section-card border border-border rounded-xl shadow-sm flex flex-col h-full bg-card overflow-hidden ${className}`} style={{ minHeight: '480px' }}>
+      
+      {/* Synchronized Header */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-border bg-card">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+            <Brain className="w-4 h-4 text-indigo-700 dark:text-indigo-400" />
+          </div>
+          <div>
+            <h2 className="text-sm font-semibold text-foreground">AI Power Analytics</h2>
+            <div className="flex items-center gap-1">
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+              </span>
+              <span className="text-[10px] text-emerald-600 font-medium uppercase tracking-wider">Live</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted text-muted-foreground border border-border">
+            <Zap className="w-3 h-3" />
+            <span className="text-[11px] font-bold">{formatPower(status.powerW)}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center ${status.led1 ? 'bg-yellow-100 text-yellow-600' : 'bg-muted text-muted-foreground'}`}>
+              <Lightbulb className="w-3 h-3" />
+            </div>
+            <div className={`w-5 h-5 rounded-full flex items-center justify-center ${status.led2 ? 'bg-yellow-100 text-yellow-600' : 'bg-muted text-muted-foreground'}`}>
+              <Lightbulb className="w-3 h-3" />
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between px-4 py-3 border-b border-border">
-        <div className="flex items-center flex-wrap gap-2">
-          <Bot className="w-5 h-5 text-foreground/80" />
-          <span className="text-sm sm:text-base font-semibold text-foreground">{t('ai.title')}</span>
-          {isConnected ? (
-            <span className="inline-flex items-center gap-1 text-xs text-green-600 font-medium">
-              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              {t('ai.live')}
-            </span>
+      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+        {/* Current Status */}
+        {shouldShowCurrentStatus && (
+          <div className="mb-6 animate-in fade-in slide-in-from-top-2 duration-500">
+            <div className={`p-4 rounded-xl border-l-4 shadow-sm ${config.bg} ${config.border}`}>
+              <div className="flex items-center justify-between mb-1">
+                <h4 className={`font-bold text-sm ${config.text}`}>
+                  {status.is_critical ? t("ai.status.anomaly") : t("ai.status.normal")}
+                </h4>
+                <span className="text-[10px] font-medium text-slate-400 bg-white/50 px-1.5 py-0.5 rounded uppercase">{t("ai.now") || "NOW"}</span>
+              </div>
+              
+              <div className="space-y-1.5 mt-2">
+                {analysisLines.map((line, idx) => (
+                  <p key={idx} className="text-sm text-foreground/90 leading-relaxed font-medium">
+                    {line.trim()}
+                  </p>
+                ))}
+              </div>
+
+              {status.tips && status.tips.length > 0 && (
+                <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/5">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("ai.tips") || "AI Tips"}:</p>
+                  <ul className="space-y-1.5">
+                    {status.tips.map((tip, idx) => (
+                      <li key={idx} className="flex gap-2 text-xs text-muted-foreground leading-relaxed">
+                        <span className="text-indigo-500 font-bold">•</span>
+                        {localizeAiText(tip, language)}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* History Header */}
+        <div className="flex items-center gap-2 mb-4">
+          <Clock className="w-3 h-3 text-muted-foreground" />
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t("ai.history") || "History"}</span>
+          <div className="h-px flex-1 bg-border/50"></div>
+        </div>
+
+        {/* History List */}
+        <div className="space-y-4">
+          {alerts.length > 0 ? (
+            alerts.map((alert, index) => {
+              const alertConfig = getStatusConfig(alert.severity);
+              const lines = localizeAiText(alert.analysis, language).split("|");
+
+              return (
+                <div
+                  key={`${alert.time}-${index}`}
+                  className="relative pl-4 border-l border-border hover:border-indigo-400 transition-colors py-0.5"
+                >
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="text-[10px] font-medium text-muted-foreground tabular-nums">
+                      {new Date(alert.time).toLocaleTimeString(language === 'vi' ? 'vi-VN' : 'en-US', {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${alertConfig.bg} ${alertConfig.text}`}>
+                      {alert.is_critical ? t("ai.status.anomaly") : t("ai.status.normal")}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    {lines.map((line, lIdx) => (
+                      <p key={lIdx} className="text-xs text-foreground/70 leading-snug">{line.trim()}</p>
+                    ))}
+                  </div>
+                </div>
+              );
+            })
           ) : (
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-medium">
-              <span className="w-2 h-2 rounded-full bg-muted-foreground" />
-              {t('ai.offline')}
-            </span>
+            <div className="py-10 flex flex-col items-center justify-center text-muted-foreground/30">
+              <Brain className="w-8 h-8 mb-2 opacity-20" />
+              <p className="text-[11px] font-medium">{t("ai.noHistory") || "No history"}</p>
+            </div>
           )}
         </div>
-        {alerts.length > 0 && (
-          <button
-            onClick={clear}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {t('ai.clearAll')}
-          </button>
-        )}
       </div>
 
-      {status ? (() => {
-        const mw = (status.powerW && status.powerW > 0)
-          ? status.powerW * 1000
-          : parseMwFromText(status.analysis) ??
-            status.advice.reduce<number | null>((acc, a) => acc ?? parseMwFromText(a), null) ?? 0;
-        return (
-          <PowerGauge
-            powerMw={mw}
-            led1={status.led1 ?? false}
-            led2={status.led2 ?? false}
-            t={t}
-          />
-        );
-      })() : (
-        <div className="px-4 py-3 border-b border-border text-sm text-muted-foreground inline-flex items-center gap-2">
-          <Activity className="w-4 h-4" />
-          {t('ai.waitingData')}
-        </div>
-      )}
-
-      {status && (
-        <div className={`px-4 py-2 border-b text-sm font-medium transition-colors ${analysisBg(localizedAnalysis)}`}>
-          {localizedAnalysis}
-        </div>
-      )}
-
-      <div className="flex-1 overflow-y-auto px-3 py-2 space-y-2 max-h-56 sm:max-h-64">
-        {alerts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-            <Bell className="w-8 h-8 mb-2" />
-            <p className="text-sm font-medium">{t('ai.noAlerts')}</p>
-            <p className="text-xs mt-1 text-center text-muted-foreground">
-              {t('ai.alertHint')}
-            </p>
-          </div>
-        ) : (
-          alerts.map((msg: AiAdvicePayload, idx: number) => (
-            <div key={`${msg.time}-${idx}`} className="space-y-1">
-              <div className="text-[11px] text-muted-foreground font-mono">{formatTime(msg.time, language)}</div>
-
-              {msg.anomaly && (() => {
-                const localizedAnomaly = localizeAiText(msg.anomaly, language);
-                return (
-                  <div className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(localizedAnomaly)}`}>
-                    <span>{localizedAnomaly}</span>
-                  </div>
-                );
-              })()}
-
-              {msg.advice.map((a, i) => (
-                (() => {
-                  const localizedAdvice = localizeAiText(a, language);
-                  return (
-                <div
-                  key={i}
-                  className={`flex items-start gap-2 rounded-lg border-l-4 px-3 py-2 text-sm ${alertBorderClass(localizedAdvice)}`}
-                >
-                  <span>{localizedAdvice}</span>
-                </div>
-                  );
-                })()
-              ))}
-            </div>
-          ))
-        )}
-      </div>
-
-      <div className="px-4 py-2 border-t border-border text-[11px] text-muted-foreground text-center">
-        {t('ai.footer')}
+      {/* Synchronized Footer */}
+      <div className="px-4 py-2 border-t border-border flex items-center justify-center bg-card">
+        <p className="text-[10px] text-muted-foreground font-medium text-center italic">
+          {t("ai.footer") || "AI model updates periodically based on your usage patterns."}
+        </p>
       </div>
     </div>
   );

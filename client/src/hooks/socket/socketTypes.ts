@@ -11,7 +11,7 @@ export interface AiAdvicePayload {
   advice: string[];
   anomaly: string | null;
   analysis: string;
-  type: 'status' | 'alert';
+  type: "status" | "alert";
   powerW: number;
   led1: boolean;
   led2: boolean;

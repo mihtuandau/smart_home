@@ -1,244 +1,169 @@
-'use client';
+"use client";
 
 import React, {
   createContext,
-  useCallback,
   useContext,
-  useEffect,
-  useRef,
   useState,
-} from 'react';
-import { socketService } from '@/lib/socket';
-import { aiApi } from '@/lib/api/ai';
-import type { AiAdvicePayload, LedDayEntry } from '@/hooks/socket';
+  useEffect,
+  useCallback,
+} from "react";
+import { socketService } from "@/lib/socket";
 
-const MAX_ALERTS = 50;
-const storageKey = () => `ai_alerts_${new Date().toISOString().slice(0, 10)}`;
-
-function loadAlertsFromStorage(): AiAdvicePayload[] {
-  try {
-    const raw = localStorage.getItem(storageKey());
-    if (!raw) return [];
-    return JSON.parse(raw) as AiAdvicePayload[];
-  } catch {
-    return [];
-  }
+export interface LedDayEntry {
+  date: string;
+  led1_wh: number;
+  led2_wh: number;
+  led1_on_minutes: number;
+  led2_on_minutes: number;
 }
 
-function saveAlertsToStorage(alerts: AiAdvicePayload[]) {
-  try {
-    Object.keys(localStorage)
-      .filter((k) => k.startsWith('ai_alerts_') && k !== storageKey())
-      .forEach((k) => localStorage.removeItem(k));
-    localStorage.setItem(storageKey(), JSON.stringify(alerts));
-  } catch {}
+export interface AiAdvicePayload {
+  time: string;
+  severity: "low" | "medium" | "high";
+  status_text: string;
+  analysis: string;
+  tips: string[];
+  advice: string[]; // for backward compatibility
+  is_critical: boolean;
+  has_new_alert: boolean;
+  score: number;
+  powerW?: number;
+  led1?: boolean;
+  led2?: boolean;
+  anomaly?: string;
+  type?: string;
 }
 
-const EMPTY_LED_DAY: LedDayEntry = {
-  date: '',
+interface AiContextType {
+  status: AiAdvicePayload | null;
+  alerts: AiAdvicePayload[];
+  todayLed: LedDayEntry;
+  ledHistory: LedDayEntry[];
+  ledHistoryLoading: boolean;
+  clearAlerts: () => void;
+}
+
+const AiContext = createContext<AiContextType | undefined>(undefined);
+
+const DEFAULT_TODAY_LED: LedDayEntry = {
+  date: new Date().toISOString().slice(0, 10),
   led1_wh: 0,
   led2_wh: 0,
   led1_on_minutes: 0,
   led2_on_minutes: 0,
 };
 
-const HISTORY_REFRESH_MS = 5 * 60 * 1000;
-const STATUS_REFRESH_MS = 15 * 1000;
-const BASELINE_REFRESH_MS = 10 * 60 * 1000;
-
-function isAiAdvicePayload(value: unknown): value is AiAdvicePayload {
-  if (!value || typeof value !== 'object') return false;
-  const obj = value as Record<string, unknown>;
-  return (
-    typeof obj.time === 'string' &&
-    Array.isArray(obj.advice) &&
-    typeof obj.analysis === 'string' &&
-    (obj.type === 'status' || obj.type === 'alert')
-  );
-}
-
-interface AiContextValue {
-  status: AiAdvicePayload | null;
-  alerts: AiAdvicePayload[];
-  clearAlerts: () => void;
-  todayLed: LedDayEntry;
-  ledHistory: LedDayEntry[];
-  ledHistoryLoading: boolean;
-  baseline: Record<string, unknown> | null;
-  baselineLoading: boolean;
-}
-
-const AiContext = createContext<AiContextValue>({
-  status: null,
-  alerts: [],
-  clearAlerts: () => {},
-  todayLed: { ...EMPTY_LED_DAY },
-  ledHistory: [],
-  ledHistoryLoading: true,
-  baseline: null,
-  baselineLoading: true,
-});
-
-function toRecord(value: unknown): Record<string, unknown> {
-  return value && typeof value === 'object'
-    ? (value as Record<string, unknown>)
-    : {};
-}
-
-function toAiPayload(value: unknown): AiAdvicePayload | null {
-  const obj = toRecord(value);
-  if (typeof obj.time !== 'string' || typeof obj.analysis !== 'string') {
-    return null;
-  }
-
-  const advice = Array.isArray(obj.advice)
-    ? obj.advice.filter((item): item is string => typeof item === 'string')
-    : [];
-
-  const anomaly = typeof obj.anomaly === 'string' ? obj.anomaly : null;
-  const dailyRaw = toRecord(obj.dailyLed);
-  const dailyLed: LedDayEntry = {
-    date: typeof dailyRaw.date === 'string' ? dailyRaw.date : '',
-    led1_wh: typeof dailyRaw.led1_wh === 'number' ? dailyRaw.led1_wh : 0,
-    led2_wh: typeof dailyRaw.led2_wh === 'number' ? dailyRaw.led2_wh : 0,
-    led1_on_minutes:
-      typeof dailyRaw.led1_on_minutes === 'number' ? dailyRaw.led1_on_minutes : 0,
-    led2_on_minutes:
-      typeof dailyRaw.led2_on_minutes === 'number' ? dailyRaw.led2_on_minutes : 0,
-  };
-
-  return {
-    time: obj.time,
-    analysis: obj.analysis,
-    anomaly,
-    advice,
-    type: advice.length > 0 || anomaly ? 'alert' : 'status',
-    powerW: typeof obj.powerW === 'number' ? obj.powerW : 0,
-    led1: typeof obj.led1 === 'boolean' ? obj.led1 : false,
-    led2: typeof obj.led2 === 'boolean' ? obj.led2 : false,
-    dailyLed,
-  };
-}
-
 export function AiProvider({ children }: { children: React.ReactNode }) {
+  const socket = socketService.getSocket() || socketService.connect();
   const [status, setStatus] = useState<AiAdvicePayload | null>(null);
-  const [alerts, setAlerts] = useState<AiAdvicePayload[]>(() =>
-    loadAlertsFromStorage(),
-  );
-  const [todayLed, setTodayLed] = useState<LedDayEntry>({ ...EMPTY_LED_DAY });
+  const [alerts, setAlerts] = useState<AiAdvicePayload[]>([]);
+  const [todayLed, setTodayLed] = useState<LedDayEntry>(DEFAULT_TODAY_LED);
   const [ledHistory, setLedHistory] = useState<LedDayEntry[]>([]);
-  const [ledHistoryLoading, setLedHistoryLoading] = useState(true);
-  const [baseline, setBaseline] = useState<Record<string, unknown> | null>(
-    null,
-  );
-  const [baselineLoading, setBaselineLoading] = useState(true);
+  const [ledHistoryLoading, setLedHistoryLoading] = useState(false);
 
-  const fetchStatus = useCallback(async () => {
-    try {
-      const res = await aiApi.getStatus();
-      const payload = toAiPayload(res);
-      if (!payload) return;
+  const toAiPayload = useCallback((data: any): AiAdvicePayload => {
+    const tips = Array.isArray(data.tips) ? data.tips : 
+                 Array.isArray(data.advice) ? data.advice : [];
+    
+    return {
+      time: data.time || new Date().toISOString(),
+      severity: data.severity || (data.type === 'alert' ? 'high' : 'low'),
+      status_text: data.status_text || (data.type === 'alert' ? 'Cảnh báo' : 'Ổn định'),
+      analysis: data.analysis || '',
+      tips: tips,
+      advice: tips,
+      is_critical: data.is_critical || data.isNewAlert || (data.type === 'alert') || false,
+      has_new_alert: data.has_new_alert || data.isNewAlert || (data.type === 'alert') || false,
+      score: typeof data.score === 'number' ? data.score : 0,
+      powerW: data.powerW,
+      led1: data.led1,
+      led2: data.led2,
+      anomaly: data.anomaly,
+      type: data.type
+    };
+  }, []);
 
-      setStatus((prev) => {
-        if (prev && prev.time === payload.time) {
-          return prev;
-        }
-        return payload;
-      });
+  useEffect(() => {
+    const socket = socketService.getSocket() || socketService.connect();
+    console.log("📡 AiProvider: Listening for AI events...");
 
-      if (payload.dailyLed) {
-        setTodayLed(payload.dailyLed);
+    socket.on("connect", () => {
+      console.log("🟢 Socket.io Connected! (AI & LED)");
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.warn("🔴 Socket.io Disconnected:", reason);
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("❌ Socket.io Connection Error:", err.message);
+    });
+
+    const handleAdvice = (data: any) => {
+      console.log("🤖 AI Insight Received:", data);
+      const payload = toAiPayload(data);
+      setStatus(payload);
+      
+      // Only add to history if it's a real alert/anomaly and NOT a routine status update
+      const shouldLog = (payload.has_new_alert || payload.is_critical) && payload.type !== "status";
+
+      if (shouldLog) {
+        setAlerts((prev) => {
+          // Deduplication: Strip trailing power values (e.g., "(39.8 W)") before comparing
+          const cleanAnalysis = (text: string) => text.replace(/\s*\(\d+(\.\d+)?\s*W\)\s*$/, "").trim();
+          const incomingClean = cleanAnalysis(payload.analysis);
+          
+          // Check if this alert is identical to ANY of the last 3 entries 
+          // to prevent alternating alerts from spamming the history
+          const isDuplicate = prev.slice(0, 3).some(a => cleanAnalysis(a.analysis) === incomingClean);
+
+          if (isDuplicate) {
+            return prev;
+          }
+          return [payload, ...prev].slice(0, 50);
+        });
       }
-    } catch {
-    }
-  }, []);
+    };
 
-  const fetchBaseline = useCallback(async () => {
-    try {
-      const res = await aiApi.getBaseline();
-      setBaseline(toRecord(res));
-    } catch {
-    } finally {
-      setBaselineLoading(false);
-    }
-  }, []);
-
-  const fetchLedHistory = useCallback(async () => {
-    try {
-      const res = await aiApi.getLedDaily(30);
-      const data = toRecord(res).data;
-      setLedHistory(Array.isArray(data) ? (data as LedDayEntry[]) : []);
-    } catch {
-    } finally {
+    const handleLedStats = (data: any) => {
+      console.log("📊 LED Stats Received:", data);
+      if (data?.today) setTodayLed(data.today);
+      if (Array.isArray(data?.history)) setLedHistory(data.history);
       setLedHistoryLoading(false);
-    }
-  }, []);
+    };
 
-  useEffect(() => {
-    fetchStatus();
-    fetchBaseline();
-    fetchLedHistory();
-    const statusId = setInterval(fetchStatus, STATUS_REFRESH_MS);
-    const baselineId = setInterval(fetchBaseline, BASELINE_REFRESH_MS);
-    const historyId = setInterval(fetchLedHistory, HISTORY_REFRESH_MS);
+    socket.on("ai:advice", handleAdvice);
+    socket.on("led_stats", handleLedStats);
+
     return () => {
-      clearInterval(statusId);
-      clearInterval(baselineId);
-      clearInterval(historyId);
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("connect_error");
+      socket.off("ai:advice", handleAdvice);
+      socket.off("led_stats", handleLedStats);
     };
-  }, [fetchBaseline, fetchLedHistory, fetchStatus]);
+  }, [socket, toAiPayload]);
 
-  const handleRef = useRef<((p: AiAdvicePayload) => void) | null>(null);
-
-  handleRef.current = (payload: AiAdvicePayload) => {
-    setStatus(payload);
-
-    if (payload.dailyLed) {
-      setTodayLed(payload.dailyLed);
-    }
-
-    if (payload.type === 'alert') {
-      setAlerts((prev) => {
-        const next = [payload, ...prev].slice(0, MAX_ALERTS);
-        saveAlertsToStorage(next);
-        return next;
-      });
-    }
-  };
-
-  useEffect(() => {
-    const handler = (payload: unknown) => {
-      if (isAiAdvicePayload(payload)) {
-        handleRef.current?.(payload);
-      }
-    };
-    socketService.onAiAdvice(handler);
-    return () => socketService.offAiAdvice(handler);
-  }, []);
-
-  const clearAlerts = useCallback(() => {
-    setAlerts([]);
-    saveAlertsToStorage([]);
-  }, []);
+  const clearAlerts = useCallback(() => setAlerts([]), []);
 
   return (
-    <AiContext.Provider
-      value={{
-        status,
-        alerts,
-        clearAlerts,
-        todayLed,
-        ledHistory,
-        ledHistoryLoading,
-        baseline,
-        baselineLoading,
-      }}
-    >
+    <AiContext.Provider value={{ 
+      status, 
+      alerts, 
+      todayLed, 
+      ledHistory, 
+      ledHistoryLoading, 
+      clearAlerts 
+    }}>
       {children}
     </AiContext.Provider>
   );
 }
 
 export function useAiContext() {
-  return useContext(AiContext);
+  const context = useContext(AiContext);
+  if (context === undefined) {
+    throw new Error("useAiContext must be used within an AiProvider");
+  }
+  return context;
 }

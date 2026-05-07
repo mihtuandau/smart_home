@@ -21,8 +21,8 @@ export class AiAdvisorService {
   private led1StartedAt: number | null = null;
   private led2StartedAt: number | null = null;
 
-  private static readonly ADVICE_COOLDOWN_MS = 5 * 60 * 1000; // Increased to 5 mins to prevent spam
-  private static readonly POST_SWITCH_SETTLE_MS = 45 * 1000;
+  private static readonly ADVICE_COOLDOWN_MS = 10 * 1000; // 10 seconds for demo
+  private static readonly POST_SWITCH_SETTLE_MS = 3 * 1000;  // 3 seconds
 
   private readonly logger = new Logger(AiAdvisorService.name);
   private readonly routineTimeZone = process.env.AI_ROUTINE_TIMEZONE ?? 'Asia/Ho_Chi_Minh';
@@ -320,16 +320,10 @@ export class AiAdvisorService {
       }
 
       if (led1 && led2) {
-        if (hour >= 18 && hour <= 22) {
-          pushAdvice('peak-hour-tip', [
-            ' Giờ cao điểm tối: bạn đang bật cả 2 đèn, nếu không cần thiết hãy tắt bớt 1 bên để tiết kiệm điện nhé.',
-            ' Khung giờ tối thường có tải cao, việc dùng 1 đèn thay vì 2 sẽ giúp giảm công suất tức thời hiệu quả.',
-          ]);
-        } else {
-          pushAdvice('both-led-tip', [
-            ' Gợi ý tối ưu: Bạn đang dùng cả Phòng khách và Ban công, có thể tắt bớt nếu độ sáng đã đủ dùng.',
-          ]);
-        }
+        pushAdvice('both-led-tip', [
+          ' Gợi ý tối ưu: Bạn đang dùng cả Phòng khách và Ban công, có thể tắt bớt nếu độ sáng đã đủ dùng.',
+          ' Cảnh báo: Việc bật nhiều đèn cùng lúc làm tăng hóa đơn điện. Hãy chỉ bật những nơi thực sự cần thiết!',
+        ]);
       }
 
       // Kiểm tra thời gian sử dụng liên tục (Usage Duration)

@@ -5,11 +5,12 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { Logger, UseGuards } from '@nestjs/common';
+import { Logger, UseGuards, Inject, forwardRef } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { WsJwtGuard } from '../../common/guards/ws-jwt.guard';
 
-import type { LedDayEntry } from '../ai/ai-led-stats.service';
+import { AiService } from '../ai/ai.service';
+import { AiLedStatsService, LedDayEntry } from '../ai/ai-led-stats.service';
 
 export interface AiAdvicePayload {
   time: string;
@@ -38,7 +39,7 @@ export interface AiAdvicePayload {
     credentials: true,
   },
 })
-@UseGuards(WsJwtGuard)
+// @UseGuards(WsJwtGuard)
 export class AiEventsGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
@@ -47,13 +48,36 @@ export class AiEventsGateway
 
   private readonly logger = new Logger(AiEventsGateway.name);
 
+  constructor(
+    @Inject(forwardRef(() => AiService))
+    private aiService: AiService,
+    private ledStats: AiLedStatsService,
+  ) {}
+
   afterInit() {
     this.logger.log(' AI Events WebSocket Gateway initialized');
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     const user = (client as any).user;
     this.logger.log(` Client connected: ${client.id} (User: ${user?.email})`);
+
+    // Send initial data immediately
+    try {
+      const latest = this.aiService.getLatestResult();
+      if (latest) {
+        client.emit('ai:advice', {
+          ...latest,
+          type: (latest.advice?.length > 0 || latest.anomaly) ? 'alert' : 'status'
+        });
+      }
+
+      const today = this.ledStats.getToday();
+      const history = await this.ledStats.getHistory(7);
+      client.emit('led_stats', { today, history });
+    } catch (err) {
+      this.logger.error(`Failed to send initial AI/LED data: ${err.message}`);
+    }
   }
 
   handleDisconnect(client: Socket) {
@@ -65,5 +89,9 @@ export class AiEventsGateway
 
   emitAiAdvice(payload: AiAdvicePayload): void {
     this.server.emit('ai:advice', payload);
+  }
+
+  emitLedStats(today: LedDayEntry, history: LedDayEntry[]): void {
+    this.server.emit('led_stats', { today, history });
   }
 }

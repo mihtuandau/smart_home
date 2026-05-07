@@ -13,6 +13,7 @@ export const MQTT_CONFIG = {
 
 export const MQTT_TOPICS = {
   DATA_TOPIC: process.env.MQTT_DATA_TOPIC || 'TN/IOT/smarthome/tt',
+  ALERTS_TOPIC: process.env.MQTT_ALERTS_TOPIC || 'TN/IOT/smarthome/alerts',
   CMD_TOPIC: process.env.MQTT_CMD_TOPIC || 'TN/IOT/smarthome/cmd/led',
   CMD_DEVICE_ADD:
     process.env.MQTT_CMD_DEVICE_ADD || 'TN/IOT/smarthome/cmd/device/add',

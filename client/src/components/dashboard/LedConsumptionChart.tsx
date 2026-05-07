@@ -159,21 +159,22 @@ export default function LedConsumptionChart() {
   const { todayLed, ledHistory, ledHistoryLoading, status } = useAiContext();
   const { t, language } = useLanguage();
   const [mode, setMode] = useState<'wh' | 'minutes'>('wh');
+  const safeToday = todayLed || { led1_wh: 0, led2_wh: 0, led1_on_minutes: 0, led2_on_minutes: 0 };
 
   const { chartData, totalLed1Wh, totalLed2Wh, totalLed1Min, totalLed2Min } = useMemo(() => {
     const todayKey = new Date().toISOString().slice(0, 10);
-    const baseHistory: LedDayEntry[] =
-      ledHistory.length > 0 ? ledHistory : buildSeedHistory();
+    const historyArr = Array.isArray(ledHistory) ? ledHistory : [];
+    const baseHistory: LedDayEntry[] = historyArr.length > 0 ? historyArr : buildSeedHistory();
 
     const byDate = new Map<string, LedDayEntry>();
-    for (const row of baseHistory) byDate.set(row.date, row);
+    for (const row of baseHistory) if (row?.date) byDate.set(row.date, row);
 
     byDate.set(todayKey, {
       date:             todayKey,
-      led1_wh:          todayLed.led1_wh,
-      led2_wh:          todayLed.led2_wh,
-      led1_on_minutes:  todayLed.led1_on_minutes,
-      led2_on_minutes:  todayLed.led2_on_minutes,
+      led1_wh:          safeToday.led1_wh,
+      led2_wh:          safeToday.led2_wh,
+      led1_on_minutes:  safeToday.led1_on_minutes,
+      led2_on_minutes:  safeToday.led2_on_minutes,
     });
 
     const chartRows = Array.from(byDate.values())
@@ -249,8 +250,8 @@ export default function LedConsumptionChart() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 pt-3 pb-2">
         <MiniStat
           label={t('ai.led1')}
-          wh={todayLed.led1_wh}
-          minutes={todayLed.led1_on_minutes}
+          wh={safeToday.led1_wh}
+          minutes={safeToday.led1_on_minutes}
           color="#f59e0b"
           isOn={status?.led1 ?? false}
           language={language}
@@ -258,8 +259,8 @@ export default function LedConsumptionChart() {
         />
         <MiniStat
           label={t('ai.led2')}
-          wh={todayLed.led2_wh}
-          minutes={todayLed.led2_on_minutes}
+          wh={safeToday.led2_wh}
+          minutes={safeToday.led2_on_minutes}
           color="#3b82f6"
           isOn={status?.led2 ?? false}
           language={language}

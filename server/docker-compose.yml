@@ -34,15 +34,15 @@ services:
   # ── AI Prediction Service ────────────────────────
   ai-service:
     build:
-      context: ./ai_predict_service
+      context: ../ai_predict_service
       dockerfile: Dockerfile
     container_name: smarthome_ai
     restart: always
     env_file:
-      - ./ai_predict_service/.env
-    # Ghi đè DATABASE_URL để trỏ vào mạng nội bộ Docker
+      - ../ai_predict_service/.env
+    # Sử dụng DATABASE_URL từ file .env riêng của AI service để bảo mật
     environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - NODE_ENV=production
     depends_on:
       postgres:
         condition: service_healthy

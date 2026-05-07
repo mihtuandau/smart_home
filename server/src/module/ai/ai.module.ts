@@ -24,6 +24,6 @@ import { RainForecastOptimizerService } from './rain-forecast-optimizer.service'
     AiSummaryService,
     RainForecastOptimizerService,
   ],
-  exports: [AiService, AiSummaryService, RainForecastOptimizerService],
+  exports: [AiService, AiSummaryService, RainForecastOptimizerService, AiLedStatsService],
 })
 export class AiModule {}

@@ -71,27 +71,27 @@
     "time": "Time",
     "lastHours": "Last {hours} hours",
     "lastDays": "Last {days} days",
-    "exportCsv": "Export CSV"
-    ,"pressureVeryLow": "Very low - Rain is likely"
-    ,"pressureSlightLow": "Slightly low - Possible rain"
-    ,"pressureNormal": "Normal - Lower rain chance"
-    ,"pressureHigh": "High - Stable weather"
-    ,"humidityVeryDry": "Very dry"
-    ,"humidityDry": "Dry"
-    ,"humidityModerate": "Moderate"
-    ,"humidityHumid": "Humid - Rain may come"
-    ,"humidityVeryHumid": "Very humid - Rain is near"
-    ,"temperatureNormal": "Normal"
-    ,"temperatureCold": "Cold - Lower rain chance"
-    ,"temperatureCool": "Cool - Normal"
-    ,"temperatureWarm": "Warm - Normal"
-    ,"temperatureHot": "Hot - Thunderstorm possible"
-    ,"temperatureHumidityChart": "Temperature & Humidity"
-    ,"loadTemperatureHumidityError": "Unable to load temperature and humidity data"
-    ,"lightIntensity": "Light Intensity"
-    ,"loadLightError": "Unable to load light intensity data"
-    ,"noHistoryData": "No historical data"
-    ,"optimalThreshold": "Optimal threshold"
+    "exportCsv": "Export CSV",
+    "pressureVeryLow": "Very low - Rain is likely",
+    "pressureSlightLow": "Slightly low - Possible rain",
+    "pressureNormal": "Normal - Lower rain chance",
+    "pressureHigh": "High - Stable weather",
+    "humidityVeryDry": "Very dry",
+    "humidityDry": "Dry",
+    "humidityModerate": "Moderate",
+    "humidityHumid": "Humid - Rain may come",
+    "humidityVeryHumid": "Very humid - Rain is near",
+    "temperatureNormal": "Normal",
+    "temperatureCold": "Cold - Lower rain chance",
+    "temperatureCool": "Cool - Normal",
+    "temperatureWarm": "Warm - Normal",
+    "temperatureHot": "Hot - Thunderstorm possible",
+    "temperatureHumidityChart": "Temperature & Humidity",
+    "loadTemperatureHumidityError": "Unable to load temperature and humidity data",
+    "lightIntensity": "Light Intensity",
+    "loadLightError": "Unable to load light intensity data",
+    "noHistoryData": "No historical data",
+    "optimalThreshold": "Optimal threshold"
   },
   "devices": {
     "title": "Device Control",
@@ -141,6 +141,28 @@
     "keepCurrentPower": "Leave empty to keep current power",
     "allOff": "All off"
   },
+  "ai": {
+    "title": "AI Power Monitor",
+    "live": "Live",
+    "now": "Now",
+    "tips": "AI Tips",
+    "history": "Analytics History",
+    "noHistory": "No history records",
+    "offline": "Offline",
+    "clearAll": "Clear all",
+    "noAlerts": "No alerts yet",
+    "footer": "AI learns from your habits • Gets more accurate the longer you use it",
+    "status": {
+      "anomaly": "Anomaly Detected",
+      "normal": "Normal Operation"
+    },
+    "led1": "Living Room",
+    "led2": "Balcony",
+    "idle": "Idle",
+    "normal": "Normal",
+    "medium": "Medium",
+    "high": "High"
+  },
   "energy": {
     "title": "Energy Monitoring",
     "subtitle": "Monitor solar energy system and battery",
@@ -172,19 +194,19 @@
     "systemInfo": "Energy system information",
     "hardware": "Hardware",
     "spec": "Specification",
-    "todayStats": "Today's stats"
-    ,"solarPanelPowerChart": "Solar panel power"
-    ,"powerOverTime": "Power generation over time"
-    ,"noSolarData": "No solar panel data yet"
-    ,"solarDataHint": "Data will appear once the system starts collecting"
-    ,"billingForecast": "Electricity Bill Forecast"
-    ,"billingDescription": "AI analysis based on actual load trends"
-    ,"unitPrice": "Unit price"
-    ,"currency": "VND"
-    ,"estimatedBill": "Estimated Bill End of Month"
-    ,"usedThisMonth": "Used this month"
-    ,"confidenceInterval": "95% confidence interval"
-    ,"highConsumptionWarning": "AI system detected that electricity usage trend is higher than safe average level. Please check devices with high power consumption!"
+    "todayStats": "Today's stats",
+    "solarPanelPowerChart": "Solar panel power",
+    "powerOverTime": "Power generation over time",
+    "noSolarData": "No solar panel data yet",
+    "solarDataHint": "Data will appear once the system starts collecting",
+    "billingForecast": "Electricity Bill Forecast",
+    "billingDescription": "AI analysis based on actual load trends",
+    "unitPrice": "Unit price",
+    "currency": "VND",
+    "estimatedBill": "Estimated Bill End of Month",
+    "usedThisMonth": "Used this month",
+    "confidenceInterval": "95% confidence interval",
+    "highConsumptionWarning": "AI system detected that electricity usage trend is higher than safe average level. Please check devices with high power consumption!"
   },
   "automation": {
     "title": "Automation",
@@ -475,36 +497,6 @@
     "home": "Home",
     "ifIssuePersists": "If the issue persists, please",
     "contactSupport": "contact support"
-  },
-  "ai": {
-    "title": "AI Power Monitor",
-    "live": "Live",
-    "offline": "Offline",
-    "clearAll": "Clear all",
-    "noAlerts": "No alerts yet",
-    "alertHint": "AI will notify you when lights turn on/off or detect anomalies",
-    "waitingData": "Waiting for sensor data...",
-    "footer": "AI learns from your usage habits • Gets more accurate the longer you use it",
-    "idle": "No consumption",
-    "normal": "Normal",
-    "medium": "Slightly high",
-    "high": "High — Alert",
-    "led1": "Living Room",
-    "led2": "Balcony",
-    "aiReportError": "Cannot load AI report from Mina at this time.",
-    "aiAnalyzing": "Mina is analyzing power chart...",
-    "projectedLabel": "Projected",
-    "estimatedNote": "(Projected: {kwh} kWh × {price})",
-    "minaGreeting": "Hello! I'm Mina. What would you like to know about your energy usage this week?",
-    "minaError": "Sorry, Mina is busy right now.",
-    "minaNetworkError": "Network connection with Mina encountered an error.",
-    "billThisMonth": "How much is the electricity bill this month?",
-    "weatherAndTemp": "What's the current weather and temperature?",
-    "systemAlerts": "Are there any system errors or alerts?",
-    "weeklyConsumption": "How much electricity was consumed last week?",
-    "minaPlaceholder": "Ask Mina why power is exceeding...",
-    "minaName": "Mina AI Butler",
-    "minaSubtitle": "Data analysis assistant"
   },
   "weather": {
     "manyCloud": "Overcast",

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
 import { AiAnalyzerService } from './ai-analyzer.service';
 import { AiAdvisorService } from './ai-advisor.service';
@@ -26,6 +26,7 @@ export class AiService {
     private billing: AiBillingService,
     private ledStats: AiLedStatsService,
     private rainForecast: RainForecastOptimizerService,
+    @Inject(forwardRef(() => AiEventsGateway))
     private aiEventsGateway: AiEventsGateway,
   ) {}
 
@@ -92,6 +93,8 @@ export class AiService {
       this.logger.debug(`AI Advice: ${advice.join('; ')}`);
     }
 
+    const isAlert = advice.length > 0 || !!anomaly;
+
     const result: AiResultDto = {
       time: now.toISOString(),
       analysis,
@@ -103,6 +106,7 @@ export class AiService {
       powerW: powerMw / 1000,
       led1: data.led1,
       led2: data.led2,
+      type: isAlert ? 'alert' : 'status'
     };
 
     this.latestResult = result;
@@ -110,8 +114,6 @@ export class AiService {
     this.logger.log(analysis);
     if (anomaly) this.logger.warn(anomaly);
     if (advice.length) advice.forEach((a) => this.logger.log(a));
-
-    const isAlert = advice.length > 0 || !!anomaly;
     
     // Lưu snapshot định kỳ hoặc khi có bất thường để tránh bloat DB
     if (anomaly || this.messageCount % 100 === 1) {
@@ -140,6 +142,9 @@ export class AiService {
       }
     }
 
+    // Broadcast to UI via Socket (ĐÃ TẮT ĐỂ TRÁNH SPAM - CHỈ DÙNG AI TỪ PYTHON)
+    // this.logger.log(`[AI Broadcast - DISABLED] adviceCount=${advice.length}, type=${isAlert ? 'ALERT' : 'STATUS'}`);
+    /*
     this.aiEventsGateway.emitAiAdvice({
       time: now.toISOString(),
       advice,
@@ -151,11 +156,32 @@ export class AiService {
       led2: data.led2,
       dailyLed,
     });
+    */
+
+    // Phát ngay dữ liệu LED
+    const history = await this.ledStats.getHistory(7);
+    this.aiEventsGateway.emitLedStats(dailyLed, history);
 
     return result;
   }
 
   getLatestResult(): AiResultDto | null {
+    if (!this.latestResult) {
+      return {
+        time: new Date().toISOString(),
+        analysis: 'Hệ thống AI đang theo dõi dữ liệu cảm biến...',
+        advice: [],
+        anomaly: null,
+        summary: '',
+        powerW: 0,
+        led1: false,
+        led2: false,
+        dailyLed: {} as any,
+        billing: null,
+        type: 'status'
+      };
+    }
     return this.latestResult;
   }
 }
+     
