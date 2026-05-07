@@ -39,7 +39,9 @@ export class AiService {
     try {
       await this.rainForecast.addSensorReading(data);
     } catch (err) {
-      this.logger.warn(`Failed to update rain forecast with sensor data: ${err.message}`);
+      this.logger.warn(
+        `Failed to update rain forecast with sensor data: ${err.message}`,
+      );
     }
 
     // Fetch system settings
@@ -56,57 +58,39 @@ export class AiService {
 
     this.analyzer.feedReading(powerMw, data.led1, data.led2);
 
-    const analysis = this.analyzer.analyzeRealtime(
-      powerMw,
-      data.led1,
-      data.led2,
-      now,
-    );
-
-    const anomaly = this.analyzer.detectAnomaly(powerMw, data.led1, data.led2);
-
-    const summary = await this.analyzer.getDailySummary();
-
-    let advice: string[] = [];
-    if (settings?.aiAdvisorEnabled !== false) {
-      advice = this.advisor.getAdvice({
-        powerMw,
-        led1: data.led1,
-        led2: data.led2,
-        ts: now,
-      });
-    }
+    // INTERNAL ADVISOR DISABLED: Using Python AI for analysis & advice
+    const analysis = this.latestResult?.analysis || 'Đang chờ phân tích từ AI...';
+    const anomaly = this.latestResult?.anomaly || null;
+    const summary = this.latestResult?.summary || '';
+    const advice = this.latestResult?.advice || [];
 
     let billingDto = this.latestResult?.billing ?? null;
     if (this.messageCount % BILLING_EVERY_N === 1) {
       try {
         billingDto = await this.billing.projectMonthly(
-          now, 
-          settings?.energyPriceKwh ?? 2500
+          now,
+          settings?.energyPriceKwh ?? 2500,
         );
       } catch (err) {
         this.logger.warn(`Billing forecast failed: ${err.message}`);
       }
     }
 
-    if (anomaly || advice.length > 0) {
-      this.logger.debug(`AI Advice: ${advice.join('; ')}`);
-    }
-
     const isAlert = advice.length > 0 || !!anomaly;
 
+    // Cập nhật thông số kỹ thuật (Watt, LED) nhưng giữ nguyên lời khuyên từ Python
     const result: AiResultDto = {
       time: now.toISOString(),
-      analysis,
-      anomaly: anomaly ?? null,
-      summary,
-      advice,
+      analysis: analysis,
+      anomaly: anomaly,
+      summary: summary,
+      advice: advice,
       billing: billingDto,
       dailyLed,
       powerW: powerMw / 1000,
       led1: data.led1,
       led2: data.led2,
-      type: isAlert ? 'alert' : 'status'
+      type: isAlert ? 'alert' : 'status',
     };
 
     this.latestResult = result;
@@ -114,7 +98,7 @@ export class AiService {
     this.logger.log(analysis);
     if (anomaly) this.logger.warn(anomaly);
     if (advice.length) advice.forEach((a) => this.logger.log(a));
-    
+
     // Lưu snapshot định kỳ hoặc khi có bất thường để tránh bloat DB
     if (anomaly || this.messageCount % 100 === 1) {
       try {
@@ -132,7 +116,7 @@ export class AiService {
             outputData: { analysis, anomaly, summary, advice },
             accuracy: null,
             // Snapshot thông thường hết hạn sau 1 ngày, Anomaly giữ lại 7 ngày
-            expiresAt: anomaly 
+            expiresAt: anomaly
               ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
               : new Date(Date.now() + 24 * 60 * 60 * 1000),
           },
@@ -178,10 +162,9 @@ export class AiService {
         led2: false,
         dailyLed: {} as any,
         billing: null,
-        type: 'status'
+        type: 'status',
       };
     }
     return this.latestResult;
   }
 }
-     

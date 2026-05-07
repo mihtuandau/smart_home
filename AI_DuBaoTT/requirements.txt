@@ -1,0 +1,8 @@
+paho-mqtt>=2.0.0
+requests
+pandas
+numpy
+tensorflow
+scikit-learn
+python-dotenv
+pyyaml

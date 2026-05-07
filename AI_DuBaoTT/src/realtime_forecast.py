@@ -70,11 +70,11 @@ STATIC_FEATURES = [
 ]
 
 # Database configuration
-DB_HOST = os.environ.get("DB_HOST")
+DB_HOST = os.environ.get("DB_HOST", "localhost")
 DB_PORT = os.environ.get("DB_PORT", "5432")
-DB_NAME = os.environ.get("DB_NAME")
-DB_USER = os.environ.get("DB_USER")
-DB_PASS = os.environ.get("DB_PASS")
+DB_NAME = os.environ.get("POSTGRES_DB", os.environ.get("DB_NAME", "smart_home"))
+DB_USER = os.environ.get("POSTGRES_USER", os.environ.get("DB_USER", "postgres"))
+DB_PASS = os.environ.get("POSTGRES_PASSWORD", os.environ.get("DB_PASS", "1234"))
 
 
 def clamp(value: float, min_value: float = 0.0, max_value: float = 1.0) -> float:

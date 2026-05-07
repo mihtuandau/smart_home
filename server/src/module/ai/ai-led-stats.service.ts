@@ -55,7 +55,7 @@ export class AiLedStatsService implements OnModuleInit {
     // Day change detection
     if (dayNow !== this.currentDay) {
       // Sync last day one last time before switching
-      this.syncToDb();
+      this.syncToDb({ ...this.today });
       
       this.currentDay = dayNow;
       this.today = this.emptyEntry(dayNow);
@@ -83,17 +83,16 @@ export class AiLedStatsService implements OnModuleInit {
     this.lastTsMs = nowMs;
     this.lastLed = { led1, led2 };
 
-    // Fire and forget sync to DB
-    this.syncToDb();
-
+    // Fire and forget sync to DB with a snapshot of current data
+    this.syncToDb({ ...this.today });
     return { ...this.today };
   }
 
-  private async syncToDb() {
+  private async syncToDb(entry: LedDayEntry) {
     try {
       const existing = await this.prisma.aiLearningData.findFirst({
         where: {
-          date: this.today.date,
+          date: entry.date,
           feature: 'daily_stats',
         },
       });
@@ -102,29 +101,28 @@ export class AiLedStatsService implements OnModuleInit {
         await this.prisma.aiLearningData.update({
           where: { id: existing.id },
           data: {
-            led1_wh: this.today.led1_wh,
-            led2_wh: this.today.led2_wh,
-            led1_on_minutes: this.today.led1_on_minutes,
-            led2_on_minutes: this.today.led2_on_minutes,
+            led1_wh: entry.led1_wh,
+            led2_wh: entry.led2_wh,
+            led1_on_minutes: entry.led1_on_minutes,
+            led2_on_minutes: entry.led2_on_minutes,
             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Refresh expiry
           },
         });
       } else {
         await this.prisma.aiLearningData.create({
           data: {
-            date: this.today.date,
+            date: entry.date,
             feature: 'daily_stats',
-            led1_wh: this.today.led1_wh,
-            led2_wh: this.today.led2_wh,
-            led1_on_minutes: this.today.led1_on_minutes,
-            led2_on_minutes: this.today.led2_on_minutes,
+            led1_wh: entry.led1_wh,
+            led2_wh: entry.led2_wh,
+            led1_on_minutes: entry.led1_on_minutes,
+            led2_on_minutes: entry.led2_on_minutes,
             expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // Keep for 30 days
           },
         });
       }
     } catch (e) {
-      // Only log errors occasionally to avoid spamming
-      this.logger.error(`Failed to sync LED stats for ${this.today.date}`, e);
+      this.logger.error(`Failed to sync LED stats for ${entry.date}`, e);
     }
   }
 
@@ -171,12 +169,13 @@ export class AiLedStatsService implements OnModuleInit {
   }
 
   private utcDateStr(d: Date): string {
-    // Return YYYY-MM-DD in local-ish time but using ISO slice
-    // Use local date parts to ensure it matches user's expectation of "today"
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    // Force Vietnam Time (GMT+7) to ensure consistency regardless of server location
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).format(d);
   }
 
   private emptyEntry(date: string): LedDayEntry {

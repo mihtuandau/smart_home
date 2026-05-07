@@ -68,7 +68,8 @@ export class AiEventsGateway
       if (latest) {
         client.emit('ai:advice', {
           ...latest,
-          type: (latest.advice?.length > 0 || latest.anomaly) ? 'alert' : 'status'
+          type:
+            latest.advice?.length > 0 || latest.anomaly ? 'alert' : 'status',
         });
       }
 

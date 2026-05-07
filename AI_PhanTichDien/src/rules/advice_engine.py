@@ -33,39 +33,55 @@ def generate_advice(
     alert_cfg = rules_cfg["alerts"]
 
     is_daytime = hour is not None and day_cfg["start_hour"] <= hour <= day_cfg["end_hour"]
-    # 1. Lights on in daylight
+    is_late_night = hour is not None and (hour >= 22 or hour <= 5)
+
+    # 1. Lights on in daylight (if not raining) or late night
     if alert_cfg.get("led_on_in_daylight", True):
         leds_on = [led1, led2].count(True)
-        if is_daytime and leds_on > 0:
-            msg = "Tất cả đèn đang bật vào ban ngày." if leds_on == 2 else "Vẫn còn thiết bị đèn đang bật vào ban ngày."
-            _add_unique(alerts, msg)
-            _add_unique(recommendations, "Nên tận dụng ánh sáng tự nhiên và tắt bớt đèn để tiết kiệm điện.")
+        if leds_on > 0:
+            if is_daytime and not rain:
+                msg = "Đang bật đèn vào ban ngày (trời nắng)."
+                _add_unique(alerts, msg)
+                _add_unique(recommendations, "Nên tận dụng ánh sáng tự nhiên để tiết kiệm điện.")
+            elif is_daytime and rain:
+                _add_unique(recommendations, "Trời mưa và thiếu sáng, có thể bật đèn để sinh hoạt.")
+            elif is_late_night:
+                _add_unique(recommendations, "Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.")
+                if leds_on == 2:
+                    _add_unique(alerts, "Đang sử dụng nhiều đèn vào khung giờ đêm muộn.")
 
-    # 2. Power & Current Analysis (Consolidated)
+    # 2. Power & Current Analysis
     is_baseline_anomaly = alert_cfg.get("hourly_baseline_anomaly", True) and bool(inference_result.get("is_hourly_baseline_anomaly", False))
+    # Debug so sánh ngưỡng
+    print(f"[DEBUG] Power: {power_mw}mW / Limit: {power_cfg['high_power_mw_threshold']}mW | Current: {current_ma}mA / Limit: {power_cfg.get('high_current_ma_threshold')}mA")
+
     is_high_power = alert_cfg.get("high_power_anomaly", True) and (power_mw > float(power_cfg["high_power_mw_threshold"]))
     is_high_current = current_ma > float(power_cfg.get("high_current_ma_threshold", 999999))
 
+    # Cảnh báo Vượt ngưỡng (Threshold)
+    if is_high_power or is_high_current:
+        _add_unique(alerts, "Công suất tiêu thụ cao vượt ngưỡng cài đặt.")
+        _add_unique(recommendations, "Kiểm tra các thiết bị đang hoạt động đồng thời và tắt tải không cần thiết.")
+
+    # Cảnh báo Bất thường theo giờ (Baseline)
     if is_baseline_anomaly:
-        _add_unique(alerts, "Công suất cao bất thường so với thói quen sử dụng.")
+        _add_unique(alerts, "Công suất hiện tại cao bất thường so với thói quen sử dụng.")
         baseline_w = float(inference_result.get("hourly_baseline_mean_mw", 0)) / 1000
         hour_text = str(hour) if hour is not None else "này"
-        _add_unique(recommendations, f"Bình thường trong khung giờ này ({hour_text}:00), bạn chỉ dùng khoảng {baseline_w:.2f} W. Hãy kiểm tra các thiết bị tải lớn.")
-    elif is_high_power or is_high_current:
-        _add_unique(alerts, "Phát hiện thiết bị tiêu thụ điện cao vượt ngưỡng cài đặt.")
-        _add_unique(recommendations, "Kiểm tra các thiết bị đang hoạt động đồng thời và tắt bớt tải không cần thiết.")
+        _add_unique(recommendations, f"Mọi khi tầm {hour_text}h bạn chỉ dùng khoảng {baseline_w:.1f}W. Hãy kiểm tra các thiết bị tải lớn.")
 
-    # 3. Environment & Other rules (Optional)
+    # 3. Environment & Other rules
     if temperature >= float(env_cfg.get("high_temperature_threshold_c", 999)):
-        _add_unique(alerts, "Nhiệt độ môi trường cao, nguy cơ làm tăng tải làm mát.")
+        _add_unique(alerts, "Nhiệt độ môi trường cao, nguy cơ làm tăng tải thiết bị làm mát.")
     
-    if rain and (led1 or led2):
-        _add_unique(alerts, "Trời mưa nhưng đèn vẫn đang bật.")
+    if rain:
+        _add_unique(alerts, "Hệ thống ghi nhận trời đang mưa.")
+        _add_unique(recommendations, "Kiểm tra cửa sổ và các thiết bị điện ngoài trời để đảm bảo an toàn.")
 
     # 4. ML Model Anomaly
     if inference_result.get("is_anomaly", False):
-        _add_unique(alerts, "Mô hình AI phát hiện hành vi sử dụng điện lạ (Anomaly).")
-        _add_unique(recommendations, "Hãy kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc bị rò rỉ điện không.")
+        _add_unique(alerts, "Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.")
+        _add_unique(recommendations, "Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.")
 
     return {
         "alerts": alerts,

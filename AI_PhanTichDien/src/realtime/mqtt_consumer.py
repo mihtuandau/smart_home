@@ -269,6 +269,14 @@ def main() -> None:
     args = parse_args()
     try:
         config = load_config(args.config)
+        
+        # In ra các ngưỡng để kiểm tra
+        power_rules = config.get("rules", {}).get("power", {})
+        logger.info(f"--- AI Rules Loaded ---")
+        logger.info(f"Ngưỡng công suất cao: {power_rules.get('high_power_mw_threshold')} mW")
+        logger.info(f"Ngưỡng dòng điện cao: {power_rules.get('high_current_ma_threshold')} mA")
+        logger.info(f"-----------------------")
+
         mqtt_cfg = config["realtime"]["mqtt"]
 
         logger.info(f"Starting AI Power Analytics Consumer (Broker: {mqtt_cfg['broker']})")

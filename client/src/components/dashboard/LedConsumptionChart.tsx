@@ -162,7 +162,8 @@ export default function LedConsumptionChart() {
   const safeToday = todayLed || { led1_wh: 0, led2_wh: 0, led1_on_minutes: 0, led2_on_minutes: 0 };
 
   const { chartData, totalLed1Wh, totalLed2Wh, totalLed1Min, totalLed2Min } = useMemo(() => {
-    const todayKey = new Date().toISOString().slice(0, 10);
+    const now = new Date();
+    const todayKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const historyArr = Array.isArray(ledHistory) ? ledHistory : [];
     const baseHistory: LedDayEntry[] = historyArr.length > 0 ? historyArr : buildSeedHistory();
 

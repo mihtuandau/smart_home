@@ -31,21 +31,29 @@ services:
       postgres:
         condition: service_healthy
 
-  # ── AI Prediction Service ────────────────────────
-  ai-service:
+  # ── AI Power Analytics ───────────────────────────
+  ai-analytics:
     build:
-      context: ../ai_predict_service
+      context: ../AI_PhanTichDien
       dockerfile: Dockerfile
-    container_name: smarthome_ai
+    container_name: smarthome_ai_analytics
     restart: always
-    env_file:
-      - ../ai_predict_service/.env
-    # Sử dụng DATABASE_URL từ file .env riêng của AI service để bảo mật
-    environment:
-      - NODE_ENV=production
+    volumes:
+      - ../AI_PhanTichDien/configs:/app/configs
+      - ../AI_PhanTichDien/logs:/app/logs
     depends_on:
-      postgres:
-        condition: service_healthy
+      - server
+
+  # ── AI Weather Forecast ──────────────────────────
+  ai-forecast:
+    build:
+      context: ../AI_DuBaoTT
+      dockerfile: Dockerfile
+    container_name: smarthome_ai_forecast
+    restart: always
+    command: ["python", "src/realtime_forecast.py", "--use-mqtt", "--watch", "--interval", "60"]
+    depends_on:
+      - server
 
 volumes:
   postgres_data:

@@ -50,10 +50,17 @@ export class AiController {
   }
 
   @Get('energy-kwh')
-  @ApiOperation({ summary: 'Tổng điện năng kWh + công suất trung bình theo khoảng thời gian rolling' })
+  @ApiOperation({
+    summary:
+      'Tổng điện năng kWh + công suất trung bình theo khoảng thời gian rolling',
+  })
   async getEnergyKwh(@Query('hours') hoursStr?: string) {
-    const hours = Math.min(Math.max(parseFloat(hoursStr ?? '168') || 168, 1), 8760);
-    const { kwh, avgPowerW, sampleCount } = await this.billing.computeRollingStats(hours);
+    const hours = Math.min(
+      Math.max(parseFloat(hoursStr ?? '168') || 168, 1),
+      8760,
+    );
+    const { kwh, avgPowerW, sampleCount } =
+      await this.billing.computeRollingStats(hours);
     return {
       hours,
       kwh: Math.round(kwh * 10000) / 10000,
@@ -82,7 +89,7 @@ export class AiController {
     // Lấy dữ liệu thật từ database 7 ngày qua
     const history = await this.ledStats.getHistory(7);
     let ledForgotCount = 0;
-    
+
     for (const day of history) {
       // Nếu đèn bật hơn 300 phút (5 tiếng) thì AI tự học đây là "quên tắt đèn"
       if (day.led1_on_minutes > 300 || day.led2_on_minutes > 300) {
@@ -100,8 +107,8 @@ export class AiController {
     const highPeakCount = await this.prisma.powerData.count({
       where: {
         power: { gt: peakThresholdMw },
-        timestamp: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
-      }
+        timestamp: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+      },
     });
 
     const realData = {
@@ -109,7 +116,7 @@ export class AiController {
       ledForgotCount: ledForgotCount,
       highPeakCount: highPeakCount,
     };
-    
+
     const summary = await this.aiSummary.generateWeeklySummary(realData);
     return { data: realData, summary };
   }
@@ -121,7 +128,8 @@ export class AiController {
     const history = await this.ledStats.getHistory(7);
     let ledForgotCount = 0;
     for (const day of history) {
-      if (day.led1_on_minutes > 300 || day.led2_on_minutes > 300) ledForgotCount++;
+      if (day.led1_on_minutes > 300 || day.led2_on_minutes > 300)
+        ledForgotCount++;
     }
     // Lấy tổng kWh hệ thống 7 ngày qua cho đúng (System-wide rolling)
     const { kwh: exactKwh7d } = await this.billing.computeRollingStats(168);
@@ -129,11 +137,16 @@ export class AiController {
 
     // 2. Dữ liệu Hoá đơn (Billing) - Lấy đúng giá từ cài đặt
     const settings = await this.prisma.systemSettings.findFirst();
-    const billingInfo = await this.billing.projectMonthly(new Date(), settings?.energyPriceKwh ?? 3000);
+    const billingInfo = await this.billing.projectMonthly(
+      new Date(),
+      settings?.energyPriceKwh ?? 3000,
+    );
 
     // 3. Dữ liệu Logic/Z-Score (Advisor & Service)
     const latestAiData = this.aiService.getLatestResult();
-    const adviceList = latestAiData?.advice || ['Hệ thống điện đang hoạt động bình thường, không có cảnh báo nghiêm trọng.'];
+    const adviceList = latestAiData?.advice || [
+      'Hệ thống điện đang hoạt động bình thường, không có cảnh báo nghiêm trọng.',
+    ];
     adviceList.push(this.aiAdvisor.getLearnedRoutineSummary());
 
     // 4. Dữ liệu trạng thái cảm biến hiện tại (Nhiệt độ, Độ ẩm, Cường độ sáng, Mưa...)
@@ -145,12 +158,12 @@ export class AiController {
     });
 
     // Tính số lần vượt ngưỡng công suất đỉnh (ví dụ > 25W) trong 7 ngày qua
-    const peakThresholdMw = 25000; 
+    const peakThresholdMw = 25000;
     const highPeakCount = await this.prisma.powerData.count({
       where: {
         power: { gt: peakThresholdMw },
-        timestamp: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
-      }
+        timestamp: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+      },
     });
 
     // Gộp Unified Context
@@ -164,15 +177,20 @@ export class AiController {
       currentStatus: {
         sensor: latestSensor,
         power: latestPower,
-      }
+      },
     };
-    
-    const reply = await this.aiSummary.chatWithMina(body.message, unifiedContext);
+
+    const reply = await this.aiSummary.chatWithMina(
+      body.message,
+      unifiedContext,
+    );
     return { reply };
   }
 
   @Get('rain-forecast')
-  @ApiOperation({ summary: 'Dự báo mưa tối ưu hóa 48 giờ (kết hợp API + cảm biến địa phương)' })
+  @ApiOperation({
+    summary: 'Dự báo mưa tối ưu hóa 48 giờ (kết hợp API + cảm biến địa phương)',
+  })
   async getRainForecast(
     @Query('lat') lat?: string,
     @Query('lon') lon?: string,
@@ -181,13 +199,20 @@ export class AiController {
     const latitude = lat ? parseFloat(lat) : undefined;
     const longitude = lon ? parseFloat(lon) : undefined;
     const forceRefresh = refresh === 'true';
-    
+
     try {
-      const report = await this.rainForecast.getCurrentForecast(latitude, longitude, forceRefresh);
+      const report = await this.rainForecast.getCurrentForecast(
+        latitude,
+        longitude,
+        forceRefresh,
+      );
       return report;
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Failed to fetch rain forecast',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch rain forecast',
         status: 500,
       };
     }
@@ -205,27 +230,37 @@ export class AiController {
     const forceRefresh = refresh === 'true';
 
     try {
-      const prob = await this.rainForecast.getLatestAdjustedPop(latitude, longitude, forceRefresh);
+      const prob = await this.rainForecast.getLatestAdjustedPop(
+        latitude,
+        longitude,
+        forceRefresh,
+      );
       return {
         adjusted_probability: prob !== null ? Math.round(prob * 100) : null,
         unit: 'percent',
       };
     } catch (error) {
       return {
-        error: error instanceof Error ? error.message : 'Failed to fetch rain probability',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to fetch rain probability',
         status: 500,
       };
     }
   }
 
   @Post('rain-forecast/clear-cache')
-  @ApiOperation({ summary: 'Xóa cache dự báo mưa để refetch dữ liệu mới từ API' })
+  @ApiOperation({
+    summary: 'Xóa cache dự báo mưa để refetch dữ liệu mới từ API',
+  })
   async clearRainForecastCache() {
     try {
       await this.rainForecast.clearCache();
       return {
         success: true,
-        message: 'Rain forecast cache cleared. API will fetch fresh data on next request.',
+        message:
+          'Rain forecast cache cleared. API will fetch fresh data on next request.',
       };
     } catch (error) {
       return {

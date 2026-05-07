@@ -1,9 +1,9 @@
 {
-  "timestamp": 1778147453,
+  "timestamp": 1778175203,
   "sensor_data": {
-    "dt": 1778147453,
-    "temp": 29.95,
-    "humidity": 50.3,
+    "dt": 1778175203,
+    "temp": 29.94,
+    "humidity": 50.25,
     "pressure": 1007.3,
     "rain_mm": 0
   }
