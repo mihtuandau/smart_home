@@ -23,10 +23,7 @@ import numpy as np
 import pandas as pd
 import paho.mqtt.client as mqtt
 import tensorflow as tf
-try:
-    import tf_keras
-except ImportError:
-    tf_keras = tf.keras
+import h5py
 from sklearn.preprocessing import MinMaxScaler
 from dotenv import load_dotenv
 import psycopg2
@@ -216,12 +213,6 @@ def get_latest_mqtt_message(timeout_seconds: int = 30) -> Optional[Dict[str, Any
         logger.error(f"MQTT connection failed: {exc}")
 
     return None
-    return None
-
-    cached = load_mqtt_cache()
-    if cached:
-        logger.info("Sử dụng dữ liệu sensor cache MQTT.")
-    return cached
 
 
 def save_mqtt_cache(data: Dict[str, Any]) -> None:
@@ -355,41 +346,6 @@ def build_integrated_record(sensor: Dict[str, Any], lat: float, lon: float) -> O
     except Exception as e:
         logger.error(f"Xây dựng record tích hợp thất bại: {e}")
         return None
-# def build_integrated_record(sensor: Dict[str, Any], lat: float, lon: float) -> Optional[Dict[str, Any]]:
-#     try:
-#         # Fetch Open-Meteo data and match the nearest hour
-#         api_df = OpenMeteoAPIClient.fetch_open_meteo_data(latitude=lat, longitude=lon, hours=48)
-#         if api_df.empty:
-#             logger.error("Không lấy được dữ liệu Open-Meteo.")
-#             return None
-
-#         sensor_ts = pd.to_datetime(int(sensor['dt']), unit='s', utc=True).tz_convert(None)
-#         api_df['timestamp'] = pd.to_datetime(api_df['timestamp']).dt.tz_localize(None)
-#         api_df = api_df.sort_values('timestamp')
-#         idx = (api_df['timestamp'] - sensor_ts).abs().idxmin()
-#         api_row = api_df.loc[idx]
-
-#         record = {
-#             'dt': int(sensor['dt']),
-#             'timestamp': sensor_ts,
-#             'temperature_2m': float(sensor.get('temp_surface', sensor.get('temp', 0.0))),
-#             'relative_humidity_2m': float(sensor.get('humidity_surface', sensor.get('humidity', 0.0))),
-#             'surface_pressure': float(sensor.get('pressure_surface', sensor.get('pressure', 0.0))),
-#             'rain_mm': float(sensor.get('rain_mm', 0.0)),
-#             'precipitation': float(sensor.get('rain_mm', 0.0)),
-#             'temperature_850hPa': float(api_row['T_850']),
-#             'dew_point_850hPa': float(api_row['Td_850']),
-#             'temperature_700hPa': float(api_row['T_700']),
-#             'dew_point_700hPa': float(api_row['Td_700']),
-#             'temperature_500hPa': float(api_row['T_500']),
-#             'dew_point_500hPa': float(api_row['Td_500']),
-#             'wind_speed_10m': float(api_row['wind_speed_10m']),
-#             'cloud_cover': float(api_row['cloud_cover']),
-#         }
-#         return record
-#     except Exception as e:
-#         logger.error(f"Xây dựng record tích hợp thất bại: {e}")
-#         return None
 
 
 def enrich_record(record: Dict[str, Any]) -> Dict[str, Any]:
@@ -423,8 +379,55 @@ def model_available() -> bool:
 def load_model():
     if not model_available():
         raise FileNotFoundError(f"Không tìm thấy mô hình đã huấn luyện: {MODEL_PATH}")
-    # Sử dụng tf_keras để tương thích tốt nhất với cả Keras 2 và Keras 3 models
-    return tf_keras.models.load_model(MODEL_PATH, compile=False)
+    
+    try:
+        # Thử nạp trực tiếp trước
+        return tf.keras.models.load_model(MODEL_PATH, compile=False)
+    except Exception as e:
+        logger.warning(f"Nạp model trực tiếp thất bại, đang thử vá config... (Lỗi: {e})")
+        
+        try:
+            import tempfile
+            # 1. Tạo file tạm để xử lý
+            with tempfile.NamedTemporaryFile(suffix='.h5', delete=False) as tmp:
+                with open(MODEL_PATH, 'rb') as f:
+                    tmp.write(f.read())
+                tmp_path = tmp.name
+
+            # 2. Vá lỗi config JSON trong file H5
+            with h5py.File(tmp_path, 'r+') as f:
+                if 'model_config' in f.attrs:
+                    config_raw = f.attrs.get('model_config')
+                    if isinstance(config_raw, bytes):
+                        config_raw = config_raw.decode('utf-8')
+                    
+                    config = json.loads(config_raw)
+                    
+                    def clean_config(obj):
+                        if isinstance(obj, dict):
+                            obj.pop('quantization_config', None)
+                            obj.pop('optional', None)
+                            for k in list(obj.keys()): clean_config(obj[k])
+                        elif isinstance(obj, list):
+                            for x in obj: clean_config(x)
+                    
+                    clean_config(config)
+                    f.attrs['model_config'] = json.dumps(config)
+            
+            # 3. Nạp lại từ file đã vá
+            model = tf.keras.models.load_model(tmp_path, compile=False)
+            
+            # 4. Dọn dẹp
+            try:
+                os.remove(tmp_path)
+            except:
+                pass
+            
+            logger.info("✓ Đã nạp model thành công sau khi vá config!")
+            return model
+        except Exception as e2:
+            logger.error(f"Vá lỗi model thất bại: {e2}")
+            raise e
 
 
 def build_sequence_from_buffer(df: pd.DataFrame) -> Optional[np.ndarray]:

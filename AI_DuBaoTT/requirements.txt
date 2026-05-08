@@ -3,7 +3,7 @@ requests
 pandas
 numpy
 tensorflow-cpu>=2.16.1
-tf-keras
+h5py
 scikit-learn
 python-dotenv
 pyyaml
