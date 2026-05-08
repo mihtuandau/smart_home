@@ -88,7 +88,7 @@ realtime:
     password: "123456789"
     tls:
       enabled: true
-      ca_cert: "D:/Deadline Year 4/Tốt Nghiệp/smart_home/AI_PhanTichDien/emqxsl-ca.crt" 
+      ca_cert: "emqxsl-ca.crt" 
       insecure: false
   inference:
     anomaly_score_threshold: -0.1
