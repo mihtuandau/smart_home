@@ -2,7 +2,9 @@ paho-mqtt>=2.0.0
 requests
 pandas
 numpy
-tensorflow
+tensorflow-cpu>=2.16.1
+tf-keras
 scikit-learn
 python-dotenv
 pyyaml
+psycopg2-binary

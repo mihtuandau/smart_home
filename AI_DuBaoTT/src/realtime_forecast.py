@@ -23,6 +23,10 @@ import numpy as np
 import pandas as pd
 import paho.mqtt.client as mqtt
 import tensorflow as tf
+try:
+    import tf_keras
+except ImportError:
+    tf_keras = tf.keras
 from sklearn.preprocessing import MinMaxScaler
 from dotenv import load_dotenv
 import psycopg2
@@ -492,10 +496,11 @@ def model_available() -> bool:
     return MODEL_PATH.exists()
 
 
-def load_model() -> tf.keras.Model:
+def load_model():
     if not model_available():
         raise FileNotFoundError(f"Không tìm thấy mô hình đã huấn luyện: {MODEL_PATH}")
-    return tf.keras.models.load_model(MODEL_PATH, compile=False)
+    # Sử dụng tf_keras để tương thích tốt nhất với cả Keras 2 và Keras 3 models
+    return tf_keras.models.load_model(MODEL_PATH, compile=False)
 
 
 def build_sequence_from_buffer(df: pd.DataFrame) -> Optional[np.ndarray]:

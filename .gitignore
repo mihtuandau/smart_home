@@ -16,8 +16,8 @@ dist/
 .eslintcache
 
 # AI/Models
-*.h5
-*.pkl
+# *.h5
+# *.pkl
 results/
 cache/
 
