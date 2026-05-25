@@ -454,6 +454,7 @@
     "loginSubtitle": "登录智能家居管理系统",
     "loginError": "登录失败，请检查你的信息。",
     "loginButton": "登录",
+    "loginRequiredAction": "Phải đăng nhập để sử dụng chức năng này",
     "loggingIn": "登录中...",
     "noAccount": "还没有账号？",
     "registerLink": "立即注册"
@@ -495,17 +496,7 @@
     "aiReportError": "目前无法从 Mina 加载 AI 报告。",
     "aiAnalyzing": "Mina 正在分析功率图...",
     "projectedLabel": "预计",
-    "estimatedNote": "（预计：{kwh} kWh × {price}）",
-    "minaGreeting": "你好！我是 Mina。你想了解本周的用电情况吗？",
-    "minaError": "抱歉，Mina 现在很忙。",
-    "minaNetworkError": "与 Mina 的网络连接出现错误。",
-    "billThisMonth": "这个月的电费是多少？",
-    "weatherAndTemp": "当前天气和温度如何？",
-    "systemAlerts": "系统有错误或警告吗？",
-    "weeklyConsumption": "上周消耗了多少电量？",
-    "minaPlaceholder": "问 Mina 为什么电力超载...",
-    "minaName": "Mina AI 管家",
-    "minaSubtitle": "数据分析助手"
+    "estimatedNote": "（预计：{kwh} kWh × {price}）"
   },
   "weather": {
     "manyCloud": "多云",

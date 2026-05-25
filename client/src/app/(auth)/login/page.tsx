@@ -3,7 +3,7 @@
 import React, { useState, FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { LoginCredentials } from '@/types';
 import { loginSchema } from '@/lib/validations/auth';
@@ -11,6 +11,7 @@ import { CircleAlert, Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login } = useAuth();
 
   const [credentials, setCredentials] = useState<LoginCredentials>({
@@ -41,7 +42,12 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await login(credentials);
-      router.push('/dashboard');
+      const redirect = searchParams.get('redirect');
+      const safeRedirect =
+        redirect && redirect.startsWith('/') && !redirect.startsWith('//')
+          ? redirect
+          : '/dashboard';
+      router.push(safeRedirect);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Đăng nhập thất bại. Vui lòng thử lại.';
       setError(message);

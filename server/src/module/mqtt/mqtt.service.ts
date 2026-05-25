@@ -430,6 +430,19 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     return this.rawDeviceData;
   }
 
+  clearIoTDevice(deviceIndex: number): void {
+    const deviceKey =
+      deviceIndex === 0 ? 'device1' : deviceIndex === 1 ? 'device2' : null;
+    if (!deviceKey) {
+      return;
+    }
+
+    delete this.rawDeviceData[deviceKey];
+    if (this.latestData) {
+      delete (this.latestData as unknown as Record<string, unknown>)[deviceKey];
+    }
+  }
+
   async controlLed(led: 'led1' | 'led2', state: boolean): Promise<void> {
     const displayName = led === 'led1' ? 'Đèn Phòng Khách' : 'Đèn Ban Công';
     await this.commandService.controlLed(led, state);
@@ -462,6 +475,7 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
   async deleteIoTDevice(deviceIndex: number): Promise<void> {
     await this.commandService.deleteIoTDevice(deviceIndex);
+    this.clearIoTDevice(deviceIndex);
   }
 
   isConnected(): boolean {

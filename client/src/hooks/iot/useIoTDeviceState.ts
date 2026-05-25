@@ -73,6 +73,11 @@ export function useIoTDeviceState() {
       return;
     }
 
+    if (!localDevices[0] && !localDevices[1]) {
+      window.localStorage.removeItem(IOT_LOCAL_STORAGE_KEY);
+      return;
+    }
+
     window.localStorage.setItem(
       IOT_LOCAL_STORAGE_KEY,
       JSON.stringify(localDevices),

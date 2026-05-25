@@ -184,28 +184,6 @@ export default function SystemSettings() {
             </div>
             <p className="text-[11px] text-muted-foreground italic">* Hệ thống sẽ gửi email cảnh báo nếu tổng công suất vượt ngưỡng này.</p>
           </div>
-
-          {/* AI Advisor Toggle */}
-          <div className="flex items-center justify-between p-4 border border-border rounded-xl bg-background/40">
-            <div className="flex items-start gap-3">
-              <div className="mt-1 p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-foreground">Trợ lý ảo AI Advisor</h3>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Tự động phân tích và đưa ra lời khuyên tiết kiệm điện</p>
-              </div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={settings.aiAdvisorEnabled}
-                onChange={(e) => handleUpdate({ aiAdvisorEnabled: e.target.checked })}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
-            </label>
-          </div>
         </div>
       </div>
     </div>

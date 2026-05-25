@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useLatestDeviceData } from '@/hooks/devices';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useRequireAuthAction } from '@/hooks/useRequireAuthAction';
 import { useIoTDeviceState } from '@/hooks/iot';
 import Toast from '@/components/ui/Toast';
 import { AddIoTDeviceModal } from './AddIoTDeviceModal';
@@ -18,6 +19,7 @@ interface LatestData {
 
 export default function IoTDeviceManager() {
   const { t } = useLanguage();
+  const { requireAuth } = useRequireAuthAction();
   const { data: latestRaw } = useLatestDeviceData(2000);
   const latest = (latestRaw as { data?: LatestData })?.data as LatestData | undefined;
 
@@ -64,6 +66,14 @@ export default function IoTDeviceManager() {
     syncDevicesFromServer(latest);
   }, [latest, syncDevicesFromServer]);
 
+  const requireLoginForAction = () => {
+    if (requireAuth()) {
+      return true;
+    }
+    setToast({ message: t('auth.loginRequiredAction'), type: 'info' });
+    return false;
+  };
+
   return (
     <>
       {toast && (
@@ -83,7 +93,9 @@ export default function IoTDeviceManager() {
         onPowerChange={setAddPower}
         loading={addLoading}
         error={addError}
-        onSubmit={() => handleAdd(addName, addPower)}
+        onSubmit={() => {
+          if (requireLoginForAction()) handleAdd(addName, addPower);
+        }}
       />
 
       <EditIoTDeviceModal
@@ -109,7 +121,9 @@ export default function IoTDeviceManager() {
           </div>
           {devices.length < 1 && !showAddForm && (
             <button
-              onClick={() => setShowAddForm(true)}
+              onClick={() => {
+                if (requireLoginForAction()) setShowAddForm(true);
+              }}
               className="w-full sm:w-auto px-3 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
             >
               {t('devices.addDevice')}
@@ -147,7 +161,9 @@ export default function IoTDeviceManager() {
                 <div className="flex flex-wrap items-center gap-2 shrink-0 sm:ml-4">
 
                   <button
-                    onClick={() => handleControl(device.index, !device.state)}
+                    onClick={() => {
+                      if (requireLoginForAction()) handleControl(device.index, !device.state);
+                    }}
                     disabled={controlLoading === device.index}
                     title={device.state ? t('devices.clickToOff') : t('devices.clickToOn')}
                     className={`relative w-12 h-12 rounded-full flex items-center justify-center

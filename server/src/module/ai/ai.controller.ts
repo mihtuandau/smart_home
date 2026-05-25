@@ -1,12 +1,11 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Query } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma.service';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { AiService } from './ai.service';
 import { AiBillingService } from './ai-billing.service';
 import { AiBaselineService } from './ai-baseline.service';
 import { AiLedStatsService } from './ai-led-stats.service';
 import { AiSummaryService } from './ai-summary.service';
-import { AiAdvisorService } from './ai-advisor.service';
 import { RainForecastOptimizerService } from './rain-forecast-optimizer.service';
 
 @ApiTags('AI')
@@ -19,7 +18,6 @@ export class AiController {
     private baseline: AiBaselineService,
     private ledStats: AiLedStatsService,
     private aiSummary: AiSummaryService,
-    private aiAdvisor: AiAdvisorService,
     private rainForecast: RainForecastOptimizerService,
   ) {}
 
@@ -100,7 +98,7 @@ export class AiController {
     // Tính tổng KWh của 7 ngày qua DỰA TRÊN TOÀN BỘ HỆ THỐNG (thay vì chỉ tính đèn bật)
     // Điều này giúp khớp số liệu với bên Report/Billing
     const { kwh: exactKwh7d } = await this.billing.computeRollingStats(168);
-    let totalKwh = Math.round(exactKwh7d * 1000) / 1000;
+    const totalKwh = Math.round(exactKwh7d * 1000) / 1000;
 
     // Tính số lần vượt ngưỡng công suất đỉnh (ví dụ > 25W) trong 7 ngày qua
     const peakThresholdMw = 25000;
@@ -119,72 +117,6 @@ export class AiController {
 
     const summary = await this.aiSummary.generateWeeklySummary(realData);
     return { data: realData, summary };
-  }
-
-  @Post('chat')
-  @ApiOperation({ summary: 'Chat trực tiếp với AI Mina (Tích hợp mọi model)' })
-  async chatWithMina(@Body() body: { message: string }) {
-    // 1. Dữ liệu Lịch Sử Tuần
-    const history = await this.ledStats.getHistory(7);
-    let ledForgotCount = 0;
-    for (const day of history) {
-      if (day.led1_on_minutes > 300 || day.led2_on_minutes > 300)
-        ledForgotCount++;
-    }
-    // Lấy tổng kWh hệ thống 7 ngày qua cho đúng (System-wide rolling)
-    const { kwh: exactKwh7d } = await this.billing.computeRollingStats(168);
-    let totalKwh = Math.round(exactKwh7d * 1000) / 1000;
-
-    // 2. Dữ liệu Hoá đơn (Billing) - Lấy đúng giá từ cài đặt
-    const settings = await this.prisma.systemSettings.findFirst();
-    const billingInfo = await this.billing.projectMonthly(
-      new Date(),
-      settings?.energyPriceKwh ?? 3000,
-    );
-
-    // 3. Dữ liệu Logic/Z-Score (Advisor & Service)
-    const latestAiData = this.aiService.getLatestResult();
-    const adviceList = latestAiData?.advice || [
-      'Hệ thống điện đang hoạt động bình thường, không có cảnh báo nghiêm trọng.',
-    ];
-    adviceList.push(this.aiAdvisor.getLearnedRoutineSummary());
-
-    // 4. Dữ liệu trạng thái cảm biến hiện tại (Nhiệt độ, Độ ẩm, Cường độ sáng, Mưa...)
-    const latestSensor = await this.prisma.sensorData.findFirst({
-      orderBy: { timestamp: 'desc' },
-    });
-    const latestPower = await this.prisma.powerData.findFirst({
-      orderBy: { timestamp: 'desc' },
-    });
-
-    // Tính số lần vượt ngưỡng công suất đỉnh (ví dụ > 25W) trong 7 ngày qua
-    const peakThresholdMw = 25000;
-    const highPeakCount = await this.prisma.powerData.count({
-      where: {
-        power: { gt: peakThresholdMw },
-        timestamp: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
-      },
-    });
-
-    // Gộp Unified Context
-    const unifiedContext = {
-      kwhTotal: totalKwh,
-      ledForgotCount: ledForgotCount,
-      highPeakCount: highPeakCount,
-      billingForecast: billingInfo,
-      advisorAdvice: adviceList,
-      baselineStatus: null,
-      currentStatus: {
-        sensor: latestSensor,
-        power: latestPower,
-      },
-    };
-
-    const reply = await this.aiSummary.chatWithMina(
-      body.message,
-      unifiedContext,
-    );
-    return { reply };
   }
 
   @Get('rain-forecast')

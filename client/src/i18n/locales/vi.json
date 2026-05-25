@@ -474,6 +474,7 @@
     "loginSubtitle": "Đăng nhập vào hệ thống quản lý nhà thông minh",
     "loginError": "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.",
     "loginButton": "Đăng nhập",
+    "loginRequiredAction": "Phải đăng nhập để sử dụng chức năng này",
     "loggingIn": "Đang đăng nhập...",
     "noAccount": "Chưa có tài khoản?",
     "registerLink": "Đăng ký ngay"

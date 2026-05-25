@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLatestDeviceData, useControlSingleLED } from '@/hooks/devices';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useRequireAuthAction } from '@/hooks/useRequireAuthAction';
 import Toast from '@/components/ui/Toast';
 import { Flashlight, Lightbulb, Sun } from 'lucide-react';
 
@@ -25,6 +26,7 @@ const TOGGLE_COOLDOWN = 10000;
 export default function QuickLEDControl() {
   const controlLEDMutation = useControlSingleLED();
   const { t } = useLanguage();
+  const { requireAuth } = useRequireAuthAction();
   const [toast, setToast] = useState<ToastState | null>(null);
   const [optimisticLEDs, setOptimisticLEDs] = useState<LedDataShape | null>(null);
   const [cooldownActive, setCooldownActive] = useState(false);
@@ -59,6 +61,10 @@ export default function QuickLEDControl() {
 
   const toggleLed = async (ledNumber: 1 | 2) => {
     if (controlLEDMutation.isPending) return;
+    if (!requireAuth()) {
+      setToast({ message: t('auth.loginRequiredAction'), type: 'info' });
+      return;
+    }
 
     const key = ledNumber === 1 ? 'led1' : 'led2';
     const newState = !(localLEDs[key] === true);

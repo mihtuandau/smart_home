@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useControlSingleLED } from "@/hooks/devices";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useRequireAuthAction } from "@/hooks/useRequireAuthAction";
 import Toast from "@/components/ui/Toast";
 import { Lightbulb, Power } from 'lucide-react';
 
@@ -36,8 +37,14 @@ export default function QuickControls() {
   const [toast, setToast] = useState<ToastState | null>(null);
   const queryClient = useQueryClient();
   const controlLED = useControlSingleLED();
+  const { requireAuth } = useRequireAuthAction();
 
   const handleAllLedsOn = async () => {
+    if (!requireAuth()) {
+      setToast({ message: t('auth.loginRequiredAction'), type: 'info' });
+      return;
+    }
+
     try {
       queryClient.setQueryData(["devices", "latestData"], (oldData: unknown) =>
         patchLedState(oldData, true, true)
@@ -57,6 +64,11 @@ export default function QuickControls() {
   };
 
   const handleAllLedsOff = async () => {
+    if (!requireAuth()) {
+      setToast({ message: t('auth.loginRequiredAction'), type: 'info' });
+      return;
+    }
+
     try {
       queryClient.setQueryData(["devices", "latestData"], (oldData: unknown) =>
         patchLedState(oldData, false, false)

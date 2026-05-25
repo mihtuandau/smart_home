@@ -1087,3 +1087,64 @@ logged_at,topic,cluster_id,is_anomaly,anomaly_score,alerts,recommendations
 2026-05-08T01:20:43.902748+07:00,TN/IOT/smarthome/alerts,14.212,True,0.074471,Công suất hiện tại cao bất thường so với thói quen sử dụng.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị. | Mọi khi tầm 1h bạn chỉ dùng khoảng 0.6W. Hãy kiểm tra các thiết bị tải lớn.
 2026-05-08T01:21:53.912215+07:00,TN/IOT/smarthome/alerts,14.333,True,0.085573,Công suất hiện tại cao bất thường so với thói quen sử dụng.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị. | Mọi khi tầm 1h bạn chỉ dùng khoảng 0.6W. Hãy kiểm tra các thiết bị tải lớn.
 2026-05-08T01:22:53.917440+07:00,TN/IOT/smarthome/alerts,15.968,True,0.07358,Công suất hiện tại cao bất thường so với thói quen sử dụng.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị. | Mọi khi tầm 1h bạn chỉ dùng khoảng 0.6W. Hãy kiểm tra các thiết bị tải lớn.
+2026-05-24T23:42:16.212692+07:00,TN/IOT/smarthome/alerts,0.456,False,0.124241,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:43:43.133086+07:00,TN/IOT/smarthome/alerts,0.696,False,0.131223,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:43:25.793271+07:00,TN/IOT/smarthome/alerts,0.746,False,0.127769,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:44:33.151585+07:00,TN/IOT/smarthome/alerts,15.061,False,0.104292,Hệ thống đang hoạt động trong ngưỡng an toàn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:43:35.775290+07:00,TN/IOT/smarthome/alerts,15.061,False,0.104292,Hệ thống đang hoạt động trong ngưỡng an toàn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:44:53.136671+07:00,TN/IOT/smarthome/alerts,39.799,False,0.080417,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:43:55.755655+07:00,TN/IOT/smarthome/alerts,39.799,False,0.080417,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:45:11.609255+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:44:14.241991+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:45:13.150064+07:00,TN/IOT/smarthome/alerts,40.022,False,0.080752,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:44:15.785645+07:00,TN/IOT/smarthome/alerts,40.022,False,0.080752,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:45:39.870868+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:44:42.486792+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:45:43.141850+07:00,TN/IOT/smarthome/alerts,39.719,False,0.085139,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:44:45.762656+07:00,TN/IOT/smarthome/alerts,39.719,False,0.085139,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:44:52.109123+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:45:49.500371+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:45:53.141452+07:00,TN/IOT/smarthome/alerts,40.395,False,0.098047,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:44:55.759195+07:00,TN/IOT/smarthome/alerts,40.395,False,0.098047,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:46:53.709715+07:00,TN/IOT/smarthome/alerts,39.606,False,0.082203,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:46:05.762829+07:00,TN/IOT/smarthome/alerts,40.433,False,0.098675,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:46:25.760995+07:00,TN/IOT/smarthome/alerts,14.468,False,0.019363,Hệ thống đang hoạt động trong ngưỡng an toàn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:47:23.168667+07:00,TN/IOT/smarthome/alerts,14.468,False,0.019363,Hệ thống đang hoạt động trong ngưỡng an toàn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:47:33.151261+07:00,TN/IOT/smarthome/alerts,0.634,False,0.138355,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:46:35.758780+07:00,TN/IOT/smarthome/alerts,0.634,False,0.138355,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:47:53.401874+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:46:56.026252+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:47:05.755642+07:00,TN/IOT/smarthome/alerts,0.405,False,0.122727,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:48:03.150264+07:00,TN/IOT/smarthome/alerts,0.405,False,0.122727,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:48:44.090016+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:47:46.711060+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:48:53.165537+07:00,TN/IOT/smarthome/alerts,0.667,False,0.138404,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:47:55.773885+07:00,TN/IOT/smarthome/alerts,0.667,False,0.138404,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:49:02.730897+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:48:05.338270+07:00,TN/IOT/smarthome/alerts,0.0,True,-0.005792,Hành vi sử dụng điện lạ được phát hiện bởi mô hình AI.,Kiểm tra xem có thiết bị nào đang hoạt động bất thường hoặc rò rỉ điện không.
+2026-05-24T23:49:03.143363+07:00,TN/IOT/smarthome/alerts,0.436,False,0.12685,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:48:05.761108+07:00,TN/IOT/smarthome/alerts,0.436,False,0.12685,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:50:03.148520+07:00,TN/IOT/smarthome/alerts,0.447,False,0.123408,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:49:05.779742+07:00,TN/IOT/smarthome/alerts,0.447,False,0.123408,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:51:03.263234+07:00,TN/IOT/smarthome/alerts,0.489,False,0.130773,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:50:15.764344+07:00,TN/IOT/smarthome/alerts,0.452,False,0.125013,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:52:13.218157+07:00,TN/IOT/smarthome/alerts,0.644,False,0.136262,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:51:25.781114+07:00,TN/IOT/smarthome/alerts,0.57,False,0.140372,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:53:23.167233+07:00,TN/IOT/smarthome/alerts,0.499,False,0.131485,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:52:35.764546+07:00,TN/IOT/smarthome/alerts,0.431,False,0.125063,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:54:33.173698+07:00,TN/IOT/smarthome/alerts,0.612,False,0.139473,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:53:45.763663+07:00,TN/IOT/smarthome/alerts,0.675,False,0.13567,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:55:33.193623+07:00,TN/IOT/smarthome/alerts,0.564,False,0.138999,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:54:45.771579+07:00,TN/IOT/smarthome/alerts,0.522,False,0.137941,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:56:33.428657+07:00,TN/IOT/smarthome/alerts,0.738,False,0.130667,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:55:45.785846+07:00,TN/IOT/smarthome/alerts,0.505,False,0.136073,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:57:43.163915+07:00,TN/IOT/smarthome/alerts,0.679,False,0.13563,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:56:55.761142+07:00,TN/IOT/smarthome/alerts,0.69,False,0.133489,Hệ thống đang hoạt động trong ngưỡng an toàn.,
+2026-05-24T23:57:15.766451+07:00,TN/IOT/smarthome/alerts,0.563,False,0.108627,Hệ thống đang hoạt động trong ngưỡng an toàn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:58:13.186059+07:00,TN/IOT/smarthome/alerts,0.563,False,0.108627,Hệ thống đang hoạt động trong ngưỡng an toàn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:58:23.170386+07:00,TN/IOT/smarthome/alerts,14.095,False,0.093373,Hệ thống đang hoạt động trong ngưỡng an toàn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:57:25.771381+07:00,TN/IOT/smarthome/alerts,14.095,False,0.093373,Hệ thống đang hoạt động trong ngưỡng an toàn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:59:23.190087+07:00,TN/IOT/smarthome/alerts,40.235,False,0.094468,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-24T23:58:25.794225+07:00,TN/IOT/smarthome/alerts,40.235,False,0.094468,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.
+2026-05-25T00:00:03.193159+07:00,TN/IOT/smarthome/alerts,39.945,True,0.019286,Đang sử dụng nhiều đèn vào khung giờ đêm muộn. | Công suất hiện tại cao bất thường so với thói quen sử dụng.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị. | Mọi khi tầm 0h bạn chỉ dùng khoảng 0.6W. Hãy kiểm tra các thiết bị tải lớn.
+2026-05-24T23:59:35.805055+07:00,TN/IOT/smarthome/alerts,40.302,False,0.097958,Đang sử dụng nhiều đèn vào khung giờ đêm muộn.,Gợi ý ban đêm: Ưu tiên dùng ít đèn để tiết kiệm và bảo vệ tuổi thọ thiết bị.

@@ -29,6 +29,36 @@ interface UseIoTDeviceActionsParams {
   ui: UiActions;
 }
 
+const removeDeletedDeviceFromCache = (oldData: unknown, index: number) => {
+  if (!oldData || typeof oldData !== 'object') {
+    return oldData;
+  }
+
+  const deviceKey = index === 0 ? 'device1' : index === 1 ? 'device2' : null;
+  if (!deviceKey) {
+    return oldData;
+  }
+
+  const updated = { ...(oldData as Record<string, unknown>) };
+  const data =
+    updated.data && typeof updated.data === 'object'
+      ? { ...(updated.data as Record<string, unknown>) }
+      : updated;
+
+  delete data[deviceKey];
+
+  if (Array.isArray(data.devices)) {
+    data.devices = data.devices.filter((_, deviceIndex) => deviceIndex !== index);
+  }
+
+  if (updated.data && typeof updated.data === 'object') {
+    updated.data = data;
+    return updated;
+  }
+
+  return data;
+};
+
 export function useIoTDeviceActions({
   queryClient,
   localDevices,
@@ -214,6 +244,9 @@ export function useIoTDeviceActions({
 
     try {
       await iotApi.deleteIoTDevice(index);
+      queryClient.setQueryData(deviceKeys.latestData(), (oldData: unknown) =>
+        removeDeletedDeviceFromCache(oldData, index),
+      );
 
       ui.showToast('success', `Đã xóa "${name}"`);
 

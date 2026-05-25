@@ -475,6 +475,7 @@
     "loginSubtitle": "Sign in to smart home management system",
     "loginError": "Login failed. Please check your information.",
     "loginButton": "Login",
+    "loginRequiredAction": "Phải đăng nhập để sử dụng chức năng này",
     "loggingIn": "Logging in...",
     "noAccount": "Don't have an account?",
     "registerLink": "Register now"
