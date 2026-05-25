@@ -29,6 +29,7 @@ COPY . .
 
 # Generate Prisma Client
 RUN npx prisma generate
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Build NestJS
 RUN npm run build

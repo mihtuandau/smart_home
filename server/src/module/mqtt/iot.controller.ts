@@ -57,7 +57,8 @@ export class IotController {
     const allDevices: any[] = [];
     for (const d of devices) {
       const mqttState = d.pin === 13 ? latestData.device1 : undefined;
-      const state = typeof mqttState === 'boolean' ? mqttState : d.status === 'ON';
+      const state =
+        typeof mqttState === 'boolean' ? mqttState : d.status === 'ON';
 
       allDevices.push({
         id: d.id,
@@ -82,7 +83,8 @@ export class IotController {
     const data = {
       ...latestData,
       devices: allDevices,
-      device1: allDevices[0] || undefined,
+      device1: allDevices[0] || null,
+      device2: allDevices[1] || null,
     };
 
     return { success: true, data, timestamp: new Date().toISOString() };
@@ -150,12 +152,15 @@ export class IotController {
   ) {
     const currentDevices = await this.prisma.device.count();
     if (currentDevices >= 1) {
-      throw new HttpException('Maximum 1 device supported', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Maximum 1 device supported',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     try {
       await this.mqttService.addIoTDevice(dto.name, dto.power_consumption);
-      
+
       await this.prisma.device.create({
         data: {
           name: dto.name,
@@ -179,7 +184,7 @@ export class IotController {
   ) {
     try {
       await this.mqttService.controlIoTDevice(dto.device1, dto.device2);
-      
+
       const devices = await this.getCustomDevicesOrdered();
       if (dto.device1 !== undefined && devices[0]) {
         await this.prisma.device.update({
@@ -208,7 +213,7 @@ export class IotController {
       const devices = await this.getCustomDevicesOrdered();
       const rawDevices = this.mqttService.getRawDeviceData() || {};
       const target = devices[idx];
-      
+
       // Check if device exists in database
       if (!target) {
         // Try to find in MQTT raw devices

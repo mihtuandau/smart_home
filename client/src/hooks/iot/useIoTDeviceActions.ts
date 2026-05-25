@@ -127,6 +127,20 @@ export function useIoTDeviceActions({
 
     setLocalDevices((prev) => {
       const next: Record<number, IoTDevice | null> = {};
+      const serverDevices = Array.isArray(latest.devices)
+        ? (latest.devices as unknown[])
+        : null;
+
+      if (serverDevices) {
+        next[0] = pendingOpsRef.current.has(0)
+          ? (prev[0] || null)
+          : mergeIncomingDevice(prev[0] || null, serverDevices[0] ?? null);
+        next[1] = pendingOpsRef.current.has(1)
+          ? (prev[1] || null)
+          : mergeIncomingDevice(prev[1] || null, serverDevices[1] ?? null);
+
+        return next;
+      }
 
       next[0] = pendingOpsRef.current.has(0)
         ? (prev[0] || null)

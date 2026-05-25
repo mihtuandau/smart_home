@@ -52,6 +52,10 @@ services:
     container_name: smarthome_ai_forecast
     restart: always
     command: ["python", "src/realtime_forecast.py", "--use-mqtt", "--watch", "--interval", "60"]
+    volumes:
+      - ../AI_DuBaoTT/results:/app/results
+      - ../AI_DuBaoTT/configs:/app/configs
+      - ../AI_DuBaoTT/hybrid_rain_forecast_model:/app/hybrid_rain_forecast_model
     depends_on:
       - server
 
