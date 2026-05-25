@@ -1,7 +1,9 @@
 import React from 'react';
 
 export const getChartColors = () => {
-  const isDark = document.documentElement.classList.contains('dark');
+  const isDark =
+    typeof document !== 'undefined' &&
+    document.documentElement.classList.contains('dark');
 
   return {
     gridColor: isDark ? '#374151' : '#e5e7eb',
@@ -27,6 +29,10 @@ export const useChartColors = () => {
   const [colors, setColors] = React.useState(getChartColors());
 
   React.useEffect(() => {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
     setColors(getChartColors());
 
     const observer = new MutationObserver(() => {

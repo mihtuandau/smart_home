@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useSyncExternalStore } from 'react';
 import {
   BarChart,
   Bar,
@@ -29,6 +29,10 @@ const SEED_DAYS = [
   { led1_min: 510, led2_min: 480 },
   { led1_min: 330, led2_min: 210 },
 ];
+
+const subscribeToMount = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 function buildSeedHistory(): LedDayEntry[] {
   const today = new Date();
@@ -159,6 +163,11 @@ export default function LedConsumptionChart() {
   const { todayLed, ledHistory, ledHistoryLoading, status } = useAiContext();
   const { t, language } = useLanguage();
   const [mode, setMode] = useState<'wh' | 'minutes'>('wh');
+  const isMounted = useSyncExternalStore(
+    subscribeToMount,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
   const safeToday = todayLed || { led1_wh: 0, led2_wh: 0, led1_on_minutes: 0, led2_on_minutes: 0 };
 
   const { chartData, totalLed1Wh, totalLed2Wh, totalLed1Min, totalLed2Min } = useMemo(() => {
@@ -203,7 +212,13 @@ export default function LedConsumptionChart() {
       totalLed1Min: total1Min,
       totalLed2Min: total2Min,
     };
-  }, [ledHistory, todayLed]);
+  }, [
+    ledHistory,
+    safeToday.led1_on_minutes,
+    safeToday.led1_wh,
+    safeToday.led2_on_minutes,
+    safeToday.led2_wh,
+  ]);
 
   return (
     <div className="section-card border border-border rounded-xl shadow-sm flex flex-col h-full">
@@ -270,7 +285,8 @@ export default function LedConsumptionChart() {
       </div>
 
       <div className="px-2 pb-2 flex-1 min-h-[160px] sm:min-h-[200px]">
-        <ResponsiveContainer width="100%" height="100%">
+        {isMounted ? (
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
               barCategoryGap="30%"
@@ -308,6 +324,9 @@ export default function LedConsumptionChart() {
               )}
             </BarChart>
           </ResponsiveContainer>
+        ) : (
+          <div className="h-full min-h-[160px] sm:min-h-[200px]" />
+        )}
       </div>
 
       <div className="px-4 py-2 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">

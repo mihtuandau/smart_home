@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from './provider';
@@ -26,6 +26,9 @@ export const metadata: Metadata = {
     icon: '/images/logo_smart.png',
     apple: '/images/logo_smart.png',
   },
+};
+
+export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
     { media: '(prefers-color-scheme: dark)', color: '#1f2937' },
