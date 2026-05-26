@@ -24,7 +24,7 @@ export default function AIInsights({ className = "" }: { className?: string }) {
     return (
       <div className={`section-card border border-border rounded-xl shadow-sm flex flex-col h-full bg-card items-center justify-center p-8 ${className}`}>
         <Brain className="w-8 h-8 text-indigo-400 animate-pulse mb-3" />
-        <p className="text-xs text-muted-foreground font-medium">{t("common.loading") || "Đang tải dữ liệu AI..."}</p>
+        <p className="text-xs text-muted-foreground font-medium">{t("common.loading")}</p>
       </div>
     );
   }
@@ -57,6 +57,9 @@ export default function AIInsights({ className = "" }: { className?: string }) {
 
   const config = getStatusConfig(status.severity);
   const analysisLines = localizeAiText(status.analysis, language).split("|");
+  const powerW = status?.powerW ?? 0;
+  const powerLevelKey =
+    powerW > 1500 ? "ai.loadVeryHigh" : powerW > 500 ? "ai.loadMedium" : "ai.loadNormal";
 
   const shouldShowCurrentStatus = 
     alerts.length === 0 || 
@@ -80,13 +83,13 @@ export default function AIInsights({ className = "" }: { className?: string }) {
             <Brain className="w-4 h-4 text-indigo-700 dark:text-indigo-400" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-foreground tracking-tight">AI Power Analytics</h2>
+            <h2 className="text-sm font-bold text-foreground tracking-tight">{t("ai.powerAnalytics")}</h2>
             <div className="flex items-center gap-1">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
               </span>
-              <span className="text-[9px] text-emerald-600 font-bold uppercase tracking-widest">Live System</span>
+              <span className="text-[9px] text-emerald-600 font-bold uppercase tracking-widest">{t("ai.liveSystem")}</span>
             </div>
           </div>
         </div>
@@ -98,16 +101,16 @@ export default function AIInsights({ className = "" }: { className?: string }) {
           <div>
             <div className="flex items-center gap-1.5 mb-1">
               <Zap className="w-3.5 h-3.5 text-amber-500" />
-              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Công suất hiện tại</span>
+              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{t("energy.currentPower")}</span>
             </div>
             <div className="flex items-baseline gap-1">
               <span className={`text-3xl font-black tabular-nums tracking-tighter ${
-                (status?.powerW ?? 0) > 1500 ? 'text-red-600' : 
-                (status?.powerW ?? 0) > 500 ? 'text-amber-600' : 'text-emerald-600'
+                powerW > 1500 ? 'text-red-600' : 
+                powerW > 500 ? 'text-amber-600' : 'text-emerald-600'
               }`}>
-                {formatPower(status?.powerW ?? 0).split(' ')[0]}
+                {formatPower(powerW).split(' ')[0]}
               </span>
-              <span className="text-sm font-bold text-slate-400 uppercase">{formatPower(status?.powerW ?? 0).split(' ')[1]}</span>
+              <span className="text-sm font-bold text-slate-400 uppercase">{formatPower(powerW).split(' ')[1]}</span>
             </div>
           </div>
 
@@ -117,21 +120,20 @@ export default function AIInsights({ className = "" }: { className?: string }) {
                 status.led1 ? 'bg-yellow-100/80 border-yellow-200 text-yellow-700 shadow-sm' : 'bg-slate-100/50 border-slate-200 text-slate-400'
               }`}>
                 <Lightbulb className={`w-3 h-3 ${status.led1 ? 'fill-yellow-500' : ''}`} />
-                <span className="text-[9px] font-bold">P.Khách</span>
+                <span className="text-[9px] font-bold">{t("ai.led1")}</span>
               </div>
               <div className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 border transition-all duration-300 ${
                 status.led2 ? 'bg-blue-100/80 border-blue-200 text-blue-700 shadow-sm' : 'bg-slate-100/50 border-slate-200 text-slate-400'
               }`}>
                 <Lightbulb className={`w-3 h-3 ${status.led2 ? 'fill-blue-500' : ''}`} />
-                <span className="text-[9px] font-bold">B.Công</span>
+                <span className="text-[9px] font-bold">{t("ai.led2")}</span>
               </div>
             </div>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-              (status?.powerW ?? 0) > 1500 ? 'bg-red-100 text-red-700' : 
-              (status?.powerW ?? 0) > 500 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
+              powerW > 1500 ? 'bg-red-100 text-red-700' : 
+              powerW > 500 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'
             }`}>
-              {(status?.powerW ?? 0) > 1500 ? 'TẢI RẤT CAO' : 
-               (status?.powerW ?? 0) > 500 ? 'TẢI TRUNG BÌNH' : 'BÌNH THƯỜNG'}
+              {t(powerLevelKey)}
             </span>
           </div>
         </div>
@@ -143,16 +145,16 @@ export default function AIInsights({ className = "" }: { className?: string }) {
               className="absolute top-0 left-0 h-full transition-all duration-1000 ease-out rounded-full"
               style={{ 
                 width: (() => {
-                  const p = status?.powerW ?? 0;
+                  const p = powerW;
                   if (p <= 0) return '0%';
                   if (p <= 100) return `${(p / 100) * 25}%`; // 0-100W chiếm 25% (Rất nhạy)
                   if (p <= 500) return `${25 + ((p - 100) / 400) * 20}%`; // 100-500W thêm 20%
                   if (p <= 1500) return `${45 + ((p - 500) / 1000) * 30}%`; // 500-1500W thêm 30%
                   return `${75 + Math.min(((p - 1500) / 1500) * 25, 25)}%`;
                 })(),
-                background: (status?.powerW ?? 0) > 1500 
+                background: powerW > 1500 
                   ? 'linear-gradient(90deg, #f59e0b 0%, #ef4444 100%)' 
-                  : (status?.powerW ?? 0) > 500 
+                  : powerW > 500 
                     ? 'linear-gradient(90deg, #10b981 0%, #f59e0b 100%)'
                     : 'linear-gradient(90deg, #34d399 0%, #10b981 100%)',
                 boxShadow: '0 0 10px rgba(0,0,0,0.1) inset'
@@ -173,7 +175,7 @@ export default function AIInsights({ className = "" }: { className?: string }) {
         <div className="px-4 py-2 bg-slate-50/80 dark:bg-slate-900/40 border-y border-border/50 sticky top-0 z-10 backdrop-blur-sm flex items-center justify-between">
           <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
             <History className="w-3 h-3" />
-            {t("ai.history") || "Lịch sử phân tích"}
+            {t("ai.history")}
           </h3>
           <span className="text-[9px] font-medium text-slate-400 italic">Live Update</span>
         </div>
@@ -201,7 +203,7 @@ export default function AIInsights({ className = "" }: { className?: string }) {
 
                   {status.tips && status.tips.length > 0 && (
                     <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/5">
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("ai.tips") || "Lời khuyên AI"}:</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2">{t("ai.tips")}:</p>
                       <ul className="space-y-1.5">
                         {status.tips.map((tip, idx) => (
                           <li key={idx} className="flex gap-2 text-xs text-muted-foreground leading-relaxed">
@@ -230,7 +232,7 @@ export default function AIInsights({ className = "" }: { className?: string }) {
                           {new Date(alert.time).toLocaleTimeString(language === 'vi' ? 'vi-VN' : 'en-US', { hour: "2-digit", minute: "2-digit" })}
                         </span>
                         <span className={`px-1.5 py-0.25 rounded text-[9px] font-bold uppercase ${alertConfig.bg} ${alertConfig.text} bg-slate-100 dark:bg-slate-800`}>
-                          {alert.is_critical ? "Bất thường" : "Ổn định"}
+                          {alert.is_critical ? t("ai.status.anomaly") : t("ai.status.normal")}
                         </span>
                       </div>
                       <div className="space-y-1">
@@ -246,7 +248,7 @@ export default function AIInsights({ className = "" }: { className?: string }) {
               ) : (
                 <div className="py-12 flex flex-col items-center justify-center text-muted-foreground/30 opacity-50">
                   <Brain className="w-8 h-8 mb-2" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest">{t("ai.noHistory") || "Chưa có dữ liệu lịch sử"}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest">{t("ai.noHistory")}</p>
                 </div>
               )}
             </div>
@@ -257,7 +259,7 @@ export default function AIInsights({ className = "" }: { className?: string }) {
       {/* Footer */}
       <div className="px-4 py-2 border-t border-border flex items-center justify-center bg-white dark:bg-slate-900 shrink-0">
         <p className="text-[9px] text-muted-foreground font-medium text-center italic">
-          {t("ai.footer") || "AI model tự động cập nhật dựa trên thói quen của bạn."}
+          {t("ai.footer")}
         </p>
       </div>
     </div>

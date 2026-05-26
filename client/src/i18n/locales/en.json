@@ -139,7 +139,8 @@
     "editDevice": "Edit device",
     "keepCurrentName": "Leave empty to keep current name",
     "keepCurrentPower": "Leave empty to keep current power",
-    "allOff": "All off"
+    "allOff": "All off",
+    "success": "LED {n} is now {state}"
   },
   "ai": {
     "title": "AI Power Monitor",
@@ -161,7 +162,18 @@
     "idle": "Idle",
     "normal": "Normal",
     "medium": "Medium",
-    "high": "High"
+    "high": "High",
+    "alertHint": "AI will notify you when lights change or anomalies are detected",
+    "waitingData": "Waiting for sensor data...",
+    "aiReportError": "Unable to load the AI report from Mina right now.",
+    "aiAnalyzing": "Mina is analyzing the power chart...",
+    "projectedLabel": "Projected",
+    "estimatedNote": "(projected: {kwh} kWh x {price})",
+    "powerAnalytics": "AI Power Analytics",
+    "liveSystem": "Live System",
+    "loadVeryHigh": "Very high load",
+    "loadMedium": "Medium load",
+    "loadNormal": "Normal"
   },
   "energy": {
     "title": "Energy Monitoring",
@@ -320,7 +332,8 @@
     "temperature_label": "°C Temperature",
     "humidity_label": "💧 Humidity",
     "pressure_label": "⚖️ Pressure",
-    "local_readings_checked": "local readings checked"
+    "local_readings_checked": "local readings checked",
+    "weather_api_says": "OpenWeather says"
   },
   "settings": {
     "title": "Settings",
@@ -423,7 +436,13 @@
     "oldDataDeleted": "Older data will be deleted",
     "dangerZone": "Danger zone",
     "deleteAllData": "Delete all data",
-    "cannotUndo": "This action cannot be undone"
+    "cannotUndo": "This action cannot be undone",
+    "energyAiTitle": "Energy & AI",
+    "energyAiDescription": "Configure consumption thresholds and artificial intelligence settings",
+    "energyPrice": "Electricity price (VND/kWh)",
+    "energyPriceHint": "Used to calculate the estimated electricity bill for the month.",
+    "powerAlertThreshold": "Power alert threshold (W)",
+    "powerAlertHint": "The system will send an email alert if total power exceeds this threshold."
   },
   "reports": {
     "title": "Reports & Export Data",
@@ -475,10 +494,19 @@
     "loginSubtitle": "Sign in to smart home management system",
     "loginError": "Login failed. Please check your information.",
     "loginButton": "Login",
-    "loginRequiredAction": "Phải đăng nhập để sử dụng chức năng này",
+    "loginRequiredAction": "You must log in to use this feature",
     "loggingIn": "Logging in...",
     "noAccount": "Don't have an account?",
-    "registerLink": "Register now"
+    "registerLink": "Register now",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "pleaseWait": "Please wait...",
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must be at least 6 characters"
+    }
   },
   "sidebar": {
     "closeMenu": "Close menu",
@@ -530,5 +558,10 @@
   "theme": {
     "switchLight": "Switch to light",
     "switchDark": "Switch to dark"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "System / email notifications",
+    "empty": "No system or email notifications yet."
   }
 }

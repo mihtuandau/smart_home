@@ -139,7 +139,8 @@
     "editDevice": "编辑设备",
     "keepCurrentName": "留空以保留当前名称",
     "keepCurrentPower": "留空以保留当前功率",
-    "allOff": "全部关闭"
+    "allOff": "全部关闭",
+    "success": "LED {n} 已{state}"
   },
   "energy": {
     "title": "能源监控",
@@ -402,7 +403,13 @@
     "oldDataDeleted": "旧数据将被删除",
     "dangerZone": "危险操作区",
     "deleteAllData": "删除所有数据",
-    "cannotUndo": "此操作不可撤销"
+    "cannotUndo": "此操作不可撤销",
+    "energyAiTitle": "能源与 AI",
+    "energyAiDescription": "配置用电阈值和人工智能设置",
+    "energyPrice": "电价（VND/kWh）",
+    "energyPriceHint": "用于计算本月预计电费。",
+    "powerAlertThreshold": "功率警报阈值（W）",
+    "powerAlertHint": "如果总功率超过此阈值，系统将发送邮件警报。"
   },
   "reports": {
     "title": "报表与数据导出",
@@ -454,10 +461,19 @@
     "loginSubtitle": "登录智能家居管理系统",
     "loginError": "登录失败，请检查你的信息。",
     "loginButton": "登录",
-    "loginRequiredAction": "Phải đăng nhập để sử dụng chức năng này",
+    "loginRequiredAction": "你必须登录才能使用此功能",
     "loggingIn": "登录中...",
     "noAccount": "还没有账号？",
-    "registerLink": "立即注册"
+    "registerLink": "立即注册",
+    "showPassword": "显示密码",
+    "hidePassword": "隐藏密码",
+    "pleaseWait": "请稍候...",
+    "validation": {
+      "emailRequired": "请输入邮箱",
+      "emailInvalid": "邮箱格式无效",
+      "passwordRequired": "请输入密码",
+      "passwordMin": "密码至少需要 6 个字符"
+    }
   },
   "sidebar": {
     "closeMenu": "关闭菜单",
@@ -496,7 +512,20 @@
     "aiReportError": "目前无法从 Mina 加载 AI 报告。",
     "aiAnalyzing": "Mina 正在分析功率图...",
     "projectedLabel": "预计",
-    "estimatedNote": "（预计：{kwh} kWh × {price}）"
+    "estimatedNote": "（预计：{kwh} kWh × {price}）",
+    "now": "现在",
+    "tips": "AI 建议",
+    "history": "分析历史",
+    "noHistory": "暂无历史数据",
+    "status": {
+      "anomaly": "检测到异常",
+      "normal": "运行正常"
+    },
+    "powerAnalytics": "AI 功率分析",
+    "liveSystem": "实时系统",
+    "loadVeryHigh": "负载非常高",
+    "loadMedium": "中等负载",
+    "loadNormal": "正常"
   },
   "weather": {
     "manyCloud": "多云",
@@ -529,5 +558,10 @@
   "theme": {
     "switchLight": "切换到浅色模式",
     "switchDark": "切换到深色模式"
+  },
+  "notifications": {
+    "title": "通知",
+    "subtitle": "系统 / 邮件通知",
+    "empty": "暂无系统或邮件通知。"
   }
 }

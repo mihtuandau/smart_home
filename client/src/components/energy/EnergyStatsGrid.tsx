@@ -130,7 +130,7 @@ export default function EnergyStatsGrid({ mode = "24h" }: EnergyStatsGridProps) 
       title: t("energy.totalEnergy"),
       value: total24hWh.toFixed(3),
       unit: "Wh",
-      subtitle: t("energy.last24Hours") + " (Trôi)",
+      subtitle: `${t("energy.last24Hours")} ${t("time.drifting")}`,
       icon: <ChartNoAxesColumn className="w-5 h-5" />,
       iconColor: "#10b981",
       trend: undefined,

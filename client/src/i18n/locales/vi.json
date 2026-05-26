@@ -89,7 +89,9 @@
     "lightIntensity": "Cường độ ánh sáng",
     "loadLightError": "Không thể tải dữ liệu cường độ ánh sáng",
     "noHistoryData": "Không có dữ liệu lịch sử",
-    "optimalThreshold": "Ngưỡng tối ưu"
+    "optimalThreshold": "Ngưỡng tối ưu",
+    "rainProbabilityQuestion": "Hôm nay có mưa không?",
+    "updatedRealtime": "Cập nhật thời gian thực"
   },
   "devices": {
     "title": "Điều khiển thiết bị",
@@ -160,7 +162,18 @@
     "idle": "Nghỉ",
     "normal": "Bình thường",
     "medium": "Hơi cao",
-    "high": "Cao — Cảnh báo"
+    "high": "Cao — Cảnh báo",
+    "alertHint": "Khi đèn thay đổi trạng thái hoặc phát hiện bất thường, AI sẽ thông báo cho bạn",
+    "waitingData": "Đang chờ dữ liệu cảm biến...",
+    "aiReportError": "Hiện không thể tải báo cáo AI từ Mina.",
+    "aiAnalyzing": "Mina đang phân tích biểu đồ công suất...",
+    "projectedLabel": "Dự kiến",
+    "estimatedNote": "(dự kiến: {kwh} kWh x {price})",
+    "powerAnalytics": "Phân tích công suất AI",
+    "liveSystem": "Hệ thống trực tiếp",
+    "loadVeryHigh": "Tải rất cao",
+    "loadMedium": "Tải trung bình",
+    "loadNormal": "Bình thường"
   },
   "energy": {
     "title": "Giám sát năng lượng",
@@ -319,7 +332,8 @@
     "temperature_label": "°C Nhiệt độ",
     "humidity_label": "💧 Độ ẩm",
     "pressure_label": "⚖️ Áp suất",
-    "local_readings_checked": "đã kiểm tra dữ liệu cục bộ"
+    "local_readings_checked": "đã kiểm tra dữ liệu cục bộ",
+    "weather_api_says": "OpenWeather dự báo"
   },
   "settings": {
     "title": "Cài đặt",
@@ -422,7 +436,13 @@
     "oldDataDeleted": "Dữ liệu cũ hơn sẽ bị xóa",
     "dangerZone": "Vùng nguy hiểm",
     "deleteAllData": "Xóa tất cả dữ liệu",
-    "cannotUndo": "Hành động này không thể hoàn tác"
+    "cannotUndo": "Hành động này không thể hoàn tác",
+    "energyAiTitle": "Năng lượng & AI",
+    "energyAiDescription": "Cấu hình định mức tiêu thụ và trí tuệ nhân tạo",
+    "energyPrice": "Giá điện (VNĐ/kWh)",
+    "energyPriceHint": "Sử dụng để tính toán hóa đơn tiền điện dự kiến trong tháng.",
+    "powerAlertThreshold": "Ngưỡng cảnh báo công suất (W)",
+    "powerAlertHint": "Hệ thống sẽ gửi email cảnh báo nếu tổng công suất vượt ngưỡng này."
   },
   "reports": {
     "title": "Báo cáo & Xuất dữ liệu",
@@ -477,7 +497,16 @@
     "loginRequiredAction": "Phải đăng nhập để sử dụng chức năng này",
     "loggingIn": "Đang đăng nhập...",
     "noAccount": "Chưa có tài khoản?",
-    "registerLink": "Đăng ký ngay"
+    "registerLink": "Đăng ký ngay",
+    "showPassword": "Hiện mật khẩu",
+    "hidePassword": "Ẩn mật khẩu",
+    "pleaseWait": "Vui lòng chờ...",
+    "validation": {
+      "emailRequired": "Email không được để trống",
+      "emailInvalid": "Email không hợp lệ",
+      "passwordRequired": "Mật khẩu không được để trống",
+      "passwordMin": "Mật khẩu phải có ít nhất 6 ký tự"
+    }
   },
   "sidebar": {
     "closeMenu": "Đóng menu",
@@ -529,5 +558,10 @@
   "theme": {
     "switchLight": "Chuyển sang chế độ sáng",
     "switchDark": "Chuyển sang chế độ tối"
+  },
+  "notifications": {
+    "title": "Thông báo",
+    "subtitle": "Thông báo hệ thống / email",
+    "empty": "Chưa có thông báo hệ thống hoặc email nào."
   }
 }

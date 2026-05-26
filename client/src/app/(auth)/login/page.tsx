@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { LoginCredentials } from '@/types';
 import { loginSchema } from '@/lib/validations/auth';
 import { CircleAlert, Eye, EyeOff, Loader2, Lock, Mail } from 'lucide-react';
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
+  const { t } = useLanguage();
 
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: '',
@@ -33,7 +35,16 @@ export default function LoginPage() {
       const errors: { email?: string; password?: string } = {};
       result.error.issues.forEach((issue) => {
         const field = issue.path[0] as 'email' | 'password';
-        if (!errors[field]) errors[field] = issue.message;
+        const minimum = 'minimum' in issue ? issue.minimum : undefined;
+        const message =
+          field === 'email'
+            ? issue.code === 'invalid_format'
+              ? t('auth.validation.emailInvalid')
+              : t('auth.validation.emailRequired')
+            : issue.code === 'too_small' && minimum === 6
+              ? t('auth.validation.passwordMin')
+              : t('auth.validation.passwordRequired');
+        if (!errors[field]) errors[field] = message;
       });
       setFieldErrors(errors);
       return;
@@ -49,7 +60,7 @@ export default function LoginPage() {
           : '/dashboard';
       router.push(safeRedirect);
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Đăng nhập thất bại. Vui lòng thử lại.';
+      const message = err instanceof Error ? err.message : t('auth.loginError');
       setError(message);
     } finally {
       setIsLoading(false);
@@ -85,7 +96,7 @@ export default function LoginPage() {
               </div>
             </div>
             <h1 className="text-2xl font-bold text-white text-center">Smart Home</h1>
-            <p className="text-white/80 text-center text-sm mt-1">Hệ thống quản lý nhà thông minh</p>
+            <p className="text-white/80 text-center text-sm mt-1">{t('auth.loginSubtitle')}</p>
           </div>
 
           <div className="p-8 backdrop-blur-md">
@@ -127,7 +138,7 @@ export default function LoginPage() {
 
               <div>
                 <label htmlFor="password" className="block text-sm font-semibold text-gray-950 mb-2">
-                  Mật khẩu
+                  {t('auth.password')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -149,7 +160,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-cyan-700 hover:text-cyan-900 transition"
-                    aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                    aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5" />
@@ -171,10 +182,10 @@ export default function LoginPage() {
                     type="checkbox"
                     className="h-4 w-4 rounded border-gray-400/30 text-cyan-600 focus:ring-cyan-300 bg-white/16"
                   />
-                  <span className="ml-2 text-sm text-gray-900">Ghi nhớ đăng nhập</span>
+                  <span className="ml-2 text-sm text-gray-900">{t('auth.rememberMe')}</span>
                 </label>
                 <a href="#" className="text-sm font-medium text-cyan-600 hover:text-cyan-700 transition">
-                  Quên mật khẩu?
+                  {t('auth.forgotPassword')}
                 </a>
               </div>
 
@@ -186,17 +197,17 @@ export default function LoginPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="animate-spin h-4 w-4" />
-                    Vui lòng chờ...
+                    {t('auth.pleaseWait')}
                   </>
                 ) : (
-                  'Đăng nhập'
+                  t('auth.loginButton')
                 )}
               </button>
 
               <p className="text-center text-sm text-gray-900 pt-3">
-                Chưa có tài khoản?{' '}
+                {t('auth.noAccount')}{' '}
                 <Link href="/register" className="font-semibold text-cyan-600 hover:text-cyan-700 transition">
-                  Đăng ký
+                  {t('auth.registerLink')}
                 </Link>
               </p>
             </form>

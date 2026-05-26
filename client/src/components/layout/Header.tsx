@@ -53,27 +53,6 @@ export default function DashboardHeader({
     };
   }, [isNotificationOpen]);
 
-  const notificationTitle =
-    language === "en"
-      ? "Notifications"
-      : language === "zh"
-        ? "通知"
-        : "Thông báo";
-
-  const notificationSubtitle =
-    language === "en"
-      ? "System / email notifications"
-      : language === "zh"
-        ? "系统 / 邮件通知"
-        : "Thông báo hệ thống / email";
-
-  const emptyNotificationText =
-    language === "en"
-      ? "No system or email notifications yet."
-      : language === "zh"
-        ? "暂无系统或邮件通知。"
-        : "Chưa có thông báo hệ thống hoặc email nào.";
-
   const getPageTitle = () => {
     switch (pathname) {
       case "/dashboard":
@@ -184,16 +163,16 @@ export default function DashboardHeader({
                 <div className="absolute right-0 mt-2 w-[min(90vw,360px)] rounded-xl border border-border bg-card shadow-xl z-50 overflow-hidden">
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-sm font-semibold text-foreground">
-                      {notificationTitle}
+                      {t("notifications.title")}
                     </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {notificationSubtitle}
+                      {t("notifications.subtitle")}
                     </p>
                   </div>
 
                   <div className="max-h-80 overflow-y-auto">
                     <div className="px-4 py-6 text-sm text-muted-foreground text-center">
-                      {emptyNotificationText}
+                      {t("notifications.empty")}
                     </div>
                   </div>
                 </div>

@@ -130,9 +130,9 @@ export default function SystemSettings() {
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2 inline-flex items-center gap-2">
               <Zap className="w-6 h-6 text-yellow-500" />
-              {t('dashboard.energyTitle')} & AI
+              {t('settings.energyAiTitle')}
             </h2>
-            <p className="text-sm text-muted-foreground">Cấu hình định mức tiêu thụ và trí tuệ nhân tạo</p>
+            <p className="text-sm text-muted-foreground">{t('settings.energyAiDescription')}</p>
           </div>
         </div>
 
@@ -141,7 +141,7 @@ export default function SystemSettings() {
           <div className="space-y-3">
             <label className="text-sm font-semibold text-foreground flex items-center gap-2">
               <CreditCard className="w-4 h-4 text-primary" />
-              Giá điện (VNĐ/kWh)
+              {t('settings.energyPrice')}
             </label>
             <div className="flex gap-2">
               <input
@@ -158,14 +158,14 @@ export default function SystemSettings() {
                 <Save className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-[11px] text-muted-foreground italic">* Sử dụng để tính toán hóa đơn tiền điện dự kiến trong tháng.</p>
+            <p className="text-[11px] text-muted-foreground italic">* {t('settings.energyPriceHint')}</p>
           </div>
 
           {/* Power Alert Threshold */}
           <div className="space-y-3">
             <label className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Zap className="w-4 h-4 text-red-500" />
-              Ngưỡng cảnh báo công suất (W)
+              {t('settings.powerAlertThreshold')}
             </label>
             <div className="flex gap-2">
               <input
@@ -182,7 +182,7 @@ export default function SystemSettings() {
                 <Save className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-[11px] text-muted-foreground italic">* Hệ thống sẽ gửi email cảnh báo nếu tổng công suất vượt ngưỡng này.</p>
+            <p className="text-[11px] text-muted-foreground italic">* {t('settings.powerAlertHint')}</p>
           </div>
         </div>
       </div>
